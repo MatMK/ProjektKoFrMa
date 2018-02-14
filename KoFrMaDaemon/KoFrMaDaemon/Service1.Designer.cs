@@ -1,6 +1,6 @@
 ﻿namespace KoFrMaDaemon
 {
-    partial class Service1
+    partial class ServiceKoFrMa
     {
         /// <summary> 
         /// Vyžaduje se proměnná návrháře.
