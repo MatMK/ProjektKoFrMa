@@ -29,6 +29,10 @@ namespace KoFrMaDaemon
 
         private string serverURL;
 
+        private LogOperations log;
+
+        private Actions a = new Actions();
+
         public ServiceKoFrMa()
         {
             InitializeComponent();
@@ -37,44 +41,42 @@ namespace KoFrMaDaemon
             timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
             isStopping = false;
             this.logPath = @"d:\tmp\tmp.txt";
+            log = new LogOperations(this.logPath);
+
             timer.AutoReset = true;
             this.serverURL = @"http://www.e64.cz/kofrma/ns1.aspx";
         }
 
         protected override void OnStart(string[] args)
         {
-            WriteToLog("Service started");
+            log.WriteToLog("Service started");
             timer.Start();
+
+            a.BackupFullFolder(@"d:\tmp\testBackup\BackupThisFolder\", @"d:\tmp\testBackup\BackupGoesHere\", true);
 
         }
 
         protected override void OnStop()
         {
             this.isStopping = true;
-            WriteToLog("Service stopped");
+            log.WriteToLog("Service stopped");
         }
 
 
 
         private void OnTimerTick(object sender, ElapsedEventArgs e)
         {
-            if (!this.isStopping)
-            {
-                this.WriteToLog("tik");
+            //if (!this.isStopping)
+            //{
+            //    log.WriteToLog("tik");
 
-                this.GetTasks();
-                this.WriteToLog("tikTasksGot");
-            }
+            //    this.GetTasks();
+            //    log.WriteToLog("tikTasksGot");
+            //}
 
         }
 
-        private void WriteToLog(string text)
-        {
-            StreamWriter w = new StreamWriter(this.logPath, true);
-            w.WriteLine(DateTime.Now.ToString() + ' ' + text);
-            w.Close();
-            w.Dispose();
-        }
+
 
         /*
          Vstupní parametry GetTasks():
@@ -103,20 +105,20 @@ namespace KoFrMaDaemon
 
         private void GetTasks()
         {
-            WriteToLog("InGetTasks 1");
+            log.WriteToLog("InGetTasks 1");
 
             WebRequest request = WebRequest.Create(this.serverURL);
             //request.Method = "POST";
             //request.ContentType = "multipart/form-data"; // ideální pro Upload souborů
             //request.ContentLength = 4;
-            WriteToLog("InGetTasks 2");
+            log.WriteToLog("InGetTasks 2");
 
             WebResponse response = request.GetResponse();
-            WriteToLog("InGetTasks 3");
+            log.WriteToLog("InGetTasks 3");
 
             string statusDescr = "StatusDescription = " + ((HttpWebResponse)response).StatusDescription;
 
-            WriteToLog(statusDescr);
+            log.WriteToLog(statusDescr);
             /*
              // Get the stream containing content returned by the server.
              dataStream = response.GetResponseStream();
