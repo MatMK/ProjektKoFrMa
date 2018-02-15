@@ -44,6 +44,7 @@ namespace KoFrMaDaemon
 
         private void CopyDirectoryRecursivly(DirectoryInfo from, DirectoryInfo to, bool createLog)
         {
+            //Rekurzivní kopírovaní složky
             if (!to.Exists)
             {
                 to.Create();
