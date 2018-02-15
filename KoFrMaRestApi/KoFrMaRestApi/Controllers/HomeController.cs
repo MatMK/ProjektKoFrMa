@@ -10,6 +10,8 @@ namespace KoFrMaRestApi.Controllers
     {
         public ActionResult Index()
         {
+            ViewBag.Title = "Home_Page";
+
             return View();
         }
 
