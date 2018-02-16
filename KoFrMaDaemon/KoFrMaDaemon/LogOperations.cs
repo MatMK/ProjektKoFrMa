@@ -28,13 +28,14 @@ namespace KoFrMaDaemon
             w.Dispose();
         }
 
-        public void CreateBackupLog(List<FileInfoObject> backuplog, string path)
+        public void CreateBackupLog(List<FileInfoObject> backuplog, string RelativePath, string path)
         {
             w = new StreamWriter(path, true);
             string row;
+            w.WriteLine(RelativePath);
             for (int i = 0; i < backuplog.Count; i++)
             {
-                row = backuplog[i].FullName + '|' + backuplog[i].Length.ToString() + '|' + backuplog[i].CreationTimeUtc.ToString() + '|' + backuplog[i].LastWriteTimeUtc.ToString() + '|' + backuplog[i].Attributes.ToString() + '|' + backuplog[i].MD5;
+                row = backuplog[i].RelativePathName + '|' + backuplog[i].Length.ToString() + '|' + backuplog[i].CreationTimeUtc.ToString() + '|' + backuplog[i].LastWriteTimeUtc.ToString() + '|' + backuplog[i].Attributes.ToString() + '|' + backuplog[i].MD5;
                 w.WriteLine(row + '|' + CalculateMD5_32(row).ToString());
             }
             w.Close();
@@ -45,12 +46,19 @@ namespace KoFrMaDaemon
         {
             r = new StreamReader(OriginalBackupDatFilePath);
             List<FileInfoObject> tmpList = new List<FileInfoObject>(100);
+            r.ReadLine();
             while (!r.EndOfStream)
             {
                 string[] tmp = r.ReadLine().Split('|');
-                tmpList.Add(new FileInfoObject() {FullName = tmp[0], Length = Convert.ToInt64(tmp[1]), CreationTimeUtc = Convert.ToDateTime(tmp[2]), LastWriteTimeUtc = Convert.ToDateTime(tmp[3]), Attributes = tmp[4],MD5 = tmp[5],HashRow = Convert.ToInt32(tmp[6])});
+                tmpList.Add(new FileInfoObject() {RelativePathName = tmp[0], Length = Convert.ToInt64(tmp[1]), CreationTimeUtc = Convert.ToDateTime(tmp[2]), LastWriteTimeUtc = Convert.ToDateTime(tmp[3]), Attributes = tmp[4],MD5 = tmp[5],HashRow = Convert.ToInt32(tmp[6])});
             }
             return tmpList;
+        }
+
+        public string LoadBackupRelativePath(string OriginalBackupDatFilePath)
+        {
+            r = new StreamReader(OriginalBackupDatFilePath);
+            return r.ReadLine();
         }
 
 

@@ -13,7 +13,7 @@ namespace KoFrMaDaemon
 
         //public string DirectoryName { get; set; }
 
-        public string FullName { get; set; }
+        public string RelativePathName { get; set; }
 
         public long Length { get; set; }
 
