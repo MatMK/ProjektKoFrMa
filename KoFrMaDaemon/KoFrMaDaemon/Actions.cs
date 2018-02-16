@@ -25,10 +25,16 @@ namespace KoFrMaDaemon
 
         public void BackupFullFolder(string source, string destination, bool createLog)
         {
+            DateTime timeOfBackup = DateTime.Now;
+
             DirectoryInfo sourceInfo = new DirectoryInfo(source);
             DirectoryInfo destinationInfo = new DirectoryInfo(destination);
+            BackupLog = new LogOperations(destinationInfo.FullName + "KoFrMaBackup.dat");
+            BackupLog.WriteToLog(destination + "KoFrMaBackup" + timeOfBackup.Year + timeOfBackup.Month + timeOfBackup.Day + timeOfBackup.Hour + timeOfBackup.Minute + @"\");
+            destinationInfo = destinationInfo.CreateSubdirectory(destination + "KoFrMaBackup" + timeOfBackup.Year+timeOfBackup.Month+timeOfBackup.Day+timeOfBackup.Hour+timeOfBackup.Minute + @"\");
 
-            BackupLog = new LogOperations(destinationInfo.Parent.FullName + "KoFrMaBackup.dat");
+
+            
 
             try
             {

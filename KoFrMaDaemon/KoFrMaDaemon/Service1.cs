@@ -50,7 +50,7 @@ namespace KoFrMaDaemon
         protected override void OnStart(string[] args)
         {
             log.WriteToLog("Service started");
-            timer.Start();
+            //timer.Start();
 
             a.BackupFullFolder(@"d:\tmp\testBackup\BackupThisFolder\", @"d:\tmp\testBackup\BackupGoesHere\", true);
 
