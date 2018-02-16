@@ -16,7 +16,7 @@ namespace KoFrMaDaemon
         //const int dim1 = 5;
         //public string[,] poleStr = new string[dim1, dim1];
 
-        public List<String> FilesCorrect =new List<string>(1000);
+        public List<FileInfoObject> FilesCorrect =new List<FileInfoObject>(1000);
         public List<String> FolderseCorrect = new List<string>(1000);
         public List<String> FilesError = new List<string>(1000);
         public List<String> FoldersError = new List<string>(1000);
@@ -46,7 +46,8 @@ namespace KoFrMaDaemon
             }
 
             DebugLog.WriteToLog("Vytváření logu úspěšně zálohovaných souborů...");
-            BackupLog.CreateBackupLog(FilesCorrect);
+            BackupLog.CreateBackupLog(FilesCorrect, destinationInfo.Parent.FullName + @"\" + "KoFrMaBackup.dat");
+            BackupLog.CreateBackupLog(BackupLog.LoadBackupList(destinationInfo.Parent.FullName + @"\" + "KoFrMaBackup.dat"), destinationInfo.Parent.FullName + @"\" + "KoFrMaBackup2.dat");
             DebugLog.WriteToLog("Log byl úspěšně vytvořen");
             DebugLog.WriteToLog("Full backup " + timeOfBackup.ToString() + " byl dokončen");
 
@@ -71,7 +72,8 @@ namespace KoFrMaDaemon
                     {
                         if (Copy)
                         item.CopyTo(to.FullName + @"\" + item.Name);
-                        this.FilesCorrect.Add(item.DirectoryName + '|' + item.FullName + '|' +  item.Length.ToString() + '|' + item.CreationTimeUtc.ToString() + '|' + item.LastWriteTimeUtc.ToString() + '|' + item.LastAccessTimeUtc.ToString() + '|' + item.Attributes.ToString() + '|' + this.CalculateMD5(item.FullName));
+                        FilesCorrect.Add(new FileInfoObject { DirectoryName = item.DirectoryName, FullName = item.FullName, Length = item.Length, CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString(), MD5 = this.CalculateMD5(item.FullName) });
+                        //this.FilesCorrect.Add(item.DirectoryName + '|' + item.FullName + '|' +  item.Length.ToString() + '|' + item.CreationTimeUtc.ToString() + '|' + item.LastWriteTimeUtc.ToString() + '|' + item.LastAccessTimeUtc.ToString() + '|' + item.Attributes.ToString() + '|' + this.CalculateMD5(item.FullName));
                     }
                     catch (Exception x)
                     {
