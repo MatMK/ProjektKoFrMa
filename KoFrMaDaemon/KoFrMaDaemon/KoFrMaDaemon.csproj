@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Actions.cs" />
     <Compile Include="FileInfoObject.cs" />
+    <Compile Include="FolderObject.cs" />
     <Compile Include="LogOperations.cs" />
     <Compile Include="Service1.cs">
       <SubType>Component</SubType>
