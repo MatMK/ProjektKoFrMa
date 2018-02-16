@@ -11,7 +11,7 @@ namespace KoFrMaDaemon
     public class Actions
     {
         
-        public string State;
+        //public string State;
 
         //const int dim1 = 5;
         //public string[,] poleStr = new string[dim1, dim1];
@@ -22,55 +22,44 @@ namespace KoFrMaDaemon
         public List<String> FoldersError = new List<string>(1000);
 
         private LogOperations BackupLog;
+        public LogOperations DebugLog;
 
         public void BackupFullFolder(string source, string destination, bool createLog)
         {
             DateTime timeOfBackup = DateTime.Now;
 
             DirectoryInfo sourceInfo = new DirectoryInfo(source);
-            DirectoryInfo destinationInfo = new DirectoryInfo(destination);
-            BackupLog = new LogOperations(destinationInfo.FullName + "KoFrMaBackup.dat");
-            BackupLog.WriteToLog(destination + "KoFrMaBackup" + timeOfBackup.Year + timeOfBackup.Month + timeOfBackup.Day + timeOfBackup.Hour + timeOfBackup.Minute + @"\");
-            destinationInfo = destinationInfo.CreateSubdirectory(destination + "KoFrMaBackup" + timeOfBackup.Year+timeOfBackup.Month+timeOfBackup.Day+timeOfBackup.Hour+timeOfBackup.Minute + @"\");
-
-
-            
+            DirectoryInfo destinationInfo = new DirectoryInfo(destination).CreateSubdirectory("KoFrMaBackup" + timeOfBackup.Year + timeOfBackup.Month + timeOfBackup.Day + timeOfBackup.Hour + timeOfBackup.Minute).CreateSubdirectory("KoFrMaBackup");
+            BackupLog = new LogOperations(destinationInfo.Parent.FullName + @"\" + "KoFrMaBackup.dat");
+            DebugLog = new LogOperations(destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log");
+            DebugLog.WriteToLog("Vytvořena podsložka pro Full Backup zálohu");
 
             try
             {
-                State = "Copying folders";
+                DebugLog.WriteToLog("Zálohuji složku...");
                 this.CopyDirectoryRecursivly(sourceInfo,destinationInfo, createLog);
+                DebugLog.WriteToLog("Složka úspěšně zálohována");
             }
-            catch (System.IO.IOException)
+            catch (Exception x)
             {
-                State = "Cannot copy!";
+                DebugLog.WriteToLog("Došlo k chybě " + x.Message + " a záloha nemohla být dokončena");
             }
 
-            catch (System.UnauthorizedAccessException)
-            {
-                State = "Access denied!";
-            }
-
-            for (int i = 0; i < FilesCorrect.Count; i++)
-            {
-
-            }
-
+            DebugLog.WriteToLog("Vytváření logu úspěšně zálohovaných souborů...");
             BackupLog.CreateBackupLog(FilesCorrect);
+            DebugLog.WriteToLog("Log byl úspěšně vytvořen");
+            DebugLog.WriteToLog("Full backup " + timeOfBackup.ToString() + " byl dokončen");
 
-            State = "";
-            
         }
 
 
-        public void BackupDifferentialIncremental(string source, string destination, string OriginalBackupDatFilePath, bool createLog)
+        public void BackupDifferential(string source, string destination, string OriginalBackupDatFilePath, bool createLog)
         {
 
         }
         
         private void CopyDirectoryRecursivly(DirectoryInfo from, DirectoryInfo to, bool Copy)
         {
-            //Rekurzivní kopírovaní složky
             if (!to.Exists)
             {
                 to.Create();
@@ -82,7 +71,7 @@ namespace KoFrMaDaemon
                     {
                         if (Copy)
                         item.CopyTo(to.FullName + @"\" + item.Name);
-                        this.FilesCorrect.Add(item.FullName + '|' + item.DirectoryName + '|' + item.Length.ToString() + '|' + item.CreationTimeUtc.ToString() + '|' + item.LastWriteTimeUtc.ToString() + '|' + item.LastAccessTimeUtc.ToString() + '|' + item.Attributes.ToString() + '|' + this.CalculateMD5(item.FullName));
+                        this.FilesCorrect.Add(item.DirectoryName + '|' + item.FullName + '|' +  item.Length.ToString() + '|' + item.CreationTimeUtc.ToString() + '|' + item.LastWriteTimeUtc.ToString() + '|' + item.LastAccessTimeUtc.ToString() + '|' + item.Attributes.ToString() + '|' + this.CalculateMD5(item.FullName));
                     }
                     catch (Exception x)
                     {

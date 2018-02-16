@@ -40,7 +40,7 @@ namespace KoFrMaDaemon
             timer = new Timer(this.timerStep);
             timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
             isStopping = false;
-            this.logPath = @"d:\tmp\tmp.txt";
+            this.logPath = @"d:\tmp\testBackup\DebugServiceLog.log";
             log = new LogOperations(this.logPath);
 
             timer.AutoReset = true;
