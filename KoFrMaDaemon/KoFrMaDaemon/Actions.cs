@@ -63,14 +63,21 @@ namespace KoFrMaDaemon
         public void BackupDifferential(string destination, string OriginalBackupDatFilePath, byte logLevel)
         {
             DateTime timeOfBackup = DateTime.Now;
-            string temporaryDebugInfo;
+            string temporaryDebugInfo ="";
             if (logLevel >= 4)
-                temporaryDebugInfo = "Starting the differential/incremental backup " + timeOfBackup.ToString();
+                temporaryDebugInfo = "Starting the differential/incremental backup in " + timeOfBackup.ToString();
             destinationInfo = new DirectoryInfo(destination).CreateSubdirectory("KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup)).CreateSubdirectory("KoFrMaBackup");
             BackupLog = new LogOperations(destinationInfo.Parent.FullName + @"\" + "KoFrMaBackup.dat");
             DebugLog = new LogOperations(destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log");
+
             if (logLevel >= 5)
                 DebugLog.WriteToLog("Subdirectory for the backup was created.");
+            if (logLevel >= 4)
+            {
+                DebugLog.WriteToLog(temporaryDebugInfo);
+                temporaryDebugInfo = null;
+            }
+                
 
             string source = BackupLog.LoadBackupRelativePath(OriginalBackupDatFilePath);
 
@@ -81,8 +88,8 @@ namespace KoFrMaDaemon
             this.CopyDirectoryRecursivly(sourceInfo, null, false);
             List<FileInfoObject> CurrentFiles = this.ReturnHashCodes(FilesCorrect);
 
-            if (logLevel >= 7)
-                DebugLog.CreateBackupJournal(CurrentFiles, "current files", destinationInfo.Parent.FullName + @"\KoFrMaBackupDebugCurrentFiles.dat", new List<string>());
+            if (logLevel >= 6)
+                DebugLog.CreateBackupJournal(CurrentFiles, "current files", destinationInfo.Parent.FullName + @"\KoFrMaBackupDebugCurrentFiles.dat", FoldersCorrect);
 
             FilesCorrect = new List<FileInfoObject>();
             List<string> CurrentFolders = FoldersCorrect;
@@ -133,12 +140,12 @@ namespace KoFrMaDaemon
                             sameObject = true;
                             itemOriginal.Paired = true;
 
-                            if (logLevel >= 6)
+                            if (logLevel >= 7)
                                 DebugLog.WriteToLog("Same object = true");
 
                             break;
                         }
-
+                        
                         else if (logLevel >= 6)
                         {
                             if (itemCurrent.RelativePathName != itemOriginal.RelativePathName)
@@ -169,7 +176,7 @@ namespace KoFrMaDaemon
 
 
                     }
-                    else if (logLevel >= 7)
+                    else if (logLevel >= 8)
                         DebugLog.WriteToLog("HashRow Error: " + itemCurrent.HashRow.ToString() + " is not " + itemOriginal.HashRow.ToString());
 
                 }
@@ -201,6 +208,9 @@ namespace KoFrMaDaemon
                         itemOriginal.Paired = true;
                         break;
                     }
+                    
+                    else if(logLevel>=6)
+                        DebugLog.WriteToLog("Folder name error: " + itemCurrent.FolderPath + " is not " + itemOriginal.FolderPath);
 
                 }
 
@@ -223,7 +233,7 @@ namespace KoFrMaDaemon
                 }
             }
             if (logLevel >= 5)
-                DebugLog.WriteToLog("There is " + FoldersToDelete.Count + " folders that were deleted since the original backup.");
+                DebugLog.WriteToLog("There is " + FoldersToDelete.Count + " folders that need to be deleted since the original backup.");
 
             // M * delete:
 
@@ -234,11 +244,12 @@ namespace KoFrMaDaemon
             {
                 if (!itemOriginal.Paired)
                 {
+                    //možná předělat, ukazuje včetně upravených souborů
                     FilesToDelete.Add(source + itemOriginal.RelativePathName);
                 }
             }
             if (logLevel >= 5)
-                DebugLog.WriteToLog("There is " + FilesToDelete.Count + " files that were deleted since the original backup.");
+                DebugLog.WriteToLog("There is " + FilesToDelete.Count + " files that need to be deleted since the original backup.");
 
             if (logLevel >= 5)
                 DebugLog.WriteToLog("Backuping modified folder structure...");
@@ -292,7 +303,7 @@ namespace KoFrMaDaemon
                 DebugLog.WriteToLog("Transaction log successfully created in destination "+ destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat");
             BackupLog = null;
             if (logLevel >= 4)
-                DebugLog.WriteToLog("Differential/Incremental backup of " + timeOfBackup.ToString() + " done.");
+                DebugLog.WriteToLog("Differential/Incremental backup done in " + (DateTime.Now.Second -timeOfBackup.Second).ToString() + " seconds and " +(DateTime.Now.Millisecond - timeOfBackup.Millisecond).ToString() + " milliseconds");
 
         }
         
