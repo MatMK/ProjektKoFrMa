@@ -14,6 +14,5 @@ namespace KoFrMaRestApi.Controllers
     public class DaemonController : ApiController
     {
 
-
     }
 }
