@@ -52,8 +52,8 @@ namespace KoFrMaDaemon
             log.WriteToLog("Service started");
             //timer.Start();
 
-            //a.BackupFullFolder(@"d:\tmp\testBackup\BackupThisFolder\", @"d:\tmp\testBackup\BackupGoesHere\", true);
-            a.BackupDifferential(@"d:\tmp\testBackup\BackupThisFolder\", @"d:\tmp\testBackup\BackupGoesHere\", @"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_17_00_03_44\KoFrMaBackup.dat", true);
+            //a.BackupFullFolder(@"d:\tmp\testBackup\BackupThisFolder\", @"d:\tmp\testBackup\BackupGoesHere\", 6);
+            a.BackupDifferential(@"d:\tmp\testBackup\BackupGoesHere\", @"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_17_20_00_42\KoFrMaBackup.dat", 6);
         }
 
         protected override void OnStop()

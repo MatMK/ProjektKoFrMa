@@ -35,8 +35,8 @@ namespace KoFrMaDaemon
             w.WriteLine(RelativePath);
             for (int i = 0; i < backuplog.Count; i++)
             {
-                row = backuplog[i].RelativePathName + '|' + backuplog[i].Length.ToString() + '|' + backuplog[i].CreationTimeUtc.ToString() + '|' + backuplog[i].LastWriteTimeUtc.ToString() + '|' + backuplog[i].Attributes.ToString() + '|' + backuplog[i].MD5;
-                w.WriteLine(row + '|' + CalculateMD5_32(row).ToString());
+                row = backuplog[i].RelativePathName + '|' + backuplog[i].Length.ToString() + '|' + backuplog[i].CreationTimeUtc.ToBinary().ToString() + '|' + backuplog[i].LastWriteTimeUtc.ToBinary().ToString() + '|' + backuplog[i].Attributes.ToString() + '|' + backuplog[i].MD5;
+                w.WriteLine(row + '|' + row.GetHashCode().ToString());
             }
             w.WriteLine("?");
             for (int i = 0; i < FoldersCorrect.Count; i++)
@@ -58,7 +58,7 @@ namespace KoFrMaDaemon
                 tmp = r.ReadLine().Split('|');
                 if (tmp.Length==7)
                 {
-                    tmpList.Add(new FileInfoObject() { RelativePathName = tmp[0], Length = Convert.ToInt64(tmp[1]), CreationTimeUtc = Convert.ToDateTime(tmp[2]), LastWriteTimeUtc = Convert.ToDateTime(tmp[3]), Attributes = tmp[4], MD5 = tmp[5], HashRow = Convert.ToInt32(tmp[6]) });
+                    tmpList.Add(new FileInfoObject() { RelativePathName = tmp[0], Length = Convert.ToInt64(tmp[1]), CreationTimeUtc = DateTime.FromBinary(Convert.ToInt64(tmp[2])), LastWriteTimeUtc = DateTime.FromBinary(Convert.ToInt64(tmp[3])), Attributes = tmp[4], MD5 = tmp[5], HashRow = Convert.ToInt32(tmp[6]) });
                 }
                 
             }
@@ -87,17 +87,37 @@ namespace KoFrMaDaemon
             return tmpList;
         }
 
-        Int32 CalculateMD5_32(string row)
+        //Int32 CalculateMD5_32(string row)
+        //{
+        //    byte[] inputBytes = System.Text.Encoding.UTF8.GetBytes(row);
+        //    using (var md5 = MD5.Create())
+        //    {
+        //        {
+        //            var hash = md5.ComputeHash(inputBytes);
+        //            return BitConverter.ToInt32(hash, 0);
+        //            //return 123;// Convert.ToInt32(BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant().Substring(0, 8));
+        //        }
+        //    }
+        //}
+
+
+        private string DateTimeToString(DateTime dateTime)
         {
-            byte[] inputBytes = System.Text.Encoding.UTF8.GetBytes(row);
-            using (var md5 = MD5.Create())
-            {
-                {
-                    var hash = md5.ComputeHash(inputBytes);
-                    return BitConverter.ToInt32(hash, 0);
-                    //return 123;// Convert.ToInt32(BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant().Substring(0, 8));
-                }
-            }
+            return dateTime.Year.ToString() + dateTime.Month.ToString() + dateTime.Day.ToString() + dateTime.Hour.ToString() + dateTime.Minute.ToString() + dateTime.Second.ToString() + dateTime.Millisecond.ToString();
+        }
+
+        private DateTime StringToDateTime(string dateTimeInString)
+        {
+            DateTime tmp =  new DateTime();
+            tmp.AddYears(Convert.ToInt32(dateTimeInString.Substring(0, 4)));
+            tmp.AddMonths(Convert.ToInt32(dateTimeInString.Substring(4, 2)));
+            tmp.AddDays(Convert.ToInt32(dateTimeInString.Substring(6, 2)));
+            tmp.AddHours(Convert.ToInt32(dateTimeInString.Substring(8, 2)));
+            tmp.AddMinutes(Convert.ToInt32(dateTimeInString.Substring(10, 2)));
+            tmp.AddSeconds(Convert.ToInt32(dateTimeInString.Substring(12, 2)));
+            tmp.AddMilliseconds(Convert.ToDouble(dateTimeInString.Substring(14)));
+
+            return tmp;
         }
     }
 }
