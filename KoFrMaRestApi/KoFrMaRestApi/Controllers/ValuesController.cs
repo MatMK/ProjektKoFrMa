@@ -12,11 +12,13 @@ namespace KoFrMaRestApi.Controllers
     {
         public string name { get; set; }
         public string password { get; set; }
+        public string error { get; set; }
 
-        public results(string name, string password)
+        public results(string name, string password, string error)
         {
             this.name = name;
             this.password = password;
+            this.error = error;
         }
     }
 
@@ -33,7 +35,7 @@ namespace KoFrMaRestApi.Controllers
             return new string[] { "value1", "value2" };
         }
          // Get api/values/5
-        public string Get(int id)
+        public List<results> Get(int id)
         {
             MySqlConnection conn = WebApiConfig.Connection();
             MySqlCommand query = conn.CreateCommand();
@@ -48,15 +50,22 @@ namespace KoFrMaRestApi.Controllers
             }
             catch (MySql.Data.MySqlClient.MySqlException ex)
             {
-            return "failure: " + ex;
+                 results.Add(new results(null, null, ex.ToString()));
             }
 
             MySqlDataReader fetch_query = query.ExecuteReader();
+
+
+
+
+
+
+
             while (fetch_query.Read())
             {
-                //return results.Add(new results(fetch_query["id"].ToString(), fetch_query["PC_Unique"].ToString()));
+                 results.Add(new results(fetch_query["id"].ToString(), fetch_query["PC_Unique"].ToString(), null));
             }
-            return "Done";
+            return results;
         }
 
         // Delete api/values/5
