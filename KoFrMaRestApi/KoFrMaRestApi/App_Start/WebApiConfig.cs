@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Web.Http;
 using MySql.Data.MySqlClient;
 
@@ -24,11 +25,12 @@ namespace KoFrMaRestApi
 
         public static void Register(HttpConfiguration config)
         {
-             //Služby a konfigurace rozhraní Web API
-             //config.Formatters.JsonFormatter
-             //Trasy rozhraní Web API
+            //překládání xml na json
+            config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
+            //Služby a konfigurace rozhraní Web API
+            //config.Formatters.JsonFormatter
+            //Trasy rozhraní Web API
             config.MapHttpAttributeRoutes();
-
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                routeTemplate: "api/{controller}/{id}",
