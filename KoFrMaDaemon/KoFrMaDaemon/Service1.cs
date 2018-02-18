@@ -15,19 +15,19 @@ namespace KoFrMaDaemon
 {
     public partial class ServiceKoFrMa : ServiceBase
     {
-        private const string servicePrefixName = "KoFrMa";
+        //private const string servicePrefixName = "KoFrMa";
 
-        private const byte version = 101;
+        //private const byte version = 101;
 
-        private bool isStopping;
+        //private bool isStopping;
 
-        private Timer timer;
+        //private Timer timer;
 
-        private int timerStep;
+        //private int timerStep;
 
         private string logPath;
 
-        private string serverURL;
+        //private string serverURL;
 
         private DebugLog debugLog;
 
@@ -41,7 +41,7 @@ namespace KoFrMaDaemon
             //timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
             //isStopping = false;
             this.logPath = @"d:\tmp\testBackup\DebugServiceLog.log";
-            debugLog = new DebugLog(this.logPath,6);
+            debugLog = new DebugLog(this.logPath,8);
 
             //timer.AutoReset = true;
             //this.serverURL = @"http://www.e64.cz/kofrma/ns1.aspx";
@@ -52,13 +52,13 @@ namespace KoFrMaDaemon
             debugLog.WriteToLog("Service started",4);
             //timer.Start();
 
-            a.BackupFullFolder(@"d:\tmp\testBackup\BackupThisFolder\", @"d:\tmp\testBackup\BackupGoesHere\", debugLog);
-            a.BackupDifferential(@"d:\tmp\testBackup\BackupGoesHere\", @"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_17_20_00_42\KoFrMaBackup.dat", debugLog);
+            //a.BackupFullFolder(@"d:\tmp\testBackup\BackupThisFolder\", @"d:\tmp\testBackup\BackupGoesHere\", debugLog);
+            a.BackupDifferential(@"d:\tmp\testBackup\BackupGoesHere\", @"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_13_58_48_Full\KoFrMaBackup.dat", debugLog);
         }
 
         protected override void OnStop()
         {
-            this.isStopping = true;
+            //this.isStopping = true;
             debugLog.WriteToLog("Service stopped",4);
         }
 

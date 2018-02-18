@@ -34,10 +34,10 @@ namespace KoFrMaDaemon
 
         public void WriteToLog(string text, byte level)
         {
-            if (level>=_logLevel)
+            if (level<=_logLevel)
             {
                 w = new StreamWriter(_logPath, true);
-                w.WriteLine(DateTime.Now.ToString() + ' ' + _logLevel.ToString() + ' ' + text);
+                w.WriteLine(DateTime.Now.ToString() + ' ' + level.ToString() + ' ' + text);
                 w.Close();
                 w.Dispose();
             }

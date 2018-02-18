@@ -18,8 +18,8 @@ namespace KoFrMaDaemon
 
         public List<FileInfoObject> FilesCorrect =new List<FileInfoObject>(1000);
         public List<FolderObject> FoldersCorrect = new List<FolderObject>(1000);
-        public List<String> FilesError = new List<string>(1000);
-        public List<String> FoldersError = new List<string>(1000);
+        public List<String> FilesError = new List<string>(100);
+        public List<String> FoldersError = new List<string>(100);
 
         DirectoryInfo sourceInfo;
         DirectoryInfo destinationInfo;
@@ -43,11 +43,12 @@ namespace KoFrMaDaemon
             DebugLog.WriteToLog(temporaryDebugInfo, 4);
             temporaryDebugInfo = null;
 
+            sourceInfo = new DirectoryInfo(source);
             try
             {
                 DebugLog.WriteToLog("Backuping now...",4);
                 this.CopyDirectoryRecursivly(sourceInfo,destinationInfo, true);
-                DebugLog.WriteToLog("Backup done, " + FilesCorrect.Count.ToString() + " files and "+FoldersCorrect.Count.ToString() + " folders successfully backuped, it was unable to backup "+FilesCorrect.Count + " files and " + FoldersCorrect.Count+ " folders",5);
+                DebugLog.WriteToLog("Backup done, " + FilesCorrect.Count.ToString() + " files and "+FoldersCorrect.Count.ToString() + " folders successfully backuped, it was unable to backup "+FilesError.Count + " files and " + FoldersError.Count+ " folders",5);
             }
             catch (Exception x)
             {
@@ -59,8 +60,8 @@ namespace KoFrMaDaemon
             BackupJournal.CreateBackupJournal(new BackupJournalObject() { RelativePath = source, BackupJournalFiles = FilesCorrect, BackupJournalFolders = FoldersCorrect }, destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", DebugLog);
             //BackupLog.CreateBackupLog(BackupLog.LoadBackupList(destinationInfo.Parent.FullName + @"\" + "KoFrMaBackup.dat"), destinationInfo.Parent.FullName + @"\" + "KoFrMaBackup2.dat");
             DebugLog.WriteToLog("Journal successfully created",5);
-
-            DebugLog.WriteToLog("Full backup " + timeOfBackup.ToString() + " was completed",4);
+            TimeSpan backupTook = DateTime.Now - timeOfBackup;
+            DebugLog.WriteToLog("Full backup was completed in " + backupTook.TotalSeconds + " s", 4);
         }
 
 
@@ -288,6 +289,7 @@ namespace KoFrMaDaemon
                 tmpDirectoryInfo = new DirectoryInfo(destinationInfo.FullName + @"\" + FoldersToCreate[i]);
                 try
                 {
+
                     tmpDirectoryInfo.Create();
                     this.FoldersCorrect.Add(new FolderObject() { FolderPath = tmpDirectoryInfo.FullName.Remove(0, sourceInfo.FullName.Length), CreationTimeUtc = tmpDirectoryInfo.CreationTimeUtc, LastWriteTimeUtc = tmpDirectoryInfo.LastWriteTimeUtc, Attributes = tmpDirectoryInfo.Attributes.ToString() });
                 }
@@ -306,17 +308,20 @@ namespace KoFrMaDaemon
 
             DebugLog.WriteToLog("Backuping new or modified files...",5);
             FileInfo tmpFileInfo;
+            
             for (int i = 0; i < FilesToCopy.Count; i++)
             {
                 tmpFileInfo = new FileInfo(source + FilesToCopy[i]);
                 try
                 {
+                    Directory.CreateDirectory(tmpFileInfo.Directory.FullName);
                     tmpFileInfo.CopyTo(destinationInfo.FullName + @"\" + FilesToCopy[i]);
                     FilesCorrect.Add(new FileInfoObject { RelativePathName = tmpFileInfo.FullName.Remove(0, sourceInfo.FullName.Length), Length = tmpFileInfo.Length, CreationTimeUtc = tmpFileInfo.CreationTimeUtc, LastWriteTimeUtc = tmpFileInfo.LastWriteTimeUtc, Attributes = tmpFileInfo.Attributes.ToString(), MD5 = this.CalculateMD5(tmpFileInfo.FullName) });
                 }
                 catch (Exception x)
                 {
                     this.FilesError.Add(tmpFileInfo.FullName);
+                    DebugLog.WriteToLog("Unable to copy " + tmpFileInfo.FullName + " to " + destinationInfo.FullName + @"\" + FilesToCopy[i]+". Path to destination folder: "+tmpFileInfo.Directory.FullName,8);
                 }
 
             }
@@ -330,8 +335,8 @@ namespace KoFrMaDaemon
 
 
 
-
-            DebugLog.WriteToLog("Differential/Incremental backup done in " + (DateTime.Now.Second -timeOfBackup.Second).ToString() + " seconds and " +(DateTime.Now.Millisecond - timeOfBackup.Millisecond).ToString() + " milliseconds",4);
+            TimeSpan backupTook = DateTime.Now-timeOfBackup;
+            DebugLog.WriteToLog("Differential/Incremental backup done in " + backupTook.TotalSeconds + " s",4);
 
         }
         
@@ -379,6 +384,7 @@ namespace KoFrMaDaemon
                     
                 }
         }
+
 
 
         private string CalculateMD5(string filename)
