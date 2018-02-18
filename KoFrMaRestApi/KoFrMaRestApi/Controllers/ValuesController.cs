@@ -8,6 +8,18 @@ using MySql.Data.MySqlClient;
 
 namespace KoFrMaRestApi.Controllers
 {
+    public class results
+    {
+        public string name { get; set; }
+        public string password { get; set; }
+
+        public results(string name, string password)
+        {
+            this.name = name;
+            this.password = password;
+        }
+    }
+
     public class ValuesController : ApiController
     {
 
@@ -23,7 +35,28 @@ namespace KoFrMaRestApi.Controllers
          // Get api/values/5
         public string Get(int id)
         {
-            return "value";
+            MySqlConnection conn = WebApiConfig.Connection();
+            MySqlCommand query = conn.CreateCommand();
+
+            query.CommandText = "SELECT id, PC_Unique from tbDaemons";
+            var results = new List<results>();
+
+
+            try
+            {
+                conn.Open();
+            }
+            catch (MySql.Data.MySqlClient.MySqlException ex)
+            {
+            return "failure: " + ex;
+            }
+
+            MySqlDataReader fetch_query = query.ExecuteReader();
+            while (fetch_query.Read())
+            {
+                return results.Add(new results(fetch_query["id"].ToString(), fetch_query["PC_Unique"].ToString()));
+            }
+            return "Done";
         }
 
         // Delete api/values/5
