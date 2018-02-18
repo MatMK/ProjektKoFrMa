@@ -29,37 +29,37 @@ namespace KoFrMaDaemon
 
         private string serverURL;
 
-        private LogOperations log;
+        private DebugLog debugLog;
 
         private Actions a = new Actions();
 
         public ServiceKoFrMa()
         {
             InitializeComponent();
-            timerStep = 5000;
-            timer = new Timer(this.timerStep);
-            timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
-            isStopping = false;
+            //timerStep = 5000;
+            //timer = new Timer(this.timerStep);
+            //timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
+            //isStopping = false;
             this.logPath = @"d:\tmp\testBackup\DebugServiceLog.log";
-            log = new LogOperations(this.logPath);
+            debugLog = new DebugLog(this.logPath,6);
 
-            timer.AutoReset = true;
-            this.serverURL = @"http://www.e64.cz/kofrma/ns1.aspx";
+            //timer.AutoReset = true;
+            //this.serverURL = @"http://www.e64.cz/kofrma/ns1.aspx";
         }
 
         protected override void OnStart(string[] args)
         {
-            log.WriteToLog("Service started");
+            debugLog.WriteToLog("Service started",4);
             //timer.Start();
 
-            //a.BackupFullFolder(@"d:\tmp\testBackup\BackupThisFolder\", @"d:\tmp\testBackup\BackupGoesHere\", 6);
-            a.BackupDifferential(@"d:\tmp\testBackup\BackupGoesHere\", @"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_17_20_00_42\KoFrMaBackup.dat", 6);
+            a.BackupFullFolder(@"d:\tmp\testBackup\BackupThisFolder\", @"d:\tmp\testBackup\BackupGoesHere\", debugLog);
+            a.BackupDifferential(@"d:\tmp\testBackup\BackupGoesHere\", @"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_17_20_00_42\KoFrMaBackup.dat", debugLog);
         }
 
         protected override void OnStop()
         {
             this.isStopping = true;
-            log.WriteToLog("Service stopped");
+            debugLog.WriteToLog("Service stopped",4);
         }
 
 
@@ -103,31 +103,31 @@ namespace KoFrMaDaemon
          */
 
 
-        private void GetTasks()
-        {
-            log.WriteToLog("InGetTasks 1");
+  //      private void GetTasks()
+  //      {
+  //          log.WriteToLog("InGetTasks 1");
 
-            WebRequest request = WebRequest.Create(this.serverURL);
-            //request.Method = "POST";
-            //request.ContentType = "multipart/form-data"; // ideální pro Upload souborů
-            //request.ContentLength = 4;
-            log.WriteToLog("InGetTasks 2");
+  //          WebRequest request = WebRequest.Create(this.serverURL);
+  //          //request.Method = "POST";
+  //          //request.ContentType = "multipart/form-data"; // ideální pro Upload souborů
+  //          //request.ContentLength = 4;
+  //          log.WriteToLog("InGetTasks 2");
 
-            WebResponse response = request.GetResponse();
-            log.WriteToLog("InGetTasks 3");
+  //          WebResponse response = request.GetResponse();
+  //          log.WriteToLog("InGetTasks 3");
 
-            string statusDescr = "StatusDescription = " + ((HttpWebResponse)response).StatusDescription;
+  //          string statusDescr = "StatusDescription = " + ((HttpWebResponse)response).StatusDescription;
 
-            log.WriteToLog(statusDescr);
-            /*
-             // Get the stream containing content returned by the server.
-             dataStream = response.GetResponseStream();
-             byte[] buffer = new byte[16000];
-             int ReadCount = dataStream.Read(buffer, 0, buffer.Length);
+  //          log.WriteToLog(statusDescr);
+  //          /*
+  //           // Get the stream containing content returned by the server.
+  //           dataStream = response.GetResponseStream();
+  //           byte[] buffer = new byte[16000];
+  //           int ReadCount = dataStream.Read(buffer, 0, buffer.Length);
 
-             dataStream.Close();
-             response.Close();
-  */
-        }
+  //           dataStream.Close();
+  //           response.Close();
+  //*/
+  //      }
     }
 }

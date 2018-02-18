@@ -17,111 +17,116 @@ namespace KoFrMaDaemon
         //public string[,] poleStr = new string[dim1, dim1];
 
         public List<FileInfoObject> FilesCorrect =new List<FileInfoObject>(1000);
-        public List<String> FoldersCorrect = new List<string>(1000);
+        public List<FolderObject> FoldersCorrect = new List<FolderObject>(1000);
         public List<String> FilesError = new List<string>(1000);
         public List<String> FoldersError = new List<string>(1000);
-
-        private LogOperations BackupLog;
-        public LogOperations DebugLog;
 
         DirectoryInfo sourceInfo;
         DirectoryInfo destinationInfo;
 
-        public void BackupFullFolder(string source, string destination, byte logLevel)
+        public void BackupFullFolder(string source, string destination, DebugLog serviceDebugLog)
         {
             DateTime timeOfBackup = DateTime.Now;
 
-            sourceInfo = new DirectoryInfo(source);
-            destinationInfo = new DirectoryInfo(destination).CreateSubdirectory("KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup)).CreateSubdirectory("KoFrMaBackup");
-            //DirectoryInfo destinationInfo = new DirectoryInfo(destination).CreateSubdirectory("KoFrMaBackup" + timeOfBackup.Year + timeOfBackup.Month + timeOfBackup.Day + timeOfBackup.Hour + timeOfBackup.Minute).CreateSubdirectory("KoFrMaBackup");
-            
-            BackupLog = new LogOperations(destinationInfo.Parent.FullName + @"\" + "KoFrMaBackup.dat");
-            DebugLog = new LogOperations(destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log");
-            DebugLog.WriteToLog("Vytvořena podsložka pro Full Backup zálohu");
+            string temporaryDebugInfo = "";
+            if (serviceDebugLog._logLevel >= 4)
+                temporaryDebugInfo = "Starting the full backup in " + timeOfBackup.ToString();
+
+            destinationInfo = new DirectoryInfo(destination).CreateSubdirectory("KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup)+"_Full").CreateSubdirectory("KoFrMaBackup");
+
+            serviceDebugLog.WriteToLog("Log of including operations is located in " + destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log", 4);
+
+            DebugLog DebugLog = new DebugLog(destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log", serviceDebugLog._logLevel);
+
+            DebugLog.WriteToLog("Subdirectory for the backup was created at " + destinationInfo.FullName, 5);
+
+            DebugLog.WriteToLog(temporaryDebugInfo, 4);
+            temporaryDebugInfo = null;
 
             try
             {
-                DebugLog.WriteToLog("Zálohuji složku...");
+                DebugLog.WriteToLog("Backuping now...",4);
                 this.CopyDirectoryRecursivly(sourceInfo,destinationInfo, true);
-                DebugLog.WriteToLog("Složka úspěšně zálohována");
+                DebugLog.WriteToLog("Backup done, " + FilesCorrect.Count.ToString() + " files and "+FoldersCorrect.Count.ToString() + " folders successfully backuped, it was unable to backup "+FilesCorrect.Count + " files and " + FoldersCorrect.Count+ " folders",5);
             }
             catch (Exception x)
             {
-                DebugLog.WriteToLog("Došlo k chybě " + x.Message + " a záloha nemohla být dokončena");
+                DebugLog.WriteToLog("Error " + x.Message + " occured and backup couldn't be fully done",3);
             }
 
-            DebugLog.WriteToLog("Vytváření logu úspěšně zálohovaných souborů...");
-            BackupLog.CreateBackupJournal(FilesCorrect, sourceInfo.FullName ,destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat",FoldersCorrect);
+            DebugLog.WriteToLog("Creating transaction jounal of successfully backuped files and folders...",5);
+            BackupJournalOperations BackupJournal = new BackupJournalOperations();
+            BackupJournal.CreateBackupJournal(new BackupJournalObject() { RelativePath = source, BackupJournalFiles = FilesCorrect, BackupJournalFolders = FoldersCorrect }, destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", DebugLog);
             //BackupLog.CreateBackupLog(BackupLog.LoadBackupList(destinationInfo.Parent.FullName + @"\" + "KoFrMaBackup.dat"), destinationInfo.Parent.FullName + @"\" + "KoFrMaBackup2.dat");
-            DebugLog.WriteToLog("Log byl úspěšně vytvořen");
-            BackupLog = null;
-            DebugLog.WriteToLog("Full backup " + timeOfBackup.ToString() + " byl dokončen");
+            DebugLog.WriteToLog("Journal successfully created",5);
 
+            DebugLog.WriteToLog("Full backup " + timeOfBackup.ToString() + " was completed",4);
         }
 
 
-        public void BackupDifferential(string destination, string OriginalBackupDatFilePath, byte logLevel)
+        public void BackupDifferential(string destination, string OriginalBackupDatFilePath, DebugLog serviceDebugLog)
         {
             DateTime timeOfBackup = DateTime.Now;
+
             string temporaryDebugInfo ="";
-            if (logLevel >= 4)
+            if (serviceDebugLog._logLevel >= 4)
                 temporaryDebugInfo = "Starting the differential/incremental backup in " + timeOfBackup.ToString();
+
             destinationInfo = new DirectoryInfo(destination).CreateSubdirectory("KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup)).CreateSubdirectory("KoFrMaBackup");
-            BackupLog = new LogOperations(destinationInfo.Parent.FullName + @"\" + "KoFrMaBackup.dat");
-            DebugLog = new LogOperations(destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log");
 
-            if (logLevel >= 5)
-                DebugLog.WriteToLog("Subdirectory for the backup was created.");
-            if (logLevel >= 4)
-            {
-                DebugLog.WriteToLog(temporaryDebugInfo);
-                temporaryDebugInfo = null;
-            }
-                
+            serviceDebugLog.WriteToLog("Log of including operations is located in " + destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log", 4);
 
-            string source = BackupLog.LoadBackupRelativePath(OriginalBackupDatFilePath);
+            DebugLog DebugLog = new DebugLog(destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log",serviceDebugLog._logLevel);
 
+            DebugLog.WriteToLog("Subdirectory for the backup was created at " + destinationInfo.FullName,5);
+
+            DebugLog.WriteToLog(temporaryDebugInfo,4);
+            temporaryDebugInfo = null;
+
+
+            DebugLog.WriteToLog("Loading journal of original backup from " + OriginalBackupDatFilePath, 5);
+            BackupJournalOperations BackupJournal = new BackupJournalOperations();
+            BackupJournalObject backupJournalObject = BackupJournal.LoadBackupJournalObject(OriginalBackupDatFilePath,DebugLog);
+            string source = backupJournalObject.RelativePath;
+            List<FileInfoObject> OriginalFiles = backupJournalObject.BackupJournalFiles;
+            List<FolderObject> OriginalFolders = backupJournalObject.BackupJournalFolders;
+            DebugLog.WriteToLog("List of original files and folders loaded, containing " + OriginalFiles.Count + " files and " + OriginalFolders.Count + " folders.", 5);
+
+
+            DebugLog.WriteToLog("Creating list of current files and folders...",5);
             sourceInfo = new DirectoryInfo(source);
-
-            if (logLevel >= 5)
-                DebugLog.WriteToLog("Creating list of current files and folders...");
             this.CopyDirectoryRecursivly(sourceInfo, null, false);
-            List<FileInfoObject> CurrentFiles = this.ReturnHashCodes(FilesCorrect);
 
-            if (logLevel >= 6)
-                DebugLog.CreateBackupJournal(CurrentFiles, "current files", destinationInfo.Parent.FullName + @"\KoFrMaBackupDebugCurrentFiles.dat", FoldersCorrect);
 
+            DebugLog.WriteToLog("Adding hash column to lists of current files and folders...", 6);
+            List<FileInfoObject> CurrentFiles = BackupJournal.ReturnHashCodesFiles(FilesCorrect);
+            List<FolderObject> CurrentFolders = BackupJournal.ReturnHashCodesFolders(FoldersCorrect);
             FilesCorrect = new List<FileInfoObject>();
-            List<string> CurrentFolders = FoldersCorrect;
-            FoldersCorrect = new List<string>();
-            FoldersError = new List<string>();
-            FilesError = new List<string>();
+            FoldersCorrect = new List<FolderObject>();
 
-            if (logLevel >= 5)
+            DebugLog.WriteToLog("List of current files and folders successfully created, containing " + CurrentFiles.Count + " files and " + CurrentFolders.Count + " folders. Unable to load " + FilesError.Count + " files and " + FoldersError.Count + " folders.",5);
+
+
+            if (serviceDebugLog._logLevel >= 6)
             {
-                DebugLog.WriteToLog("List of current files and folders successfully created, conntaining " + CurrentFiles.Count + " files and " + CurrentFolders.Count + " folders. Unable to load " + FilesError.Count + " files and " + FoldersError.Count + " folders.");
-                DebugLog.WriteToLog("Loading list of files from original source of the backup...");
+                DebugLog.WriteToLog("Writing journal of current files and folders (that will be compared to original journal later) into .dat file for debug purposes...",6);
+                BackupJournal.CreateBackupJournal(new BackupJournalObject() { BackupJournalFiles = CurrentFiles, BackupJournalFolders = CurrentFolders, RelativePath = source }, destinationInfo.Parent.FullName + @"\KoFrMaBackupDebugCurrentFiles.dat", DebugLog);
             }
 
-            List<FileInfoObject> OriginalFiles = BackupLog.LoadBackupJournalFiles(OriginalBackupDatFilePath);
-            List<FolderObject> CurrentFoldersObjects = new List<FolderObject>();
-            if (logLevel >= 5)
-            {
-                DebugLog.WriteToLog("Original source of backup contains " + OriginalFiles.Count + " files");
-                DebugLog.WriteToLog("Loading list of folders from original source of the backup...");
-            }
 
-            List<string> OriginalFolders = BackupLog.LoadBackupJournalFolders(OriginalBackupDatFilePath);
-            List<FolderObject> OriginalFoldersObjects = new List<FolderObject>();
-            if (logLevel >= 5)
-                DebugLog.WriteToLog("Original source of backup contains " + OriginalFolders.Count + " folders");
-            List<string> FilesToCopy = new List<string>(FilesCorrect.Count / 4);
-            List<string> FilesToDelete = new List<string>(FilesCorrect.Count / 8);
-            List<string> FoldersToCreate = new List<string>();
-            List<string> FoldersToDelete = new List<string>();
-            if (logLevel >= 5)
-                DebugLog.WriteToLog("Comparing list of current files to original source of the backup...");
+
+
+
+
+            DebugLog.WriteToLog("Comparing list of current files to original source of the backup...", 5);
+
+            List<string> FilesToCopy = new List<string>(CurrentFiles.Count / 4);
+            List<string> FilesToDelete = new List<string>(CurrentFiles.Count / 4);
+            List<string> FoldersToCreate = new List<string>(CurrentFolders.Count / 8);
+            List<string> FoldersToDelete = new List<string>(CurrentFolders.Count / 8);
+
             bool sameObject;
+
             foreach (FileInfoObject itemCurrent in CurrentFiles)
             {
                 sameObject = false;
@@ -140,44 +145,42 @@ namespace KoFrMaDaemon
                             sameObject = true;
                             itemOriginal.Paired = true;
 
-                            if (logLevel >= 7)
-                                DebugLog.WriteToLog("Same object = true");
+                            if (DebugLog._logLevel >= 8)
+                                DebugLog.WriteToLog("Same object = true",8);
 
                             break;
                         }
                         
-                        else if (logLevel >= 6)
+                        else if (DebugLog._logLevel >= 8)
                         {
                             if (itemCurrent.RelativePathName != itemOriginal.RelativePathName)
                             {
-                                DebugLog.WriteToLog("RelativePathName Error" + itemCurrent.RelativePathName + " is not " + itemOriginal.RelativePathName);
+                                DebugLog.WriteToLog("RelativePathName Error: " + itemCurrent.RelativePathName + " is not " + itemOriginal.RelativePathName,8);
                             }
                             if (itemCurrent.Length != itemOriginal.Length)
                             {
-                                DebugLog.WriteToLog("Length Error" + itemCurrent.Length.ToString() + " is not " + itemOriginal.Length.ToString());
+                                DebugLog.WriteToLog("Length Error: " + itemCurrent.Length.ToString() + " is not " + itemOriginal.Length.ToString(),8);
                             }
                             if (itemCurrent.CreationTimeUtc != itemOriginal.CreationTimeUtc)
                             {
-                                DebugLog.WriteToLog("CreationTimeUtc Error: " + itemCurrent.CreationTimeUtc.ToString() + " is not " + itemOriginal.CreationTimeUtc.ToString());
+                                DebugLog.WriteToLog("CreationTimeUtc Error: " + itemCurrent.CreationTimeUtc.ToString() + " is not " + itemOriginal.CreationTimeUtc.ToString(),8);
                             }
                             if (itemCurrent.LastWriteTimeUtc != itemOriginal.LastWriteTimeUtc)
                             {
-                                DebugLog.WriteToLog("LastWriteTimeUtc Error" + itemCurrent.LastWriteTimeUtc.ToString() + " is not " + itemOriginal.LastWriteTimeUtc.ToString());
+                                DebugLog.WriteToLog("LastWriteTimeUtc Error: " + itemCurrent.LastWriteTimeUtc.ToString() + " is not " + itemOriginal.LastWriteTimeUtc.ToString(),8);
                             }
                             if (itemCurrent.MD5 != itemOriginal.MD5)
                             {
-                                DebugLog.WriteToLog("MD5 Error" + itemCurrent.MD5 + " is not " + itemOriginal.MD5);
+                                DebugLog.WriteToLog("MD5 Error: " + itemCurrent.MD5 + " is not " + itemOriginal.MD5,8);
                             }
                             if (itemCurrent.Attributes != itemOriginal.Attributes)
                             {
-                                DebugLog.WriteToLog("Attributes Error" + itemCurrent.Attributes + " is not " + itemOriginal.Attributes);
+                                DebugLog.WriteToLog("Attributes Error: " + itemCurrent.Attributes + " is not " + itemOriginal.Attributes,8);
                             }
                         }
-
-
                     }
-                    else if (logLevel >= 8)
-                        DebugLog.WriteToLog("HashRow Error: " + itemCurrent.HashRow.ToString() + " is not " + itemOriginal.HashRow.ToString());
+                    //else if (DebugLog._logLevel >= 8)
+                    //    DebugLog.WriteToLog("HashRow Error: " + itemCurrent.HashRow.ToString() + " is not " + itemOriginal.HashRow.ToString(),8);
 
                 }
                 if (!sameObject)
@@ -185,61 +188,9 @@ namespace KoFrMaDaemon
                     FilesToCopy.Add(itemCurrent.RelativePathName);
                 }
             }
-            if (logLevel >= 5)
-            {
-                DebugLog.WriteToLog("Comparison of files successfully done, " + FilesToCopy.Count + " files were created or modified since original backup.");
+            DebugLog.WriteToLog("Comparison of files successfully done, " + FilesToCopy.Count + " files were created or modified since original backup.",5);
 
-                DebugLog.WriteToLog("Comparing list of current folders to original source of backup...");
-            }
-
-
-            for (int i = 0; i < CurrentFolders.Count; i++)
-            {
-                CurrentFoldersObjects.Add(new FolderObject { FolderPath = CurrentFolders[i] });
-            }
-            foreach (FolderObject itemCurrent in CurrentFoldersObjects)
-            {
-                sameObject = false;
-                foreach (FolderObject itemOriginal in OriginalFoldersObjects)
-                {
-                    if (itemCurrent.FolderPath == itemOriginal.FolderPath)
-                    {
-                        sameObject = true;
-                        itemOriginal.Paired = true;
-                        break;
-                    }
-                    
-                    else if(logLevel>=6)
-                        DebugLog.WriteToLog("Folder name error: " + itemCurrent.FolderPath + " is not " + itemOriginal.FolderPath);
-
-                }
-
-                if (!sameObject)
-                {
-                    FoldersToCreate.Add(itemCurrent.FolderPath);
-                }
-            }
-            if (logLevel >= 5)
-            {
-                DebugLog.WriteToLog("Comparison of folders successfully done, " + FoldersToCreate.Count + " new folders were created since original backup.");
-                DebugLog.WriteToLog("Creating list of folders that no longer exists...");
-            }
-
-            foreach (FolderObject itemOriginal in OriginalFoldersObjects)
-            {
-                if (!itemOriginal.Paired)
-                {
-                    FoldersToDelete.Add(source + itemOriginal.FolderPath);
-                }
-            }
-            if (logLevel >= 5)
-                DebugLog.WriteToLog("There is " + FoldersToDelete.Count + " folders that need to be deleted since the original backup.");
-
-            // M * delete:
-
-            if (logLevel >= 5)
-                DebugLog.WriteToLog("Creating list of files that no longer exists...");
-
+            DebugLog.WriteToLog("Creating list of files that were changed or no longer exists...", 5);
             foreach (FileInfoObject itemOriginal in OriginalFiles)
             {
                 if (!itemOriginal.Paired)
@@ -248,43 +199,119 @@ namespace KoFrMaDaemon
                     FilesToDelete.Add(source + itemOriginal.RelativePathName);
                 }
             }
-            if (logLevel >= 5)
-                DebugLog.WriteToLog("There is " + FilesToDelete.Count + " files that need to be deleted since the original backup.");
+            DebugLog.WriteToLog("There is " + FilesToDelete.Count + " files that needs to be deleted since the original backup.", 5);
 
-            if (logLevel >= 5)
-                DebugLog.WriteToLog("Backuping modified folder structure...");
+
+
+
+
+            DebugLog.WriteToLog("Comparing list of current folders to original source of backup...",5);
+            foreach (FolderObject itemCurrent in CurrentFolders)
+            {
+                sameObject = false;
+                foreach (FolderObject itemOriginal in OriginalFolders)
+                {
+
+                    if (itemCurrent.HashRow == itemOriginal.HashRow)
+                    {
+                        if (itemCurrent.FolderPath == itemOriginal.FolderPath
+                            && itemCurrent.CreationTimeUtc == itemOriginal.CreationTimeUtc
+                            && itemCurrent.LastWriteTimeUtc == itemOriginal.LastWriteTimeUtc
+                            && itemCurrent.Attributes == itemOriginal.Attributes)
+                        {
+                            sameObject = true;
+                            itemOriginal.Paired = true;
+
+                            if (DebugLog._logLevel >= 8)
+                                DebugLog.WriteToLog("Same object = true", 8);
+
+                            break;
+                        }
+
+                        else if (DebugLog._logLevel >= 8)
+                        {
+                            if (itemCurrent.FolderPath != itemOriginal.FolderPath)
+                            {
+                                DebugLog.WriteToLog("FolderPath Error: " + itemCurrent.FolderPath + " is not " + itemOriginal.FolderPath, 8);
+                            }
+                            if (itemCurrent.CreationTimeUtc != itemOriginal.CreationTimeUtc)
+                            {
+                                DebugLog.WriteToLog("CreationTimeUtc Error: " + itemCurrent.CreationTimeUtc.ToString() + " is not " + itemOriginal.CreationTimeUtc.ToString(), 8);
+                            }
+                            if (itemCurrent.LastWriteTimeUtc != itemOriginal.LastWriteTimeUtc)
+                            {
+                                DebugLog.WriteToLog("LastWriteTimeUtc Error: " + itemCurrent.LastWriteTimeUtc.ToString() + " is not " + itemOriginal.LastWriteTimeUtc.ToString(), 8);
+                            }
+                            if (itemCurrent.Attributes != itemOriginal.Attributes)
+                            {
+                                DebugLog.WriteToLog("Attributes Error: " + itemCurrent.Attributes + " is not " + itemOriginal.Attributes, 8);
+                            }
+                        }
+                    }
+                    //else if (DebugLog._logLevel >= 8)
+                    //    DebugLog.WriteToLog("HashRow Error: " + itemCurrent.HashRow.ToString() + " is not " + itemOriginal.HashRow.ToString(),8);
+
+                }
+                if (!sameObject)
+                {
+                    FoldersToCreate.Add(itemCurrent.FolderPath);
+                }
+            }
+            DebugLog.WriteToLog("Comparison of folders successfully done, " + FoldersToCreate.Count + " folders were created or changed since the original backup.",5);
+
+
+
+            DebugLog.WriteToLog("Creating list of folders that were modified or no longer exists...",5);
+            foreach (FolderObject itemOriginal in OriginalFolders)
+            {
+                if (!itemOriginal.Paired)
+                {
+                    FoldersToDelete.Add(source + itemOriginal.FolderPath);
+                    //in FoldersToDelete při obnově mazat POUZE prázdné!!
+                }
+            }
+            DebugLog.WriteToLog("There is " + FoldersToDelete.Count + " folders that needs to be deleted since the original backup.",5);
+
+
+
+
+
+
+            DebugLog.WriteToLog("Starting to backup files and folders to " + destinationInfo.FullName + @"\", 4);
+
+            DebugLog.WriteToLog("Backuping modified folder structure...",5);
+            FilesError = new List<string>();
+            FoldersError = new List<string>();
             DirectoryInfo tmpDirectoryInfo;
             for (int i = 0; i < FoldersToCreate.Count; i++)
             {
-                tmpDirectoryInfo = new DirectoryInfo(destinationInfo.FullName + FoldersToCreate[i]);
+                tmpDirectoryInfo = new DirectoryInfo(destinationInfo.FullName + @"\" + FoldersToCreate[i]);
                 try
                 {
                     tmpDirectoryInfo.Create();
-                    this.FoldersCorrect.Add(tmpDirectoryInfo.FullName.Remove(0, sourceInfo.FullName.Length));
+                    this.FoldersCorrect.Add(new FolderObject() { FolderPath = tmpDirectoryInfo.FullName.Remove(0, sourceInfo.FullName.Length), CreationTimeUtc = tmpDirectoryInfo.CreationTimeUtc, LastWriteTimeUtc = tmpDirectoryInfo.LastWriteTimeUtc, Attributes = tmpDirectoryInfo.Attributes.ToString() });
                 }
                 catch (Exception x)
                 {
                     this.FoldersError.Add(tmpDirectoryInfo.FullName);
                 }
             }
-            if (logLevel >= 5)
-                DebugLog.WriteToLog("Backup of folder structure is done, " + this.FoldersCorrect.Count + " folders were successfully created, but it was unable to create " + this.FoldersError.Count + " folders");
+            DebugLog.WriteToLog("Backup of folder structure is done, " + this.FoldersCorrect.Count + " folders were successfully created, it was unable to create " + this.FoldersError.Count + " folders",5);
 
 
 
 
 
 
-            if (logLevel >= 4)
-                DebugLog.WriteToLog("Backuping new or modified files to " + destinationInfo.FullName);
 
+            DebugLog.WriteToLog("Backuping new or modified files...",5);
             FileInfo tmpFileInfo;
             for (int i = 0; i < FilesToCopy.Count; i++)
             {
                 tmpFileInfo = new FileInfo(source + FilesToCopy[i]);
                 try
                 {
-                    tmpFileInfo.CopyTo(destinationInfo.FullName + FilesToCopy[i]);
+                    tmpFileInfo.CopyTo(destinationInfo.FullName + @"\" + FilesToCopy[i]);
                     FilesCorrect.Add(new FileInfoObject { RelativePathName = tmpFileInfo.FullName.Remove(0, sourceInfo.FullName.Length), Length = tmpFileInfo.Length, CreationTimeUtc = tmpFileInfo.CreationTimeUtc, LastWriteTimeUtc = tmpFileInfo.LastWriteTimeUtc, Attributes = tmpFileInfo.Attributes.ToString(), MD5 = this.CalculateMD5(tmpFileInfo.FullName) });
                 }
                 catch (Exception x)
@@ -293,17 +320,18 @@ namespace KoFrMaDaemon
                 }
 
             }
-            if (logLevel >= 5)
-            {
-                DebugLog.WriteToLog("File backup is done, " + this.FilesCorrect.Count + " files were successfully copied, but it was unable to copy " + this.FilesError.Count + " files");
-                DebugLog.WriteToLog("Creating transaction log of successfully copied files and folders...");
-            }
-            BackupLog.CreateBackupJournal(FilesCorrect, sourceInfo.FullName, destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat",FoldersCorrect);
-            if (logLevel >= 5)
-                DebugLog.WriteToLog("Transaction log successfully created in destination "+ destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat");
-            BackupLog = null;
-            if (logLevel >= 4)
-                DebugLog.WriteToLog("Differential/Incremental backup done in " + (DateTime.Now.Second -timeOfBackup.Second).ToString() + " seconds and " +(DateTime.Now.Millisecond - timeOfBackup.Millisecond).ToString() + " milliseconds");
+
+            DebugLog.WriteToLog("File backup is done, " + this.FilesCorrect.Count + " files were successfully copied, it was unable to copy " + this.FilesError.Count + " files",5);
+
+
+            DebugLog.WriteToLog("Creating transaction log of successfully copied files and folders...",5);
+            BackupJournal.CreateBackupJournal(new BackupJournalObject() { RelativePath = source , BackupJournalFiles = FilesCorrect, BackupJournalFolders = FoldersCorrect}, destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat",DebugLog);
+            DebugLog.WriteToLog("Transaction log successfully created in destination "+ destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat",5);
+
+
+
+
+            DebugLog.WriteToLog("Differential/Incremental backup done in " + (DateTime.Now.Second -timeOfBackup.Second).ToString() + " seconds and " +(DateTime.Now.Millisecond - timeOfBackup.Millisecond).ToString() + " milliseconds",4);
 
         }
         
@@ -341,8 +369,9 @@ namespace KoFrMaDaemon
                         this.CopyDirectoryRecursivly(item, to.CreateSubdirectory(item.Name), Copy);
                         else
                         this.CopyDirectoryRecursivly(item, null, Copy);
-                        this.FoldersCorrect.Add(item.FullName.Remove(0, sourceInfo.FullName.Length));
-                    }
+                    //this.FoldersCorrect.Add(item.FullName.Remove(0, sourceInfo.FullName.Length));
+                    this.FoldersCorrect.Add(new FolderObject() { FolderPath = item.FullName.Remove(0, sourceInfo.FullName.Length), CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString() });
+                }
                     catch (Exception x)
                     {
                         this.FoldersError.Add(item.FullName);
@@ -364,20 +393,7 @@ namespace KoFrMaDaemon
             }
         }
 
-        private List<FileInfoObject> ReturnHashCodes (List<FileInfoObject> listWithoutHashCodes)
-        {
-            List<FileInfoObject> tmpList;
 
-            tmpList = listWithoutHashCodes;
-            string tmp;
-            foreach (FileInfoObject item in tmpList)
-            {
-                tmp = item.RelativePathName + '|' + item.Length.ToString() + '|' + item.CreationTimeUtc.ToBinary().ToString() + '|' + item.LastWriteTimeUtc.ToBinary().ToString() + '|' + item.Attributes.ToString() + '|' + item.MD5;
-                item.HashRow = tmp.GetHashCode();
-            }
-
-        return tmpList;
-        }
 
 
 
