@@ -30,13 +30,14 @@ namespace KoFrMaDaemon
 
             string temporaryDebugInfo = "";
             if (serviceDebugLog._logLevel >= 4)
-                temporaryDebugInfo = "Starting the full backup in " + timeOfBackup.ToString();
+                temporaryDebugInfo = "Full backup started at  " + timeOfBackup.ToString();
+            Directory.CreateDirectory(destination + @"\KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup) + @"_Full\KoFrMaBackup");
+            //destinationInfo = new DirectoryInfo(destination).CreateSubdirectory("KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup)+"_Full").CreateSubdirectory("KoFrMaBackup");
+            destinationInfo = new DirectoryInfo(destination + @"\KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup) + @"_Full\KoFrMaBackup");
 
-            destinationInfo = new DirectoryInfo(destination).CreateSubdirectory("KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup)+"_Full").CreateSubdirectory("KoFrMaBackup");
+            serviceDebugLog.WriteToLog("Log of including operations is located in " + destinationInfo.Parent.FullName + @"\KoFrMaDebug.log", 4);
 
-            serviceDebugLog.WriteToLog("Log of including operations is located in " + destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log", 4);
-
-            DebugLog DebugLog = new DebugLog(destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log", serviceDebugLog._logLevel);
+            DebugLog DebugLog = new DebugLog(destinationInfo.Parent.FullName + @"\KoFrMaDebug.log", serviceDebugLog._logLevel);
 
             DebugLog.WriteToLog("Subdirectory for the backup was created at " + destinationInfo.FullName, 5);
 
@@ -44,6 +45,14 @@ namespace KoFrMaDaemon
             temporaryDebugInfo = null;
 
             sourceInfo = new DirectoryInfo(source);
+
+            if (!sourceInfo.Exists)
+            {
+                DebugLog.WriteToLog("Fatal Error: Cannot backup because source folder doesn't exists!", 2);
+            }
+
+            
+
             try
             {
                 DebugLog.WriteToLog("Backuping now...",4);
@@ -99,7 +108,7 @@ namespace KoFrMaDaemon
             this.CopyDirectoryRecursivly(sourceInfo, null, false);
 
 
-            DebugLog.WriteToLog("Adding hash column to lists of current files and folders...", 6);
+            DebugLog.WriteToLog("Adding hash column to lists of current files and folders...", 7);
             List<FileInfoObject> CurrentFiles = BackupJournal.ReturnHashCodesFiles(FilesCorrect);
             List<FolderObject> CurrentFolders = BackupJournal.ReturnHashCodesFolders(FoldersCorrect);
             FilesCorrect = new List<FileInfoObject>();
@@ -146,8 +155,8 @@ namespace KoFrMaDaemon
                             sameObject = true;
                             itemOriginal.Paired = true;
 
-                            if (DebugLog._logLevel >= 8)
-                                DebugLog.WriteToLog("Same object = true",8);
+                            if (DebugLog._logLevel >= 9)
+                                DebugLog.WriteToLog("Same object = true",9);
 
                             break;
                         }
@@ -180,8 +189,8 @@ namespace KoFrMaDaemon
                             }
                         }
                     }
-                    //else if (DebugLog._logLevel >= 8)
-                    //    DebugLog.WriteToLog("HashRow Error: " + itemCurrent.HashRow.ToString() + " is not " + itemOriginal.HashRow.ToString(),8);
+                    //else if (DebugLog._logLevel >= 10)
+                    //    DebugLog.WriteToLog("HashRow Error: " + itemCurrent.HashRow.ToString() + " is not " + itemOriginal.HashRow.ToString(),10);
 
                 }
                 if (!sameObject)
@@ -223,8 +232,8 @@ namespace KoFrMaDaemon
                             sameObject = true;
                             itemOriginal.Paired = true;
 
-                            if (DebugLog._logLevel >= 8)
-                                DebugLog.WriteToLog("Same object = true", 8);
+                            if (DebugLog._logLevel >= 9)
+                                DebugLog.WriteToLog("Same object = true", 9);
 
                             break;
                         }
@@ -249,8 +258,8 @@ namespace KoFrMaDaemon
                             }
                         }
                     }
-                    //else if (DebugLog._logLevel >= 8)
-                    //    DebugLog.WriteToLog("HashRow Error: " + itemCurrent.HashRow.ToString() + " is not " + itemOriginal.HashRow.ToString(),8);
+                    //else if (DebugLog._logLevel >= 10)
+                    //    DebugLog.WriteToLog("HashRow Error: " + itemCurrent.HashRow.ToString() + " is not " + itemOriginal.HashRow.ToString(),10);
 
                 }
                 if (!sameObject)
@@ -314,17 +323,18 @@ namespace KoFrMaDaemon
                 tmpFileInfo = new FileInfo(source + FilesToCopy[i]);
                 try
                 {
-                    Directory.CreateDirectory(tmpFileInfo.Directory.FullName);
+                    Directory.CreateDirectory(Path.GetDirectoryName(FilesToCopy[i]));
                     tmpFileInfo.CopyTo(destinationInfo.FullName + @"\" + FilesToCopy[i]);
                     FilesCorrect.Add(new FileInfoObject { RelativePathName = tmpFileInfo.FullName.Remove(0, sourceInfo.FullName.Length), Length = tmpFileInfo.Length, CreationTimeUtc = tmpFileInfo.CreationTimeUtc, LastWriteTimeUtc = tmpFileInfo.LastWriteTimeUtc, Attributes = tmpFileInfo.Attributes.ToString(), MD5 = this.CalculateMD5(tmpFileInfo.FullName) });
                 }
-                catch (Exception x)
+                catch (Exception ex)
                 {
                     this.FilesError.Add(tmpFileInfo.FullName);
-                    DebugLog.WriteToLog("Unable to copy " + tmpFileInfo.FullName + " to " + destinationInfo.FullName + @"\" + FilesToCopy[i]+". Path to destination folder: "+tmpFileInfo.Directory.FullName,8);
+                    DebugLog.WriteToLog("Unable to copy " + tmpFileInfo.FullName + " to " + destinationInfo.FullName + @"\" + FilesToCopy[i]+" because of exception "+ex.Message + ". Path to destination folder: "+tmpFileInfo.Directory.FullName,8);
                 }
 
             }
+
 
             DebugLog.WriteToLog("File backup is done, " + this.FilesCorrect.Count + " files were successfully copied, it was unable to copy " + this.FilesError.Count + " files",5);
 

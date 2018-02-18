@@ -19,28 +19,38 @@ namespace KoFrMaDaemon
         3 = Errors that program can handle
         4 = Basic info about operations that program runs
         5 = Debug info that could lead to fixing or optimizing some processes
-        6 = Tracing info for almost every process
+        6 = Tracing info for every process that is likely to fail
         7 = Tracing info about everything program does
         8 = Tracing info including loop cycles
+        9 = Tracing info including large loop cycles that will slow down the process a lot
+        10 = Program will be more like a log writer than actually doing the process
         */
 
+        private StreamWriter w;
         public DebugLog(string logPath, byte logLevel)
         {
             this._logPath = logPath;
             this._logLevel = logLevel;
+            w = new StreamWriter(logPath, true);
+            if (logLevel!=0)
+            {
+                w.WriteLine("Time of occurrence    Level of alert  Text");
+            }
+            w.Close();
+            w.Dispose();
         }
         
-        private StreamWriter w;
+        
 
         public void WriteToLog(string text, byte level)
         {
+            w = new StreamWriter(this._logPath, true);
             if (level<=_logLevel)
             {
-                w = new StreamWriter(_logPath, true);
-                w.WriteLine(DateTime.Now.ToString() + ' ' + level.ToString() + ' ' + text);
-                w.Close();
-                w.Dispose();
+                w.WriteLine(DateTime.Now.ToString() + " " + level.ToString() + " " + text);
             }
+            w.Close();
+            w.Dispose();
         }
 
 

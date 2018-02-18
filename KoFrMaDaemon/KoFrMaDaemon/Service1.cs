@@ -36,23 +36,24 @@ namespace KoFrMaDaemon
         public ServiceKoFrMa()
         {
             InitializeComponent();
-            timerStep = 5000;
-            timer = new Timer(this.timerStep);
-            timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
+            //timerStep = 5000;
+            //timer = new Timer(this.timerStep);
+            //timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
             //isStopping = false;
-            this.logPath = @"d:\tmp\testBackup\DebugServiceLog.log";
+            this.logPath = @"d:\Users\Matej\Desktop\KoFrMaBackup\DebugServiceLog.log";
             debugLog = new DebugLog(this.logPath,8);
 
-            timer.AutoReset = true;
-            this.serverURL = @"http://localhost:50576/";
+            //timer.AutoReset = true;
+            //this.serverURL = @"http://localhost:50576/";
         }
 
         protected override void OnStart(string[] args)
         {
             debugLog.WriteToLog("Service started",4);
-            timer.Start();
+            //timer.Start();
 
-            //a.BackupFullFolder(@"d:\tmp\testBackup\BackupThisFolder\", @"d:\tmp\testBackup\BackupGoesHere\", debugLog);
+            //a.BackupFullFolder(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupThisFolder\", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\", debugLog);
+            a.BackupDifferential(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", debugLog);
             //a.BackupDifferential(@"d:\tmp\testBackup\BackupGoesHere\", @"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_13_58_48_Full\KoFrMaBackup.dat", debugLog);
         }
 

@@ -13,6 +13,7 @@ namespace KoFrMaDaemon
         private StreamWriter w;
 
         private StreamReader r;
+
         public void CreateBackupJournal(BackupJournalObject backupJournalObject, string pathToJournal, DebugLog debugLog)
         {
             try
@@ -41,8 +42,7 @@ namespace KoFrMaDaemon
             catch (Exception ex)
             {
                 debugLog.WriteToLog("Fatal error when trying to create backup journal: " + ex.Message, 2);
-                //zde nelze pokračovat, nutno shodit celý proces zálohování
-                throw;
+                //zde už nelze pokračovat, nutno shodit celý proces zálohování!
             }
 
         }
