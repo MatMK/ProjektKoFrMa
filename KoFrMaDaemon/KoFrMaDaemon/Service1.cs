@@ -19,15 +19,15 @@ namespace KoFrMaDaemon
 
         //private const byte version = 101;
 
-        //private bool isStopping;
+        private bool isStopping;
 
-        //private Timer timer;
+        private Timer timer;
 
-        //private int timerStep;
+        private int timerStep;
 
         private string logPath;
 
-        //private string serverURL;
+        private string serverURL;
 
         private DebugLog debugLog;
 
@@ -36,24 +36,24 @@ namespace KoFrMaDaemon
         public ServiceKoFrMa()
         {
             InitializeComponent();
-            //timerStep = 5000;
-            //timer = new Timer(this.timerStep);
-            //timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
+            timerStep = 5000;
+            timer = new Timer(this.timerStep);
+            timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
             //isStopping = false;
             this.logPath = @"d:\tmp\testBackup\DebugServiceLog.log";
             debugLog = new DebugLog(this.logPath,8);
 
-            //timer.AutoReset = true;
-            //this.serverURL = @"http://www.e64.cz/kofrma/ns1.aspx";
+            timer.AutoReset = true;
+            this.serverURL = @"http://localhost:50576/";
         }
 
         protected override void OnStart(string[] args)
         {
             debugLog.WriteToLog("Service started",4);
-            //timer.Start();
+            timer.Start();
 
             //a.BackupFullFolder(@"d:\tmp\testBackup\BackupThisFolder\", @"d:\tmp\testBackup\BackupGoesHere\", debugLog);
-            a.BackupDifferential(@"d:\tmp\testBackup\BackupGoesHere\", @"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_13_58_48_Full\KoFrMaBackup.dat", debugLog);
+            //a.BackupDifferential(@"d:\tmp\testBackup\BackupGoesHere\", @"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_13_58_48_Full\KoFrMaBackup.dat", debugLog);
         }
 
         protected override void OnStop()
@@ -66,13 +66,13 @@ namespace KoFrMaDaemon
 
         private void OnTimerTick(object sender, ElapsedEventArgs e)
         {
-            //if (!this.isStopping)
-            //{
-            //    log.WriteToLog("tik");
+            if (!this.isStopping)
+            {
+                //log.WriteToLog("tik");
 
-            //    this.GetTasks();
-            //    log.WriteToLog("tikTasksGot");
-            //}
+                this.GetTasks();
+                //log.WriteToLog("tikTasksGot");
+            }
 
         }
 
@@ -103,31 +103,31 @@ namespace KoFrMaDaemon
          */
 
 
-  //      private void GetTasks()
-  //      {
-  //          log.WriteToLog("InGetTasks 1");
+        private void GetTasks()
+        {
+            //log.WriteToLog("InGetTasks 1");
 
-  //          WebRequest request = WebRequest.Create(this.serverURL);
-  //          //request.Method = "POST";
-  //          //request.ContentType = "multipart/form-data"; // ideální pro Upload souborů
-  //          //request.ContentLength = 4;
-  //          log.WriteToLog("InGetTasks 2");
+            WebRequest request = WebRequest.Create(this.serverURL);
+            //request.Method = "POST";
+            //request.ContentType = "multipart/form-data"; // ideální pro Upload souborů
+            //request.ContentLength = 4;
+            //log.WriteToLog("InGetTasks 2");
 
-  //          WebResponse response = request.GetResponse();
-  //          log.WriteToLog("InGetTasks 3");
+            WebResponse response = request.GetResponse();
+            //log.WriteToLog("InGetTasks 3");
 
-  //          string statusDescr = "StatusDescription = " + ((HttpWebResponse)response).StatusDescription;
+            string statusDescr = "StatusDescription = " + ((HttpWebResponse)response).StatusDescription;
 
-  //          log.WriteToLog(statusDescr);
-  //          /*
-  //           // Get the stream containing content returned by the server.
-  //           dataStream = response.GetResponseStream();
-  //           byte[] buffer = new byte[16000];
-  //           int ReadCount = dataStream.Read(buffer, 0, buffer.Length);
+            debugLog.WriteToLog(statusDescr,6);
+            /*
+             // Get the stream containing content returned by the server.
+             dataStream = response.GetResponseStream();
+             byte[] buffer = new byte[16000];
+             int ReadCount = dataStream.Read(buffer, 0, buffer.Length);
 
-  //           dataStream.Close();
-  //           response.Close();
-  //*/
-  //      }
+             dataStream.Close();
+             response.Close();
+  */
+        }
     }
 }
