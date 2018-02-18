@@ -10,6 +10,6 @@ namespace KoFrMaRestApi.Models
     /// </summary>
     public class Instructions
     {
-
+        
     }
 }

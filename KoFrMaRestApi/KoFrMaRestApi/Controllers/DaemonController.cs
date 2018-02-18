@@ -8,22 +8,17 @@ using System.Web.Http;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using KoFrMaRestApi.Models;
+using System.Data.SqlClient;
 
 namespace KoFrMaRestApi.Controllers
 {
     public class DaemonController : ApiController
     {
-        [Route("api/Daemon/Register/{daemon}")]
-        [HttpPost]
-        public void DaemonRegister(DaemonInfo daemon)
-        {
-
-        }
         [Route("api/Daemon/GetInstructions/{DaemonId:int}")]
         [HttpGet]
-        public Instructions GetInstructions(int DaemonId)
+        public Instructions GetInstructions(int PC_Unique, int OS,int Version, DateTime Time)
         {
-            throw new Exception();
+            return new Instructions() { };
         }
     }
 }
