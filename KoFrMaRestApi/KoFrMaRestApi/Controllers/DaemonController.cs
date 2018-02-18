@@ -14,11 +14,12 @@ namespace KoFrMaRestApi.Controllers
 {
     public class DaemonController : ApiController
     {
-        [Route("api/Daemon/GetInstructions/{DaemonId:int}")]
-        [HttpGet]
-        public Instructions GetInstructions(int PC_Unique, int OS,int Version, DateTime Time)
+        [HttpPost]
+        public Instructions GetInstructions(Instructions i)
         {
-            return new Instructions() { };
+            //MySqlConnection connection = WebApiConfig.Connection();
+
+            return i;
         }
     }
 }
