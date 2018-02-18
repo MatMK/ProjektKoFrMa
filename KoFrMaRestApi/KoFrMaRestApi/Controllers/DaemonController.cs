@@ -14,12 +14,56 @@ namespace KoFrMaRestApi.Controllers
 {
     public class DaemonController : ApiController
     {
+        /// <summary>
+        /// Vrací instrukce pro daemon a registruje daemony do databáze.
+        /// </summary>
+        /// <param name="daemon"></param>
+        /// <returns>Obsahuje informace o deamonu zasílajícím informaci.</returns>
         [HttpPost]
-        public Instructions GetInstructions(Instructions i)
+        public Tasks GetInstructions(DaemonInfo daemon)
         {
-            //MySqlConnection connection = WebApiConfig.Connection();
-
-            return i;
+            //Zjistí zda je Daemon už zaregistrovaný, pokud ne, přidá ho do databáze
+            string DaemonId;
+            MySqlConnection connection = WebApiConfig.Connection();
+            connection.Open();
+            MySqlDataReader reader = SelectFromTableByPcId(connection,daemon);
+            
+            if (reader.Read())
+            {
+                DaemonId = reader.GetString(0);
+                reader.Close();
+            }
+            else
+            {
+                reader.Close();
+                string SqlInsert = "insert into tbDaemons values(null, @version, @os, @pc_unique, 1)";
+                MySqlCommand command = new MySqlCommand(SqlInsert, connection);
+                command.Parameters.AddWithValue("@version", daemon.Version);
+                command.Parameters.AddWithValue("@os", daemon.OS);
+                command.Parameters.AddWithValue("@pc_unique", daemon.PC_Unique);
+                command.ExecuteNonQuery();
+                DaemonId = SelectFromTableByPcId(connection, daemon).GetString(0);
+                reader.Close();
+            }
+            // Vybere task určený pro daemona.
+            MySqlCommand TaskSelect = new MySqlCommand("SELECT s.Task FROM tbTasksDaemons d inner join tbTasks s on d.ID_Task = s.Id where ID_Daemon = @IdDaemon", connection);
+            TaskSelect.Parameters.AddWithValue("@IdDaemon", DaemonId);
+            MySqlDataReader result = TaskSelect.ExecuteReader();
+            if (result.Read())
+            {
+                return new Tasks() { Task = result.GetString(0) };
+            }
+            else
+            {
+                return new Tasks();
+            }
+        }
+        private MySqlDataReader SelectFromTableByPcId(MySqlConnection connection,DaemonInfo daemon)
+        {
+            string SqlCommand = "SELECT id FROM `tbDaemons` WHERE PC_Unique = @PC_ID";
+            MySqlCommand query = new MySqlCommand(SqlCommand, connection);
+            query.Parameters.AddWithValue("@PC_ID", daemon.PC_Unique);
+            return query.ExecuteReader();
         }
     }
 }
