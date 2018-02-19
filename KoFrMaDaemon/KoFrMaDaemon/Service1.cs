@@ -33,9 +33,13 @@ namespace KoFrMaDaemon
 
         private Actions a = new Actions();
 
+        private List<Tasks> ScheduledTasks;
+        //Naplánované úlohy přijaté od serveru se budou přidávat do tohoto listu
+
         public ServiceKoFrMa()
         {
             InitializeComponent();
+            ScheduledTasks = new List<Tasks>();
             //timerStep = 5000;
             //timer = new Timer(this.timerStep);
             //timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
