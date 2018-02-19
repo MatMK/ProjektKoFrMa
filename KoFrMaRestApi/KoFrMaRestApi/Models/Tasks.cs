@@ -12,5 +12,20 @@ namespace KoFrMaRestApi.Models
     {
         public string Task { get; set; }
         //pridat dalsi funkce
+
+        public DateTime TimeToBackup { get; set; }
+
+        public string PathToBackup { get; set; }
+
+        public string WhereToBackup { get; set; }
+
+        public bool BackupDifferential { get; set; }
+        /*
+         false = FullBackup
+         true = Differential/Incremental Backup                 
+         */
+
+        public int TimerValue { get; set; }
+
     }
 }

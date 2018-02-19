@@ -10,5 +10,11 @@ namespace KoFrMaRestApi.Models
         public int Version { get; set; }
         public int OS { get; set; }
         public string PC_Unique { get; set; }
+
+        public byte LogLevel { get; set; }
+        /*
+         
+         
+         */
     }
 }
