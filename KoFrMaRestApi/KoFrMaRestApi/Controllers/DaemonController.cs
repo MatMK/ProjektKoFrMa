@@ -42,16 +42,15 @@ namespace KoFrMaRestApi.Controllers
                 command.Parameters.AddWithValue("@os", daemon.OS);
                 command.Parameters.AddWithValue("@pc_unique", daemon.PC_Unique);
                 command.ExecuteNonQuery();
-                DaemonId = SelectFromTableByPcId(connection, daemon).GetString(0);
-                reader.Close();
+                GetInstructions(daemon);
             }
-            // Vybere task určený pro daemona.
+            // Vybere task určený pro daemona. - nedodelane
             MySqlCommand TaskSelect = new MySqlCommand("SELECT s.Task FROM tbTasksDaemons d inner join tbTasks s on d.ID_Task = s.Id where ID_Daemon = @IdDaemon", connection);
-            TaskSelect.Parameters.AddWithValue("@IdDaemon", DaemonId);
+            TaskSelect.Parameters.AddWithValue("@IdDaemon", "");
             MySqlDataReader result = TaskSelect.ExecuteReader();
             if (result.Read())
             {
-                return new Tasks() { Task = result.GetString(0) };
+                return new Tasks() {/*dodělat*/};
             }
             else
             {
