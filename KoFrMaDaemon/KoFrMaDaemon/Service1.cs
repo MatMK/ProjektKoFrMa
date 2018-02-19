@@ -10,11 +10,13 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.IO;
 using System.Net;
+using KoFrMaDaemon.ConnectionToServer;
 
 namespace KoFrMaDaemon
 {
     public partial class ServiceKoFrMa : ServiceBase
     {
+        Connection connection = new Connection();
         //private const string servicePrefixName = "KoFrMa";
 
         //private const byte version = 101;
@@ -76,7 +78,7 @@ namespace KoFrMaDaemon
             {
                 //log.WriteToLog("tik");
 
-                this.GetTasks();
+                connection.PostRequest();
                 //log.WriteToLog("tikTasksGot");
 
                 foreach (Tasks item in ScheduledTasks)
