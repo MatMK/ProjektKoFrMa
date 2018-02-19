@@ -10,12 +10,6 @@ namespace KoFrMaDaemon
 {
     public class Actions
     {
-        
-        //public string State;
-
-        //const int dim1 = 5;
-        //public string[,] poleStr = new string[dim1, dim1];
-
         public List<FileInfoObject> FilesCorrect =new List<FileInfoObject>(1000);
         public List<FolderObject> FoldersCorrect = new List<FolderObject>(1000);
         public List<String> FilesError = new List<string>(100);
