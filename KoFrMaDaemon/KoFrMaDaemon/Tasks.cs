@@ -16,11 +16,6 @@ namespace KoFrMaDaemon
         //Co zálohovat, pokud se jedná o full zálohu je zde path ke složce, pokud je záloha diferenciální/inkrementální je v tomto poli cesta k .dat původní zálohy
         public string WhereToBackup { get; set; }
         //Cíl zálohy, archiv nebo složka, může odkazovat na ftp server (ftp://...) nebo sdílené úložiště (//NASBackup/CilZalohy)
-        public bool BackupDifferential { get; set; }
-        /*
-        False = Full Backup
-        True = Differential/Incremental Backup
-        */
         public int TimerValue { get; set; }
         //Jak často se má daemon ptát serveru na úlohu
         public byte LogLevel { get; set; }

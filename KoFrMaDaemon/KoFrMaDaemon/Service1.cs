@@ -45,7 +45,7 @@ namespace KoFrMaDaemon
             //timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
             //isStopping = false;
             this.logPath = @"d:\Users\Matej\Desktop\KoFrMaBackup\DebugServiceLog.log";
-            debugLog = new DebugLog(this.logPath,8);
+            debugLog = new DebugLog(this.logPath, 8);
 
             //timer.AutoReset = true;
             //this.serverURL = @"http://localhost:50576/";
@@ -53,7 +53,7 @@ namespace KoFrMaDaemon
 
         protected override void OnStart(string[] args)
         {
-            debugLog.WriteToLog("Service started",4);
+            debugLog.WriteToLog("Service started", 4);
             //timer.Start();
 
             //a.BackupFullFolder(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupThisFolder\", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\", debugLog);
@@ -64,7 +64,7 @@ namespace KoFrMaDaemon
         protected override void OnStop()
         {
             //this.isStopping = true;
-            debugLog.WriteToLog("Service stopped",4);
+            debugLog.WriteToLog("Service stopped", 4);
         }
 
 
@@ -72,11 +72,22 @@ namespace KoFrMaDaemon
         private void OnTimerTick(object sender, ElapsedEventArgs e)
         {
             if (!this.isStopping)
+            //Pokud se service zrovna nevypíná, třeba aby při vypínání Windows nezačala běžet úloha
             {
                 //log.WriteToLog("tik");
 
                 this.GetTasks();
                 //log.WriteToLog("tikTasksGot");
+
+                foreach (Tasks item in ScheduledTasks)
+                {
+                    if (item.TimeToBackup.CompareTo(DateTime.Now)>=0)
+                    {
+                        Actions action = new Actions();
+                        
+                    }
+                }
+
             }
 
         }
@@ -123,7 +134,7 @@ namespace KoFrMaDaemon
 
             string statusDescr = "StatusDescription = " + ((HttpWebResponse)response).StatusDescription;
 
-            debugLog.WriteToLog(statusDescr,6);
+            debugLog.WriteToLog(statusDescr, 6);
             /*
              // Get the stream containing content returned by the server.
              dataStream = response.GetResponseStream();
