@@ -55,12 +55,6 @@ namespace KoFrMaRestApi.Controllers
 
             MySqlDataReader fetch_query = query.ExecuteReader();
 
-
-
-
-
-
-
             while (fetch_query.Read())
             {
                  results.Add(new results(fetch_query["id"].ToString(), fetch_query["PC_Unique"].ToString(), null));
