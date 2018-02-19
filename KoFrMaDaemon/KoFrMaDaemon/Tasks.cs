@@ -8,9 +8,10 @@ namespace KoFrMaDaemon
 {
     public class Tasks
     {
+        public int IDTask { get; set; }
         public DateTime TimeToBackup { get; set; }
 
-        public string SourceOfBackup { get; set; }
+        public string SurceOfBackup { get; set; }
 
         public string WhereToBackup { get; set; }
 
