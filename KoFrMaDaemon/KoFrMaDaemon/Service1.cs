@@ -76,9 +76,9 @@ namespace KoFrMaDaemon
             {
                 //log.WriteToLog("tik");
 
-                this.GetTasks();
+                //this.GetTasks();
                 //log.WriteToLog("tikTasksGot");
-
+                /*
                 foreach (Tasks item in ScheduledTasks)
                 {
                     if (item.TimeToBackup.CompareTo(DateTime.Now)>=0) //Pokud čas úlohy už uběhl
@@ -105,7 +105,7 @@ namespace KoFrMaDaemon
                                 action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
                         }
                     }
-                }
+                }*/
 
             }
 

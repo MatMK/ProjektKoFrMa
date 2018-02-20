@@ -70,9 +70,11 @@
     <Compile Include="BackupJournalObject.cs" />
     <Compile Include="BackupJournalOperations.cs" />
     <Compile Include="ConnectionToServer\Connection.cs" />
+    <Compile Include="ConnectionToServer\ConnectionInfo.cs" />
+    <Compile Include="ConnectionToServer\DaemonInfo.cs" />
     <Compile Include="FileInfoObject.cs" />
     <Compile Include="FolderObject.cs" />
-    <Compile Include="LogOperations.cs" />
+    <Compile Include="DebugLog.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

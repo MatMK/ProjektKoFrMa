@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace KoFrMaDaemon.ConnectionToServer
 {
-    class ConnectionInfo
+    public static class ConnectionInfo
     {
+        public static string ServerURL;
     }
 }
