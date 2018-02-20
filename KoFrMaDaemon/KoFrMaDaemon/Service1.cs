@@ -33,6 +33,7 @@ namespace KoFrMaDaemon
         private List<Tasks> ScheduledTasks;
 
         Connection connection = new Connection();
+        DaemonInfo daemon = DaemonInfo.Instance;
         //Naplánované úlohy přijaté od serveru se budou přidávat do tohoto listu
 
         public ServiceKoFrMa()
@@ -44,7 +45,11 @@ namespace KoFrMaDaemon
             inProgress = false;
             this.logPath = @"d:\Users\Matej\Desktop\KoFrMaBackup\DebugServiceLog.log";
             debugLog = new DebugLog(this.logPath, 8);
-
+            ConnectionInfo.ServerURL = @"http://localhost:50576/api/Daemon/GetInstructions";
+            daemon.OS = 1;
+            daemon.PC_Unique = "1";
+            daemon.Version = 1;
+                
             timer.AutoReset = true;
             //this.serverURL = @"http://localhost:50576/";
         }
@@ -53,7 +58,7 @@ namespace KoFrMaDaemon
         {
             debugLog.WriteToLog("Service started", 4);
             timer.Start();
-
+            
             //a.BackupFullFolder(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupThisFolder\", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\", debugLog);
             //a.BackupDifferential(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", debugLog);
             //a.BackupDifferential(@"d:\tmp\testBackup\BackupGoesHere\", @"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_13_58_48_Full\KoFrMaBackup.dat", debugLog);
