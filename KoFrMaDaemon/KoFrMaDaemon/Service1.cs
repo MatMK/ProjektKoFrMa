@@ -20,7 +20,7 @@ namespace KoFrMaDaemon
 
         //private const byte version = 101;
 
-        private bool isStopping;
+        private bool inProgress;
 
         private Timer timer;
 
@@ -41,7 +41,7 @@ namespace KoFrMaDaemon
             ScheduledTasks = new List<Tasks>();
             timer = new Timer(5000);
             timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
-            isStopping = false;
+            inProgress = false;
             this.logPath = @"d:\Users\Matej\Desktop\KoFrMaBackup\DebugServiceLog.log";
             debugLog = new DebugLog(this.logPath, 8);
 
@@ -61,7 +61,7 @@ namespace KoFrMaDaemon
 
         protected override void OnStop()
         {
-            this.isStopping = true;
+            this.inProgress = true;
             debugLog.WriteToLog("Service stopped", 4);
         }
 
@@ -70,11 +70,13 @@ namespace KoFrMaDaemon
         private void OnTimerTick(object sender, ElapsedEventArgs e)
         {
             debugLog.WriteToLog("Timer tick", 7);
-            if (!this.isStopping) //Pokud se service zrovna nevypíná, třeba aby při vypínání Windows nezačala běžet úloha
+            if (!this.inProgress) //Pokud se service zrovna nevypíná, třeba aby při vypínání Windows nezačala běžet nová úloha nebo pokud se zrovna neprohledává seznam úloh (běží asynchonně)
             {
+                this.inProgress = true;
                 debugLog.WriteToLog("Updating list of scheduled tasks from the server...", 5);
                 this.GetTasks();
                 debugLog.WriteToLog("List of scheduled tasks now contains " + this.ScheduledTasks.Count + " tasks", 6);
+                this.inProgress = false;
                 if (this.ScheduledTasks.Count>0)
                 {
                     debugLog.WriteToLog("Tasks found, starting to check if the time has come for each of the tasks", 5);
@@ -82,21 +84,23 @@ namespace KoFrMaDaemon
                     foreach (Tasks item in ScheduledTasks)
                     {
                         debugLog.WriteToLog("Checking if the task should be started for task with ID " + item.IDTask, 7);
-                        if (item.TimeToBackup.CompareTo(DateTime.Now) >= 0) //Pokud čas úlohy už uběhl
+                        if (item.TimeToBackup.CompareTo(DateTime.Now) >= 0&&item.InProgress == false) //Pokud čas úlohy už uběhl nebo zrovna neběží
                         {
-                            debugLog.WriteToLog("Task should be running because it was planned to run in " + item.TimeToBackup.ToString() + ", starting the inicialization now...", 6);
+                            debugLog.WriteToLog("Task " + item.IDTask +" should be running because it was planned to run in " + item.TimeToBackup.ToString() + ", starting the inicialization now...", 6);
                             Actions action = new Actions();
                             if (item.SourceOfBackup.EndsWith(".dat")) //když bude jako zdroj úlohy nastaven path na soubor .dat provede se diferenciální, jinak pokud je to složka tak incrementální
                             {
                                 debugLog.WriteToLog("Starting differential/incremental backup, because the path to source ends with .dat (" + item.SourceOfBackup + ')', 7);
                                 if (item.WhereToBackup.EndsWith(".zip") || item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
                                 {
+                                    item.InProgress = true;
                                     debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
                                     //action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
                                     //udělat komprimaci
                                 }
                                 else
                                 {
+                                    item.InProgress = true;
                                     debugLog.WriteToLog("Starting plain copy backup, because the path to destination doesn't end with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
                                     action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
                                 }
@@ -106,30 +110,36 @@ namespace KoFrMaDaemon
                             {
                                 if (item.WhereToBackup.EndsWith(".zip") || item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
                                 {
+                                    item.InProgress = true;
                                     debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
                                     //action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
                                     //udělat komprimaci
                                 }
                                 else
                                 {
+                                    item.InProgress = true;
                                     debugLog.WriteToLog("Starting plain copy backup, because the path to destination doesn't end with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 8);
                                     action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
                                 }
 
                             }
                         }
+                        else
+                        {
+                            debugLog.WriteToLog("Task " + item.IDTask + " is skipped because " + item.TimeToBackup.ToString() + " is in the future", 6);
+                        }
                     }
                 }
                 else
                 {
-                    debugLog.WriteToLog("No tasks planned, service will check again after " + timer.Interval / 1000 + 's', 5);
+                    debugLog.WriteToLog("No other tasks planned, service will check again after " + timer.Interval / 1000 + 's', 5);
                 }
                 
 
             }
             else
             {
-                debugLog.WriteToLog("Service is in the process of stopping, skipping regular timer action", 5);
+                debugLog.WriteToLog("Service is in the process of stopping, skipping regular timer action...", 5);
             }
 
         }

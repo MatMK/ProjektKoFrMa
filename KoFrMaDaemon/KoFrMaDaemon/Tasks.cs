@@ -53,5 +53,7 @@ namespace KoFrMaDaemon
         /// 10 = Program will be more like a log writer than actually doing the process
         /// </summary>
         public byte LogLevel { get; set; }
+
+        public bool InProgress { get; set; }
     }
 }
