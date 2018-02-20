@@ -6,24 +6,22 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.IO;
 using System.Net;
+using Newtonsoft.Json;
 
 
 namespace KoFrMaDaemon.ConnectionToServer
 {
     public class Connection
     {
-        public void PostRequest()
+        public List<Tasks> PostRequest()
         {
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://localhost:50576/api/Daemon/GetInstructions");
+            DaemonInfo daemon = DaemonInfo.Instance;
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(ConnectionInfo.ServerURL);
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
-                string json = @"{
-	Version: 1,
-	Os: 1,
-	PC_Unique: '2'
-}";
+                string json = JsonConvert.SerializeObject(daemon);
 
                 streamWriter.Write(json);
                 streamWriter.Flush();
@@ -36,6 +34,7 @@ namespace KoFrMaDaemon.ConnectionToServer
             {
                 reslut = streamReader.ReadToEnd();
             }
+            return JsonConvert.DeserializeObject<List<Tasks>>(reslut);
         }
     }
 }

@@ -23,10 +23,10 @@ namespace KoFrMaRestApi.Controllers
         /// <param name="daemon"></param>
         /// <returns>Obsahuje informace o deamonu zasílajícím informaci.</returns>
         [HttpPost]
-        public List<Tasks> GetInstructions(DaemonInfo daemon)
+        public string GetInstructions(DaemonInfo daemon)
         {
             //Zjistí zda je Daemon už zaregistrovaný, pokud ne, přidá ho do databáze
-            string DaemonId;
+            string DaemonId = "";
             MySqlConnection connection = WebApiConfig.Connection();
             connection.Open();
             MySqlDataReader reader = SelectFromTableByPcId(connection,daemon);
@@ -48,16 +48,17 @@ namespace KoFrMaRestApi.Controllers
                 GetInstructions(daemon);
             }
             // Vybere task určený pro daemona. - nedodelane
-            MySqlCommand TaskSelect = new MySqlCommand("SELECT s.Task FROM tbTasksDaemons d inner join tbTasks s on d.ID_Task = s.Id where ID_Daemon = @IdDaemon", connection);
-            TaskSelect.Parameters.AddWithValue("@IdDaemon", "");
-            MySqlDataReader result = TaskSelect.ExecuteReader();
+            
+            MySqlCommand sqlCommand = new MySqlCommand(@"SELECT Task FROM `tbTasks` WHERE `IdDaemon` = @Id", connection);
+            sqlCommand.Parameters.AddWithValue("@Id", DaemonId);
+            MySqlDataReader result = sqlCommand.ExecuteReader();
             if (result.Read())
             {
-                return new List<Tasks> {/*dodělat*/};
+                return result.GetString(0);
             }
             else
             {
-                return new List<Tasks>();
+                return "";
             }
         }
         private MySqlDataReader SelectFromTableByPcId(MySqlConnection connection,DaemonInfo daemon)
