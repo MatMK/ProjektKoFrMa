@@ -6,19 +6,13 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.IO;
 using System.Net;
-using Newtonsoft.Json;
 
 
 namespace KoFrMaDaemon.ConnectionToServer
 {
-    
     public class Connection
     {
-        /// <summary>
-        /// Zavolá server a dá mu informace o své verzi, operačním systému a unikátní klíč počítače
-        /// </summary>
-        /// <returns>Vrací nový Task ze serveru</returns>
-        public Tasks PostRequest()
+        public void PostRequest()
         {
             var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://localhost:50576/api/Daemon/GetInstructions");
             httpWebRequest.ContentType = "application/json";
@@ -32,17 +26,16 @@ namespace KoFrMaDaemon.ConnectionToServer
 }";
 
                 streamWriter.Write(json);
+                streamWriter.Flush();
                 streamWriter.Close();
             }
 
             var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            string response;
+            string reslut;
             using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
             {
-                response = streamReader.ReadToEnd();
+                reslut = streamReader.ReadToEnd();
             }
-
-            return JsonConvert.DeserializeObject<Tasks>(response);
         }
     }
 }

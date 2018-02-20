@@ -10,13 +10,11 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.IO;
 using System.Net;
-using KoFrMaDaemon.ConnectionToServer;
 
 namespace KoFrMaDaemon
 {
     public partial class ServiceKoFrMa : ServiceBase
     {
-        Connection connection = new Connection();
         //private const string servicePrefixName = "KoFrMa";
 
         //private const byte version = 101;
@@ -65,7 +63,7 @@ namespace KoFrMaDaemon
 
         protected override void OnStop()
         {
-            //this.isStopping = true;
+            this.isStopping = true;
             debugLog.WriteToLog("Service stopped", 4);
         }
 
@@ -73,20 +71,39 @@ namespace KoFrMaDaemon
 
         private void OnTimerTick(object sender, ElapsedEventArgs e)
         {
-            if (!this.isStopping)
-            //Pokud se service zrovna nevypíná, třeba aby při vypínání Windows nezačala běžet úloha
+            debugLog.WriteToLog("Timer tick", 9);
+            if (!this.isStopping) //Pokud se service zrovna nevypíná, třeba aby při vypínání Windows nezačala běžet úloha
             {
                 //log.WriteToLog("tik");
 
-                connection.PostRequest();
+                this.GetTasks();
                 //log.WriteToLog("tikTasksGot");
 
                 foreach (Tasks item in ScheduledTasks)
                 {
-                    if (item.TimeToBackup.CompareTo(DateTime.Now)>=0)
+                    if (item.TimeToBackup.CompareTo(DateTime.Now)>=0) //Pokud čas úlohy už uběhl
                     {
                         Actions action = new Actions();
-                        
+                        if(item.SourceOfBackup.EndsWith(".dat")) //když bude jako zdroj úlohy nastaven path na soubor .dat provede se diferenciální, jinak pokud je to složka tak incrementální
+                        {
+                            if (item.WhereToBackup.EndsWith(".zip")|| item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
+                            {
+                                action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
+                                //udělat komprimaci
+                            }
+                            else
+                                action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
+                        }
+                        else
+                        {
+                            if (item.WhereToBackup.EndsWith(".zip") || item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
+                            {
+                                action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
+                                //udělat komprimaci
+                            }
+                            else
+                                action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
+                        }
                     }
                 }
 
@@ -136,7 +153,7 @@ namespace KoFrMaDaemon
 
             string statusDescr = "StatusDescription = " + ((HttpWebResponse)response).StatusDescription;
 
-            debugLog.WriteToLog(statusDescr, 6);
+            debugLog.WriteToLog(statusDescr, 5);
             /*
              // Get the stream containing content returned by the server.
              dataStream = response.GetResponseStream();
