@@ -10,7 +10,7 @@ namespace KoFrMaRestApi
 {
     public static class WebApiConfig
     {
-        //https://dev.mysql.com/doc/dev/connector-net/6.10/html/T_MySql_Data_MySqlClient_MySqlConnection.htm 
+       
 
         public static MySqlConnection Connection()
         {
