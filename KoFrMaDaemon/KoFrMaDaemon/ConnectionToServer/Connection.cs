@@ -29,12 +29,12 @@ namespace KoFrMaDaemon.ConnectionToServer
             }
 
             var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            string reslut;
+            string result;
             using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
             {
-                reslut = streamReader.ReadToEnd();
+                result = streamReader.ReadToEnd();
             }
-            return JsonConvert.DeserializeObject<List<Tasks>>(reslut);
+            return JsonConvert.DeserializeObject<List<Tasks>>(result);
         }
     }
 }
