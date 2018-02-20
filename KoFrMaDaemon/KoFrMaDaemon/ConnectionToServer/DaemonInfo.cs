@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace KoFrMaDaemon.ConnectionToServer
 {
+    /// <summary>
+    /// Informace o tomto Daemonu
+    /// </summary>
     public class DaemonInfo
     {
         private DaemonInfo() { }
