@@ -22,7 +22,7 @@ namespace KoFrMaRestApi.Models
         /// <summary>
         /// Co zálohovat, pokud se jedná o full zálohu je zde path ke složce, pokud je záloha diferenciální/inkrementální je v tomto poli cesta k .dat původní zálohy
         /// </summary>
-        public string SurceOfBackup { get; set; }
+        public string SourceOfBackup { get; set; }
 
         /// <summary>
         /// Cíl zálohy, archiv nebo složka, může odkazovat na ftp server (ftp://...) nebo sdílené úložiště (//NASBackup/CilZalohy)
