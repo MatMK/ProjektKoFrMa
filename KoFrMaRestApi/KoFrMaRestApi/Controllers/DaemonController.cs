@@ -12,6 +12,9 @@ using System.Data.SqlClient;
 
 namespace KoFrMaRestApi.Controllers
 {
+    /// <summary>
+    /// Slouží k komunikaci s Daemony a Serverem
+    /// </summary>
     public class DaemonController : ApiController
     {
         /// <summary>
@@ -20,7 +23,7 @@ namespace KoFrMaRestApi.Controllers
         /// <param name="daemon"></param>
         /// <returns>Obsahuje informace o deamonu zasílajícím informaci.</returns>
         [HttpPost]
-        public Tasks GetInstructions(DaemonInfo daemon)
+        public List<Tasks> GetInstructions(DaemonInfo daemon)
         {
             //Zjistí zda je Daemon už zaregistrovaný, pokud ne, přidá ho do databáze
             string DaemonId;
@@ -50,11 +53,11 @@ namespace KoFrMaRestApi.Controllers
             MySqlDataReader result = TaskSelect.ExecuteReader();
             if (result.Read())
             {
-                return new Tasks() {/*dodělat*/};
+                return new List<Tasks> {/*dodělat*/};
             }
             else
             {
-                return new Tasks();
+                return new List<Tasks>();
             }
         }
         private MySqlDataReader SelectFromTableByPcId(MySqlConnection connection,DaemonInfo daemon)
