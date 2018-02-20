@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.IO;
 using System.Net;
+using KoFrMaDaemon.ConnectionToServer;
 
 namespace KoFrMaDaemon
 {
@@ -23,41 +24,38 @@ namespace KoFrMaDaemon
 
         private Timer timer;
 
-        private int timerStep;
-
         private string logPath;
-
-        private string serverURL;
 
         private DebugLog debugLog;
 
         private Actions a = new Actions();
 
         private List<Tasks> ScheduledTasks;
+
+        Connection connection = new Connection();
         //Naplánované úlohy přijaté od serveru se budou přidávat do tohoto listu
 
         public ServiceKoFrMa()
         {
             InitializeComponent();
             ScheduledTasks = new List<Tasks>();
-            //timerStep = 5000;
-            //timer = new Timer(this.timerStep);
-            //timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
-            //isStopping = false;
+            timer = new Timer(5000);
+            timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
+            isStopping = false;
             this.logPath = @"d:\Users\Matej\Desktop\KoFrMaBackup\DebugServiceLog.log";
             debugLog = new DebugLog(this.logPath, 8);
 
-            //timer.AutoReset = true;
+            timer.AutoReset = true;
             //this.serverURL = @"http://localhost:50576/";
         }
 
         protected override void OnStart(string[] args)
         {
             debugLog.WriteToLog("Service started", 4);
-            //timer.Start();
+            timer.Start();
 
             //a.BackupFullFolder(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupThisFolder\", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\", debugLog);
-            a.BackupDifferential(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", debugLog);
+            //a.BackupDifferential(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", debugLog);
             //a.BackupDifferential(@"d:\tmp\testBackup\BackupGoesHere\", @"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_13_58_48_Full\KoFrMaBackup.dat", debugLog);
         }
 
@@ -71,42 +69,67 @@ namespace KoFrMaDaemon
 
         private void OnTimerTick(object sender, ElapsedEventArgs e)
         {
-            debugLog.WriteToLog("Timer tick", 9);
+            debugLog.WriteToLog("Timer tick", 7);
             if (!this.isStopping) //Pokud se service zrovna nevypíná, třeba aby při vypínání Windows nezačala běžet úloha
             {
-                //log.WriteToLog("tik");
-
-                //this.GetTasks();
-                //log.WriteToLog("tikTasksGot");
-                /*
-                foreach (Tasks item in ScheduledTasks)
+                debugLog.WriteToLog("Updating list of scheduled tasks from the server...", 5);
+                this.GetTasks();
+                debugLog.WriteToLog("List of scheduled tasks now contains " + this.ScheduledTasks.Count + " tasks", 6);
+                if (this.ScheduledTasks.Count>0)
                 {
-                    if (item.TimeToBackup.CompareTo(DateTime.Now)>=0) //Pokud čas úlohy už uběhl
+                    debugLog.WriteToLog("Tasks found, starting to check if the time has come for each of the tasks", 5);
+
+                    foreach (Tasks item in ScheduledTasks)
                     {
-                        Actions action = new Actions();
-                        if(item.SourceOfBackup.EndsWith(".dat")) //když bude jako zdroj úlohy nastaven path na soubor .dat provede se diferenciální, jinak pokud je to složka tak incrementální
+                        debugLog.WriteToLog("Checking if the task should be started for task with ID " + item.IDTask, 7);
+                        if (item.TimeToBackup.CompareTo(DateTime.Now) >= 0) //Pokud čas úlohy už uběhl
                         {
-                            if (item.WhereToBackup.EndsWith(".zip")|| item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
+                            debugLog.WriteToLog("Task should be running because it was planned to run in " + item.TimeToBackup.ToString() + ", starting the inicialization now...", 6);
+                            Actions action = new Actions();
+                            if (item.SourceOfBackup.EndsWith(".dat")) //když bude jako zdroj úlohy nastaven path na soubor .dat provede se diferenciální, jinak pokud je to složka tak incrementální
                             {
-                                action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
-                                //udělat komprimaci
+                                debugLog.WriteToLog("Starting differential/incremental backup, because the path to source ends with .dat (" + item.SourceOfBackup + ')', 7);
+                                if (item.WhereToBackup.EndsWith(".zip") || item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
+                                {
+                                    debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
+                                    //action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
+                                    //udělat komprimaci
+                                }
+                                else
+                                {
+                                    debugLog.WriteToLog("Starting plain copy backup, because the path to destination doesn't end with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
+                                    action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
+                                }
+
                             }
                             else
-                                action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
-                        }
-                        else
-                        {
-                            if (item.WhereToBackup.EndsWith(".zip") || item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
                             {
-                                action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
-                                //udělat komprimaci
+                                if (item.WhereToBackup.EndsWith(".zip") || item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
+                                {
+                                    debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
+                                    //action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
+                                    //udělat komprimaci
+                                }
+                                else
+                                {
+                                    debugLog.WriteToLog("Starting plain copy backup, because the path to destination doesn't end with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 8);
+                                    action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
+                                }
+
                             }
-                            else
-                                action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
                         }
                     }
-                }*/
+                }
+                else
+                {
+                    debugLog.WriteToLog("No tasks planned, service will check again after " + timer.Interval / 1000 + 's', 5);
+                }
+                
 
+            }
+            else
+            {
+                debugLog.WriteToLog("Service is in the process of stopping, skipping regular timer action", 5);
             }
 
         }
@@ -140,20 +163,22 @@ namespace KoFrMaDaemon
 
         private void GetTasks()
         {
+            ScheduledTasks = connection.PostRequest();
+
             //log.WriteToLog("InGetTasks 1");
 
-            WebRequest request = WebRequest.Create(this.serverURL);
+            //WebRequest request = WebRequest.Create(this.serverURL);
             //request.Method = "POST";
             //request.ContentType = "multipart/form-data"; // ideální pro Upload souborů
             //request.ContentLength = 4;
             //log.WriteToLog("InGetTasks 2");
 
-            WebResponse response = request.GetResponse();
+            //WebResponse response = request.GetResponse();
             //log.WriteToLog("InGetTasks 3");
 
-            string statusDescr = "StatusDescription = " + ((HttpWebResponse)response).StatusDescription;
+            //string statusDescr = "StatusDescription = " + ((HttpWebResponse)response).StatusDescription;
 
-            debugLog.WriteToLog(statusDescr, 5);
+            //debugLog.WriteToLog(statusDescr, 5);
             /*
              // Get the stream containing content returned by the server.
              dataStream = response.GetResponseStream();

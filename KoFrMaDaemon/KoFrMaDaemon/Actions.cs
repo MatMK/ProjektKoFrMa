@@ -184,7 +184,7 @@ namespace KoFrMaDaemon
                         }
                     }
                     //else if (DebugLog._logLevel >= 10)
-                    //    DebugLog.WriteToLog("HashRow Error: " + itemCurrent.HashRow.ToString() + " is not " + itemOriginal.HashRow.ToString(),10);
+                    //    DebugLog.WriteToLog("HashRow Error: " + itemCurrent.HashRow.ToString() + " is not " + itemOriginal.HashRow.ToString(), 10);
 
                 }
                 if (!sameObject)
