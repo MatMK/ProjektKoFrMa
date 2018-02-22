@@ -8,9 +8,10 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
-using System.IO;
-using System.Net;
+//using System.IO;
+//using System.Net;
 using KoFrMaDaemon.ConnectionToServer;
+using System.Management;
 
 namespace KoFrMaDaemon
 {
@@ -93,42 +94,56 @@ namespace KoFrMaDaemon
                         if (item.TimeToBackup.CompareTo(DateTime.Now) >= 0&&item.InProgress == false) //Pokud čas úlohy už uběhl nebo zrovna neběží
                         {
                             debugLog.WriteToLog("Task " + item.IDTask +" should be running because it was planned to run in " + item.TimeToBackup.ToString() + ", starting the inicialization now...", 6);
-                            Actions action = new Actions();
-                            if (item.SourceOfBackup.EndsWith(".dat")) //když bude jako zdroj úlohy nastaven path na soubor .dat provede se diferenciální, jinak pokud je to složka tak incrementální
+                            BackupSwitch backupInstance = new BackupSwitch();
+                            try
                             {
-                                debugLog.WriteToLog("Starting differential/incremental backup, because the path to source ends with .dat (" + item.SourceOfBackup + ')', 7);
-                                if (item.WhereToBackup.EndsWith(".zip") || item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
-                                {
-                                    item.InProgress = true;
-                                    debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
-                                    //action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
-                                    //udělat komprimaci
-                                }
-                                else
-                                {
-                                    item.InProgress = true;
-                                    debugLog.WriteToLog("Starting plain copy backup, because the path to destination doesn't end with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
-                                    action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
-                                }
-
+                                item.InProgress = true;
+                                backupInstance.Backup(item.SourceOfBackup, item.WhereToBackup, debugLog);
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                if (item.WhereToBackup.EndsWith(".zip") || item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
-                                {
-                                    item.InProgress = true;
-                                    debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
-                                    //action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
-                                    //udělat komprimaci
-                                }
-                                else
-                                {
-                                    item.InProgress = true;
-                                    debugLog.WriteToLog("Starting plain copy backup, because the path to destination doesn't end with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 8);
-                                    action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
-                                }
-
+                                debugLog.WriteToLog("Task failed with fatal error " + ex.Message, 2);
                             }
+                            finally
+                            {
+                                item.InProgress = false;
+                            }
+                            
+                            //if (item.SourceOfBackup.EndsWith(".dat")) //když bude jako zdroj úlohy nastaven path na soubor .dat provede se diferenciální, jinak pokud je to složka tak incrementální
+                            //{
+                            //    debugLog.WriteToLog("Starting differential/incremental backup, because the path to source ends with .dat (" + item.SourceOfBackup + ')', 7);
+                            //    if (item.WhereToBackup.EndsWith(".zip") || item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
+                            //    {
+                            //        item.InProgress = true;
+                            //        debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
+                            //        //action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
+                            //        //udělat komprimaci
+                            //    }
+                            //    else
+                            //    {
+                            //        item.InProgress = true;
+                            //        debugLog.WriteToLog("Starting plain copy backup, because the path to destination doesn't end with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
+                            //        action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
+                            //    }
+
+                            //}
+                            //else
+                            //{
+                            //    if (item.WhereToBackup.EndsWith(".zip") || item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
+                            //    {
+                            //        item.InProgress = true;
+                            //        debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
+                            //        //action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
+                            //        //udělat komprimaci
+                            //    }
+                            //    else
+                            //    {
+                            //        item.InProgress = true;
+                            //        debugLog.WriteToLog("Starting plain copy backup, because the path to destination doesn't end with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 8);
+                            //        action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
+                            //    }
+
+                            //}
                         }
                         else
                         {
@@ -149,32 +164,6 @@ namespace KoFrMaDaemon
             }
 
         }
-
-
-
-        /*
-         Vstupní parametry GetTasks():
-         ID
-         IdentityOS
-         Heslo
-         Session
-         OS demona
-         Verze démona
-         LokalniCas
-         LastTasksResults: N-dim; ID_Result; ReturnCode; ID_Result; ReturnCode; ...0
-         
-
-
-
-         int32 i =15;
-         CopyBin(ByteCile, byte[4], 4, i)
-
-
-        Navrácené data:
-        N-tasks; TypeOfTask; Par0..M;  
-
-
-         */
 
 
         private void GetTasks()
@@ -205,5 +194,35 @@ namespace KoFrMaDaemon
              response.Close();
   */
         }
+
+        private static string GetSerNumBIOS()
+        {
+            string lcPopis = "";
+
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_BaseBoard");
+            foreach (ManagementObject wmi in searcher.Get())
+            {
+                try
+                {
+                    lcPopis = wmi.GetPropertyValue("SerialNumber").ToString().Trim();
+                }
+                catch { }
+            }
+            searcher.Dispose();
+
+            searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_BIOS");
+            foreach (ManagementObject wmi in searcher.Get())
+            {
+                try
+                {
+                    lcPopis = lcPopis + wmi.GetPropertyValue("SerialNumber").ToString().Trim();
+                }
+                catch { }
+            }
+            searcher.Dispose();
+
+            return lcPopis;
+        }
+
     }
 }
