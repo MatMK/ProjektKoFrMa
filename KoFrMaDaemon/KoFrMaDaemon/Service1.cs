@@ -93,42 +93,56 @@ namespace KoFrMaDaemon
                         if (item.TimeToBackup.CompareTo(DateTime.Now) >= 0&&item.InProgress == false) //Pokud čas úlohy už uběhl nebo zrovna neběží
                         {
                             debugLog.WriteToLog("Task " + item.IDTask +" should be running because it was planned to run in " + item.TimeToBackup.ToString() + ", starting the inicialization now...", 6);
-                            Actions action = new Actions();
-                            if (item.SourceOfBackup.EndsWith(".dat")) //když bude jako zdroj úlohy nastaven path na soubor .dat provede se diferenciální, jinak pokud je to složka tak incrementální
+                            BackupSwitch backupInstance = new BackupSwitch();
+                            try
                             {
-                                debugLog.WriteToLog("Starting differential/incremental backup, because the path to source ends with .dat (" + item.SourceOfBackup + ')', 7);
-                                if (item.WhereToBackup.EndsWith(".zip") || item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
-                                {
-                                    item.InProgress = true;
-                                    debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
-                                    //action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
-                                    //udělat komprimaci
-                                }
-                                else
-                                {
-                                    item.InProgress = true;
-                                    debugLog.WriteToLog("Starting plain copy backup, because the path to destination doesn't end with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
-                                    action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
-                                }
-
+                                item.InProgress = true;
+                                backupInstance.Backup(item.SourceOfBackup, item.WhereToBackup, debugLog);
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                if (item.WhereToBackup.EndsWith(".zip") || item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
-                                {
-                                    item.InProgress = true;
-                                    debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
-                                    //action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
-                                    //udělat komprimaci
-                                }
-                                else
-                                {
-                                    item.InProgress = true;
-                                    debugLog.WriteToLog("Starting plain copy backup, because the path to destination doesn't end with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 8);
-                                    action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
-                                }
-
+                                debugLog.WriteToLog("Task failed with fatal error " + ex.Message, 2);
                             }
+                            finally
+                            {
+                                item.InProgress = false;
+                            }
+                            
+                            //if (item.SourceOfBackup.EndsWith(".dat")) //když bude jako zdroj úlohy nastaven path na soubor .dat provede se diferenciální, jinak pokud je to složka tak incrementální
+                            //{
+                            //    debugLog.WriteToLog("Starting differential/incremental backup, because the path to source ends with .dat (" + item.SourceOfBackup + ')', 7);
+                            //    if (item.WhereToBackup.EndsWith(".zip") || item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
+                            //    {
+                            //        item.InProgress = true;
+                            //        debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
+                            //        //action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
+                            //        //udělat komprimaci
+                            //    }
+                            //    else
+                            //    {
+                            //        item.InProgress = true;
+                            //        debugLog.WriteToLog("Starting plain copy backup, because the path to destination doesn't end with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
+                            //        action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
+                            //    }
+
+                            //}
+                            //else
+                            //{
+                            //    if (item.WhereToBackup.EndsWith(".zip") || item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
+                            //    {
+                            //        item.InProgress = true;
+                            //        debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
+                            //        //action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
+                            //        //udělat komprimaci
+                            //    }
+                            //    else
+                            //    {
+                            //        item.InProgress = true;
+                            //        debugLog.WriteToLog("Starting plain copy backup, because the path to destination doesn't end with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 8);
+                            //        action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
+                            //    }
+
+                            //}
                         }
                         else
                         {

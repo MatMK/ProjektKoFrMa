@@ -70,6 +70,10 @@
     <Compile Include="Actions.cs" />
     <Compile Include="BackupJournalObject.cs" />
     <Compile Include="BackupJournalOperations.cs" />
+    <Compile Include="ConnectionToServer\Backup.cs" />
+    <Compile Include="ConnectionToServer\BackupDifferential.cs" />
+    <Compile Include="ConnectionToServer\BackupFull.cs" />
+    <Compile Include="ConnectionToServer\Compression.cs" />
     <Compile Include="ConnectionToServer\Connection.cs" />
     <Compile Include="ConnectionToServer\ConnectionInfo.cs" />
     <Compile Include="ConnectionToServer\DaemonInfo.cs" />
