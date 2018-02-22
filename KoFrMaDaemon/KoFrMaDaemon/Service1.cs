@@ -43,12 +43,13 @@ namespace KoFrMaDaemon
             timer = new Timer(5000);
             timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
             inProgress = false;
-            this.logPath = @"d:\Users\Matej\Desktop\KoFrMaBackup\DebugServiceLog.log";
+            this.logPath = @"D:\Matej\Data\Visual Studio\DebugServiceLog.log";
             debugLog = new DebugLog(this.logPath, 8);
-            ConnectionInfo.ServerURL = @"http://localhost:50576/api/Daemon/GetInstructions";
+            daemon.Version = 1;
+            //ziskavat informace z pocitace
+            ConnectionInfo.ServerURL = @"http://localhost:50576";
             daemon.OS = 1;
             daemon.PC_Unique = "1";
-            daemon.Version = 1;
                 
             timer.AutoReset = true;
             //this.serverURL = @"http://localhost:50576/";
@@ -178,7 +179,7 @@ namespace KoFrMaDaemon
 
         private void GetTasks()
         {
-            ScheduledTasks = connection.PostRequest();
+            ScheduledTasks.AddRange(connection.PostRequest());
 
             //log.WriteToLog("InGetTasks 1");
 

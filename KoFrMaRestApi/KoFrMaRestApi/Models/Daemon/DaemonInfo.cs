@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace KoFrMaRestApi.Models
+namespace KoFrMaRestApi.Models.Daemon
 {
     /// <summary>
     /// Info které server obdrží od Daemonu

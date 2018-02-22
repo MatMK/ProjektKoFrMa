@@ -10,7 +10,6 @@ namespace KoFrMaDaemon
     public class DebugLog
     {
         private string _logPath;
-
         public byte _logLevel;
         /*
         0 = Don't create log
@@ -51,6 +50,16 @@ namespace KoFrMaDaemon
             }
             w.Close();
             w.Dispose();
+        }
+
+        public string ReadLog()
+        {
+            string result;
+            using (StreamReader reader = new StreamReader(_logPath))
+            {
+                result = reader.ReadToEnd();
+            }
+            return result;
         }
 
 
