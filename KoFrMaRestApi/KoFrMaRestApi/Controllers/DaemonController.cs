@@ -23,7 +23,7 @@ namespace KoFrMaRestApi.Controllers
         /// </summary>
         /// <param name="daemon"></param>
         /// <returns>Obsahuje informace o deamonu zasílajícím informaci.</returns>
-        [HttpPost]
+        [HttpPost, Route(@"api/Daemon/GetInstructions")]
         public List<Tasks> GetInstructions(DaemonInfo daemon)
         {
             //Zjistí zda je Daemon už zaregistrovaný, pokud ne, přidá ho do databáze
@@ -63,10 +63,10 @@ namespace KoFrMaRestApi.Controllers
                 return new List<Tasks>(); ;
             }
         }
-        [HttpPost]
-        public string TaskCompleted(TaskComplete taskCompleted)
+        [HttpPost,Route(@"api/Daemon/TaskCompleted")]
+        public void TaskCompleted(TaskComplete taskCompleted)
         {
-            return "";
+            
         }
         private MySqlDataReader SelectFromTableByPcId(MySqlConnection connection,DaemonInfo daemon)
         {
