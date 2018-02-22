@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.IO;
 
-namespace KoFrMaDaemon.ConnectionToServer
+namespace KoFrMaDaemon
 {
     public class BackupSwitch
     {
@@ -31,10 +31,12 @@ namespace KoFrMaDaemon.ConnectionToServer
             if (destination.EndsWith(".zip") || destination.EndsWith(".rar") || destination.EndsWith(".7z"))
             {
                 debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + source + ')', 7);
-                Compression compression = new Compression();
-                compression.CompressToZip(destinationInfo.FullName, destinationInfo.FullName + @"\" + ".zip", debugLog);
+                Compression compression = new Compression(debugLog);
+                compression.CompressToZip(destinationInfo.FullName, destinationInfo.FullName + @"\" + ".zip");
 
                 //udělat komprimaci
+
+                Directory.Delete(destinationInfo.FullName);
             }
             else
             {
