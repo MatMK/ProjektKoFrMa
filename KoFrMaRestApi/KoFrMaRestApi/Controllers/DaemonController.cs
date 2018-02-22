@@ -9,6 +9,7 @@ using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using KoFrMaRestApi.Models;
 using System.Data.SqlClient;
+using KoFrMaRestApi.Models.Daemon;
 
 namespace KoFrMaRestApi.Controllers
 {
@@ -23,7 +24,7 @@ namespace KoFrMaRestApi.Controllers
         /// <param name="daemon"></param>
         /// <returns>Obsahuje informace o deamonu zasílajícím informaci.</returns>
         [HttpPost]
-        public string GetInstructions(DaemonInfo daemon)
+        public List<Tasks> GetInstructions(DaemonInfo daemon)
         {
             //Zjistí zda je Daemon už zaregistrovaný, pokud ne, přidá ho do databáze
             string DaemonId = "";
@@ -52,14 +53,20 @@ namespace KoFrMaRestApi.Controllers
             MySqlCommand sqlCommand = new MySqlCommand(@"SELECT Task FROM `tbTasks` WHERE `IdDaemon` = @Id", connection);
             sqlCommand.Parameters.AddWithValue("@Id", DaemonId);
             MySqlDataReader result = sqlCommand.ExecuteReader();
+            
             if (result.Read())
             {
-                return result.GetString(0);
+                return JsonConvert.DeserializeObject<List<Tasks>>(result.GetString(0));
             }
             else
             {
-                return "";
+                return new List<Tasks>(); ;
             }
+        }
+        [HttpPost]
+        public string TaskCompleted(TaskComplete taskCompleted)
+        {
+            return "";
         }
         private MySqlDataReader SelectFromTableByPcId(MySqlConnection connection,DaemonInfo daemon)
         {

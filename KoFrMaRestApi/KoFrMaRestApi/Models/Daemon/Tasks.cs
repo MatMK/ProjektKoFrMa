@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace KoFrMaRestApi.Models
+namespace KoFrMaRestApi.Models.Daemon
 {
     /// <summary>
     /// Obsahuje instrukce pro Daemon
@@ -55,5 +55,7 @@ namespace KoFrMaRestApi.Models
         /// 10 = Program will be more like a log writer than actually doing the process
         /// </summary>
         public byte LogLevel { get; set; }
+
+        public bool InProgress { get; set; }
     }
 }

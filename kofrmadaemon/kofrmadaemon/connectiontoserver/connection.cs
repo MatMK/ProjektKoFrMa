@@ -16,7 +16,7 @@ namespace KoFrMaDaemon.ConnectionToServer
         public List<Tasks> PostRequest()
         {
             DaemonInfo daemon = DaemonInfo.Instance;
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create(ConnectionInfo.ServerURL);
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(ConnectionInfo.ServerURL + @"/api/Daemon/GetInstructions");
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
@@ -35,6 +35,28 @@ namespace KoFrMaDaemon.ConnectionToServer
                 result = streamReader.ReadToEnd();
             }
             return JsonConvert.DeserializeObject<List<Tasks>>(result);
+        }
+        public void TaskCompleted(Tasks task, List<DebugLog> DebugLogs)
+        {
+            
+            List<string> LogTexts = new List<string>();
+            foreach (DebugLog item in DebugLogs)
+            {
+                LogTexts.Add(item.ReadLog());
+            }
+            TaskComplete completedTask = new TaskComplete() { IDTask = task.IDTask, TimeOfCompletition = DateTime.Now,DebugLog = LogTexts, DatFilePath = task.WhereToBackup };
+
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(ConnectionInfo.ServerURL + @"/api/Daemon/TaskCompleted");
+            httpWebRequest.ContentType = "application/json";
+            httpWebRequest.Method = "POST";
+            using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+            {
+                string json = JsonConvert.SerializeObject(completedTask);
+
+                streamWriter.Write(json);
+                streamWriter.Flush();
+                streamWriter.Close();
+            }
         }
     }
 }
