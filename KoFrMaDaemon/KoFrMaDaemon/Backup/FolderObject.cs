@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KoFrMaDaemon
+namespace KoFrMaDaemon.Backup
 {
     public class FolderObject
     {

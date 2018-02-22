@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Security.Cryptography;
 
-namespace KoFrMaDaemon
+namespace KoFrMaDaemon.Backup
 {
     public class BackupJournalOperations
     {

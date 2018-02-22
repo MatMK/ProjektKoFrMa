@@ -12,6 +12,7 @@ using System.Timers;
 //using System.Net;
 using KoFrMaDaemon.ConnectionToServer;
 using System.Management;
+using KoFrMaDaemon.Backup;
 
 namespace KoFrMaDaemon
 {
