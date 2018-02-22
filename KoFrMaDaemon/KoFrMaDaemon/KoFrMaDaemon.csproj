@@ -54,6 +54,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Management" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.4\lib\net45\System.Net.Http.Formatting.dll</HintPath>
@@ -68,17 +69,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions.cs" />
-    <Compile Include="BackupJournalObject.cs" />
-    <Compile Include="BackupJournalOperations.cs" />
-    <Compile Include="ConnectionToServer\Backup.cs" />
-    <Compile Include="ConnectionToServer\BackupDifferential.cs" />
-    <Compile Include="ConnectionToServer\BackupFull.cs" />
-    <Compile Include="ConnectionToServer\Compression.cs" />
+    <Compile Include="Backup\BackupJournalObject.cs" />
+    <Compile Include="Backup\BackupJournalOperations.cs" />
+    <Compile Include="Backup\Backup.cs" />
+    <Compile Include="Backup\BackupDifferential.cs" />
+    <Compile Include="Backup\BackupFull.cs" />
+    <Compile Include="Backup\Compression.cs" />
     <Compile Include="ConnectionToServer\Connection.cs" />
     <Compile Include="ConnectionToServer\ConnectionInfo.cs" />
     <Compile Include="ConnectionToServer\DaemonInfo.cs" />
-    <Compile Include="FileInfoObject.cs" />
-    <Compile Include="FolderObject.cs" />
+    <Compile Include="Backup\FileInfoObject.cs" />
+    <Compile Include="Backup\FolderObject.cs" />
     <Compile Include="DebugLog.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
