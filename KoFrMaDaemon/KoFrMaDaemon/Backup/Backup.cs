@@ -13,26 +13,26 @@ namespace KoFrMaDaemon.Backup
         protected DirectoryInfo sourceInfo;
         protected DirectoryInfo destinationInfo;
 
-        public void Backup(string source, string destination, DebugLog debugLog)
+        public void Backup(string source, string destination,  byte compressionLevel, DebugLog debugLog)
         {
             if (source.EndsWith(".dat")) //když bude jako zdroj úlohy nastaven path na soubor .dat provede se diferenciální, jinak pokud je to složka tak plná
             {
                 debugLog.WriteToLog("Starting differential/incremental backup, because the path to source ends with .dat (" + source + ')', 7);
                 BackupDifferential backupDifferential = new BackupDifferential();
-                backupDifferential.Backup(source, destination, debugLog);
+                backupDifferential.BackupDifferentialProcess(source, destination, debugLog);
             }
             else
             {
                 debugLog.WriteToLog("Starting full backup, because the path to source doesn't end with .dat (" + source + ')', 7);
                 BackupFull backupFull = new BackupFull();
-                backupFull.Backup(source, destination, debugLog);
+                backupFull.BackupFullProcess(source, destination, debugLog);
             }
 
             if (destination.EndsWith(".zip") || destination.EndsWith(".rar") || destination.EndsWith(".7z"))
             {
                 debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + source + ')', 7);
                 Compression compression = new Compression(debugLog);
-                compression.CompressToZip(destinationInfo.FullName, destinationInfo.FullName + @"\" + ".zip");
+                compression.CompressToZip(destinationInfo.FullName, destinationInfo.FullName + @"\" + ".zip",compressionLevel);
 
                 //udělat komprimaci
 

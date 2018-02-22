@@ -54,6 +54,15 @@ namespace KoFrMaDaemon
         /// </summary>
         public byte LogLevel { get; set; }
 
+        /// <summary>
+        /// Jakou úrovní komprese komprimovat zip, pokud se do něj komprimuje
+        /// 0 = Optimal
+        /// 1 = Fastest
+        /// 2 = No Compression
+        /// </summary>
+        public byte CompressionLevel { get; set; }
+
+
         public bool InProgress { get; set; }
     }
 }

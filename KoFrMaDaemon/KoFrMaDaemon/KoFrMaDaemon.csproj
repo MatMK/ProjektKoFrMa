@@ -68,7 +68,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions.cs" />
     <Compile Include="Backup\BackupJournalObject.cs" />
     <Compile Include="Backup\BackupJournalOperations.cs" />
     <Compile Include="Backup\Backup.cs" />

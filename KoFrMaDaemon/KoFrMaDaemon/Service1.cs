@@ -30,8 +30,6 @@ namespace KoFrMaDaemon
 
         private DebugLog debugLog;
 
-        private Actions a = new Actions();
-
         private List<Tasks> ScheduledTasks;
 
         Connection connection = new Connection();
@@ -99,7 +97,7 @@ namespace KoFrMaDaemon
                             try
                             {
                                 item.InProgress = true;
-                                backupInstance.Backup(item.SourceOfBackup, item.WhereToBackup, debugLog);
+                                backupInstance.Backup(item.SourceOfBackup, item.WhereToBackup,item.CompressionLevel, debugLog);
                             }
                             catch (Exception ex)
                             {
