@@ -8,9 +8,10 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
-using System.IO;
-using System.Net;
+//using System.IO;
+//using System.Net;
 using KoFrMaDaemon.ConnectionToServer;
+using System.Management;
 
 namespace KoFrMaDaemon
 {
@@ -150,32 +151,6 @@ namespace KoFrMaDaemon
         }
 
 
-
-        /*
-         Vstupní parametry GetTasks():
-         ID
-         IdentityOS
-         Heslo
-         Session
-         OS demona
-         Verze démona
-         LokalniCas
-         LastTasksResults: N-dim; ID_Result; ReturnCode; ID_Result; ReturnCode; ...0
-         
-
-
-
-         int32 i =15;
-         CopyBin(ByteCile, byte[4], 4, i)
-
-
-        Navrácené data:
-        N-tasks; TypeOfTask; Par0..M;  
-
-
-         */
-
-
         private void GetTasks()
         {
             ScheduledTasks = connection.PostRequest();
@@ -204,5 +179,35 @@ namespace KoFrMaDaemon
              response.Close();
   */
         }
+
+        private static string GetSerNumBIOS()
+        {
+            string lcPopis = "";
+
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_BaseBoard");
+            foreach (ManagementObject wmi in searcher.Get())
+            {
+                try
+                {
+                    lcPopis = wmi.GetPropertyValue("SerialNumber").ToString().Trim();
+                }
+                catch { }
+            }
+            searcher.Dispose();
+
+            searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_BIOS");
+            foreach (ManagementObject wmi in searcher.Get())
+            {
+                try
+                {
+                    lcPopis = lcPopis + wmi.GetPropertyValue("SerialNumber").ToString().Trim();
+                }
+                catch { }
+            }
+            searcher.Dispose();
+
+            return lcPopis;
+        }
+
     }
 }
