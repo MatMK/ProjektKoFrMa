@@ -10,11 +10,18 @@ namespace KoFrMaDaemon.Backup
 {
     public class BackupFull:BackupSwitch
     {
-        public List<FileInfoObject> FilesCorrect = new List<FileInfoObject>(1000);
-        public List<FolderObject> FoldersCorrect = new List<FolderObject>(1000);
-        public List<String> FilesError = new List<string>(100);
-        public List<String> FoldersError = new List<string>(100);
+        public List<FileInfoObject> FilesCorrect;
+        public List<FolderObject> FoldersCorrect;
+        public List<CopyErrorObject> FilesErrorCopy;
+        public List<CopyErrorObject> FoldersErrorCopy;
 
+        public BackupFull()
+        {
+            FilesCorrect = new List<FileInfoObject>(100);
+            FoldersCorrect = new List<FolderObject>(100);
+            FilesErrorCopy = new List<CopyErrorObject>(100);
+            FoldersErrorCopy = new List<CopyErrorObject>(100);
+        }
 
 
         public void BackupFullProcess(string source, string destination, DebugLog serviceDebugLog)
@@ -49,7 +56,7 @@ namespace KoFrMaDaemon.Backup
             {
                 DebugLog.WriteToLog("Backuping now...", 4);
                 this.CopyDirectoryRecursivly(sourceInfo, destinationInfo);
-                DebugLog.WriteToLog("Backup done, " + FilesCorrect.Count.ToString() + " files and " + FoldersCorrect.Count.ToString() + " folders successfully backuped, it was unable to backup " + FilesError.Count + " files and " + FoldersError.Count + " folders", 5);
+                DebugLog.WriteToLog("Backup done, " + FilesCorrect.Count.ToString() + " files and " + FoldersCorrect.Count.ToString() + " folders successfully backuped, it was unable to backup " + FilesErrorCopy.Count + " files and " + FoldersErrorCopy.Count + " folders", 5);
             }
             catch (Exception x)
             {
@@ -78,9 +85,9 @@ namespace KoFrMaDaemon.Backup
                     item.CopyTo(to.FullName + @"\" + item.Name);
                     FilesCorrect.Add(new FileInfoObject { RelativePath = item.FullName.Remove(0, sourceInfo.FullName.Length), Length = item.Length, CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString(), MD5 = this.CalculateMD5(item.FullName) });
                 }
-                catch (Exception x)
+                catch (Exception ex)
                 {
-                    this.FilesError.Add(item.FullName);
+                    this.FilesErrorCopy.Add(new CopyErrorObject() { FullPath = item.FullName, ExceptionMessage = ex.Message });
                 }
 
             }
@@ -92,9 +99,9 @@ namespace KoFrMaDaemon.Backup
                     this.CopyDirectoryRecursivly(item, to.CreateSubdirectory(item.Name));
                     this.FoldersCorrect.Add(new FolderObject() { RelativePath = item.FullName.Remove(0, sourceInfo.FullName.Length), CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString() });
                 }
-                catch (Exception x)
+                catch (Exception ex)
                 {
-                    this.FoldersError.Add(item.FullName);
+                    this.FoldersErrorCopy.Add(new CopyErrorObject() { FullPath = item.FullName, ExceptionMessage = ex.Message });
                 }
 
             }

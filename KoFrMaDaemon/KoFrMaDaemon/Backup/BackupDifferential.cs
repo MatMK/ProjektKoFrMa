@@ -9,12 +9,23 @@ namespace KoFrMaDaemon.Backup
 {
     public class BackupDifferential:BackupSwitch
     {
-        public List<FileInfoObject> FilesCorrect = new List<FileInfoObject>(100);
-        public List<FolderObject> FoldersCorrect = new List<FolderObject>(100);
-        public List<String> FilesErrorLoad = new List<string>(100);
-        public List<String> FilesErrorCopy = new List<string>(100);
-        public List<String> FoldersErrorLoad = new List<string>(100);
-        public List<String> FoldersErrorCopy = new List<string>(100);
+        public List<FileInfoObject> FilesCorrect;
+        public List<FolderObject> FoldersCorrect;
+        public List<CopyErrorObject> FilesErrorLoad;
+        public List<CopyErrorObject> FilesErrorCopy;
+        public List<CopyErrorObject> FoldersErrorLoad;
+        public List<CopyErrorObject> FoldersErrorCopy;
+
+        public BackupDifferential()
+        {
+            FilesCorrect = new List<FileInfoObject>(100);
+            FoldersCorrect = new List<FolderObject>(100);
+            FilesErrorLoad = new List<CopyErrorObject>(100);
+            FilesErrorCopy = new List<CopyErrorObject>(100);
+            FoldersErrorLoad = new List<CopyErrorObject>(100);
+            FoldersErrorCopy = new List<CopyErrorObject>(100);
+        }
+
 
         public void BackupDifferentialProcess(string OriginalBackupDatFilePath, string destination, DebugLog serviceDebugLog)
         {
@@ -232,8 +243,6 @@ namespace KoFrMaDaemon.Backup
             DebugLog.WriteToLog("Backuping modified folder structure...", 5);
             FilesCorrect = new List<FileInfoObject>();
             FoldersCorrect = new List<FolderObject>();
-            FilesErrorCopy = new List<string>();
-            FoldersErrorCopy = new List<string>();
             DirectoryInfo tmpDirectoryInfo;
             for (int i = 0; i < FoldersToCreate.Count; i++)
             {
@@ -244,9 +253,9 @@ namespace KoFrMaDaemon.Backup
                     tmpDirectoryInfo.Create();
                     this.FoldersCorrect.Add(new FolderObject() { RelativePath = tmpDirectoryInfo.FullName.Remove(0, sourceInfo.FullName.Length), CreationTimeUtc = tmpDirectoryInfo.CreationTimeUtc, LastWriteTimeUtc = tmpDirectoryInfo.LastWriteTimeUtc, Attributes = tmpDirectoryInfo.Attributes.ToString() });
                 }
-                catch (Exception x)
+                catch (Exception ex)
                 {
-                    this.FoldersErrorCopy.Add(tmpDirectoryInfo.FullName);
+                    this.FoldersErrorCopy.Add(new CopyErrorObject() {FullPath = tmpDirectoryInfo.FullName,ExceptionMessage = ex.Message });
                 }
             }
             DebugLog.WriteToLog("Backup of folder structure is done, " + this.FoldersCorrect.Count + " folders were successfully created, it was unable to create " + this.FoldersErrorCopy.Count + " folders", 5);
@@ -271,7 +280,7 @@ namespace KoFrMaDaemon.Backup
                 }
                 catch (Exception ex)
                 {
-                    this.FilesErrorCopy.Add(tmpFileInfo.FullName);
+                    this.FilesErrorCopy.Add(new CopyErrorObject() {FullPath = tmpFileInfo.FullName,ExceptionMessage = ex.Message });
                     DebugLog.WriteToLog("Unable to copy " + tmpFileInfo.FullName + " to " + destinationInfo.FullName + @"\" + FilesToCopy[i] + " because of exception " + ex.Message + ". Path to destination folder: " + tmpFileInfo.Directory.FullName, 8);
                 }
 
@@ -314,9 +323,9 @@ namespace KoFrMaDaemon.Backup
                 {
                     FileList.Add(new FileInfoObject { RelativePath = item.FullName.Remove(0, sourceInfo.FullName.Length), Length = item.Length, CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString(), MD5 = this.CalculateMD5(item.FullName) });
                 }
-                catch (Exception x)
+                catch (Exception ex)
                 {
-                    this.FilesErrorLoad.Add(item.FullName);
+                    this.FilesErrorLoad.Add(new CopyErrorObject() { FullPath = item.FullName, ExceptionMessage = ex.Message });
                 }
 
             }
@@ -328,9 +337,9 @@ namespace KoFrMaDaemon.Backup
                     this.ExploreDirectoryRecursively(item, FileList, FolderList);
                     FolderList.Add(new FolderObject() { RelativePath = item.FullName.Remove(0, sourceInfo.FullName.Length), CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString() });
                 }
-                catch (Exception x)
+                catch (Exception ex)
                 {
-                    this.FoldersErrorLoad.Add(item.FullName);
+                    this.FoldersErrorLoad.Add(new CopyErrorObject() { FullPath = item.FullName, ExceptionMessage = ex.Message });
                 }
 
             }
