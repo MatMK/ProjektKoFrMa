@@ -18,39 +18,42 @@ namespace KoFrMaDaemon
 {
     public partial class ServiceKoFrMa : ServiceBase
     {
-        //private const string servicePrefixName = "KoFrMa";
+        private Timer timer;
+        private DebugLog debugLog;
+        Connection connection;
+        DaemonInfo daemon;
 
         private bool inProgress;
-
-        private Timer timer;
-
         private string logPath;
 
-        private DebugLog debugLog;
-
+        /// <summary>
+        /// Naplánované úlohy přijaté od serveru se budou přidávat do tohoto listu
+        /// </summary>
         private List<Tasks> ScheduledTasks;
-
-        Connection connection = new Connection();
-        DaemonInfo daemon = DaemonInfo.Instance;
-        //Naplánované úlohy přijaté od serveru se budou přidávat do tohoto listu
 
         public ServiceKoFrMa()
         {
             InitializeComponent();
+
+            connection = new Connection();
+            ConnectionInfo.ServerURL = @"http://localhost:50576";
+            daemon = DaemonInfo.Instance;
             ScheduledTasks = new List<Tasks>();
+
+            inProgress = false;
             timer = new Timer(5000);
             timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
-            inProgress = false;
+            timer.AutoReset = true;
+
             this.logPath = @"D:\Matej\Data\Visual Studio\DebugServiceLog.log";
             debugLog = new DebugLog(this.logPath, 8);
+
+            /// <summary>
+            /// Předávání informací o daemonovi a systému
+            /// </summary>
             daemon.Version = 101;
-            //ziskavat informace z pocitace
-            ConnectionInfo.ServerURL = @"http://localhost:50576";
             daemon.OS = System.Environment.OSVersion.VersionString;
             daemon.PC_Unique = this.GetSerNumBIOS();
-
-            timer.AutoReset = true;
-            //this.serverURL = @"http://localhost:50576/";
         }
 
         protected override void OnStart(string[] args)
@@ -132,30 +135,6 @@ namespace KoFrMaDaemon
         private void GetTasks()
         {
             ScheduledTasks.AddRange(connection.PostRequest());
-
-            //log.WriteToLog("InGetTasks 1");
-
-            //WebRequest request = WebRequest.Create(this.serverURL);
-            //request.Method = "POST";
-            //request.ContentType = "multipart/form-data"; // ideální pro Upload souborů
-            //request.ContentLength = 4;
-            //log.WriteToLog("InGetTasks 2");
-
-            //WebResponse response = request.GetResponse();
-            //log.WriteToLog("InGetTasks 3");
-
-            //string statusDescr = "StatusDescription = " + ((HttpWebResponse)response).StatusDescription;
-
-            //debugLog.WriteToLog(statusDescr, 5);
-            /*
-             // Get the stream containing content returned by the server.
-             dataStream = response.GetResponseStream();
-             byte[] buffer = new byte[16000];
-             int ReadCount = dataStream.Read(buffer, 0, buffer.Length);
-
-             dataStream.Close();
-             response.Close();
-  */
         }
 
         private string GetSerNumBIOS()

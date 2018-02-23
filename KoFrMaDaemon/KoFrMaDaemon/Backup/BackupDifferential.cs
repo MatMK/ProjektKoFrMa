@@ -47,7 +47,6 @@ namespace KoFrMaDaemon.Backup
 
             DebugLog.WriteToLog("Creating list of current files and folders...", 5);
             sourceInfo = new DirectoryInfo(source);
-            //this.CopyDirectoryRecursivly(sourceInfo, null, false);
             BackupJournalObject currentJournalObject = JournalCurrent(sourceInfo);
 
 
@@ -87,7 +86,7 @@ namespace KoFrMaDaemon.Backup
 
                     if (itemCurrent.HashRow == itemOriginal.HashRow)
                     {
-                        if (itemCurrent.RelativePathName == itemOriginal.RelativePathName
+                        if (itemCurrent.RelativePath == itemOriginal.RelativePath
                             && itemCurrent.Length == itemOriginal.Length
                             && itemCurrent.CreationTimeUtc == itemOriginal.CreationTimeUtc
                             && itemCurrent.LastWriteTimeUtc == itemOriginal.LastWriteTimeUtc
@@ -105,9 +104,9 @@ namespace KoFrMaDaemon.Backup
 
                         else if (DebugLog._logLevel >= 8)
                         {
-                            if (itemCurrent.RelativePathName != itemOriginal.RelativePathName)
+                            if (itemCurrent.RelativePath != itemOriginal.RelativePath)
                             {
-                                DebugLog.WriteToLog("RelativePathName Error: " + itemCurrent.RelativePathName + " is not " + itemOriginal.RelativePathName, 8);
+                                DebugLog.WriteToLog("RelativePathName Error: " + itemCurrent.RelativePath + " is not " + itemOriginal.RelativePath, 8);
                             }
                             if (itemCurrent.Length != itemOriginal.Length)
                             {
@@ -137,7 +136,7 @@ namespace KoFrMaDaemon.Backup
                 }
                 if (!sameObject)
                 {
-                    FilesToCopy.Add(itemCurrent.RelativePathName);
+                    FilesToCopy.Add(itemCurrent.RelativePath);
                 }
             }
             DebugLog.WriteToLog("Comparison of files successfully done, " + FilesToCopy.Count + " files were created or modified since original backup.", 5);
@@ -147,8 +146,7 @@ namespace KoFrMaDaemon.Backup
             {
                 if (!itemOriginal.Paired)
                 {
-                    //možná předělat, ukazuje včetně upravených souborů
-                    FilesToDelete.Add(source + itemOriginal.RelativePathName);
+                    FilesToDelete.Add(source + itemOriginal.RelativePath);
                 }
             }
             DebugLog.WriteToLog("There is " + FilesToDelete.Count + " files that needs to be deleted since the original backup.", 5);
@@ -166,7 +164,7 @@ namespace KoFrMaDaemon.Backup
 
                     if (itemCurrent.HashRow == itemOriginal.HashRow)
                     {
-                        if (itemCurrent.FolderPath == itemOriginal.FolderPath
+                        if (itemCurrent.RelativePath == itemOriginal.RelativePath
                             && itemCurrent.CreationTimeUtc == itemOriginal.CreationTimeUtc
                             && itemCurrent.LastWriteTimeUtc == itemOriginal.LastWriteTimeUtc
                             && itemCurrent.Attributes == itemOriginal.Attributes)
@@ -182,9 +180,9 @@ namespace KoFrMaDaemon.Backup
 
                         else if (DebugLog._logLevel >= 8)
                         {
-                            if (itemCurrent.FolderPath != itemOriginal.FolderPath)
+                            if (itemCurrent.RelativePath != itemOriginal.RelativePath)
                             {
-                                DebugLog.WriteToLog("FolderPath Error: " + itemCurrent.FolderPath + " is not " + itemOriginal.FolderPath, 8);
+                                DebugLog.WriteToLog("FolderPath Error: " + itemCurrent.RelativePath + " is not " + itemOriginal.RelativePath, 8);
                             }
                             if (itemCurrent.CreationTimeUtc != itemOriginal.CreationTimeUtc)
                             {
@@ -206,7 +204,7 @@ namespace KoFrMaDaemon.Backup
                 }
                 if (!sameObject)
                 {
-                    FoldersToCreate.Add(itemCurrent.FolderPath);
+                    FoldersToCreate.Add(itemCurrent.RelativePath);
                 }
             }
             DebugLog.WriteToLog("Comparison of folders successfully done, " + FoldersToCreate.Count + " folders were created or changed since the original backup.", 5);
@@ -218,7 +216,7 @@ namespace KoFrMaDaemon.Backup
             {
                 if (!itemOriginal.Paired)
                 {
-                    FoldersToDelete.Add(source + itemOriginal.FolderPath);
+                    FoldersToDelete.Add(source + itemOriginal.RelativePath);
                     //in FoldersToDelete při obnově mazat POUZE prázdné!!
                 }
             }
@@ -244,7 +242,7 @@ namespace KoFrMaDaemon.Backup
                 {
 
                     tmpDirectoryInfo.Create();
-                    this.FoldersCorrect.Add(new FolderObject() { FolderPath = tmpDirectoryInfo.FullName.Remove(0, sourceInfo.FullName.Length), CreationTimeUtc = tmpDirectoryInfo.CreationTimeUtc, LastWriteTimeUtc = tmpDirectoryInfo.LastWriteTimeUtc, Attributes = tmpDirectoryInfo.Attributes.ToString() });
+                    this.FoldersCorrect.Add(new FolderObject() { RelativePath = tmpDirectoryInfo.FullName.Remove(0, sourceInfo.FullName.Length), CreationTimeUtc = tmpDirectoryInfo.CreationTimeUtc, LastWriteTimeUtc = tmpDirectoryInfo.LastWriteTimeUtc, Attributes = tmpDirectoryInfo.Attributes.ToString() });
                 }
                 catch (Exception x)
                 {
@@ -269,7 +267,7 @@ namespace KoFrMaDaemon.Backup
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(FilesToCopy[i]));
                     tmpFileInfo.CopyTo(destinationInfo.FullName + @"\" + FilesToCopy[i]);
-                    FilesCorrect.Add(new FileInfoObject { RelativePathName = tmpFileInfo.FullName.Remove(0, sourceInfo.FullName.Length), Length = tmpFileInfo.Length, CreationTimeUtc = tmpFileInfo.CreationTimeUtc, LastWriteTimeUtc = tmpFileInfo.LastWriteTimeUtc, Attributes = tmpFileInfo.Attributes.ToString(), MD5 = this.CalculateMD5(tmpFileInfo.FullName) });
+                    FilesCorrect.Add(new FileInfoObject { RelativePath = tmpFileInfo.FullName.Remove(0, sourceInfo.FullName.Length), Length = tmpFileInfo.Length, CreationTimeUtc = tmpFileInfo.CreationTimeUtc, LastWriteTimeUtc = tmpFileInfo.LastWriteTimeUtc, Attributes = tmpFileInfo.Attributes.ToString(), MD5 = this.CalculateMD5(tmpFileInfo.FullName) });
                 }
                 catch (Exception ex)
                 {
@@ -314,8 +312,7 @@ namespace KoFrMaDaemon.Backup
             {
                 try
                 {
-                    FileList.Add(new FileInfoObject { RelativePathName = item.FullName.Remove(0, sourceInfo.FullName.Length), Length = item.Length, CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString(), MD5 = this.CalculateMD5(item.FullName) });
-                    //this.FilesCorrect.Add(item.DirectoryName + '|' + item.FullName + '|' +  item.Length.ToString() + '|' + item.CreationTimeUtc.ToString() + '|' + item.LastWriteTimeUtc.ToString() + '|' + item.LastAccessTimeUtc.ToString() + '|' + item.Attributes.ToString() + '|' + this.CalculateMD5(item.FullName));
+                    FileList.Add(new FileInfoObject { RelativePath = item.FullName.Remove(0, sourceInfo.FullName.Length), Length = item.Length, CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString(), MD5 = this.CalculateMD5(item.FullName) });
                 }
                 catch (Exception x)
                 {
@@ -329,8 +326,7 @@ namespace KoFrMaDaemon.Backup
                 try
                 {
                     this.ExploreDirectoryRecursively(item, FileList, FolderList);
-                    //this.FoldersCorrect.Add(item.FullName.Remove(0, sourceInfo.FullName.Length));
-                    FolderList.Add(new FolderObject() { FolderPath = item.FullName.Remove(0, sourceInfo.FullName.Length), CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString() });
+                    FolderList.Add(new FolderObject() { RelativePath = item.FullName.Remove(0, sourceInfo.FullName.Length), CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString() });
                 }
                 catch (Exception x)
                 {
