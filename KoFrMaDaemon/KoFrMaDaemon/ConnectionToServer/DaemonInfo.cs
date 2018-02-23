@@ -27,7 +27,7 @@ namespace KoFrMaDaemon.ConnectionToServer
         /// <summary>
         /// Operační systém na kterém daemón běží
         /// </summary>
-        public int OS { get; set; }
+        public string OS { get; set; }
         /// <summary>
         /// Unikátní číslo počítače
         /// </summary>
