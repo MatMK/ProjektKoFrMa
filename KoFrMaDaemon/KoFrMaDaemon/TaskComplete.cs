@@ -19,5 +19,7 @@ namespace KoFrMaDaemon
 
         public List<string> DebugLog { get; set; }
 
+        public bool IsSuccessfull { get; set; }
+
     }
 }

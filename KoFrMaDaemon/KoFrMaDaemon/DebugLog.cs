@@ -11,6 +11,8 @@ namespace KoFrMaDaemon
     {
         private string _logPath;
         public byte _logLevel;
+        public List<string> logReport;
+
         /*
         0 = Don't create log
         1 = Fatal errors only that shuts down whole service/program
@@ -38,86 +40,45 @@ namespace KoFrMaDaemon
             w.Close();
             w.Dispose();
         }
-        
-        
+
+
 
         public void WriteToLog(string text, byte level)
         {
-            w = new StreamWriter(this._logPath, true);
-            if (level<=_logLevel)
+            string row = DateTime.Now.ToString() + " " + level.ToString() + " " + text;
+            bool logLevelBool;
+            if (level <= _logLevel)
             {
-                w.WriteLine(DateTime.Now.ToString() + " " + level.ToString() + " " + text);
+                logLevelBool = true;
+                logReport.Add(row);
             }
-            w.Close();
-            w.Dispose();
+            else
+            {
+                logLevelBool = false;
+            }
+            if (_logPath != null)
+            {
+                w = new StreamWriter(this._logPath, true);
+                if (logLevelBool)
+                {
+                    w.WriteLine(row);
+                }
+                w.Close();
+                w.Dispose();
+            }
+
         }
 
-        public string ReadLog()
-        {
-            string result;
-            using (StreamReader reader = new StreamReader(_logPath))
-            {
-                result = reader.ReadToEnd();
-            }
-            return result;
-        }
 
-
-
-
-        //public List<FileInfoObject> LoadBackupJournalFiles(string OriginalBackupDatFilePath)
+        //public string ReadLog()
         //{
-        //    r = new StreamReader(OriginalBackupDatFilePath);
-        //    List<FileInfoObject> tmpList = new List<FileInfoObject>(100);
-        //    r.ReadLine();
-        //    string[] tmp;
-        //    while (r.Peek()!='?')
+        //    string result;
+        //    using (StreamReader reader = new StreamReader(_logPath))
         //    {
-        //        tmp = r.ReadLine().Split('|');
-        //        if (tmp.Length==7)
-        //        {
-        //            tmpList.Add(new FileInfoObject() { RelativePathName = tmp[0], Length = Convert.ToInt64(tmp[1]), CreationTimeUtc = DateTime.FromBinary(Convert.ToInt64(tmp[2])), LastWriteTimeUtc = DateTime.FromBinary(Convert.ToInt64(tmp[3])), Attributes = tmp[4], MD5 = tmp[5], HashRow = Convert.ToInt32(tmp[6]) });
-        //        }
-                
+        //        result = reader.ReadToEnd();
         //    }
-        //    return tmpList;
+        //    return result;
         //}
-
-        //public string LoadBackupRelativePath(string OriginalBackupDatFilePath)
-        //{
-        //    r = new StreamReader(OriginalBackupDatFilePath);
-        //    return r.ReadLine();
-        //}
-
-        //public List<string> LoadBackupJournalFolders(string OriginalBackupDatFilePath)
-        //{
-        //    r = new StreamReader(OriginalBackupDatFilePath);
-        //    List<string> tmpList = new List<string>();
-        //    string tmp = "";
-        //    while(tmp != "?")
-        //    {
-        //        tmp = r.ReadLine();
-        //    }
-        //    while (!r.EndOfStream)
-        //    {
-        //        tmpList.Add(r.ReadLine());
-        //    }
-        //    return tmpList;
-        //}
-
-        //Int32 CalculateMD5_32(string row)
-        //{
-        //    byte[] inputBytes = System.Text.Encoding.UTF8.GetBytes(row);
-        //    using (var md5 = MD5.Create())
-        //    {
-        //        {
-        //            var hash = md5.ComputeHash(inputBytes);
-        //            return BitConverter.ToInt32(hash, 0);
-        //            //return 123;// Convert.ToInt32(BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant().Substring(0, 8));
-        //        }
-        //    }
-        //}
-
 
         //private string DateTimeToString(DateTime dateTime)
         //{

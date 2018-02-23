@@ -20,8 +20,6 @@ namespace KoFrMaDaemon
     {
         //private const string servicePrefixName = "KoFrMa";
 
-        //private const byte version = 101;
-
         private bool inProgress;
 
         private Timer timer;
@@ -45,12 +43,12 @@ namespace KoFrMaDaemon
             inProgress = false;
             this.logPath = @"D:\Matej\Data\Visual Studio\DebugServiceLog.log";
             debugLog = new DebugLog(this.logPath, 8);
-            daemon.Version = 1;
+            daemon.Version = 101;
             //ziskavat informace z pocitace
             ConnectionInfo.ServerURL = @"http://localhost:50576";
-            daemon.OS = 1;
-            daemon.PC_Unique = "1";
-                
+            daemon.OS = System.Environment.OSVersion.VersionString;
+            daemon.PC_Unique = this.GetSerNumBIOS();
+
             timer.AutoReset = true;
             //this.serverURL = @"http://localhost:50576/";
         }
@@ -98,51 +96,17 @@ namespace KoFrMaDaemon
                             {
                                 item.InProgress = true;
                                 backupInstance.Backup(item.SourceOfBackup, item.WhereToBackup,item.CompressionLevel, debugLog);
+                                connection.TaskCompleted(item, debugLog, true);
                             }
                             catch (Exception ex)
                             {
                                 debugLog.WriteToLog("Task failed with fatal error " + ex.Message, 2);
+                                connection.TaskCompleted(item, debugLog, false);
                             }
                             finally
                             {
                                 item.InProgress = false;
                             }
-                            
-                            //if (item.SourceOfBackup.EndsWith(".dat")) //když bude jako zdroj úlohy nastaven path na soubor .dat provede se diferenciální, jinak pokud je to složka tak incrementální
-                            //{
-                            //    debugLog.WriteToLog("Starting differential/incremental backup, because the path to source ends with .dat (" + item.SourceOfBackup + ')', 7);
-                            //    if (item.WhereToBackup.EndsWith(".zip") || item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
-                            //    {
-                            //        item.InProgress = true;
-                            //        debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
-                            //        //action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
-                            //        //udělat komprimaci
-                            //    }
-                            //    else
-                            //    {
-                            //        item.InProgress = true;
-                            //        debugLog.WriteToLog("Starting plain copy backup, because the path to destination doesn't end with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
-                            //        action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
-                            //    }
-
-                            //}
-                            //else
-                            //{
-                            //    if (item.WhereToBackup.EndsWith(".zip") || item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
-                            //    {
-                            //        item.InProgress = true;
-                            //        debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
-                            //        //action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
-                            //        //udělat komprimaci
-                            //    }
-                            //    else
-                            //    {
-                            //        item.InProgress = true;
-                            //        debugLog.WriteToLog("Starting plain copy backup, because the path to destination doesn't end with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 8);
-                            //        action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
-                            //    }
-
-                            //}
                         }
                         else
                         {
@@ -194,7 +158,7 @@ namespace KoFrMaDaemon
   */
         }
 
-        private static string GetSerNumBIOS()
+        private string GetSerNumBIOS()
         {
             string lcPopis = "";
 
