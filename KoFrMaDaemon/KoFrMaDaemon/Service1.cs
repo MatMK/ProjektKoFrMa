@@ -35,9 +35,9 @@ namespace KoFrMaDaemon
         {
             InitializeComponent();
 
-            connection = new Connection();
+            
             ConnectionInfo.ServerURL = @"http://localhost:50576";
-            daemon = DaemonInfo.Instance;
+
             ScheduledTasks = new List<Tasks>();
 
             inProgress = false;
@@ -45,22 +45,41 @@ namespace KoFrMaDaemon
             timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
             timer.AutoReset = true;
 
-            this.logPath = @"D:\Matej\Data\Visual Studio\DebugServiceLog.log";
+            this.logPath = @"d:\tmp\testBackup\DebugServiceLog.log";
             debugLog = new DebugLog(this.logPath, 8);
 
             /// <summary>
             /// Předávání informací o daemonovi a systému
             /// </summary>
-            daemon.Version = 101;
-            daemon.OS = System.Environment.OSVersion.VersionString;
-            daemon.PC_Unique = this.GetSerNumBIOS();
+            /// 
+            //daemon = DaemonInfo.Instance;
+            //daemon.Version = 101;
+            //daemon.OS = System.Environment.OSVersion.VersionString;
+            ////daemon.PC_Unique = this.GetSerNumBIOS();
+            //connection = new Connection();
         }
 
         protected override void OnStart(string[] args)
         {
             debugLog.WriteToLog("Service started", 4);
-            timer.Start();
+            //timer.Start();
+
+            //BackupDifferential backupTest = new BackupDifferential();
+            //BackupFull fullbackupTestFull = new BackupFull();
+            //fullbackupTestFull.BackupFullProcess(@"d:\tmp\testBackup\BackupThisFolder\", @"d:\tmp\testBackup\BackupGoesHere\", debugLog);
+            //backupTest.BackupDifferentialProcess(@"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_24_15_14_39_Full\KoFrMaBackup.dat\", @"d:\tmp\testBackup\BackupGoesHere\", debugLog);
+            BackupSwitch backupSwitchTest = new BackupSwitch();
+            try
+            {
+                backupSwitchTest.Backup(@"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_24_15_14_39_Full\KoFrMaBackup.dat", @"d:\tmp\testBackup\BackupGoesHere\.zip", null, debugLog);
+            }
+            catch (Exception ex)
+            {
+                debugLog.WriteToLog(ex.Message, 2);
+                throw;
+            }
             
+
             //a.BackupFullFolder(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupThisFolder\", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\", debugLog);
             //a.BackupDifferential(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", debugLog);
             //a.BackupDifferential(@"d:\tmp\testBackup\BackupGoesHere\", @"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_13_58_48_Full\KoFrMaBackup.dat", debugLog);

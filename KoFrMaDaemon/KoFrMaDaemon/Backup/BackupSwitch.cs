@@ -19,20 +19,20 @@ namespace KoFrMaDaemon.Backup
             {
                 debugLog.WriteToLog("Starting differential/incremental backup, because the path to source ends with .dat (" + source + ')', 6);
                 BackupDifferential backupDifferential = new BackupDifferential();
-                backupDifferential.BackupDifferentialProcess(source, destination, debugLog);
+                backupDifferential.BackupDifferentialProcess(source, Path.GetDirectoryName(destination), debugLog);
             }
             else
             {
                 debugLog.WriteToLog("Starting full backup, because the path to source doesn't end with .dat (" + source + ')', 6);
                 BackupFull backupFull = new BackupFull();
-                backupFull.BackupFullProcess(source, destination, debugLog);
+                backupFull.BackupFullProcess(source, Path.GetDirectoryName(destination), debugLog);
             }
 
             if (destination.EndsWith(".zip") || destination.EndsWith(".rar") || destination.EndsWith(".7z"))
             {
-                debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + source + ')', 6);
+                debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + destination + ')', 6);
                 Compression compression = new Compression(debugLog);
-                compression.CompressToZip(destinationInfo.FullName, destinationInfo.FullName + @"\" + ".zip",compressionLevel);
+                compression.CompressToZip(destinationInfo.FullName, destinationInfo.FullName + @"\archive.zip",compressionLevel);
 
                 Directory.Delete(destinationInfo.FullName);
             }

@@ -29,15 +29,16 @@ namespace KoFrMaDaemon
         private StreamWriter w;
         public DebugLog(string logPath, byte logLevel)
         {
+            logReport = new List<string>();
             this._logPath = logPath;
             this._logLevel = logLevel;
-            w = new StreamWriter(logPath, true);
-            if (logLevel!=0)
-            {
-                w.WriteLine("Time of occurrence, Level of alert, Text");
-            }
-            w.Close();
-            w.Dispose();
+            //w = new StreamWriter(logPath, true);
+            //if (logLevel!=0)
+            //{
+            //    w.WriteLine("Time of occurrence, Level of alert, Text");
+            //}
+            //w.Close();
+            //w.Dispose();
         }
 
 
