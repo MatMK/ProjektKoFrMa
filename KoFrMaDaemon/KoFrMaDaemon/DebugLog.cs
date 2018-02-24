@@ -9,23 +9,22 @@ namespace KoFrMaDaemon
 {
     public class DebugLog
     {
-        private string _logPath;
+        /// <summary>
+        /// 0 = Don't create log
+        /// 1 = Fatal errors only that shuts down whole service/program
+        /// 2 = Errors that cause some process to fail
+        /// 3 = Errors that program can handle
+        /// 4 = Basic info about operations that program runs
+        /// 5 = Debug info that could lead to fixing or optimizing some processes
+        /// 6 = Tracing info for every process that is likely to fail
+        /// 7 = Tracing info about everything program does
+        /// 8 = Tracing info including loop cycles
+        /// 9 = Tracing info including large loop cycles that will slow down the process a lot
+        /// 10 = Program will be more like a log writer than actually doing the process
+        /// </summary>
         public byte _logLevel;
+        private string _logPath;
         public List<string> logReport;
-
-        /*
-        0 = Don't create log
-        1 = Fatal errors only that shuts down whole service/program
-        2 = Errors that cause some process to fail
-        3 = Errors that program can handle
-        4 = Basic info about operations that program runs
-        5 = Debug info that could lead to fixing or optimizing some processes
-        6 = Tracing info for every process that is likely to fail
-        7 = Tracing info about everything program does
-        8 = Tracing info including loop cycles
-        9 = Tracing info including large loop cycles that will slow down the process a lot
-        10 = Program will be more like a log writer than actually doing the process
-        */
 
         private StreamWriter w;
         public DebugLog(string logPath, byte logLevel)
@@ -35,7 +34,7 @@ namespace KoFrMaDaemon
             w = new StreamWriter(logPath, true);
             if (logLevel!=0)
             {
-                w.WriteLine("Time of occurrence    Level of alert  Text");
+                w.WriteLine("Time of occurrence, Level of alert, Text");
             }
             w.Close();
             w.Dispose();
@@ -95,7 +94,6 @@ namespace KoFrMaDaemon
         //    tmp.AddMinutes(Convert.ToInt32(dateTimeInString.Substring(10, 2)));
         //    tmp.AddSeconds(Convert.ToInt32(dateTimeInString.Substring(12, 2)));
         //    tmp.AddMilliseconds(Convert.ToDouble(dateTimeInString.Substring(14)));
-
         //    return tmp;
         //}
 

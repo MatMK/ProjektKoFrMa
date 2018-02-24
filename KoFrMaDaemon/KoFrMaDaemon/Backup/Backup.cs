@@ -34,8 +34,6 @@ namespace KoFrMaDaemon.Backup
                 Compression compression = new Compression(debugLog);
                 compression.CompressToZip(destinationInfo.FullName, destinationInfo.FullName + @"\" + ".zip",compressionLevel);
 
-                //udělat komprimaci
-
                 Directory.Delete(destinationInfo.FullName);
             }
             else
