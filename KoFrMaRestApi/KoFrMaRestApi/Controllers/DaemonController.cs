@@ -18,6 +18,7 @@ namespace KoFrMaRestApi.Controllers
     /// </summary>
     public class DaemonController : ApiController
     {
+        MySqlCom mySqlCom = new MySqlCom();
         /// <summary>
         /// Vrací instrukce pro daemon a registruje daemony do databáze.
         /// </summary>
@@ -26,54 +27,32 @@ namespace KoFrMaRestApi.Controllers
         [HttpPost, Route(@"api/Daemon/GetInstructions")]
         public List<Tasks> GetInstructions(DaemonInfo daemon)
         {
-            //Zjistí zda je Daemon už zaregistrovaný, pokud ne, přidá ho do databáze
-            string DaemonId = "";
-            MySqlConnection connection = WebApiConfig.Connection();
-            connection.Open();
-            MySqlDataReader reader = SelectFromTableByPcId(connection,daemon);
-            
-            if (reader.Read())
+            using (MySqlConnection connection = WebApiConfig.Connection())
             {
-                DaemonId = reader.GetString(0);
-                reader.Close();
-            }
-            else
-            {
-                reader.Close();
-                string SqlInsert = "insert into tbDaemons values(null, @version, @os, @pc_unique, 1)";
-                MySqlCommand command = new MySqlCommand(SqlInsert, connection);
-                command.Parameters.AddWithValue("@version", daemon.Version);
-                command.Parameters.AddWithValue("@os", daemon.OS);
-                command.Parameters.AddWithValue("@pc_unique", daemon.PC_Unique);
-                command.ExecuteNonQuery();
-                GetInstructions(daemon);
-            }
-            // Vybere task určený pro daemona. - nedodelane
-            
-            MySqlCommand sqlCommand = new MySqlCommand(@"SELECT Task FROM `tbTasks` WHERE `IdDaemon` = @Id", connection);
-            sqlCommand.Parameters.AddWithValue("@Id", DaemonId);
-            MySqlDataReader result = sqlCommand.ExecuteReader();
-            
-            if (result.Read())
-            {
-                return JsonConvert.DeserializeObject<List<Tasks>>(result.GetString(0));
-            }
-            else
-            {
-                return new List<Tasks>(); ;
+                connection.Open();
+                //Zjistí zda je Daemon už zaregistrovaný, pokud ne, přidá ho do databáze
+                string DaemonId = mySqlCom.GetDaemonId(daemon, connection);
+                // Vybere task určený pro daemona.
+                return mySqlCom.GetTasks(DaemonId, connection);
             }
         }
         [HttpPost,Route(@"api/Daemon/TaskCompleted")]
         public void TaskCompleted(TaskComplete taskCompleted)
         {
-            
-        }
-        private MySqlDataReader SelectFromTableByPcId(MySqlConnection connection,DaemonInfo daemon)
-        {
-            string SqlCommand = "SELECT id FROM `tbDaemons` WHERE PC_Unique = @PC_ID";
-            MySqlCommand query = new MySqlCommand(SqlCommand, connection);
-            query.Parameters.AddWithValue("@PC_ID", daemon.PC_Unique);
-            return query.ExecuteReader();
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            {
+                connection.Open();
+                if (taskCompleted.IsSuccessfull)
+                {
+                    mySqlCom.TaskCompletionRecieved(taskCompleted, connection);
+                    //pridat k povedenym taskum a odeslat emailem
+                }
+                else
+                {
+                    //pridat k nepovedenym taskum a odeslat to emailem
+                }
+                connection.Close();
+            }
         }
     }
 }
