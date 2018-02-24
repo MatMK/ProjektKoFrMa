@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace KoFrMaDaemon.Backup
+{
+    public class CopyErrorObject
+    {
+        public string FullPath { get; set; }
+        public string ExceptionMessage { get; set; }
+    }
+}
