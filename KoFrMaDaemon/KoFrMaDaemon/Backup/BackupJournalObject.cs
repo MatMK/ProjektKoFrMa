@@ -10,7 +10,6 @@ namespace KoFrMaDaemon.Backup
     {
         public string RelativePath { get; set; }
         public List<FileInfoObject> BackupJournalFiles { get; set; }
-
         public List<FolderObject> BackupJournalFolders { get; set; }
     }
 }

@@ -18,48 +18,69 @@ namespace KoFrMaDaemon
 {
     public partial class ServiceKoFrMa : ServiceBase
     {
-        //private const string servicePrefixName = "KoFrMa";
-
-        //private const byte version = 101;
+        private Timer timer;
+        private DebugLog debugLog;
+        Connection connection;
+        DaemonInfo daemon;
 
         private bool inProgress;
-
-        private Timer timer;
-
         private string logPath;
 
-        private DebugLog debugLog;
-
+        /// <summary>
+        /// Naplánované úlohy přijaté od serveru se budou přidávat do tohoto listu
+        /// </summary>
         private List<Tasks> ScheduledTasks;
-
-        Connection connection = new Connection();
-        DaemonInfo daemon = DaemonInfo.Instance;
-        //Naplánované úlohy přijaté od serveru se budou přidávat do tohoto listu
 
         public ServiceKoFrMa()
         {
             InitializeComponent();
+
+            
+            ConnectionInfo.ServerURL = @"http://localhost:50576";
+
             ScheduledTasks = new List<Tasks>();
+
+            inProgress = false;
             timer = new Timer(5000);
             timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
-            inProgress = false;
-            this.logPath = @"D:\Matej\Data\Visual Studio\DebugServiceLog.log";
-            debugLog = new DebugLog(this.logPath, 8);
-            daemon.Version = 1;
-            //ziskavat informace z pocitace
-            ConnectionInfo.ServerURL = @"http://localhost:50576";
-            daemon.OS = 1;
-            daemon.PC_Unique = "1";
-                
             timer.AutoReset = true;
-            //this.serverURL = @"http://localhost:50576/";
+
+            this.logPath = @"d:\tmp\testBackup\DebugServiceLog.log";
+            debugLog = new DebugLog(this.logPath, 8);
+
+            /// <summary>
+            /// Předávání informací o daemonovi a systému
+            /// </summary>
+
+            daemon = DaemonInfo.Instance;
+            daemon.Version = 101;
+            daemon.OS = System.Environment.OSVersion.VersionString;
+            daemon.PC_Unique = this.GetSerNumBIOS();
+            connection = new Connection();
         }
 
         protected override void OnStart(string[] args)
         {
             debugLog.WriteToLog("Service started", 4);
-            timer.Start();
+            //timer.Start();
+            debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique BIOS ID is " +daemon.PC_Unique, 6);
+
+            //BackupDifferential backupTest = new BackupDifferential();
+            //BackupFull fullbackupTestFull = new BackupFull();
+            //fullbackupTestFull.BackupFullProcess(@"d:\tmp\testBackup\BackupThisFolder\", @"d:\tmp\testBackup\BackupGoesHere\", debugLog);
+            //backupTest.BackupDifferentialProcess(@"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_24_15_14_39_Full\KoFrMaBackup.dat\", @"d:\tmp\testBackup\BackupGoesHere\", debugLog);
+            BackupSwitch backupSwitchTest = new BackupSwitch();
+            try
+            {
+                backupSwitchTest.Backup(@"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_24_15_14_39_Full\KoFrMaBackup.dat", @"d:\tmp\testBackup\BackupGoesHere\.zip", 0, debugLog);
+            }
+            catch (Exception ex)
+            {
+                debugLog.WriteToLog(ex.Message, 2);
+                throw;
+            }
             
+
             //a.BackupFullFolder(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupThisFolder\", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\", debugLog);
             //a.BackupDifferential(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", debugLog);
             //a.BackupDifferential(@"d:\tmp\testBackup\BackupGoesHere\", @"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_13_58_48_Full\KoFrMaBackup.dat", debugLog);
@@ -97,52 +118,22 @@ namespace KoFrMaDaemon
                             try
                             {
                                 item.InProgress = true;
+                                debugLog.WriteToLog("Task locked, starting the backup...", 6);
                                 backupInstance.Backup(item.SourceOfBackup, item.WhereToBackup,item.CompressionLevel, debugLog);
+                                debugLog.WriteToLog("Task completed, setting task as successfully completed...", 6);
+                                connection.TaskCompleted(item, debugLog, true);
                             }
                             catch (Exception ex)
                             {
                                 debugLog.WriteToLog("Task failed with fatal error " + ex.Message, 2);
+                                connection.TaskCompleted(item, debugLog, false);
                             }
                             finally
                             {
+                                debugLog.WriteToLog("Task "+item.IDTask + " ended. Information about the completed task will be send to server on next occasion.", 6);
+                                ScheduledTasks.Remove(item);
                                 item.InProgress = false;
                             }
-                            
-                            //if (item.SourceOfBackup.EndsWith(".dat")) //když bude jako zdroj úlohy nastaven path na soubor .dat provede se diferenciální, jinak pokud je to složka tak incrementální
-                            //{
-                            //    debugLog.WriteToLog("Starting differential/incremental backup, because the path to source ends with .dat (" + item.SourceOfBackup + ')', 7);
-                            //    if (item.WhereToBackup.EndsWith(".zip") || item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
-                            //    {
-                            //        item.InProgress = true;
-                            //        debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
-                            //        //action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
-                            //        //udělat komprimaci
-                            //    }
-                            //    else
-                            //    {
-                            //        item.InProgress = true;
-                            //        debugLog.WriteToLog("Starting plain copy backup, because the path to destination doesn't end with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
-                            //        action.BackupDifferential(item.WhereToBackup, item.SourceOfBackup, debugLog);
-                            //    }
-
-                            //}
-                            //else
-                            //{
-                            //    if (item.WhereToBackup.EndsWith(".zip") || item.WhereToBackup.EndsWith(".rar") || item.WhereToBackup.EndsWith(".7z"))
-                            //    {
-                            //        item.InProgress = true;
-                            //        debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 7);
-                            //        //action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
-                            //        //udělat komprimaci
-                            //    }
-                            //    else
-                            //    {
-                            //        item.InProgress = true;
-                            //        debugLog.WriteToLog("Starting plain copy backup, because the path to destination doesn't end with .zip, .rar or .7z (" + item.SourceOfBackup + ')', 8);
-                            //        action.BackupFullFolder(item.SourceOfBackup, item.WhereToBackup, debugLog);
-                            //    }
-
-                            //}
                         }
                         else
                         {
@@ -159,7 +150,7 @@ namespace KoFrMaDaemon
             }
             else
             {
-                debugLog.WriteToLog("Service is in the process of stopping, skipping regular timer action...", 5);
+                debugLog.WriteToLog("Service is in the process of updating list of scheduled tasks from the server or stopping, skipping regular timer action...", 5);
             }
 
         }
@@ -168,33 +159,9 @@ namespace KoFrMaDaemon
         private void GetTasks()
         {
             ScheduledTasks.AddRange(connection.PostRequest());
-
-            //log.WriteToLog("InGetTasks 1");
-
-            //WebRequest request = WebRequest.Create(this.serverURL);
-            //request.Method = "POST";
-            //request.ContentType = "multipart/form-data"; // ideální pro Upload souborů
-            //request.ContentLength = 4;
-            //log.WriteToLog("InGetTasks 2");
-
-            //WebResponse response = request.GetResponse();
-            //log.WriteToLog("InGetTasks 3");
-
-            //string statusDescr = "StatusDescription = " + ((HttpWebResponse)response).StatusDescription;
-
-            //debugLog.WriteToLog(statusDescr, 5);
-            /*
-             // Get the stream containing content returned by the server.
-             dataStream = response.GetResponseStream();
-             byte[] buffer = new byte[16000];
-             int ReadCount = dataStream.Read(buffer, 0, buffer.Length);
-
-             dataStream.Close();
-             response.Close();
-  */
         }
 
-        private static string GetSerNumBIOS()
+        private string GetSerNumBIOS()
         {
             string lcPopis = "";
 

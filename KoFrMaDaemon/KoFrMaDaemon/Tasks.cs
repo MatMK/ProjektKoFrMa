@@ -62,7 +62,9 @@ namespace KoFrMaDaemon
         /// </summary>
         public byte CompressionLevel { get; set; }
 
-
+        /// <summary>
+        /// Určuje, jestli úloha právě probíhá aby timer nespustil stejnou úlohu několikrát
+        /// </summary>
         public bool InProgress { get; set; }
     }
 }

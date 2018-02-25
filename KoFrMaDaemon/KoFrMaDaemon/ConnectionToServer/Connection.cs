@@ -36,15 +36,9 @@ namespace KoFrMaDaemon.ConnectionToServer
             }
             return JsonConvert.DeserializeObject<List<Tasks>>(result);
         }
-        public void TaskCompleted(Tasks task, List<DebugLog> DebugLogs)
+        public void TaskCompleted(Tasks task, DebugLog debugLog, bool Successfull)
         {
-            
-            List<string> LogTexts = new List<string>();
-            foreach (DebugLog item in DebugLogs)
-            {
-                LogTexts.Add(item.ReadLog());
-            }
-            TaskComplete completedTask = new TaskComplete() { IDTask = task.IDTask, TimeOfCompletition = DateTime.Now,DebugLog = LogTexts, DatFilePath = task.WhereToBackup };
+            TaskComplete completedTask = new TaskComplete() { IDTask = task.IDTask, TimeOfCompletition = DateTime.Now, DebugLog = debugLog.logReport, DatFileFullPath = task.WhereToBackup, IsSuccessfull = Successfull };
 
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(ConnectionInfo.ServerURL + @"/api/Daemon/TaskCompleted");
             httpWebRequest.ContentType = "application/json";
@@ -58,5 +52,6 @@ namespace KoFrMaDaemon.ConnectionToServer
                 streamWriter.Close();
             }
         }
+
     }
 }
