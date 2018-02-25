@@ -18,7 +18,7 @@ namespace KoFrMaDaemon.Backup
         
         public void CompressToZip(string source, string destination, byte? compressionLevel)
         {
-            _debugLog.WriteToLog("Compressing now...",7);
+            _debugLog.WriteToLog("Compressing now...",6);
             if (compressionLevel==null)
             {
                 this._debugLog.WriteToLog("Compression level is not set! Cannot continue!",2);
