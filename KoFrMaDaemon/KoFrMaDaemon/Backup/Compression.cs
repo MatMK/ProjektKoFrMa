@@ -23,7 +23,7 @@ namespace KoFrMaDaemon.Backup
             {
                 this._debugLog.WriteToLog("Compression level is not set! Cannot continue!",2);
             }
-            ZipFile.CreateFromDirectory(source, destination, (CompressionLevel)compressionLevel,true);
+            ZipFile.CreateFromDirectory(source, destination, (CompressionLevel)compressionLevel,false);
         }
     }
 }

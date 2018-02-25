@@ -38,14 +38,14 @@ namespace KoFrMaDaemon.Backup
                 Compression compression = new Compression(debugLog);
                 compression.CompressToZip(destinationInfo.FullName, destinationInfo.Parent.FullName + @"\"+this.destinationInfo.Name+".zip",compressionLevel);
                 debugLog.WriteToLog("Compression done, deleting temporary files that were needed for compression", 6);
-                Directory.Delete(destinationInfo.FullName);
+                Directory.Delete(destinationInfo.FullName,true);
                 debugLog.WriteToLog("Files successfully deleted, compression is now completed.", 6);
             }
             else
             {
                 debugLog.WriteToLog("Keeping the plain backup because the task doesn't want to archive", 5);
             }
-            debugLog.WriteToLog("Backup done, ending the backup instatnce", 7);
+            debugLog.WriteToLog("Backup done, ending the backup instance", 7);
         }
 
         protected string CalculateMD5(string filename)
