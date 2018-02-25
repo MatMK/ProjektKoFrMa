@@ -69,11 +69,11 @@ namespace KoFrMaDaemon.Backup
             DebugLog.WriteToLog("List of current files and folders successfully created, containing " + CurrentFiles.Count + " files and " + CurrentFolders.Count + " folders. Unable to load " + FilesErrorLoad.Count + " files and " + FoldersErrorLoad.Count + " folders.", 5);
 
 
-            if (serviceDebugLog._logLevel >= 6)
-            {
-                DebugLog.WriteToLog("Writing journal of current files and folders (that will be compared to original journal later) into .dat file for debug purposes...", 6);
-                BackupJournal.CreateBackupJournal(new BackupJournalObject() { BackupJournalFiles = CurrentFiles, BackupJournalFolders = CurrentFolders, RelativePath = source }, base.destinationInfo.Parent.FullName + @"\KoFrMaBackupDebugCurrentFiles.dat", DebugLog);
-            }
+            //if (serviceDebugLog._logLevel >= 7)
+            //{
+            //    DebugLog.WriteToLog("Writing journal of current files and folders (that will be compared to original journal later) into .dat file for debug purposes...", 7);
+            //    BackupJournal.CreateBackupJournal(new BackupJournalObject() { BackupJournalFiles = CurrentFiles, BackupJournalFolders = CurrentFolders, RelativePath = source }, base.destinationInfo.Parent.FullName + @"\KoFrMaBackupDebugCurrentFiles.dat", DebugLog);
+            //}
 
 
 
@@ -274,7 +274,7 @@ namespace KoFrMaDaemon.Backup
                 tmpFileInfo = new FileInfo(source + FilesToCopy[i]);
                 try
                 {
-                    Directory.CreateDirectory(Path.GetDirectoryName(FilesToCopy[i]));
+                    Directory.CreateDirectory(Path.GetDirectoryName(base.destinationInfo.FullName + @"\" + FilesToCopy[i]));
                     tmpFileInfo.CopyTo(base.destinationInfo.FullName + @"\" + FilesToCopy[i]);
                     FilesCorrect.Add(new FileInfoObject { RelativePath = tmpFileInfo.FullName.Remove(0, base.sourceInfo.FullName.Length), Length = tmpFileInfo.Length, CreationTimeUtc = tmpFileInfo.CreationTimeUtc, LastWriteTimeUtc = tmpFileInfo.LastWriteTimeUtc, Attributes = tmpFileInfo.Attributes.ToString(), MD5 = this.CalculateMD5(tmpFileInfo.FullName) });
                 }
