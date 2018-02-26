@@ -28,12 +28,6 @@ namespace KoFrMaRestApi.Models.Daemon
         /// Cíl zálohy, archiv nebo složka, může odkazovat na ftp server (ftp://...) nebo sdílené úložiště (//NASBackup/CilZalohy)
         /// </summary>
         public string WhereToBackup { get; set; }
-        
-        /// <summary>
-        /// False = Full Backup
-        /// True = Differential/Incremental Backup
-        /// </summary>
-        public bool BackupDifferential { get; set; }
 
         /// <summary>
         /// Jak často se má daemon ptát serveru na úlohu
@@ -56,6 +50,17 @@ namespace KoFrMaRestApi.Models.Daemon
         /// </summary>
         public byte LogLevel { get; set; }
 
+        /// <summary>
+        /// Jakou úrovní komprese komprimovat zip, pokud se do něj komprimuje
+        /// 0 = Optimal
+        /// 1 = Fastest
+        /// 2 = No Compression
+        /// </summary>
+        public byte CompressionLevel { get; set; }
+
+        /// <summary>
+        /// Určuje, jestli úloha právě probíhá aby timer nespustil stejnou úlohu několikrát
+        /// </summary>
         public bool InProgress { get; set; }
     }
 }

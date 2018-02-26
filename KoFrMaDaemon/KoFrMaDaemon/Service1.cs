@@ -36,7 +36,7 @@ namespace KoFrMaDaemon
             InitializeComponent();
 
             
-            ConnectionInfo.ServerURL = @"http://localhost:50576";
+            ConnectionInfo.ServerURL = @"http://localhost:51632";
 
             ScheduledTasks = new List<Tasks>();
 
@@ -45,7 +45,7 @@ namespace KoFrMaDaemon
             timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
             timer.AutoReset = true;
 
-            this.logPath = @"d:\tmp\testBackup\DebugServiceLog.log";
+            this.logPath = @"d:\Users\Matej\Desktop\KoFrMaBackup\DebugServiceLog.log";
             debugLog = new DebugLog(this.logPath, 8);
 
             /// <summary>
@@ -63,23 +63,23 @@ namespace KoFrMaDaemon
         protected override void OnStart(string[] args)
         {
             debugLog.WriteToLog("Service started", 4);
-            //timer.Start();
+            timer.Start();
             debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique BIOS ID is " +daemon.PC_Unique, 6);
 
             //BackupDifferential backupTest = new BackupDifferential();
             //BackupFull fullbackupTestFull = new BackupFull();
             //fullbackupTestFull.BackupFullProcess(@"d:\tmp\testBackup\BackupThisFolder\", @"d:\tmp\testBackup\BackupGoesHere\", debugLog);
             //backupTest.BackupDifferentialProcess(@"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_24_15_14_39_Full\KoFrMaBackup.dat\", @"d:\tmp\testBackup\BackupGoesHere\", debugLog);
-            BackupSwitch backupSwitchTest = new BackupSwitch();
-            try
-            {
-                backupSwitchTest.Backup(@"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_24_15_14_39_Full\KoFrMaBackup.dat", @"d:\tmp\testBackup\BackupGoesHere\.zip", 0, debugLog);
-            }
-            catch (Exception ex)
-            {
-                debugLog.WriteToLog(ex.Message, 2);
-                throw;
-            }
+            //BackupSwitch backupSwitchTest = new BackupSwitch();
+            //try
+            //{
+            //    backupSwitchTest.Backup(@"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_24_15_14_39_Full\KoFrMaBackup.dat", @"d:\tmp\testBackup\BackupGoesHere\.zip", 0, debugLog);
+            //}
+            //catch (Exception ex)
+            //{
+            //    debugLog.WriteToLog(ex.Message, 2);
+            //    throw;
+            //}
             
 
             //a.BackupFullFolder(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupThisFolder\", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\", debugLog);
