@@ -28,12 +28,6 @@ namespace KoFrMaDaemon
         public string WhereToBackup { get; set; }
 
         /// <summary>
-        /// False = Full Backup
-        /// True = Differential/Incremental Backup
-        /// </summary>
-        public bool BackupDifferential { get; set; }
-
-        /// <summary>
         /// Jak často se má daemon ptát serveru na úlohu
         /// </summary>
         public int TimerValue { get; set; }

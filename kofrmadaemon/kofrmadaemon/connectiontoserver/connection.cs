@@ -58,6 +58,12 @@ namespace KoFrMaDaemon.ConnectionToServer
                 streamWriter.Flush();
                 streamWriter.Close();
             }
+            var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            string result;
+            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            {
+                result = streamReader.ReadToEnd();
+            }
         }
 
     }
