@@ -139,9 +139,13 @@ namespace KoFrMaRestApi
         /// <summary>
         /// Zapíše do databáze čas kdy byla funkce zavolána
         /// </summary>
-        public void DaemonSeen()
+        public void DaemonSeen(string DaemonId, MySqlConnection connection)
         {
-
+            using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbDaemons` SET `LastSeen`= Now() where ID = @Id", connection))
+            {
+                command.Parameters.AddWithValue("@Id", DaemonId);
+                command.ExecuteNonQuery();
+            }
         }
     }
 }

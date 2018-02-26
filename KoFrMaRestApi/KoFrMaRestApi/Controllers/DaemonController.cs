@@ -32,6 +32,8 @@ namespace KoFrMaRestApi.Controllers
                 connection.Open();
                 //Zjistí zda je Daemon už zaregistrovaný, pokud ne, přidá ho do databáze
                 string DaemonId = mySqlCom.GetDaemonId(daemon, connection);
+
+                mySqlCom.DaemonSeen(DaemonId, connection);
                 // Vybere task určený pro daemona.
                 return mySqlCom.GetTasks(DaemonId, connection);
             }
@@ -51,7 +53,8 @@ namespace KoFrMaRestApi.Controllers
                 {
                     //pridat k nepovedenym taskum a odeslat to emailem
                 }
-                connection.Close();
+                mySqlCom.DaemonSeen(mySqlCom.GetDaemonId(taskCompleted.daemonInfo, connection), connection);
+                connection.Close();                
             }
         }
     }
