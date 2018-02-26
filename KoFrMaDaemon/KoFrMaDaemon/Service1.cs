@@ -56,6 +56,7 @@ namespace KoFrMaDaemon
             daemon.Version = 101;
             daemon.OS = System.Environment.OSVersion.VersionString;
             daemon.PC_Unique = this.GetSerNumBIOS();
+            daemon.Password = "123456";
             connection = new Connection();
         }
 
