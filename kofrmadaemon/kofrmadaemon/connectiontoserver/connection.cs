@@ -38,7 +38,14 @@ namespace KoFrMaDaemon.ConnectionToServer
         }
         public void TaskCompleted(Tasks task, DebugLog debugLog, bool Successfull)
         {
-            TaskComplete completedTask = new TaskComplete() { IDTask = task.IDTask, TimeOfCompletition = DateTime.Now, DebugLog = debugLog.logReport, DatFileFullPath = task.WhereToBackup, IsSuccessfull = Successfull };
+            TaskComplete completedTask = new TaskComplete()
+            {
+                IDTask = task.IDTask,
+                TimeOfCompletition = DateTime.Now,
+                DebugLog = debugLog.logReport,
+                DatFileFullPath = task.WhereToBackup,
+                IsSuccessfull = Successfull
+            };
 
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(ConnectionInfo.ServerURL + @"/api/Daemon/TaskCompleted");
             httpWebRequest.ContentType = "application/json";
