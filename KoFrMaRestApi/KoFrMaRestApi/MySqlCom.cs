@@ -26,7 +26,7 @@ namespace KoFrMaRestApi
                     return reader.GetString(0);
                 }
                 else
-                {
+                {/*
                     reader.Close();
                     string SqlInsert = "insert into tbDaemons values(null, @version, @os, @pc_unique, 1, now())";
                     using (MySqlCommand command = new MySqlCommand(SqlInsert, connection))
@@ -36,11 +36,39 @@ namespace KoFrMaRestApi
                         command.Parameters.AddWithValue("@pc_unique", daemon.PC_Unique);
                         command.ExecuteNonQuery();
                         return GetDaemonId(daemon,connection);
-                    }
+                    }*/
+                    return null;
                 }
             }
                
         }
+        public string RegisterDaemonAndGetId(DaemonInfo daemon, int Password, MySqlConnection connection)
+        {
+
+            using (MySqlDataReader reader = SelectFromTableByPcId(connection, daemon))
+            {
+                if (reader.Read())
+                {
+                    return reader.GetString(0);
+                }
+                else
+                {
+                    reader.Close();
+                    string SqlInsert = "insert into tbDaemons values(null, @version, @os, @pc_unique, 1, now()),@password";
+                    using (MySqlCommand command = new MySqlCommand(SqlInsert, connection))
+                    {
+                        command.Parameters.AddWithValue("@version", daemon.Version);
+                        command.Parameters.AddWithValue("@os", daemon.OS);
+                        command.Parameters.AddWithValue("@pc_unique", daemon.PC_Unique);
+                        command.Parameters.AddWithValue("@password", Password);
+                        command.ExecuteNonQuery();
+                        return GetDaemonId(daemon,connection);
+                    }
+                }
+            }
+
+        }
+
         /// <summary>
         /// Vybere tasky pro daemona z databáze
         /// </summary>
@@ -149,12 +177,64 @@ namespace KoFrMaRestApi
             }
         }
         /// <summary>
-        /// Kontroluje zda je heslo správné v databázi
+        /// Kontroluje zda token odpovídá počítači
         /// </summary>
-        public bool Authorized(DaemonInfo daemon)
+        public bool Authorized(string PC_Unique, string Token, MySqlConnection connection)
         {
+            bool result;
+            using (MySqlCommand command = new MySqlCommand(@"SELECT * FROM `tbDaemons` WHERE `PC_Unique` = @PC_Unique and `Token` = @Token", connection))
+            {
+                command.Parameters.AddWithValue("@PC_Unique", PC_Unique);
+                command.Parameters.AddWithValue("@Token", Token);
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                        result = true;
+                    else
+                        result =  false;
+                    reader.Close();
+                }
+            }
+            return result;
+        }
+        public void RegisterToken(string PC_Unique, int Password, string Token)
+        {
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand(@"SELECT `Password` FROM `tbDaemons` WHERE `PC_Unique` = @PC_Unique", connection))
+            {
+                int? DatabasePassword = null;
+                connection.Open();
+                command.Parameters.AddWithValue("@PC_Unique", PC_Unique);
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        DatabasePassword = (int)reader["Password"];
+                    }
+                    reader.Close();
+                }
+                if (DatabasePassword == Password)
+                {
+                    command.CommandText = @"UPDATE `tbDaemons` SET `Token`= @Token WHERE `PC_Unique` = @PC_Unique";
+                    command.Parameters.AddWithValue("@Token", Token);
+                    command.Parameters.AddWithValue("@PC_Unique", PC_Unique);
+                    command.ExecuteNonQuery();
 
-            return false;
+                }
+            }
+        }
+        public bool RegisterToken(int Password, string Token)
+        {
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbDaemons` SET `Token`= @Token WHERE `Password` = @Password", connection))
+            {
+                connection.Open();
+                command.Parameters.AddWithValue("@Token", Token);
+                command.Parameters.AddWithValue("@Password", Password);
+                if (command.ExecuteNonQuery() == 0)
+                    return false;
+                return true;
+            }
         }
     }
 }
