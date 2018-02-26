@@ -16,9 +16,14 @@ namespace KoFrMaDaemon.Backup
             _debugLog = debugLog;
         }
         
-        public void CompressToZip(string source, string destination, byte compressionLevel)
+        public void CompressToZip(string source, string destination, byte? compressionLevel)
         {
-            ZipFile.CreateFromDirectory(source, destination, (CompressionLevel)compressionLevel,true);
+            _debugLog.WriteToLog("Compressing now...",6);
+            if (compressionLevel==null)
+            {
+                this._debugLog.WriteToLog("Compression level is not set! Cannot continue!",2);
+            }
+            ZipFile.CreateFromDirectory(source, destination, (CompressionLevel)compressionLevel,false);
         }
     }
 }

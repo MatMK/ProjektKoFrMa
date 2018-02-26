@@ -35,13 +35,13 @@ namespace KoFrMaDaemon.Backup
             if (serviceDebugLog._logLevel >= 4)
                 temporaryDebugInfo = "Starting the differential/incremental backup in " + timeOfBackup.ToString();
 
-            destinationInfo = new DirectoryInfo(destination).CreateSubdirectory("KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup)).CreateSubdirectory("KoFrMaBackup");
+            base.destinationInfo = new DirectoryInfo(destination).CreateSubdirectory("KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup)).CreateSubdirectory("KoFrMaBackup");
 
-            serviceDebugLog.WriteToLog("Log of including operations is located in " + destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log", 4);
+            serviceDebugLog.WriteToLog("Log of including operations is located in " + base.destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log", 4);
 
-            DebugLog DebugLog = new DebugLog(destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log", serviceDebugLog._logLevel);
+            DebugLog DebugLog = new DebugLog(base.destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log", serviceDebugLog._logLevel);
 
-            DebugLog.WriteToLog("Subdirectory for the backup was created at " + destinationInfo.FullName, 5);
+            DebugLog.WriteToLog("Subdirectory for the backup was created at " + base.destinationInfo.FullName, 5);
 
             DebugLog.WriteToLog(temporaryDebugInfo, 4);
             temporaryDebugInfo = null;
@@ -57,9 +57,9 @@ namespace KoFrMaDaemon.Backup
 
 
             DebugLog.WriteToLog("Creating list of current files and folders...", 5);
-            sourceInfo = new DirectoryInfo(source);
-            BackupJournalObject currentJournalObject = JournalCurrent(sourceInfo);
-
+            base.sourceInfo = new DirectoryInfo(source);
+            BackupJournalObject currentJournalObject = this.JournalCurrent(base.sourceInfo);
+            DebugLog.WriteToLog("List of current files and folders loaded, containing " + currentJournalObject.BackupJournalFiles.Count + " files and " + currentJournalObject.BackupJournalFolders.Count + " folders.", 5);
 
             DebugLog.WriteToLog("Adding hash column to lists of current files and folders...", 7);
             List<FileInfoObject> CurrentFiles = BackupJournal.ReturnHashCodesFiles(currentJournalObject.BackupJournalFiles);
@@ -69,11 +69,11 @@ namespace KoFrMaDaemon.Backup
             DebugLog.WriteToLog("List of current files and folders successfully created, containing " + CurrentFiles.Count + " files and " + CurrentFolders.Count + " folders. Unable to load " + FilesErrorLoad.Count + " files and " + FoldersErrorLoad.Count + " folders.", 5);
 
 
-            if (serviceDebugLog._logLevel >= 6)
-            {
-                DebugLog.WriteToLog("Writing journal of current files and folders (that will be compared to original journal later) into .dat file for debug purposes...", 6);
-                BackupJournal.CreateBackupJournal(new BackupJournalObject() { BackupJournalFiles = CurrentFiles, BackupJournalFolders = CurrentFolders, RelativePath = source }, destinationInfo.Parent.FullName + @"\KoFrMaBackupDebugCurrentFiles.dat", DebugLog);
-            }
+            //if (serviceDebugLog._logLevel >= 7)
+            //{
+            //    DebugLog.WriteToLog("Writing journal of current files and folders (that will be compared to original journal later) into .dat file for debug purposes...", 7);
+            //    BackupJournal.CreateBackupJournal(new BackupJournalObject() { BackupJournalFiles = CurrentFiles, BackupJournalFolders = CurrentFolders, RelativePath = source }, base.destinationInfo.Parent.FullName + @"\KoFrMaBackupDebugCurrentFiles.dat", DebugLog);
+            //}
 
 
 
@@ -238,7 +238,7 @@ namespace KoFrMaDaemon.Backup
 
 
 
-            DebugLog.WriteToLog("Starting to backup files and folders to " + destinationInfo.FullName + @"\", 4);
+            DebugLog.WriteToLog("Starting to backup files and folders to " + base.destinationInfo.FullName + @"\", 4);
 
             DebugLog.WriteToLog("Backuping modified folder structure...", 5);
             FilesCorrect = new List<FileInfoObject>();
@@ -246,12 +246,12 @@ namespace KoFrMaDaemon.Backup
             DirectoryInfo tmpDirectoryInfo;
             for (int i = 0; i < FoldersToCreate.Count; i++)
             {
-                tmpDirectoryInfo = new DirectoryInfo(destinationInfo.FullName + @"\" + FoldersToCreate[i]);
+                tmpDirectoryInfo = new DirectoryInfo(base.destinationInfo.FullName + @"\" + FoldersToCreate[i]);
                 try
                 {
 
                     tmpDirectoryInfo.Create();
-                    this.FoldersCorrect.Add(new FolderObject() { RelativePath = tmpDirectoryInfo.FullName.Remove(0, sourceInfo.FullName.Length), CreationTimeUtc = tmpDirectoryInfo.CreationTimeUtc, LastWriteTimeUtc = tmpDirectoryInfo.LastWriteTimeUtc, Attributes = tmpDirectoryInfo.Attributes.ToString() });
+                    this.FoldersCorrect.Add(new FolderObject() { RelativePath = tmpDirectoryInfo.FullName.Remove(0, base.sourceInfo.FullName.Length), CreationTimeUtc = tmpDirectoryInfo.CreationTimeUtc, LastWriteTimeUtc = tmpDirectoryInfo.LastWriteTimeUtc, Attributes = tmpDirectoryInfo.Attributes.ToString() });
                 }
                 catch (Exception ex)
                 {
@@ -274,14 +274,14 @@ namespace KoFrMaDaemon.Backup
                 tmpFileInfo = new FileInfo(source + FilesToCopy[i]);
                 try
                 {
-                    Directory.CreateDirectory(Path.GetDirectoryName(FilesToCopy[i]));
-                    tmpFileInfo.CopyTo(destinationInfo.FullName + @"\" + FilesToCopy[i]);
-                    FilesCorrect.Add(new FileInfoObject { RelativePath = tmpFileInfo.FullName.Remove(0, sourceInfo.FullName.Length), Length = tmpFileInfo.Length, CreationTimeUtc = tmpFileInfo.CreationTimeUtc, LastWriteTimeUtc = tmpFileInfo.LastWriteTimeUtc, Attributes = tmpFileInfo.Attributes.ToString(), MD5 = this.CalculateMD5(tmpFileInfo.FullName) });
+                    Directory.CreateDirectory(Path.GetDirectoryName(base.destinationInfo.FullName + @"\" + FilesToCopy[i]));
+                    tmpFileInfo.CopyTo(base.destinationInfo.FullName + @"\" + FilesToCopy[i]);
+                    FilesCorrect.Add(new FileInfoObject { RelativePath = tmpFileInfo.FullName.Remove(0, base.sourceInfo.FullName.Length), Length = tmpFileInfo.Length, CreationTimeUtc = tmpFileInfo.CreationTimeUtc, LastWriteTimeUtc = tmpFileInfo.LastWriteTimeUtc, Attributes = tmpFileInfo.Attributes.ToString(), MD5 = this.CalculateMD5(tmpFileInfo.FullName) });
                 }
                 catch (Exception ex)
                 {
                     this.FilesErrorCopy.Add(new CopyErrorObject() {FullPath = tmpFileInfo.FullName,ExceptionMessage = ex.Message });
-                    DebugLog.WriteToLog("Unable to copy " + tmpFileInfo.FullName + " to " + destinationInfo.FullName + @"\" + FilesToCopy[i] + " because of exception " + ex.Message + ". Path to destination folder: " + tmpFileInfo.Directory.FullName, 8);
+                    DebugLog.WriteToLog("Unable to copy " + tmpFileInfo.FullName + " to " + base.destinationInfo.FullName + @"\" + FilesToCopy[i] + " because of exception " + ex.Message + ". Path to destination folder: " + tmpFileInfo.Directory.FullName, 8);
                 }
 
             }
@@ -291,8 +291,8 @@ namespace KoFrMaDaemon.Backup
 
 
             DebugLog.WriteToLog("Creating transaction log of successfully copied files and folders...", 5);
-            BackupJournal.CreateBackupJournal(new BackupJournalObject() { RelativePath = source, BackupJournalFiles = FilesCorrect, BackupJournalFolders = FoldersCorrect }, destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", DebugLog);
-            DebugLog.WriteToLog("Transaction log successfully created in destination " + destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", 5);
+            BackupJournal.CreateBackupJournal(new BackupJournalObject() { RelativePath = source, BackupJournalFiles = FilesCorrect, BackupJournalFolders = FoldersCorrect }, base.destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", DebugLog);
+            DebugLog.WriteToLog("Transaction log successfully created in destination " + base.destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", 5);
 
 
 
@@ -311,6 +311,8 @@ namespace KoFrMaDaemon.Backup
 
             ExploreDirectoryRecursively(path, FileList, FolderList);
 
+            journalObject.BackupJournalFiles = FileList;
+            journalObject.BackupJournalFolders = FolderList;
             return journalObject;
 
         }
@@ -321,7 +323,7 @@ namespace KoFrMaDaemon.Backup
             {
                 try
                 {
-                    FileList.Add(new FileInfoObject { RelativePath = item.FullName.Remove(0, sourceInfo.FullName.Length), Length = item.Length, CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString(), MD5 = this.CalculateMD5(item.FullName) });
+                    FileList.Add(new FileInfoObject { RelativePath = item.FullName.Remove(0, base.sourceInfo.FullName.Length), Length = item.Length, CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString(), MD5 = this.CalculateMD5(item.FullName) });
                 }
                 catch (Exception ex)
                 {
@@ -335,7 +337,7 @@ namespace KoFrMaDaemon.Backup
                 try
                 {
                     this.ExploreDirectoryRecursively(item, FileList, FolderList);
-                    FolderList.Add(new FolderObject() { RelativePath = item.FullName.Remove(0, sourceInfo.FullName.Length), CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString() });
+                    FolderList.Add(new FolderObject() { RelativePath = item.FullName.Remove(0, base.sourceInfo.FullName.Length), CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString() });
                 }
                 catch (Exception ex)
                 {

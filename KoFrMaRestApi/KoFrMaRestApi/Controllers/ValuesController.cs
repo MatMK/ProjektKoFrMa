@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Web.Http;
 using MySql.Data.MySqlClient;
 
@@ -63,10 +64,23 @@ namespace KoFrMaRestApi.Controllers
         }
 
         // Delete api/values/5
-        public void Delete(int id)
-        {
+       // public static string DeleteFile(string userName, string repoName, string filename)
+        //{
+            //var client = new HttpClient();
+            //string data = "{ \"FileData\" : { \"fileNameWithPath\" : \"" + filename + "\"}}";
 
-        }
+            //var requestUri = new Uri(new Uri(Common.WebApi), "api/v1/microtech/" + userName + "/" + repoName + "/file");
+
+            //var result =
+            //    client.SendAsync(
+            //    new HttpRequestMessage(HttpMethod.Delete, requestUri)
+            //    {
+            //        Content = new StringContent(data, Encoding.UTF8, "application/json")
+            //    })
+            //    .Result;
+
+           // return result.RequestMessage.ToString();
+       // }
 
         // Post api/values
         public void Post([FromBody]string value)
