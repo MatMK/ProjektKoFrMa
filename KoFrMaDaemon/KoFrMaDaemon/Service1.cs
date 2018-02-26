@@ -72,14 +72,14 @@ namespace KoFrMaDaemon
             //BackupSwitch backupSwitchTest = new BackupSwitch();
             //try
             //{
-            //    backupSwitchTest.Backup(@"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_24_15_14_39_Full\KoFrMaBackup.dat", @"d:\tmp\testBackup\BackupGoesHere\.zip", 0, debugLog);
+            //    backupSwitchTest.Backup(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\.zip", 0, debugLog);
             //}
             //catch (Exception ex)
             //{
             //    debugLog.WriteToLog(ex.Message, 2);
             //    throw;
             //}
-            
+
 
             //a.BackupFullFolder(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupThisFolder\", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\", debugLog);
             //a.BackupDifferential(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", debugLog);
