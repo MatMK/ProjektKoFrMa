@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KoFrMaDaemon.ConnectionToServer;
 
 namespace KoFrMaDaemon
 {
     public class TaskComplete
     {
+        public TaskComplete()
+        {
+            daemonInfo = DaemonInfo.Instance;
+        }
+        public DaemonInfo daemonInfo { get; set; }
         /// <summary>
         /// Jedinečné ID úlohy, bude na serveru spojené s databází a server může podle ID vynutit přerušení nebo smazání naplánované úlohy
         /// </summary>

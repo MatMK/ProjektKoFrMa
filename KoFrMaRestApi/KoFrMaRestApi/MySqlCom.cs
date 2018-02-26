@@ -28,7 +28,7 @@ namespace KoFrMaRestApi
                 else
                 {
                     reader.Close();
-                    string SqlInsert = "insert into tbDaemons values(null, @version, @os, @pc_unique, 1)";
+                    string SqlInsert = "insert into tbDaemons values(null, @version, @os, @pc_unique, 1, now())";
                     using (MySqlCommand command = new MySqlCommand(SqlInsert, connection))
                     {
                         command.Parameters.AddWithValue("@version", daemon.Version);
@@ -58,6 +58,7 @@ namespace KoFrMaRestApi
                 if (Convert.ToDateTime(reader["TimeOfExecution"]) <= DateTime.Now)
                 {
                     string json = (string)reader["Task"];
+
                     result.Add(JsonConvert.DeserializeObject<Tasks>(json));
                     //Pouzit pokud v databazy budeme uchovavat listy tasku
                     //result.AddRange(JsonConvert.DeserializeObject<List<Tasks>>(json));
@@ -146,6 +147,14 @@ namespace KoFrMaRestApi
                 command.Parameters.AddWithValue("@Id", DaemonId);
                 command.ExecuteNonQuery();
             }
+        }
+        /// <summary>
+        /// Kontroluje zda je heslo správné v databázi
+        /// </summary>
+        public bool Authorized(DaemonInfo daemon)
+        {
+
+            return false;
         }
     }
 }
