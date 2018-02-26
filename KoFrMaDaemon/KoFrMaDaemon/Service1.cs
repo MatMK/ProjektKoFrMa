@@ -112,7 +112,7 @@ namespace KoFrMaDaemon
                     foreach (Tasks item in ScheduledTasks)
                     {
                         debugLog.WriteToLog("Checking if the task should be started for task with ID " + item.IDTask, 7);
-                        if (item.TimeToBackup.CompareTo(DateTime.Now) >= 0&&item.InProgress == false) //Pokud čas úlohy už uběhl nebo zrovna neběží
+                        if (item.TimeToBackup.CompareTo(DateTime.Now) <= 0&&item.InProgress == false) //Pokud čas úlohy už uběhl nebo zrovna neběží
                         {
                             debugLog.WriteToLog("Task " + item.IDTask +" should be running because it was planned to run in " + item.TimeToBackup.ToString() + ", starting the inicialization now...", 6);
                             BackupSwitch backupInstance = new BackupSwitch();
