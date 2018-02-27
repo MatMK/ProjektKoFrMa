@@ -18,6 +18,7 @@ namespace KoFrMaRestApi.Controllers
     /// </summary>
     public class DaemonController : ApiController
     {
+        Token token = new Token();
         MySqlCom mySqlCom = new MySqlCom();
         /// <summary>
         /// Vrací instrukce pro daemon a registruje daemony do databáze.
@@ -27,35 +28,56 @@ namespace KoFrMaRestApi.Controllers
         [HttpPost, Route(@"api/Daemon/GetInstructions")]
         public List<Tasks> GetInstructions(DaemonInfo daemon)
         {
-            using (MySqlConnection connection = WebApiConfig.Connection())
+            if (token.Authorized(daemon))
             {
-                connection.Open();
-                //Zjistí zda je Daemon už zaregistrovaný, pokud ne, přidá ho do databáze
-                string DaemonId = mySqlCom.GetDaemonId(daemon, connection);
+                using (MySqlConnection connection = WebApiConfig.Connection())
+                {
+                    connection.Open();
+                    //Zjistí zda je Daemon už zaregistrovaný, pokud ne, přidá ho do databáze
+                    string DaemonId = mySqlCom.GetDaemonId(daemon, connection);
 
-                mySqlCom.DaemonSeen(DaemonId, connection);
-                // Vybere task určený pro daemona.
-                return mySqlCom.GetTasks(DaemonId, connection);
+                    mySqlCom.DaemonSeen(DaemonId, connection);
+                    // Vybere task určený pro daemona.
+                    return mySqlCom.GetTasks(DaemonId, connection);
+                }
+            }
+            else
+            {
+                return null;
             }
         }
         [HttpPost,Route(@"api/Daemon/TaskCompleted")]
         public void TaskCompleted(TaskComplete taskCompleted)
         {
+            if (token.Authorized(taskCompleted.daemonInfo))
+            {
+                using (MySqlConnection connection = WebApiConfig.Connection())
+                {
+                    connection.Open();
+                    if (taskCompleted.IsSuccessfull)
+                    {
+                        mySqlCom.TaskCompletionRecieved(taskCompleted, connection);
+                        //pridat k povedenym taskum a odeslat emailem
+                    }
+                    else
+                    {
+                        //pridat k nepovedenym taskum a odeslat to emailem
+                    }
+                    mySqlCom.DaemonSeen(mySqlCom.GetDaemonId(taskCompleted.daemonInfo, connection), connection);
+                    connection.Close();
+                }
+            }
+        }
+        [HttpPost, Route(@"api/Daemon/RegisterToken")]
+        public string Register(Password password)
+        {
             using (MySqlConnection connection = WebApiConfig.Connection())
             {
                 connection.Open();
-                if (taskCompleted.IsSuccessfull)
-                {
-                    mySqlCom.TaskCompletionRecieved(taskCompleted, connection);
-                    //pridat k povedenym taskum a odeslat emailem
-                }
-                else
-                {
-                    //pridat k nepovedenym taskum a odeslat to emailem
-                }
-                mySqlCom.DaemonSeen(mySqlCom.GetDaemonId(taskCompleted.daemonInfo, connection), connection);
-                connection.Close();                
+                mySqlCom.RegisterDaemonAndGetId(password.daemon,password.password, connection);
+                connection.Close();
             }
+            return token.CreateToken(password.password);
         }
     }
 }

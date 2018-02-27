@@ -80,6 +80,7 @@
     <Compile Include="ConnectionToServer\DaemonInfo.cs" />
     <Compile Include="Backup\FileInfoObject.cs" />
     <Compile Include="Backup\FolderObject.cs" />
+    <Compile Include="ConnectionToServer\Password.cs" />
     <Compile Include="DebugLog.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

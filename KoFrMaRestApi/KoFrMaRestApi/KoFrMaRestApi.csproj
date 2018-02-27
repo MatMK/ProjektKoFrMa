@@ -183,9 +183,11 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Daemon\DaemonInfo.cs" />
+    <Compile Include="Models\Daemon\Password.cs" />
     <Compile Include="Models\Daemon\TaskComplete.cs" />
     <Compile Include="Models\EmailSettings.cs" />
     <Compile Include="Models\Daemon\Tasks.cs" />
+    <Compile Include="Models\Token.cs" />
     <Compile Include="MySqlCom.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

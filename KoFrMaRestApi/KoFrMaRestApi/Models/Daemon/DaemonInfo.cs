@@ -23,8 +23,6 @@ namespace KoFrMaRestApi.Models.Daemon
         /// </summary>
         /// Zjištění unique ID z dxdiag, např XOR, dxdiag /x filename, přečíst soubor (xml), nebo machineID tvořené při prvním bootu
         public string PC_Unique { get; set; }
-        public string Password { get; set; }
-
-
+        public string Token { get; set; }
     }
 }
