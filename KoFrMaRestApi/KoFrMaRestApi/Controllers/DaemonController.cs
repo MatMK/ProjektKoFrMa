@@ -49,7 +49,7 @@ namespace KoFrMaRestApi.Controllers
         [HttpPost,Route(@"api/Daemon/TaskCompleted")]
         public void TaskCompleted(TaskComplete taskCompleted)
         {
-            if (token.Authorized(taskCompleted.daemonInfo))
+            if (token.Authorized(taskCompleted.DaemonInfo))
             {
                 using (MySqlConnection connection = WebApiConfig.Connection())
                 {
@@ -63,7 +63,7 @@ namespace KoFrMaRestApi.Controllers
                     {
                         //pridat k nepovedenym taskum a odeslat to emailem
                     }
-                    mySqlCom.DaemonSeen(mySqlCom.GetDaemonId(taskCompleted.daemonInfo, connection), connection);
+                    mySqlCom.DaemonSeen(mySqlCom.GetDaemonId(taskCompleted.DaemonInfo, connection), connection);
                     connection.Close();
                 }
             }

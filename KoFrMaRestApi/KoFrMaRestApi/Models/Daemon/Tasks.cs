@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Net;
 
 namespace KoFrMaRestApi.Models.Daemon
 {
@@ -57,6 +58,11 @@ namespace KoFrMaRestApi.Models.Daemon
         /// 2 = No Compression
         /// </summary>
         public byte CompressionLevel { get; set; }
+
+        /// <summary>
+        /// Obsahuje přihlašovací jméno a heslo, pokud je potřeba pro provedení tasku (FTP, SSH, Samba)
+        /// </summary>
+        public NetworkCredential NetworkCredentials { get; set; }
 
         /// <summary>
         /// Určuje, jestli úloha právě probíhá aby timer nespustil stejnou úlohu několikrát

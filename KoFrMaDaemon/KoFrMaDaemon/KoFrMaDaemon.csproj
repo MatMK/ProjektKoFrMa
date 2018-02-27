@@ -75,6 +75,7 @@
     <Compile Include="Backup\BackupFull.cs" />
     <Compile Include="Backup\Compression.cs" />
     <Compile Include="Backup\CopyErrorObject.cs" />
+    <Compile Include="Backup\FTPConnection.cs" />
     <Compile Include="ConnectionToServer\Connection.cs" />
     <Compile Include="ConnectionToServer\ConnectionInfo.cs" />
     <Compile Include="ConnectionToServer\DaemonInfo.cs" />

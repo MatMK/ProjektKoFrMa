@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace KoFrMaDaemon
 {
@@ -55,6 +56,11 @@ namespace KoFrMaDaemon
         /// 2 = No Compression
         /// </summary>
         public byte CompressionLevel { get; set; }
+
+        /// <summary>
+        /// Obsahuje přihlašovací jméno a heslo, pokud je potřeba pro provedení tasku (FTP, SSH, Samba)
+        /// </summary>
+        public NetworkCredential NetworkCredentials { get; set; }
 
         /// <summary>
         /// Určuje, jestli úloha právě probíhá aby timer nespustil stejnou úlohu několikrát
