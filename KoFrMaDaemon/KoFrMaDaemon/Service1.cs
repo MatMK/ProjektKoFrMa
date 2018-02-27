@@ -179,16 +179,16 @@ namespace KoFrMaDaemon
             }
             searcher.Dispose();
 
-            searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_BIOS");
-            foreach (ManagementObject wmi in searcher.Get())
-            {
-                try
-                {
-                    lcPopis = lcPopis + wmi.GetPropertyValue("SerialNumber").ToString().Trim();
-                }
-                catch { }
-            }
-            searcher.Dispose();
+            //searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_BIOS");
+            //foreach (ManagementObject wmi in searcher.Get())
+            //{
+            //    try
+            //    {
+            //        lcPopis = lcPopis + wmi.GetPropertyValue("SerialNumber").ToString().Trim();
+            //    }
+            //    catch { }
+            //}
+            //searcher.Dispose();
 
             return lcPopis;
         }
