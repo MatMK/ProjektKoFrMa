@@ -42,7 +42,7 @@ namespace KoFrMaRestApi
             }
                
         }
-        public string RegisterDaemonAndGetId(DaemonInfo daemon, int Password, MySqlConnection connection)
+        public string RegisterDaemonAndGetId(DaemonInfo daemon, Int64 Password, MySqlConnection connection)
         {
 
             using (MySqlDataReader reader = SelectFromTableByPcId(connection, daemon))
@@ -54,7 +54,7 @@ namespace KoFrMaRestApi
                 else
                 {
                     reader.Close();
-                    string SqlInsert = "insert into tbDaemons values(null, @version, @os, @pc_unique, 1, now()),@password";
+                    string SqlInsert = @"insert into tbDaemons values(null, @version, @os, @pc_unique, 1, now(),@password,'')";
                     using (MySqlCommand command = new MySqlCommand(SqlInsert, connection))
                     {
                         command.Parameters.AddWithValue("@version", daemon.Version);
@@ -182,13 +182,14 @@ namespace KoFrMaRestApi
         public bool Authorized(string PC_Unique, string Token, MySqlConnection connection)
         {
             bool result;
-            using (MySqlCommand command = new MySqlCommand(@"SELECT * FROM `tbDaemons` WHERE `PC_Unique` = @PC_Unique and `Token` = @Token", connection))
+            string _token = JsonConvert.DeserializeObject<string>(Token);
+            using (MySqlCommand command = new MySqlCommand(@"SELECT * FROM `tbDaemons` WHERE `PC_Unique` = @PC_Unique and `Token` = @Token and Allowed = 1", connection))
             {
                 command.Parameters.AddWithValue("@PC_Unique", PC_Unique);
-                command.Parameters.AddWithValue("@Token", Token);
+                command.Parameters.AddWithValue("@Token", _token);
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
-                    if (reader.HasRows)
+                    if (reader.Read())
                         result = true;
                     else
                         result =  false;
@@ -197,7 +198,7 @@ namespace KoFrMaRestApi
             }
             return result;
         }
-        public void RegisterToken(string PC_Unique, int Password, string Token)
+        public void RegisterToken(string PC_Unique, Int64 Password, string Token)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
             using (MySqlCommand command = new MySqlCommand(@"SELECT `Password` FROM `tbDaemons` WHERE `PC_Unique` = @PC_Unique", connection))
@@ -223,7 +224,7 @@ namespace KoFrMaRestApi
                 }
             }
         }
-        public bool RegisterToken(int Password, string Token)
+        public bool RegisterToken(Int64 Password, string Token)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
             using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbDaemons` SET `Token`= @Token WHERE `Password` = @Password", connection))

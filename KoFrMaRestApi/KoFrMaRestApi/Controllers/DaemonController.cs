@@ -43,14 +43,7 @@ namespace KoFrMaRestApi.Controllers
             }
             else
             {
-                //zaregistrovat daemona a pridat mu jeho token
-                using (MySqlConnection connection = WebApiConfig.Connection())
-                {
-                    connection.Open();
-                    mySqlCom.GetDaemonId(daemon, connection);
-                    connection.Close();
-                    return null;
-                }
+                return null;
             }
         }
         [HttpPost,Route(@"api/Daemon/TaskCompleted")]
@@ -80,7 +73,9 @@ namespace KoFrMaRestApi.Controllers
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
             {
+                connection.Open();
                 mySqlCom.RegisterDaemonAndGetId(password.daemon,password.password, connection);
+                connection.Close();
             }
             return token.CreateToken(password.password);
         }

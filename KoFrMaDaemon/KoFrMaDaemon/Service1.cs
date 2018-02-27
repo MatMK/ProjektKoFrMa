@@ -22,6 +22,7 @@ namespace KoFrMaDaemon
         private DebugLog debugLog;
         Connection connection;
         DaemonInfo daemon;
+        Password daemonPassword;
 
         private bool inProgress;
         private string logPath;
@@ -53,10 +54,12 @@ namespace KoFrMaDaemon
             /// </summary>
 
             daemon = DaemonInfo.Instance;
+            daemonPassword = Password.Instance;
             daemon.Version = 101;
             daemon.OS = System.Environment.OSVersion.VersionString;
             daemon.PC_Unique = this.GetSerNumBIOS();
             connection = new Connection();
+            daemonPassword.SetPassword("Zadat sem heslo z textaku");
         }
 
         protected override void OnStart(string[] args)
@@ -64,7 +67,7 @@ namespace KoFrMaDaemon
             debugLog.WriteToLog("Service started", 4);
             timer.Start();
             debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique BIOS ID is " +daemon.PC_Unique, 6);
-
+            
             //BackupDifferential backupTest = new BackupDifferential();
             BackupFull fullbackupTestFull = new BackupFull();
             fullbackupTestFull.BackupFullProcess(@"d:\KoFrMa\BackupThisFolder\", @"d:\KoFrMa\BackupGoesHere\", debugLog);

@@ -22,7 +22,7 @@ namespace KoFrMaRestApi.Models
             }
             return result;
         }
-        public string CreateToken(int HashPassword)
+        public string CreateToken(Int64 HashPassword)
         {
             string Token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
             mySql.RegisterToken(HashPassword, Token);
