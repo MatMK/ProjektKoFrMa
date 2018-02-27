@@ -4,17 +4,21 @@
 
 @*<my-app>Loading AppComponent content here ...</my-app>*@
 <html>
+<head>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+</head>
 <body>
-    <h1>LOGIN SERVICE</h1>
-    <br />
-    <br />
-    <strong>Username:  </strong><input type="text" />
-    <br />
-    <br />
-    <strong>Password:    </strong><input type="text" />
-    <br />
-    <br />
-    <input type="submit" value="Login" 
+    <div>
+        <strong>LOGIN SERVICE</strong>
+        <br />   <br />
+        <strong>Username:  </strong><input type="text" placeholder="Enter your username" />
+        <br />    <br />
+        <strong>Password:    </strong><input type="text" placeholder="Enter your password" />
+         <br />  <br />
+         <div class="g-recaptcha" data-sitekey="6Ld6W0kUAAAAALawhd36UwQInSTUT5RfAHjy9Pje"></div>
+        <br />
+         <input type="submit" value="Login"
+    </div>
 </body>
 </html>
 
