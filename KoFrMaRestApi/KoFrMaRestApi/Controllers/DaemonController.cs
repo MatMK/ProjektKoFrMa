@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using KoFrMaRestApi.Models;
 using System.Data.SqlClient;
 using KoFrMaRestApi.Models.Daemon;
+using KoFrMaRestApi.MySqlCom;
 
 namespace KoFrMaRestApi.Controllers
 {
@@ -19,12 +20,12 @@ namespace KoFrMaRestApi.Controllers
     public class DaemonController : ApiController
     {
         Token token = new Token();
-        MySqlCom mySqlCom = new MySqlCom();
+        MySqlDaemon mySqlCom = new MySqlDaemon();
         /// <summary>
-        /// Vrací instrukce pro daemon a registruje daemony do databáze.
+        /// Vraci instrukce pro daemon a registruje daemony do databaze.
         /// </summary>
         /// <param name="daemon"></param>
-        /// <returns>Obsahuje informace o deamonu zasílajícím informaci.</returns>
+        /// <returns>Obsahuje informace o deamonu zasílajicim informaci.</returns>
         [HttpPost, Route(@"api/Daemon/GetInstructions")]
         public List<Tasks> GetInstructions(DaemonInfo daemon)
         {
@@ -35,7 +36,6 @@ namespace KoFrMaRestApi.Controllers
                     connection.Open();
                     //Zjistí zda je Daemon už zaregistrovaný, pokud ne, přidá ho do databáze
                     string DaemonId = mySqlCom.GetDaemonId(daemon, connection);
-
                     mySqlCom.DaemonSeen(DaemonId, connection);
                     // Vybere task určený pro daemona.
                     return mySqlCom.GetTasks(DaemonId, connection);
@@ -46,7 +46,7 @@ namespace KoFrMaRestApi.Controllers
                 return null;
             }
         }
-        [HttpPost,Route(@"api/Daemon/TaskCompleted")]
+        [HttpPost, Route(@"api/Daemon/TaskCompleted")]
         public void TaskCompleted(TaskComplete taskCompleted)
         {
             if (token.Authorized(taskCompleted.daemonInfo))
@@ -74,10 +74,11 @@ namespace KoFrMaRestApi.Controllers
             using (MySqlConnection connection = WebApiConfig.Connection())
             {
                 connection.Open();
-                mySqlCom.RegisterDaemonAndGetId(password.daemon,password.password, connection);
+                mySqlCom.DaemonSeen(mySqlCom.GetDaemonId(password.daemon, connection), connection);
+                mySqlCom.RegisterDaemonAndGetId(password.daemon, password.password, connection);
                 connection.Close();
             }
-            return token.CreateToken(password.password);
+            return token.CreateToken(password.password, password.daemon);
         }
     }
 }

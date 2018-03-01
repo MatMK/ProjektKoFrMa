@@ -77,6 +77,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Runtime" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web.DynamicData" />
@@ -175,6 +176,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AdminAppController.cs" />
     <Compile Include="Controllers\DaemonController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
@@ -182,13 +184,16 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AdminApp\AdminInfo.cs" />
+    <Compile Include="Models\AdminApp\AdminLogin.cs" />
     <Compile Include="Models\Daemon\DaemonInfo.cs" />
     <Compile Include="Models\Daemon\Password.cs" />
     <Compile Include="Models\Daemon\TaskComplete.cs" />
     <Compile Include="Models\EmailSettings.cs" />
     <Compile Include="Models\Daemon\Tasks.cs" />
     <Compile Include="Models\Token.cs" />
-    <Compile Include="MySqlCom.cs" />
+    <Compile Include="MySqlCom\MySqlAdmin.cs" />
+    <Compile Include="MySqlCom\MySqlDaemon.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -242,6 +247,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\AdminApp\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

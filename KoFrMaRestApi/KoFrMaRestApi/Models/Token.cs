@@ -4,29 +4,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using MySql.Data.MySqlClient;
+using KoFrMaRestApi.Models.AdminApp;
+using KoFrMaRestApi.MySqlCom;
 
 namespace KoFrMaRestApi.Models
 {
     public class Token
     {
-        MySqlCom mySql = new MySqlCom();
+        MySqlDaemon SqlDaemon = new MySqlDaemon();
+        MySqlAdmin SqlAdmin = new MySqlAdmin();
         public bool Authorized(DaemonInfo daemon)
         {
             bool result;
             using (MySqlConnection connection = WebApiConfig.Connection())
             {
                 connection.Open();
-
-                result =  mySql.Authorized(daemon.PC_Unique, daemon.Token, connection);
+                result = SqlDaemon.Authorized(daemon.PC_Unique, daemon.Token, connection);
                 connection.Close();
             }
             return result;
         }
-        public string CreateToken(Int64 HashPassword)
+        public string CreateToken(Int64 HashPassword, DaemonInfo daemon)
         {
             string Token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
-            mySql.RegisterToken(HashPassword, Token);
+            SqlDaemon.RegisterToken(daemon.PC_Unique, HashPassword, Token);
             return Token;
+        }
+        public string CreateToken(AdminLogin login)
+        {
+            string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+            SqlAdmin.RegisterToken(login.UserName, login.Password, token);
+            return token;
         }
     }
 }

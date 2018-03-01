@@ -6,9 +6,9 @@ using MySql.Data.MySqlClient;
 using KoFrMaRestApi.Models.Daemon;
 using Newtonsoft.Json;
 
-namespace KoFrMaRestApi
+namespace KoFrMaRestApi.MySqlCom
 {
-    public class MySqlCom
+    public class MySqlDaemon
     {
         /// <summary>
         /// Zjistí zda je Daemon už zaregistrovaný, pokud ne, přidá ho do databáze
