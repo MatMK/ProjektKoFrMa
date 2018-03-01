@@ -11,8 +11,6 @@ namespace KoFrMaDaemon.Backup
     public class FTPConnection
     {
         private string FTPAddress;
-        private string username;
-        private string password;
         private DebugLog debugLog;
         private NetworkCredential FTPCredentials;
         public FTPConnection(string FTPAddress,string username, string password,DebugLog debugLog)
@@ -24,12 +22,7 @@ namespace KoFrMaDaemon.Backup
 
         public void UploadToFTP(string path)
         {
-            // Get the object used to communicate with the server.  
-            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(FTPAddress);
-            request.Method = WebRequestMethods.Ftp.UploadFile;
 
-            // This example assumes the FTP site uses anonymous logon.  
-            request.Credentials = new NetworkCredential(username, password);
 
             List<string>[] listToCopy = this.LoadListToCopy(path);
 
@@ -43,32 +36,6 @@ namespace KoFrMaDaemon.Backup
                 this.CopyFile(this.FTPAddress + @"/" + item);
             }
 
-
-
-
-
-
-
-
-
-
-
-
-            // Copy the contents of the file to the request stream.  
-            StreamReader sourceStream = new StreamReader("testfile.txt");
-            byte[] fileContents = Encoding.UTF8.GetBytes(sourceStream.ReadToEnd());
-            sourceStream.Close();
-            request.ContentLength = fileContents.Length;
-
-            Stream requestStream = request.GetRequestStream();
-            requestStream.Write(fileContents, 0, fileContents.Length);
-            requestStream.Close();
-
-            FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-
-            debugLog.WriteToLog("FTP Upload completed with status "+ response.StatusDescription,5);
-
-            response.Close();
         }
 
         private void CreateDirectory(string path)
@@ -86,7 +53,28 @@ namespace KoFrMaDaemon.Backup
 
         private void CopyFile(string path)
         {
+            // Get the object used to communicate with the server.  
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(FTPAddress);
+            request.Method = WebRequestMethods.Ftp.UploadFile;
 
+            // This example assumes the FTP site uses anonymous logon.  
+            request.Credentials = new NetworkCredential(FTPCredentials.UserName, FTPCredentials.Password);
+
+            // Copy the contents of the file to the request stream.  
+            StreamReader sourceStream = new StreamReader("testfile.txt");
+            byte[] fileContents = Encoding.UTF8.GetBytes(sourceStream.ReadToEnd());
+            sourceStream.Close();
+            request.ContentLength = fileContents.Length;
+
+            Stream requestStream = request.GetRequestStream();
+            requestStream.Write(fileContents, 0, fileContents.Length);
+            requestStream.Close();
+
+            FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+
+            debugLog.WriteToLog("FTP Upload completed with status " + response.StatusDescription, 5);
+
+            response.Close();
         }
 
         private List<string>[] LoadListToCopy(string path)
