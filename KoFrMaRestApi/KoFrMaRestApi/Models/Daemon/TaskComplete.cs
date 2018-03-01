@@ -10,7 +10,7 @@ namespace KoFrMaRestApi.Models.Daemon
     /// </summary>
     public class TaskComplete
     {
-        public DaemonInfo daemonInfo { get; set; }
+        public DaemonInfo DaemonInfo { get; set; }
         /// <summary>
         /// Jedinečné ID úlohy, bude na serveru spojené s databází a server může podle ID vynutit přerušení nebo smazání naplánované úlohy
         /// </summary>
