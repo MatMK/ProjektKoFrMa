@@ -13,6 +13,7 @@ namespace KoFrMaDaemon.Backup
         private string FTPAddress;
         private DebugLog debugLog;
         private NetworkCredential FTPCredentials;
+        private DirectoryInfo directoryInfo;
         public FTPConnection(string FTPAddress,string username, string password,DebugLog debugLog)
         {
             FTPCredentials = new NetworkCredential(username, password);
@@ -22,13 +23,19 @@ namespace KoFrMaDaemon.Backup
 
         public void UploadToFTP(string path)
         {
-
-
             List<string>[] listToCopy = this.LoadListToCopy(path);
 
             foreach (string item in listToCopy[0])
             {
-                this.CreateDirectory(this.FTPAddress + @"/" + item);
+                try
+                {
+                    this.CreateDirectory(this.FTPAddress + @"/" + item);
+                }
+                catch (Exception ex)
+                {
+                    debugLog.WriteToLog("Directory could not be created because of error" + ex.Message, 3);
+                }
+                
             }
 
             foreach (string item in listToCopy[1])
@@ -81,8 +88,6 @@ namespace KoFrMaDaemon.Backup
         {
             List<string>[] tmpArray = new List<string>[2];
 
-            DirectoryInfo directoryInfo = new DirectoryInfo(path);
-
             List<string> FileList = new List<string>();
 
             List<string> FolderList = new List<string>();
@@ -115,8 +120,8 @@ namespace KoFrMaDaemon.Backup
             {
                 try
                 {
+                    FolderList.Add(item.FullName.Substring(0,directoryInfo.FullName.Length));
                     this.ExploreDirectoryRecursively(item, FileList, FolderList);
-                    FolderList.Add(item.FullName);
                 }
                 catch (Exception)
                 {
