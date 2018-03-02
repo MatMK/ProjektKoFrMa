@@ -186,6 +186,9 @@
     </Compile>
     <Compile Include="Models\AdminApp\AdminInfo.cs" />
     <Compile Include="Models\AdminApp\AdminLogin.cs" />
+    <Compile Include="Models\AdminApp\Settings.cs" />
+    <Compile Include="Models\AdminApp\SetTasks.cs" />
+    <Compile Include="Models\AdminApp\TaskRepeating.cs" />
     <Compile Include="Models\Daemon\DaemonInfo.cs" />
     <Compile Include="Models\Daemon\Password.cs" />
     <Compile Include="Models\Daemon\TaskComplete.cs" />

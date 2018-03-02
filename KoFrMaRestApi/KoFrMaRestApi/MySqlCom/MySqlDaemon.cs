@@ -5,6 +5,7 @@ using System.Web;
 using MySql.Data.MySqlClient;
 using KoFrMaRestApi.Models.Daemon;
 using Newtonsoft.Json;
+using KoFrMaRestApi.Models.AdminApp;
 
 namespace KoFrMaRestApi.MySqlCom
 {
@@ -74,11 +75,11 @@ namespace KoFrMaRestApi.MySqlCom
         /// </summary>
         /// <param name="DaemonId">ID daemona v databázy, lze použí GetDaemonId()</param>
         /// <param name="connection"></param>
-        /// <returns>Vrací list tasku pro daemona</returns>
+        /// <returns>Vrací repeat.ExecutionTimes tasku pro daemona</returns>
         public List<Tasks> GetTasks(string DaemonId, MySqlConnection connection)
         {
             List<Tasks> result = new List<Tasks>();
-            MySqlCommand sqlCommand = new MySqlCommand(@"SELECT Task, TimeOfExecution FROM `tbTasks` WHERE `IdDaemon` = @Id", connection);
+            MySqlCommand sqlCommand = new MySqlCommand(@"SELECT Task, TimeOfExecution, Id FROM `tbTasks` WHERE `IdDaemon` = @Id", connection);
             sqlCommand.Parameters.AddWithValue("@Id", DaemonId);
             MySqlDataReader reader = sqlCommand.ExecuteReader();
             while (reader.Read())
@@ -86,11 +87,8 @@ namespace KoFrMaRestApi.MySqlCom
                 if (Convert.ToDateTime(reader["TimeOfExecution"]) <= DateTime.Now)
                 {
                     string json = (string)reader["Task"];
-
                     result.Add(JsonConvert.DeserializeObject<Tasks>(json));
-                    //Pouzit pokud v databazy budeme uchovavat listy tasku
-                    //result.AddRange(JsonConvert.DeserializeObject<List<Tasks>>(json));
-
+                    result.Last().IDTask = (int)reader["Id"];
                 }
             }
             sqlCommand.Dispose();
@@ -104,24 +102,23 @@ namespace KoFrMaRestApi.MySqlCom
         /// <param name="connection"></param>
         public void TaskCompletionRecieved(TaskComplete task, MySqlConnection connection)
         {
-            using (MySqlCommand command = new MySqlCommand(@"SELECT `RepeatInMinutes`,`TimeOfExecution` FROM `tbTasks` WHERE Id = @Id", connection))
+            using (MySqlCommand command = new MySqlCommand(@"SELECT `RepeatInJSON`,`TimeOfExecution` FROM `tbTasks` WHERE Id = @Id", connection))
             {
                 command.Parameters.AddWithValue("@Id", task.IDTask);
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
                     if (reader.Read())
                     {
-                        if (reader["RepeatInMinutes"] == System.DBNull.Value)
+                        if (reader["RepeatInJSON"] == DBNull.Value)
                         {
                             reader.Close();
-                            TaskRemove(task, connection);
+                            TaskRemove(task.IDTask, connection);
                         }
                         else
                         {
-                            int minutes = (int)reader["RepeatInMinutes"];
-                            DateTime time = (DateTime)reader["TimeOfExecution"];
+                            string json = (string)reader["RepeatInJSON"];
                             reader.Close();
-                            TaskExtend(task, (int)minutes,time, connection);
+                            TaskExtend(task.IDTask,json, connection);
                         }
                     }
                 }
@@ -133,11 +130,11 @@ namespace KoFrMaRestApi.MySqlCom
         /// </summary>
         /// <param name="task"></param>
         /// <param name="connection"></param>
-        public void TaskRemove(TaskComplete task, MySqlConnection connection)
+        public void TaskRemove(int IDTask, MySqlConnection connection)
         {
             using (MySqlCommand command = new MySqlCommand(@"DELETE FROM `tbTasks` WHERE `Id` = @IdTask",connection))
             {
-                command.Parameters.AddWithValue("@IdTask", task.IDTask);
+                command.Parameters.AddWithValue("@IdTask", IDTask);
                 command.ExecuteNonQuery();
             }
         }
@@ -148,14 +145,61 @@ namespace KoFrMaRestApi.MySqlCom
         /// <param name="TimeInMinutes"></param>
         /// <param name="time"></param>
         /// <param name="connection"></param>
-        public void TaskExtend(TaskComplete task,int TimeInMinutes,DateTime time, MySqlConnection connection)
+        public void TaskExtend(int IdTask, string JsonTime, MySqlConnection connection)
         {
-            DateTime Repeat = time + TimeSpan.FromMinutes(TimeInMinutes);
-            using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbTasks` SET `TimeOfExecution`= @Time WHERE `Id` = @Id",connection))
+            TaskRepeating repeat = JsonConvert.DeserializeObject<TaskRepeating>(JsonTime);
+            DateTime nextDate = repeat.ExecutionTimes.Last();
+            bool DateChanged = false;
+            foreach (var item in repeat.ExecutionTimes)
             {
-                command.Parameters.AddWithValue("@Id", task.IDTask);
-                command.Parameters.AddWithValue("@Time", Repeat);
-                command.ExecuteNonQuery();
+                if (item > DateTime.Now)
+                {
+                    nextDate = item;
+                    DateChanged = true;
+                    break;
+                }
+            }
+            if (!DateChanged)
+            {
+                while (repeat.ExecutionTimes[0] < DateTime.Now)
+                {
+                    List<int> ToDelete = new List<int>();
+                    for (int i = 0; i < repeat.ExecutionTimes.Count; i++)
+                    {
+                        if (repeat.ExecutionTimes[i] + repeat.Repeating < repeat.RepeatTill)
+                            repeat.ExecutionTimes[i] += repeat.Repeating;
+                        else
+                            ToDelete.Add(i);
+                    }
+                    for (int i = ToDelete.Count-1; i >= 0; i--)
+                    {
+                        repeat.ExecutionTimes.RemoveAt(ToDelete[i]);
+                    }
+                    if (repeat.ExecutionTimes.Count == 0)
+                        break;
+                }
+                foreach (var item in repeat.ExecutionTimes)
+                {
+                    if (item > DateTime.Now)
+                    {
+                        nextDate = item;
+                        break;
+                    }
+                }
+            }
+            if (repeat.ExecutionTimes.Count == 0)
+            {
+                TaskRemove(IdTask, connection);
+            }
+            else
+            {
+                using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbTasks` SET `TimeOfExecution`= @Time,`RepeatInJSON` = @NewJson WHERE `Id` = @Id", connection))
+                {
+                    command.Parameters.AddWithValue("@Id", IdTask);
+                    command.Parameters.AddWithValue("@Time", nextDate);
+                    command.Parameters.AddWithValue("@NewJson", JsonConvert.SerializeObject(repeat));
+                    command.ExecuteNonQuery();
+                }
             }
         }
         private MySqlDataReader SelectFromTableByPcId(MySqlConnection connection, DaemonInfo daemon)

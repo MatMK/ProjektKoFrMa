@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Web;
 using System.Net;
 
-namespace KoFrMaDaemon
+namespace KoFrMaRestApi.Models.AdminApp
 {
-    public class Tasks
+    /// <summary>
+    /// Obsahuje instrukce pro Daemon
+    /// </summary>
+    public class SetTasks
     {
+        public int? RepeatingInMinutes { get; set; }
         /// <summary>
-        /// Jedinečné ID úlohy, bude na serveru spojené s databází a server může podle ID vynutit přerušení nebo smazání naplánované úlohy
+        /// Id daemona který má task dokončit
         /// </summary>
-        public int? IDTask { get; set; }
+        public int DaemonId { get; set; }
         /// <summary>
         /// Čas, kdy se má úloha spustit (server může předáváat démonu ulohy napřed)
         /// </summary>
