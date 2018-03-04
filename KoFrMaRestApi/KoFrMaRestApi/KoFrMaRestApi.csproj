@@ -186,14 +186,18 @@
     </Compile>
     <Compile Include="Models\AdminApp\AdminInfo.cs" />
     <Compile Include="Models\AdminApp\AdminLogin.cs" />
+    <Compile Include="Models\AdminApp\RepeatingTasks\ExceptionDate.cs" />
     <Compile Include="Models\AdminApp\Settings.cs" />
     <Compile Include="Models\AdminApp\SetTasks.cs" />
-    <Compile Include="Models\AdminApp\TaskRepeating.cs" />
+    <Compile Include="Models\AdminApp\RepeatingTasks\TaskRepeating.cs" />
+    <Compile Include="Models\Daemon\Task\BackupJournal\BackupJournalObject.cs" />
     <Compile Include="Models\Daemon\DaemonInfo.cs" />
     <Compile Include="Models\Daemon\Password.cs" />
     <Compile Include="Models\Daemon\TaskComplete.cs" />
+    <Compile Include="Models\Daemon\Task\BackupJournal\FileInfoObject.cs" />
+    <Compile Include="Models\Daemon\Task\BackupJournal\FolderObject.cs" />
     <Compile Include="Models\EmailSettings.cs" />
-    <Compile Include="Models\Daemon\Tasks.cs" />
+    <Compile Include="Models\Daemon\Task\Tasks.cs" />
     <Compile Include="Models\Token.cs" />
     <Compile Include="MySqlCom\MySqlAdmin.cs" />
     <Compile Include="MySqlCom\MySqlDaemon.cs" />

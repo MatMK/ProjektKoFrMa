@@ -6,6 +6,8 @@ using MySql.Data.MySqlClient;
 using KoFrMaRestApi.Models.Daemon;
 using Newtonsoft.Json;
 using KoFrMaRestApi.Models.AdminApp;
+using KoFrMaRestApi.Models.Daemon.Task;
+using KoFrMaRestApi.Models.AdminApp.RepeatingTasks;
 
 namespace KoFrMaRestApi.MySqlCom
 {
@@ -100,11 +102,11 @@ namespace KoFrMaRestApi.MySqlCom
         /// </summary>
         /// <param name="task"></param>
         /// <param name="connection"></param>
-        public void TaskCompletionRecieved(TaskComplete task, MySqlConnection connection)
+        public void TaskCompletionRecieved(int IDTask, MySqlConnection connection)
         {
             using (MySqlCommand command = new MySqlCommand(@"SELECT `RepeatInJSON`,`TimeOfExecution` FROM `tbTasks` WHERE Id = @Id", connection))
             {
-                command.Parameters.AddWithValue("@Id", task.IDTask);
+                command.Parameters.AddWithValue("@Id", IDTask);
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
                     if (reader.Read())
@@ -112,13 +114,13 @@ namespace KoFrMaRestApi.MySqlCom
                         if (reader["RepeatInJSON"] == DBNull.Value)
                         {
                             reader.Close();
-                            TaskRemove(task.IDTask, connection);
+                            TaskRemove(IDTask, connection);
                         }
                         else
                         {
                             string json = (string)reader["RepeatInJSON"];
                             reader.Close();
-                            TaskExtend(task.IDTask,json, connection);
+                            TaskExtend(IDTask,json, connection);
                         }
                     }
                 }
@@ -154,10 +156,22 @@ namespace KoFrMaRestApi.MySqlCom
             {
                 if (item > DateTime.Now)
                 {
-                    nextDate = item;
-                    DateChanged = true;
-                    break;
-                }
+                    bool NotException = true;
+                    foreach (var time in repeat.ExceptionDates)
+                    {
+                        if (item > time.Start && item < time.End)
+                        {
+                            NotException = false;
+                            break;
+                        }
+                    }
+                    if (NotException)
+                    {
+                        nextDate = item;
+                        DateChanged = true;
+                        break;
+                    }
+                } 
             }
             if (!DateChanged)
             {
@@ -189,6 +203,7 @@ namespace KoFrMaRestApi.MySqlCom
             }
             if (repeat.ExecutionTimes.Count == 0)
             {
+                //pridat check pokud to neni potreba pro dokonceni neake zalohy
                 TaskRemove(IdTask, connection);
             }
             else

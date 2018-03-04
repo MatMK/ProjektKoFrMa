@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Net;
+using KoFrMaRestApi.Models.Daemon.Task.BackupJournal;
 
-namespace KoFrMaRestApi.Models.Daemon
+namespace KoFrMaRestApi.Models.Daemon.Task
 {
     /// <summary>
     /// Obsahuje instrukce pro Daemon
@@ -68,5 +69,6 @@ namespace KoFrMaRestApi.Models.Daemon
         /// Určuje, jestli úloha právě probíhá aby timer nespustil stejnou úlohu několikrát
         /// </summary>
         public bool InProgress { get; set; }
+        public string WhereToBackup { get; internal set; }
     }
 }

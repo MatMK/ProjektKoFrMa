@@ -5,11 +5,19 @@ using System.Linq;
 using System.Web;
 using Newtonsoft.Json;
 using MySql.Data.MySqlClient;
+using KoFrMaRestApi.Models.Daemon.Task;
 
 namespace KoFrMaRestApi.Models.AdminApp
 {
+    /// <summary>
+    /// Translates Admin's settings to Daemons
+    /// </summary>
     public class Settings
     {
+        /// <summary>
+        /// Uploads task to mySql database
+        /// </summary>
+        /// <param name="tasks">Defines task</param>
         public void SetTasks(List<SetTasks> tasks)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())

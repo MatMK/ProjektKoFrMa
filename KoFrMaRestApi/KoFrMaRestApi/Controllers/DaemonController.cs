@@ -11,6 +11,7 @@ using KoFrMaRestApi.Models;
 using System.Data.SqlClient;
 using KoFrMaRestApi.Models.Daemon;
 using KoFrMaRestApi.MySqlCom;
+using KoFrMaRestApi.Models.Daemon.Task;
 
 namespace KoFrMaRestApi.Controllers
 {
@@ -56,7 +57,7 @@ namespace KoFrMaRestApi.Controllers
                     connection.Open();
                     if (taskCompleted.IsSuccessfull)
                     {
-                        mySqlCom.TaskCompletionRecieved(taskCompleted, connection);
+                        mySqlCom.TaskCompletionRecieved(taskCompleted.IDTask, connection);
                         //pridat k povedenym taskum a odeslat emailem
                     }
                     else

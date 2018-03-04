@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace KoFrMaRestApi.Models.AdminApp
+namespace KoFrMaRestApi.Models.AdminApp.RepeatingTasks
 {
     public class TaskRepeating
     {
@@ -36,5 +36,6 @@ namespace KoFrMaRestApi.Models.AdminApp
             }*/
             get;set;
         }
+        public List<ExceptionDate> ExceptionDates { get; set; }
     }
 }
