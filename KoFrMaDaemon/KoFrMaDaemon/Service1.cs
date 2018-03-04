@@ -65,12 +65,22 @@ namespace KoFrMaDaemon
         protected override void OnStart(string[] args)
         {
             debugLog.WriteToLog("Service started", 4);
-            timer.Start();
-            debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique BIOS ID is " +daemon.PC_Unique, 6);
-            
+            //timer.Start();
+            debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique motherboard ID is " +daemon.PC_Unique, 6);
+            try
+            {
+                FTPConnection fTPConnection = new FTPConnection(@"ftp://e64.cz/WWWRoot/", "v013823a", "", debugLog);
+                fTPConnection.UploadToFTP(@"d:\KoFrMa\BackupThisFolder\");
+            }
+            catch (Exception ex)
+            {
+                debugLog.WriteToLog(ex.Message, 2);
+                throw;
+            }
+
             //BackupDifferential backupTest = new BackupDifferential();
-            BackupFull fullbackupTestFull = new BackupFull();
-            fullbackupTestFull.BackupFullProcess(@"d:\KoFrMa\BackupThisFolder\", @"d:\KoFrMa\BackupGoesHere\", debugLog);
+            //BackupFull fullbackupTestFull = new BackupFull();
+            //fullbackupTestFull.BackupFullProcess(@"d:\KoFrMa\BackupThisFolder\", @"d:\KoFrMa\BackupGoesHere\", debugLog);
             //backupTest.BackupDifferentialProcess(@"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_24_15_14_39_Full\KoFrMaBackup.dat\", @"d:\tmp\testBackup\BackupGoesHere\", debugLog);
             //BackupSwitch backupSwitchTest = new BackupSwitch();
             //try
