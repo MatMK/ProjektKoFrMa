@@ -122,14 +122,14 @@ namespace KoFrMaDaemon
                             {
                                 item.InProgress = true;
                                 debugLog.WriteToLog("Task locked, starting the backup...", 6);
-                                backupInstance.Backup(item.SourceOfBackup, item.WhereToBackup,item.CompressionLevel, debugLog);
+                                backupInstance.Backup(item.SourceOfBackup,item.BackupJournalSource, item.WhereToBackup,item.CompressionLevel, debugLog);
                                 debugLog.WriteToLog("Task completed, setting task as successfully completed...", 6);
-                                connection.TaskCompleted(item, debugLog, true);
+                                connection.TaskCompleted(item, backupInstance.BackupJournalNew,debugLog, true);
                             }
                             catch (Exception ex)
                             {
                                 debugLog.WriteToLog("Task failed with fatal error " + ex.Message, 2);
-                                connection.TaskCompleted(item, debugLog, false);
+                                connection.TaskCompleted(item, backupInstance.BackupJournalNew, debugLog, false);
                             }
                             finally
                             {

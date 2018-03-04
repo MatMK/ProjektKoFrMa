@@ -12,16 +12,18 @@ namespace KoFrMaDaemon.Backup
     {
         protected DirectoryInfo sourceInfo;
         protected DirectoryInfo destinationInfo;
+        public BackupJournalObject BackupJournalNew;
 
-        public void Backup(string source, string destination,  byte? compressionLevel, DebugLog debugLog)
+        public void Backup(string source, BackupJournalObject backupJournalSource, string destination,  byte? compressionLevel, DebugLog debugLog)
         {
-            if (source.EndsWith(".dat")) //když bude jako zdroj úlohy nastaven path na soubor .dat provede se diferenciální, jinak pokud je to složka tak plná
+            if (backupJournalSource != null)
             {
                 debugLog.WriteToLog("Starting differential/incremental backup, because the path to source ends with .dat (" + source + ')', 5);
                 BackupDifferential backupDifferential = new BackupDifferential();
-                backupDifferential.BackupDifferentialProcess(source, Path.GetDirectoryName(destination), debugLog);
+                backupDifferential.BackupDifferentialProcess(backupJournalSource, Path.GetDirectoryName(destination), debugLog);
                 this.sourceInfo = backupDifferential.sourceInfo;
                 this.destinationInfo = backupDifferential.destinationInfo;
+                BackupJournalNew = backupDifferential.BackupJournalNew;
             }
             else
             {
@@ -30,8 +32,9 @@ namespace KoFrMaDaemon.Backup
                 backupFull.BackupFullProcess(source, Path.GetDirectoryName(destination), debugLog);
                 this.sourceInfo = backupFull.sourceInfo;
                 this.destinationInfo = backupFull.destinationInfo;
+                BackupJournalNew = backupFull.BackupJournalNew;
             }
-
+            
             if (destination.EndsWith(".zip") || destination.EndsWith(".rar") || destination.EndsWith(".7z"))
             {
                 debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + destination + ')', 5);
