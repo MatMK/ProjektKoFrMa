@@ -156,15 +156,15 @@ namespace KoFrMaRestApi.MySqlCom
             {
                 if (item > DateTime.Now)
                 {
-                    bool NotException = true;
+                    bool NotException = HasDateException(item, repeat.ExceptionDates);
+                    /*
                     foreach (var time in repeat.ExceptionDates)
                     {
                         if (item > time.Start && item < time.End)
                         {
                             NotException = false;
-                            break;
                         }
-                    }
+                    }*/
                     if (NotException)
                     {
                         nextDate = item;
@@ -175,22 +175,39 @@ namespace KoFrMaRestApi.MySqlCom
             }
             if (!DateChanged)
             {
-                while (repeat.ExecutionTimes[0] < DateTime.Now)
+                if (repeat.RepeatTill == null)
                 {
-                    List<int> ToDelete = new List<int>();
-                    for (int i = 0; i < repeat.ExecutionTimes.Count; i++)
+                    bool DateOk = true;
+                    while (repeat.ExecutionTimes[0] < DateTime.Now || !DateOk)
                     {
-                        if (repeat.ExecutionTimes[i] + repeat.Repeating < repeat.RepeatTill)
+                        for (int i = 0; i < repeat.ExecutionTimes.Count; i++)
+                        {
                             repeat.ExecutionTimes[i] += repeat.Repeating;
-                        else
-                            ToDelete.Add(i);
+                        }
+                        DateOk = HasDateException(repeat.ExecutionTimes[0], repeat.ExceptionDates);
                     }
-                    for (int i = ToDelete.Count-1; i >= 0; i--)
+                }
+                else
+                {
+                    bool DateOk = true;
+                    while (repeat.ExecutionTimes[0] < DateTime.Now || !DateOk)
                     {
-                        repeat.ExecutionTimes.RemoveAt(ToDelete[i]);
+                        List<int> ToDelete = new List<int>();
+                        for (int i = 0; i < repeat.ExecutionTimes.Count; i++)
+                        {
+                            if (repeat.ExecutionTimes[i] + repeat.Repeating < repeat.RepeatTill)
+                                repeat.ExecutionTimes[i] += repeat.Repeating;
+                            else
+                                ToDelete.Add(i);
+                        }
+                        for (int i = ToDelete.Count - 1; i >= 0; i--)
+                        {
+                            repeat.ExecutionTimes.RemoveAt(ToDelete[i]);
+                        }
+                        if (repeat.ExecutionTimes.Count == 0)
+                            break;
+                        DateOk = HasDateException(repeat.ExecutionTimes[0], repeat.ExceptionDates);
                     }
-                    if (repeat.ExecutionTimes.Count == 0)
-                        break;
                 }
                 foreach (var item in repeat.ExecutionTimes)
                 {
@@ -216,6 +233,18 @@ namespace KoFrMaRestApi.MySqlCom
                     command.ExecuteNonQuery();
                 }
             }
+        }
+        private bool HasDateException(DateTime item, List<ExceptionDate> ExceptionDates)
+        {
+            bool result = true;
+            foreach (var time in ExceptionDates)
+            {
+                if (item > time.Start && item < time.End)
+                {
+                    result = false;
+                }
+            }
+            return result;
         }
         private MySqlDataReader SelectFromTableByPcId(MySqlConnection connection, DaemonInfo daemon)
         {
