@@ -12,7 +12,7 @@ namespace KoFrMaDaemon
         /// <summary>
         /// Jedinečné ID úlohy, bude na serveru spojené s databází a server může podle ID vynutit přerušení nebo smazání naplánované úlohy
         /// </summary>
-        public int? IDTask { get; set; }
+        public int IDTask { get; set; }
         /// <summary>
         /// Čas, kdy se má úloha spustit (server může předáváat démonu ulohy napřed)
         /// </summary>
