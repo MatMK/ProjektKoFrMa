@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.IO;
 using System.Net;
 using Newtonsoft.Json;
-
+using KoFrMaDaemon.Backup;
 
 namespace KoFrMaDaemon.ConnectionToServer
 {
@@ -36,14 +36,14 @@ namespace KoFrMaDaemon.ConnectionToServer
             }
             return JsonConvert.DeserializeObject<List<Tasks>>(result);
         }
-        public void TaskCompleted(Tasks task, DebugLog debugLog, bool Successfull)
+        public void TaskCompleted(Tasks task, BackupJournalObject backupJournalNew, DebugLog debugLog, bool Successfull)
         {
             TaskComplete completedTask = new TaskComplete()
             {
                 IDTask = task.IDTask,
                 TimeOfCompletition = DateTime.Now,
                 DebugLog = debugLog.logReport,
-                DatFileFullPath = task.WhereToBackup,
+                DatFile = backupJournalNew,
                 IsSuccessfull = Successfull
             };
 

@@ -27,7 +27,7 @@ namespace KoFrMaDaemon.Backup
         }
 
 
-        public void BackupDifferentialProcess(string OriginalBackupDatFilePath, string destination, DebugLog serviceDebugLog)
+        public void BackupDifferentialProcess(BackupJournalObject backupJournalSource, string destination, DebugLog serviceDebugLog)
         {
             DateTime timeOfBackup = DateTime.Now;
 
@@ -47,9 +47,10 @@ namespace KoFrMaDaemon.Backup
             temporaryDebugInfo = null;
 
 
-            DebugLog.WriteToLog("Loading journal of original backup from " + OriginalBackupDatFilePath, 5);
+            DebugLog.WriteToLog("Loading journal of original backup from backup journal received from server...", 5);
             BackupJournalOperations BackupJournal = new BackupJournalOperations();
-            BackupJournalObject backupJournalObject = BackupJournal.LoadBackupJournalObject(OriginalBackupDatFilePath, DebugLog);
+            //BackupJournalObject backupJournalObject = BackupJournal.LoadBackupJournalObject(OriginalBackupDatFilePath, DebugLog);
+            BackupJournalObject backupJournalObject = backupJournalSource;
             string source = backupJournalObject.RelativePath;
             List<FileInfoObject> OriginalFiles = backupJournalObject.BackupJournalFiles;
             List<FolderObject> OriginalFolders = backupJournalObject.BackupJournalFolders;
@@ -291,7 +292,13 @@ namespace KoFrMaDaemon.Backup
 
 
             DebugLog.WriteToLog("Creating transaction log of successfully copied files and folders...", 5);
-            BackupJournal.CreateBackupJournal(new BackupJournalObject() { RelativePath = source, BackupJournalFiles = FilesCorrect, BackupJournalFolders = FoldersCorrect }, base.destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", DebugLog);
+            BackupJournalNew = new BackupJournalObject()
+            {
+                RelativePath = source,
+                BackupJournalFiles = FilesCorrect,
+                BackupJournalFolders = FoldersCorrect
+            };
+            BackupJournal.CreateBackupJournal(BackupJournalNew, base.destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", DebugLog);
             DebugLog.WriteToLog("Transaction log successfully created in destination " + base.destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", 5);
 
 

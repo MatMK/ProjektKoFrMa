@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net;
+using KoFrMaDaemon.Backup;
 
 namespace KoFrMaDaemon
 {
@@ -19,9 +20,14 @@ namespace KoFrMaDaemon
         public DateTime TimeToBackup { get; set; }
 
         /// <summary>
-        /// Co zálohovat, pokud se jedná o full zálohu je zde path ke složce, pokud je záloha diferenciální/inkrementální je v tomto poli cesta k .dat původní zálohy
+        /// Co zálohovat, pokud se jedná o full zálohu je zde path ke složce, pokud je záloha diferenciální/inkrementální je toto pole prázdné
         /// </summary>
         public string SourceOfBackup { get; set; }
+
+        /// <summary>
+        /// Pokud se jedná o diferenciální/inkrementální zálohu, je zde kompletní log zálohy na kterou je potřeba navázat
+        /// </summary>
+        public BackupJournalObject BackupJournalSource { get; set; }
 
         /// <summary>
         /// Cíl zálohy, archiv nebo složka, může odkazovat na ftp server (ftp://...) nebo sdílené úložiště (//NASBackup/CilZalohy)

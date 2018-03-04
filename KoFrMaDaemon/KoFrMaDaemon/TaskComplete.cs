@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KoFrMaDaemon.Backup;
 using KoFrMaDaemon.ConnectionToServer;
 
 namespace KoFrMaDaemon
@@ -25,9 +26,9 @@ namespace KoFrMaDaemon
         public DateTime TimeOfCompletition { get; set; }
 
         /// <summary>
-        /// Cesta k transakčnímu journalu který byl úlohou vytvořen
+        /// Transakční journal který byl úlohou vytvořen
         /// </summary>
-        public string DatFileFullPath { get; set; }
+        public BackupJournalObject DatFile { get; set; }
 
         /// <summary>
         /// List chyb které nastaly při záloze

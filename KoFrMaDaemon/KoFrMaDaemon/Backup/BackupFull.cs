@@ -65,7 +65,8 @@ namespace KoFrMaDaemon.Backup
 
             DebugLog.WriteToLog("Creating transaction jounal of successfully backuped files and folders...", 5);
             BackupJournalOperations BackupJournal = new BackupJournalOperations();
-            BackupJournal.CreateBackupJournal(new BackupJournalObject() { RelativePath = source, BackupJournalFiles = FilesCorrect, BackupJournalFolders = FoldersCorrect }, base.destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", DebugLog);
+            base.BackupJournalNew = new BackupJournalObject() { RelativePath = source, BackupJournalFiles = FilesCorrect, BackupJournalFolders = FoldersCorrect };
+            BackupJournal.CreateBackupJournal(base.BackupJournalNew, base.destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", DebugLog);
             DebugLog.WriteToLog("Journal successfully created", 5);
             TimeSpan backupTook = DateTime.Now - timeOfBackup;
             DebugLog.WriteToLog("Full backup was completed in " + backupTook.TotalSeconds + " s", 4);

@@ -22,9 +22,9 @@ namespace KoFrMaRestApi.Models.Daemon
         public DateTime TimeOfCompletition { get; set; }
 
         /// <summary>
-        /// Cesta k transakčnímu journalu který byl úlohou vytvořen
+        /// Transakční journal který byl úlohou vytvořen
         /// </summary>
-        public string DatFileFullPath { get; set; }
+        public BackupJournalObject DatFile { get; set; }
 
         /// <summary>
         /// List chyb které nastaly při záloze
