@@ -82,6 +82,7 @@
     <Compile Include="Backup\FileInfoObject.cs" />
     <Compile Include="Backup\FolderObject.cs" />
     <Compile Include="ConnectionToServer\Password.cs" />
+    <Compile Include="ConnectionToServer\Request.cs" />
     <Compile Include="DaemonSettings.cs" />
     <Compile Include="DebugLog.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
