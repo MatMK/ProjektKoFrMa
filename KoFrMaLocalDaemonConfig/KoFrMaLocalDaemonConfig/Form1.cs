@@ -19,7 +19,6 @@ namespace KoFrMaLocalDaemonConfig
 
             LoadIniFile();
             CheckIfChecked();
-
         }
 
         private void checkBox_showPath_CheckedChanged(object sender, EventArgs e)
@@ -94,7 +93,15 @@ namespace KoFrMaLocalDaemonConfig
                 StreamWriter w = new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\config.ini");
                 w.WriteLine("ServerIP=" + this.textBox_ServerIP.Text);
                 w.WriteLine("Password=" + this.textBox_Password.Text);
-                w.WriteLine("LocalLogPath=" + this.textBox_LogPath.Text);
+                if (this.checkBox_showPath.Checked)
+                {
+                    w.WriteLine("LocalLogPath=" + this.textBox_LogPath.Text);
+                }
+                else
+                {
+                    w.WriteLine("LocalLogPath=");
+                }
+
                 w.Close();
                 w.Dispose();
             }

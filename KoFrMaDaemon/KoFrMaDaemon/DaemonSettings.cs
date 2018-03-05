@@ -10,7 +10,7 @@ namespace KoFrMaDaemon
     public class DaemonSettings
     {
         public string ServerIP;
-        public Int64 Password;
+        public string Password;
         public string LocalLogPath;
 
         private StreamReader r;
@@ -28,15 +28,24 @@ namespace KoFrMaDaemon
                         string tmpRow = r.ReadLine();
                        if (tmpRow.StartsWith("ServerIP="))
                        {
-                           this.ServerIP = tmpRow.Substring(9);
+                            string tmpRowSubstring = tmpRow.Substring(9);
+                            if (tmpRowSubstring != "")
+                            {
+                                this.ServerIP = tmpRowSubstring;
+                            }
                        }
                        else if (tmpRow.StartsWith("Password="))
                        {
-                           this.Password = Convert.ToInt64(tmpRow.Substring(9));
+                           this.Password = tmpRow.Substring(9);
                        }
                        else if (tmpRow.StartsWith("LocalLogPath="))
                        {
-                           this.LocalLogPath = tmpRow.Substring(13);
+                            string tmpRowSubstring = tmpRow.Substring(13);
+                            if (tmpRowSubstring!="")
+                            {
+                                this.LocalLogPath = tmpRowSubstring;
+                            }
+
                        }
                 }
                 r.Close();
