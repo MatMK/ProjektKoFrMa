@@ -70,12 +70,12 @@ namespace KoFrMaDaemon
         protected override void OnStart(string[] args)
         {
             debugLog.WriteToLog("Service started", 4);
-            timer.Start();
+            //timer.Start();
             debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique motherboard ID is " +daemon.PC_Unique, 6);
             try
             {
-                FTPConnection fTPConnection = new FTPConnection(@"ftp://e64.cz/WWWRoot/", "v013823a", "", debugLog);
-                //fTPConnection.UploadToFTP(@"d:\KoFrMa\BackupThisFolder\");
+                FTPConnection fTPConnection = new FTPConnection(@"ftp://e64.cz/WWWRoot/", "v013823a", "Jarin12364XXL", debugLog);
+                fTPConnection.UploadToFTP(@"d:\KoFrMa\BackupThisFolder\");
             }
             catch (Exception ex)
             {
@@ -176,7 +176,14 @@ namespace KoFrMaDaemon
 
         private void GetTasks()
         {
-            ScheduledTasks.AddRange(connection.PostRequest());
+            int[] ScheduledTasksIdArray = new int[ScheduledTasks.Count];
+            int i =0;
+            foreach (Tasks item in ScheduledTasks)
+            {
+                ScheduledTasksIdArray[i] = item.IDTask;
+                i++;
+            }
+            ScheduledTasks.AddRange(connection.PostRequest(ScheduledTasksIdArray));
         }
 
         private string GetSerNumBIOS()
