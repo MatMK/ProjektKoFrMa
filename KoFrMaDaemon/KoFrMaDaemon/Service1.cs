@@ -50,7 +50,7 @@ namespace KoFrMaDaemon
             this.logPath = daemonSettings.LocalLogPath;
 
 
-            debugLog = new DebugLog(this.logPath, 8);
+            debugLog = new DebugLog(this.logPath, 9);
 
             /// <summary>
             /// Předávání informací o daemonovi a systému
@@ -74,7 +74,7 @@ namespace KoFrMaDaemon
             debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique motherboard ID is " +daemon.PC_Unique, 6);
             try
             {
-                FTPConnection fTPConnection = new FTPConnection(@"ftp://e64.cz/WWWRoot/", "v013823a", "3wZ1ySRlLY8c7k6", debugLog);
+                FTPConnection fTPConnection = new FTPConnection(@"ftp://e64.cz/WWWRoot/DRead/", "v013823a", "3wZ1ySRlLY8c7k6", debugLog);
                 fTPConnection.UploadToFTP(@"d:\KoFrMa\BackupThisFolder\");
             }
             catch (Exception ex)
