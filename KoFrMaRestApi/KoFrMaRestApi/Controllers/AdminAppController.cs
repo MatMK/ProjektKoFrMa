@@ -26,7 +26,7 @@ namespace KoFrMaRestApi.Controllers
             using (MySqlConnection connection = WebApiConfig.Connection())
             {
                 connection.Open();
-                sqlDaemon.TaskCompletionRecieved(11,connection);
+                sqlDaemon.TaskCompletionRecieved(new Models.Daemon.TaskComplete(),connection);
             }
             
         }

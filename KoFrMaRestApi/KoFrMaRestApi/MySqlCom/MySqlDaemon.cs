@@ -5,9 +5,9 @@ using System.Web;
 using MySql.Data.MySqlClient;
 using KoFrMaRestApi.Models.Daemon;
 using Newtonsoft.Json;
-using KoFrMaRestApi.Models.AdminApp;
 using KoFrMaRestApi.Models.Daemon.Task;
 using KoFrMaRestApi.Models.AdminApp.RepeatingTasks;
+using KoFrMaRestApi.Models.Daemon.Task.BackupJournal;
 
 namespace KoFrMaRestApi.MySqlCom
 {
@@ -81,7 +81,7 @@ namespace KoFrMaRestApi.MySqlCom
         public List<Tasks> GetTasks(string DaemonId, MySqlConnection connection)
         {
             List<Tasks> result = new List<Tasks>();
-            MySqlCommand sqlCommand = new MySqlCommand(@"SELECT Task, TimeOfExecution, Id FROM `tbTasks` WHERE `IdDaemon` = @Id", connection);
+            MySqlCommand sqlCommand = new MySqlCommand(@"SELECT Task, TimeOfExecution, Id FROM `tbTasks` WHERE `IdDaemon` = @Id and `Completed` = 0", connection);
             sqlCommand.Parameters.AddWithValue("@Id", DaemonId);
             MySqlDataReader reader = sqlCommand.ExecuteReader();
             while (reader.Read())
@@ -102,11 +102,12 @@ namespace KoFrMaRestApi.MySqlCom
         /// </summary>
         /// <param name="task"></param>
         /// <param name="connection"></param>
-        public void TaskCompletionRecieved(int IDTask, MySqlConnection connection)
+        public void TaskCompletionRecieved(TaskComplete task, MySqlConnection connection)
         {
+            UpdateBackupJournal(task.IDTask, task.DatFile, connection);
             using (MySqlCommand command = new MySqlCommand(@"SELECT `RepeatInJSON`,`TimeOfExecution` FROM `tbTasks` WHERE Id = @Id", connection))
             {
-                command.Parameters.AddWithValue("@Id", IDTask);
+                command.Parameters.AddWithValue("@Id", task.IDTask);
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
                     if (reader.Read())
@@ -114,27 +115,26 @@ namespace KoFrMaRestApi.MySqlCom
                         if (reader["RepeatInJSON"] == DBNull.Value)
                         {
                             reader.Close();
-                            TaskRemove(IDTask, connection);
+                            TaskRemove(task.IDTask, connection);
                         }
                         else
                         {
                             string json = (string)reader["RepeatInJSON"];
                             reader.Close();
-                            TaskExtend(IDTask,json, connection);
+                            TaskExtend(task.IDTask,json, connection);
                         }
                     }
                 }
             }
-            
         }
         /// <summary>
         /// Odstraní task z databáze
         /// </summary>
         /// <param name="task"></param>
         /// <param name="connection"></param>
-        public void TaskRemove(int IDTask, MySqlConnection connection)
+        private void TaskRemove(int IDTask, MySqlConnection connection)
         {
-            using (MySqlCommand command = new MySqlCommand(@"DELETE FROM `tbTasks` WHERE `Id` = @IdTask",connection))
+            using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbTasks` SET `Completed`= 1 WHERE `Id` = @IdTask", connection))
             {
                 command.Parameters.AddWithValue("@IdTask", IDTask);
                 command.ExecuteNonQuery();
@@ -147,7 +147,7 @@ namespace KoFrMaRestApi.MySqlCom
         /// <param name="TimeInMinutes"></param>
         /// <param name="time"></param>
         /// <param name="connection"></param>
-        public void TaskExtend(int IdTask, string JsonTime, MySqlConnection connection)
+        private void TaskExtend(int IdTask, string JsonTime, MySqlConnection connection)
         {
             TaskRepeating repeat = JsonConvert.DeserializeObject<TaskRepeating>(JsonTime);
             DateTime nextDate = repeat.ExecutionTimes.Last();
@@ -157,14 +157,6 @@ namespace KoFrMaRestApi.MySqlCom
                 if (item > DateTime.Now)
                 {
                     bool NotException = HasDateException(item, repeat.ExceptionDates);
-                    /*
-                    foreach (var time in repeat.ExceptionDates)
-                    {
-                        if (item > time.Start && item < time.End)
-                        {
-                            NotException = false;
-                        }
-                    }*/
                     if (NotException)
                     {
                         nextDate = item;
@@ -232,6 +224,24 @@ namespace KoFrMaRestApi.MySqlCom
                     command.Parameters.AddWithValue("@NewJson", JsonConvert.SerializeObject(repeat));
                     command.ExecuteNonQuery();
                 }
+            }
+        }
+        private void UpdateBackupJournal(int IdTask, BackupJournalObject backupJournal, MySqlConnection connection)
+        {
+            using (MySqlCommand command = new MySqlCommand("SELECT `Task` FROM `tbTasks` WHERE `Id` = @IdTask",connection))
+            {
+                Tasks task = null;
+                command.Parameters.AddWithValue("@IdTask", IdTask);
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                        task = JsonConvert.DeserializeObject<Tasks>((string)reader["Task"]);
+                    reader.Close();
+                }
+                task.BackupJournalSource = backupJournal;
+                command.CommandText = "UPDATE `tbTasks` SET `Task`= @NewTask where Id = @IdTask";
+                command.Parameters.AddWithValue("@NewTask", task);
+                command.ExecuteNonQuery();
             }
         }
         private bool HasDateException(DateTime item, List<ExceptionDate> ExceptionDates)

@@ -57,7 +57,7 @@ namespace KoFrMaRestApi.Controllers
                     connection.Open();
                     if (taskCompleted.IsSuccessfull)
                     {
-                        mySqlCom.TaskCompletionRecieved(taskCompleted.IDTask, connection);
+                        mySqlCom.TaskCompletionRecieved(taskCompleted, connection);
                         //pridat k povedenym taskum a odeslat emailem
                     }
                     else
