@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace KoFrMaDaemon.ConnectionToServer
 {
-    class Request
+    public class Request
     {
+        public DaemonInfo daemon { get; set; } = DaemonInfo.Instance;
+        public int[] IdTasks { get; set; }
     }
 }

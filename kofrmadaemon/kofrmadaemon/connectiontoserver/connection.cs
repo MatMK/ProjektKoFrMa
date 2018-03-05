@@ -13,17 +13,17 @@ namespace KoFrMaDaemon.ConnectionToServer
 {
     public class Connection
     {
-        public List<Tasks> PostRequest()
+        public List<Tasks> PostRequest(int[] TasksId)
         {
             ServiceKoFrMa.debugLog.WriteToLog("Creating request to server...", 7);
-            DaemonInfo daemon = DaemonInfo.Instance;
+            Request request = new Request() {IdTasks = TasksId };
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(ConnectionInfo.ServerURL + @"/api/Daemon/GetInstructions");
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
             ServiceKoFrMa.debugLog.WriteToLog("Trying to send request to server at address " + ConnectionInfo.ServerURL + @"/api/Daemon/GetInstructions", 5);
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
-                string json = JsonConvert.SerializeObject(daemon);
+                string json = JsonConvert.SerializeObject(request);
                 streamWriter.Write(json);
                 streamWriter.Flush();
                 streamWriter.Close();
