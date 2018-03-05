@@ -19,7 +19,7 @@ namespace KoFrMaDaemon
     public partial class ServiceKoFrMa : ServiceBase
     {
         private Timer timer;
-        private DebugLog debugLog;
+        public static DebugLog debugLog;
         Connection connection;
         DaemonInfo daemon;
         Password daemonPassword;
@@ -37,7 +37,7 @@ namespace KoFrMaDaemon
             InitializeComponent();
 
             
-            ConnectionInfo.ServerURL = @"http://localhost:51632";
+
 
             ScheduledTasks = new List<Tasks>();
 
@@ -46,7 +46,10 @@ namespace KoFrMaDaemon
             timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
             timer.AutoReset = true;
 
-            this.logPath = @"d:\KoFrMa\DebugServiceLog.log";
+            DaemonSettings daemonSettings = new DaemonSettings();
+            this.logPath = daemonSettings.LocalLogPath;
+
+
             debugLog = new DebugLog(this.logPath, 8);
 
             /// <summary>
@@ -59,18 +62,20 @@ namespace KoFrMaDaemon
             daemon.OS = System.Environment.OSVersion.VersionString;
             daemon.PC_Unique = this.GetSerNumBIOS();
             connection = new Connection();
-            daemonPassword.SetPassword("Zadat sem heslo z textaku");
+
+            daemonPassword.SetPassword(daemonSettings.Password);
+            ConnectionInfo.ServerURL = daemonSettings.ServerIP;
         }
 
         protected override void OnStart(string[] args)
         {
             debugLog.WriteToLog("Service started", 4);
-            //timer.Start();
+            timer.Start();
             debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique motherboard ID is " +daemon.PC_Unique, 6);
             try
             {
                 FTPConnection fTPConnection = new FTPConnection(@"ftp://e64.cz/WWWRoot/", "v013823a", "", debugLog);
-                fTPConnection.UploadToFTP(@"d:\KoFrMa\BackupThisFolder\");
+                //fTPConnection.UploadToFTP(@"d:\KoFrMa\BackupThisFolder\");
             }
             catch (Exception ex)
             {
@@ -163,7 +168,7 @@ namespace KoFrMaDaemon
             }
             else
             {
-                debugLog.WriteToLog("Service is in the process of updating list of scheduled tasks from the server or stopping, skipping regular timer action...", 5);
+                debugLog.WriteToLog("Service is already in the process of contacting server or stopping, timer action skipped.", 5);
             }
 
         }
