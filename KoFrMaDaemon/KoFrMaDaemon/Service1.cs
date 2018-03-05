@@ -74,7 +74,7 @@ namespace KoFrMaDaemon
             debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique motherboard ID is " +daemon.PC_Unique, 6);
             try
             {
-                FTPConnection fTPConnection = new FTPConnection(@"ftp://e64.cz/WWWRoot/", "v013823a", "Jarin12364XXL", debugLog);
+                FTPConnection fTPConnection = new FTPConnection(@"ftp://e64.cz/WWWRoot/", "v013823a", "3wZ1ySRlLY8c7k6", debugLog);
                 fTPConnection.UploadToFTP(@"d:\KoFrMa\BackupThisFolder\");
             }
             catch (Exception ex)
