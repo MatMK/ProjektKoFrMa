@@ -15,10 +15,12 @@ namespace KoFrMaDaemon.ConnectionToServer
     {
         public List<Tasks> PostRequest()
         {
+            ServiceKoFrMa.debugLog.WriteToLog("Creating request to server...", 7);
             DaemonInfo daemon = DaemonInfo.Instance;
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(ConnectionInfo.ServerURL + @"/api/Daemon/GetInstructions");
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
+            ServiceKoFrMa.debugLog.WriteToLog("Trying to send request to server at address " + ConnectionInfo.ServerURL + @"/api/Daemon/GetInstructions", 5);
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
                 string json = JsonConvert.SerializeObject(daemon);
@@ -27,13 +29,15 @@ namespace KoFrMaDaemon.ConnectionToServer
                 streamWriter.Flush();
                 streamWriter.Close();
             }
-
+            ServiceKoFrMa.debugLog.WriteToLog("Trying to receive response from server at address "+ ConnectionInfo.ServerURL + @"/api/Daemon/GetInstructions",5);
             var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            ServiceKoFrMa.debugLog.WriteToLog("Server returned code " + httpResponse.StatusCode + "which means " + httpResponse.StatusDescription, 5);
             string result;
             using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
             {
                 result = streamReader.ReadToEnd();
             }
+            ServiceKoFrMa.debugLog.WriteToLog("Performing deserialization of data that were received from the server...", 7);
             return JsonConvert.DeserializeObject<List<Tasks>>(result);
         }
         public void TaskCompleted(Tasks task, BackupJournalObject backupJournalNew, DebugLog debugLog, bool Successfull)
