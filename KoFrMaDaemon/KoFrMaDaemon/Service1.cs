@@ -168,7 +168,7 @@ namespace KoFrMaDaemon
             }
             else
             {
-                debugLog.WriteToLog("Service is in the process of updating list of scheduled tasks from the server or stopping, skipping regular timer action...", 5);
+                debugLog.WriteToLog("Service is already in the process of contacting server or stopping, timer action skipped.", 5);
             }
 
         }
