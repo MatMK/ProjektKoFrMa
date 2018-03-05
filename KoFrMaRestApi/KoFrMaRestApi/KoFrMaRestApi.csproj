@@ -190,6 +190,7 @@
     <Compile Include="Models\AdminApp\Settings.cs" />
     <Compile Include="Models\AdminApp\SetTasks.cs" />
     <Compile Include="Models\AdminApp\RepeatingTasks\TaskRepeating.cs" />
+    <Compile Include="Models\Daemon\Request.cs" />
     <Compile Include="Models\Daemon\Task\BackupJournal\BackupJournalObject.cs" />
     <Compile Include="Models\Daemon\DaemonInfo.cs" />
     <Compile Include="Models\Daemon\Password.cs" />

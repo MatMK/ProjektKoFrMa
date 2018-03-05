@@ -24,7 +24,6 @@ namespace KoFrMaDaemon.ConnectionToServer
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
                 string json = JsonConvert.SerializeObject(daemon);
-
                 streamWriter.Write(json);
                 streamWriter.Flush();
                 streamWriter.Close();

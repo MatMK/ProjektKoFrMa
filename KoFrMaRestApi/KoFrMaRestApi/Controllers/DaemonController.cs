@@ -28,18 +28,34 @@ namespace KoFrMaRestApi.Controllers
         /// <param name="daemon"></param>
         /// <returns>Obsahuje informace o deamonu zasílajicim informaci.</returns>
         [HttpPost, Route(@"api/Daemon/GetInstructions")]
-        public List<Tasks> GetInstructions(DaemonInfo daemon)
+        public List<Tasks> GetInstructions(Request request)
         {
-            if (token.Authorized(daemon))
+            if (token.Authorized(request.daemon))
             {
                 using (MySqlConnection connection = WebApiConfig.Connection())
                 {
                     connection.Open();
                     //Zjistí zda je Daemon už zaregistrovaný, pokud ne, přidá ho do databáze
-                    string DaemonId = mySqlCom.GetDaemonId(daemon, connection);
+                    string DaemonId = mySqlCom.GetDaemonId(request.daemon, connection);
                     mySqlCom.DaemonSeen(DaemonId, connection);
                     // Vybere task určený pro daemona.
-                    return mySqlCom.GetTasks(DaemonId, connection);
+                    List<Tasks> tasks = mySqlCom.GetTasks(DaemonId, connection);
+                    List<int> ToRemove = new List<int>();
+                    for (int i = 0; i < tasks.Count - 1; i++)
+                    {
+                        foreach (var item in request.IdTasks)
+                        {
+                            if (tasks[i].IDTask == item)
+                            {
+                                ToRemove.Add(i);
+                            }
+                        }
+                    }
+                    for (int i = ToRemove.Count-1; i > 0; i--)
+                    {
+                        tasks.RemoveAt(i);
+                    }
+                    return tasks;
                 }
             }
             else
