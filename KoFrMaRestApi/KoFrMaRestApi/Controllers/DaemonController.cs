@@ -51,10 +51,12 @@ namespace KoFrMaRestApi.Controllers
                             }
                         }
                     }
-                    for (int i = ToRemove.Count-1; i > 0; i--)
+                    for (int i = ToRemove.Count - 1; i >= 0; i--)
                     {
-                        tasks.RemoveAt(i);
+                        tasks.RemoveAt(ToRemove[i]);
                     }
+
+
                     return tasks;
                 }
             }
