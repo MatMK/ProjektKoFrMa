@@ -15,7 +15,8 @@ namespace KoFrMaRestApi.EmailSender
         string SemailFrom = "kofrmabackup@gmail.com";
         string Spassword = "KoFrMa123456";
         string Ssubject = "Test";
-        string Sbody = "Testing email";
+        string Sbody = "";
+
         string SemailTo = "machpetr@sssvt.cz";
 
         public void SendEmail()
@@ -24,9 +25,20 @@ namespace KoFrMaRestApi.EmailSender
             mail.From=new MailAddress(SemailFrom);
             mail.To.Add(SemailTo);
             mail.Subject =Ssubject;
-            mail.Body =Sbody;
+            mail.Body = "< div style='border: medium solid grey; width: 500px; height: 266px;font-family: arial,sans-serif; font-size: 17px;'>";
+            Sbody += "<h3 style='background-color: blueviolet; margin-top:0px;'>KOFRMA backup agency</h3>";
+            Sbody += "<br />";
+            Sbody += "Dear " + SemailFrom + ",";
+            Sbody += "<br />";
+            Sbody += "<p>";
+            Sbody += "Thank you for using our backup </p>";
+            Sbody += " <br />";
+            Sbody += "Thanks,";
+            Sbody += "<br />";
+            Sbody += "<b>The Team</b>";
+            Sbody += "</div>";
             SmtpClient smt = new SmtpClient();
-            mail.IsBodyHtml = false;
+            mail.IsBodyHtml = true;
             smt.Host = smtpAddress;
             smt.Port = portNumber;
             smt.EnableSsl = true;
