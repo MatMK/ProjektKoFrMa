@@ -8,7 +8,7 @@ using System.Net;
 
 namespace KoFrMaRestApi.EmailSender
 {
-    public class EmailSender
+    public class Mail
     {
         string smtpAddress = "smtp.gmail.com";
         int portNumber = 587;
