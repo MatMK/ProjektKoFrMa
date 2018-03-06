@@ -13,7 +13,7 @@ namespace KoFrMaDaemon.ConnectionToServer
 {
     public class Connection
     {
-        public List<Tasks> PostRequest(int[] TasksId)
+        public List<Tasks> PostRequest(int[] TasksId, int[] BackupJournalNotNeeded)
         {
             ServiceKoFrMa.debugLog.WriteToLog("Creating request to server...", 7);
             Request request = new Request() {IdTasks = TasksId };

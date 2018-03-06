@@ -41,6 +41,7 @@ namespace KoFrMaRestApi.Controllers
                     // Vybere task určený pro daemona.
                     List<Tasks> tasks = mySqlCom.GetTasks(DaemonId, connection);
                     List<int> ToRemove = new List<int>();
+                    List<int> BackupJournalNotNeeded = new List<int>();
                     for (int i = 0; i < tasks.Count - 1; i++)
                     {
                         foreach (var item in request.IdTasks)
@@ -50,6 +51,17 @@ namespace KoFrMaRestApi.Controllers
                                 ToRemove.Add(i);
                             }
                         }
+                        foreach (var item in request.BackupJournalNotNeeded)
+                        {
+                            if (tasks[i].IDTask == item)
+                            {
+                                BackupJournalNotNeeded.Add(i);
+                            }
+                        }
+                    }
+                    for (int i = BackupJournalNotNeeded.Count - 1; i <= 0; i--)
+                    {
+                        tasks[BackupJournalNotNeeded[i]].BackupJournalSource = null;
                     }
                     for (int i = ToRemove.Count - 1; i >= 0; i--)
                     {
