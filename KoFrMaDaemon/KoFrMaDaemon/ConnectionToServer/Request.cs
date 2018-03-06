@@ -10,5 +10,6 @@ namespace KoFrMaDaemon.ConnectionToServer
     {
         public DaemonInfo daemon { get; set; } = DaemonInfo.Instance;
         public int[] IdTasks { get; set; }
+        public int[] BackupJournalNotNeeded { get; set; }
     }
 }
