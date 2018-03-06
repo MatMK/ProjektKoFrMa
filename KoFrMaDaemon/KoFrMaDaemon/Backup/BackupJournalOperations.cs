@@ -10,32 +10,47 @@ namespace KoFrMaDaemon.Backup
 {
     public class BackupJournalOperations
     {
-        private StreamWriter w;
+        private StreamWriter w1;
+
+        private StreamWriter w2;
 
         private StreamReader r;
 
-        public void CreateBackupJournal(BackupJournalObject backupJournalObject, string pathToJournal, DebugLog debugLog)
+        private List<string> tmpList;
+
+        public void CreateBackupJournal(BackupJournalObject backupJournalObject, string pathToJournalFolder, int TaskID, DebugLog debugLog)
         {
             try
             {
-                w = new StreamWriter(pathToJournal, true);
+                tmpList = new List<string>();
+
                 debugLog.WriteToLog("Writing relative path to backup journal...",7);
-                w.WriteLine(backupJournalObject.RelativePath);
+                tmpList.Add(backupJournalObject.RelativePath);
                 debugLog.WriteToLog("Writing list of files to backup journal...", 7);
                 List<FileInfoObject> fileBackupJournalHash = this.ReturnHashCodesFiles(backupJournalObject.BackupJournalFiles);
                 for (int i = 0; i < fileBackupJournalHash.Count; i++)
                 {
-                    w.WriteLine(fileBackupJournalHash[i].RelativePath + '|' + fileBackupJournalHash[i].Length.ToString() + '|' + fileBackupJournalHash[i].CreationTimeUtc.ToBinary().ToString() + '|' + fileBackupJournalHash[i].LastWriteTimeUtc.ToBinary().ToString() + '|' + fileBackupJournalHash[i].Attributes + '|' + fileBackupJournalHash[i].MD5 + '|' + fileBackupJournalHash[i].HashRow.ToString());
+                    tmpList.Add(fileBackupJournalHash[i].RelativePath + '|' + fileBackupJournalHash[i].Length.ToString() + '|' + fileBackupJournalHash[i].CreationTimeUtc.ToBinary().ToString() + '|' + fileBackupJournalHash[i].LastWriteTimeUtc.ToBinary().ToString() + '|' + fileBackupJournalHash[i].Attributes + '|' + fileBackupJournalHash[i].MD5 + '|' + fileBackupJournalHash[i].HashRow.ToString());
                 }
                 debugLog.WriteToLog("Writing list of folders to backup journal...", 7);
                 List<FolderObject> folderBackupJournalHash = this.ReturnHashCodesFolders(backupJournalObject.BackupJournalFolders);
-                w.WriteLine("?");
+                tmpList.Add("?");
                 for (int i = 0; i < folderBackupJournalHash.Count; i++)
                 {
-                    w.WriteLine(folderBackupJournalHash[i].RelativePath + '|' + folderBackupJournalHash[i].CreationTimeUtc.ToBinary().ToString() + '|' + folderBackupJournalHash[i].LastWriteTimeUtc.ToBinary().ToString() + '|' + folderBackupJournalHash[i].Attributes.ToString() + '|' + folderBackupJournalHash[i].HashRow.ToString());
+                    tmpList.Add(folderBackupJournalHash[i].RelativePath + '|' + folderBackupJournalHash[i].CreationTimeUtc.ToBinary().ToString() + '|' + folderBackupJournalHash[i].LastWriteTimeUtc.ToBinary().ToString() + '|' + folderBackupJournalHash[i].Attributes.ToString() + '|' + folderBackupJournalHash[i].HashRow.ToString());
                 }
-                w.Close();
-                w.Dispose();
+                debugLog.WriteToLog("Writing backup journal to disk...", 7);
+                w1 = new StreamWriter(pathToJournalFolder+ "KoFrMaBackup.dat");
+                w2 = new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\"+TaskID.ToString()+".dat");
+                for (int i = 0; i < tmpList.Count; i++)
+                {
+                    w1.WriteLine(tmpList[i]);
+                    w2.WriteLine(tmpList[i]);
+                }
+                w1.Close();
+                w1.Dispose();
+                w2.Close();
+                w2.Dispose();
             }
             catch (Exception ex)
             {

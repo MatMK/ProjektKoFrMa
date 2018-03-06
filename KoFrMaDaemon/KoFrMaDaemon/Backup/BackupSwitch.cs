@@ -14,13 +14,13 @@ namespace KoFrMaDaemon.Backup
         protected DirectoryInfo destinationInfo;
         public BackupJournalObject BackupJournalNew;
 
-        public void Backup(string source, BackupJournalObject backupJournalSource, string destination,  byte? compressionLevel, DebugLog debugLog)
+        public void Backup(string source, BackupJournalObject backupJournalSource, string destination,  byte? compressionLevel, int TaskID,DebugLog debugLog)
         {
             if (backupJournalSource != null)
             {
                 debugLog.WriteToLog("Starting differential/incremental backup, because the path to source ends with .dat (" + source + ')', 5);
                 BackupDifferential backupDifferential = new BackupDifferential();
-                backupDifferential.BackupDifferentialProcess(backupJournalSource, Path.GetDirectoryName(destination), debugLog);
+                backupDifferential.BackupDifferentialProcess(backupJournalSource, Path.GetDirectoryName(destination),TaskID, debugLog);
                 this.sourceInfo = backupDifferential.sourceInfo;
                 this.destinationInfo = backupDifferential.destinationInfo;
                 BackupJournalNew = backupDifferential.BackupJournalNew;
@@ -29,7 +29,7 @@ namespace KoFrMaDaemon.Backup
             {
                 debugLog.WriteToLog("Starting full backup, because the path to source doesn't end with .dat (" + source + ')', 5);
                 BackupFull backupFull = new BackupFull();
-                backupFull.BackupFullProcess(source, Path.GetDirectoryName(destination), debugLog);
+                backupFull.BackupFullProcess(source, Path.GetDirectoryName(destination), TaskID, debugLog);
                 this.sourceInfo = backupFull.sourceInfo;
                 this.destinationInfo = backupFull.destinationInfo;
                 BackupJournalNew = backupFull.BackupJournalNew;

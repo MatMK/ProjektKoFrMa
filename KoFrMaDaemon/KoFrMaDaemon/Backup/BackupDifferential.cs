@@ -27,7 +27,7 @@ namespace KoFrMaDaemon.Backup
         }
 
 
-        public void BackupDifferentialProcess(BackupJournalObject backupJournalSource, string destination, DebugLog serviceDebugLog)
+        public void BackupDifferentialProcess(BackupJournalObject backupJournalSource, string destination, int TaskID, DebugLog serviceDebugLog)
         {
             DateTime timeOfBackup = DateTime.Now;
 
@@ -298,7 +298,7 @@ namespace KoFrMaDaemon.Backup
                 BackupJournalFiles = FilesCorrect,
                 BackupJournalFolders = FoldersCorrect
             };
-            BackupJournal.CreateBackupJournal(BackupJournalNew, base.destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", DebugLog);
+            BackupJournal.CreateBackupJournal(BackupJournalNew, base.destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat",TaskID, DebugLog);
             DebugLog.WriteToLog("Transaction log successfully created in destination " + base.destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", 5);
 
 

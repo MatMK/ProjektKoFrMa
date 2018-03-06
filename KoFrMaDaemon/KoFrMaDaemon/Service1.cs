@@ -13,6 +13,7 @@ using System.Timers;
 using KoFrMaDaemon.ConnectionToServer;
 using System.Management;
 using KoFrMaDaemon.Backup;
+using System.IO;
 
 namespace KoFrMaDaemon
 {
@@ -137,7 +138,7 @@ namespace KoFrMaDaemon
                             {
                                 item.InProgress = true;
                                 debugLog.WriteToLog("Task locked, starting the backup...", 6);
-                                backupInstance.Backup(item.SourceOfBackup,item.BackupJournalSource, item.WhereToBackup,item.CompressionLevel, debugLog);
+                                backupInstance.Backup(item.SourceOfBackup,item.BackupJournalSource, item.WhereToBackup,item.CompressionLevel,item.IDTask, debugLog);
                                 debugLog.WriteToLog("Task completed, setting task as successfully completed...", 6);
                                 connection.TaskCompleted(item, backupInstance.BackupJournalNew,debugLog, true);
                             }
@@ -184,7 +185,38 @@ namespace KoFrMaDaemon
                 i++;
             }
 
-            ScheduledTasks.AddRange(connection.PostRequest(ScheduledTasksIdArray));
+            debugLog.WriteToLog("Searching for cached journals in folder "+ Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\", 5);
+            List<int> JournalCacheList = new List<int>();
+            if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\"))
+            {
+                try
+                {
+                    FileInfo[] JournalCacheListDir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\").GetFiles();
+                    for (int x = 0; x < JournalCacheListDir.Length; x++)
+                    {
+                        try
+                        {
+                            JournalCacheList.Add(Convert.ToInt32(JournalCacheListDir[i].Name));
+                        }
+                        catch (Exception)
+                        {
+                            debugLog.WriteToLog("Couldn't identify file from the cache folder. File name is: " + JournalCacheListDir[i].Name, 3);
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    debugLog.WriteToLog("Error occured when trying to load cached files. Returning empty list of cached journals.", 3);
+                }
+
+            }
+            else
+            {
+                debugLog.WriteToLog("The cache jounal folder doesn't exist, returning empty list of cached journals", 3);
+            }
+            
+
+            ScheduledTasks.AddRange(connection.PostRequest(ScheduledTasksIdArray,JournalCacheList));
         }
 
         private string GetSerNumBIOS()
