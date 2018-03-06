@@ -36,44 +36,55 @@ namespace KoFrMaLocalDaemonConfig
                 this.textBox_LogPath.Visible = false;
             }
         }
+        private StreamReader r;
         private void LoadIniFile()
         {
-            try
+            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\config.ini"))
             {
-                StreamReader r = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\config.ini");
-                while (!r.EndOfStream)
+                try
                 {
-                    string tmpRow = r.ReadLine();
-                    if (tmpRow.StartsWith("ServerIP="))
+                    r = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\config.ini");
+                    while (!r.EndOfStream)
                     {
-                        this.textBox_ServerIP.Text = tmpRow.Substring(9);
-                    }
-                    else if (tmpRow.StartsWith("Password="))
-                    {
-                        this.textBox_Password.Text = tmpRow.Substring(9);
-                    }
-                    else if (tmpRow.StartsWith("LocalLogPath="))
-                    {
-                        if (tmpRow.Substring(13) != "")
+                        string tmpRow = r.ReadLine();
+                        if (tmpRow.StartsWith("ServerIP="))
                         {
-                            this.checkBox_showPath.Checked = true;
-                            this.textBox_LogPath.Text = tmpRow.Substring(13);
+                            this.textBox_ServerIP.Text = tmpRow.Substring(9);
                         }
-                        else
+                        else if (tmpRow.StartsWith("Password="))
                         {
-                            this.checkBox_showPath.Checked = false;
+                            this.textBox_Password.Text = tmpRow.Substring(9);
                         }
+                        else if (tmpRow.StartsWith("LocalLogPath="))
+                        {
+                            if (tmpRow.Substring(13) != "")
+                            {
+                                this.checkBox_showPath.Checked = true;
+                                this.textBox_LogPath.Text = tmpRow.Substring(13);
+                            }
+                            else
+                            {
+                                this.checkBox_showPath.Checked = false;
+                            }
 
+                        }
                     }
+                    r.Close();
+                    r.Dispose();
                 }
-                r.Close();
-                r.Dispose();
 
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    r.Close();
+                    r.Dispose();
+                }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
+            else
+	        {
+                MessageBox.Show("Welcome to daemon offline configurator! Set server settings so the daemon can communicate with the server.");
             }
+
         }
 
         private void button_cancel_Click(object sender, EventArgs e)
@@ -81,6 +92,7 @@ namespace KoFrMaLocalDaemonConfig
             this.LoadIniFile();
         }
 
+        private StreamWriter w;
         private void button_apply_Click(object sender, EventArgs e)
         {
             try
@@ -90,7 +102,7 @@ namespace KoFrMaLocalDaemonConfig
                     Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\");
                     File.Create(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\config.ini");
                 }
-                StreamWriter w = new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\config.ini");
+                w = new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\config.ini");
                 w.WriteLine("ServerIP=" + this.textBox_ServerIP.Text);
                 w.WriteLine("Password=" + this.textBox_Password.Text);
                 if (this.checkBox_showPath.Checked)

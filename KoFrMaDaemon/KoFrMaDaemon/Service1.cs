@@ -183,6 +183,7 @@ namespace KoFrMaDaemon
                 ScheduledTasksIdArray[i] = item.IDTask;
                 i++;
             }
+
             ScheduledTasks.AddRange(connection.PostRequest(ScheduledTasksIdArray));
         }
 
