@@ -71,18 +71,18 @@ namespace KoFrMaDaemon
         protected override void OnStart(string[] args)
         {
             debugLog.WriteToLog("Service started", 4);
-            //timer.Start();
+            timer.Start();
             debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique motherboard ID is " +daemon.PC_Unique, 6);
-            try
-            {
-                FTPConnection fTPConnection = new FTPConnection(@"ftp://e64.cz/WWWRoot/DRead/", "v013823a", "3wZ1ySRlLY8c7k6", debugLog);
-                fTPConnection.UploadToFTP(@"d:\KoFrMa\BackupThisFolder\");
-            }
-            catch (Exception ex)
-            {
-                debugLog.WriteToLog(ex.Message, 2);
-                throw;
-            }
+            //try
+            //{
+            //    FTPConnection fTPConnection = new FTPConnection(@"ftp://e64.cz/WWWRoot/DRead/", "v013823a", "3wZ1ySRlLY8c7k6", debugLog);
+            //    fTPConnection.UploadToFTP(@"d:\KoFrMa\BackupThisFolder\");
+            //}
+            //catch (Exception ex)
+            //{
+            //    debugLog.WriteToLog(ex.Message, 2);
+            //    throw;
+            //}
 
             //BackupDifferential backupTest = new BackupDifferential();
             //BackupFull fullbackupTestFull = new BackupFull();
@@ -196,7 +196,7 @@ namespace KoFrMaDaemon
                     {
                         try
                         {
-                            JournalCacheList.Add(Convert.ToInt32(JournalCacheListDir[i].Name));
+                            JournalCacheList.Add(Convert.ToInt32(JournalCacheListDir[i].Name.Substring(0,JournalCacheListDir[i].Name.Length-3)));
                         }
                         catch (Exception)
                         {
@@ -206,9 +206,9 @@ namespace KoFrMaDaemon
                 }
                 catch (Exception)
                 {
-                    debugLog.WriteToLog("Error occured when trying to load cached files. Returning empty list of cached journals.", 3);
+                    debugLog.WriteToLog("Error occured when trying to load cached files. List may be incomplete or, most likely, empty.", 3);
                 }
-
+                debugLog.WriteToLog("Found " + JournalCacheList.Count + " cache files. Returning their names to the server.", 5);
             }
             else
             {
