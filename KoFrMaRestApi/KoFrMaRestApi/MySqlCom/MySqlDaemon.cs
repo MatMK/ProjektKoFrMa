@@ -21,7 +21,7 @@ namespace KoFrMaRestApi.MySqlCom
         /// <returns>Vrací ID daemona v databázi</returns>
         public string GetDaemonId(DaemonInfo daemon, MySqlConnection connection)
         {
-            
+
             using (MySqlDataReader reader = SelectFromTableByPcId(connection, daemon))
             {
                 if (reader.Read())
@@ -43,7 +43,7 @@ namespace KoFrMaRestApi.MySqlCom
                     return null;
                 }
             }
-               
+
         }
         public string RegisterDaemonAndGetId(DaemonInfo daemon, Int64 Password, MySqlConnection connection)
         {
@@ -121,7 +121,7 @@ namespace KoFrMaRestApi.MySqlCom
                         {
                             string json = (string)reader["RepeatInJSON"];
                             reader.Close();
-                            TaskExtend(task.IDTask,json, connection);
+                            TaskExtend(task.IDTask, json, connection);
                         }
                     }
                 }
@@ -163,7 +163,7 @@ namespace KoFrMaRestApi.MySqlCom
                         DateChanged = true;
                         break;
                     }
-                } 
+                }
             }
             if (!DateChanged)
             {
@@ -176,7 +176,7 @@ namespace KoFrMaRestApi.MySqlCom
                         {
                             repeat.ExecutionTimes[i] += repeat.Repeating;
                         }
-                        DateOk = HasDateException(repeat.ExecutionTimes[0], repeat.ExceptionDates);
+                        DateOk = DateAvailable(repeat.ExecutionTimes, repeat.ExceptionDates);
                     }
                 }
                 else
@@ -198,7 +198,7 @@ namespace KoFrMaRestApi.MySqlCom
                         }
                         if (repeat.ExecutionTimes.Count == 0)
                             break;
-                        DateOk = HasDateException(repeat.ExecutionTimes[0], repeat.ExceptionDates);
+                        DateOk = DateAvailable(repeat.ExecutionTimes, repeat.ExceptionDates);
                     }
                 }
                 foreach (var item in repeat.ExecutionTimes)
@@ -228,7 +228,7 @@ namespace KoFrMaRestApi.MySqlCom
         }
         private void UpdateBackupJournal(int IdTask, BackupJournalObject backupJournal, MySqlConnection connection)
         {
-            using (MySqlCommand command = new MySqlCommand("SELECT `Task` FROM `tbTasks` WHERE `Id` = @IdTask",connection))
+            using (MySqlCommand command = new MySqlCommand("SELECT `Task` FROM `tbTasks` WHERE `Id` = @IdTask", connection))
             {
                 Tasks task = null;
                 command.Parameters.AddWithValue("@IdTask", IdTask);
@@ -255,6 +255,19 @@ namespace KoFrMaRestApi.MySqlCom
                 }
             }
             return result;
+        }
+        private bool DateAvailable(List<DateTime> ExecutionTimes, List<ExceptionDate> ExceptionDates)
+        {
+            int Dates = 0;
+            foreach (var item in ExecutionTimes)
+            {
+                if (!HasDateException(item, ExceptionDates))
+                    Dates++;
+            }
+            if (Dates == ExecutionTimes.Count)
+                return false;
+            else
+                return true;
         }
         private MySqlDataReader SelectFromTableByPcId(MySqlConnection connection, DaemonInfo daemon)
         {
@@ -290,7 +303,7 @@ namespace KoFrMaRestApi.MySqlCom
                     if (reader.Read())
                         result = true;
                     else
-                        result =  false;
+                        result = false;
                     reader.Close();
                 }
             }
