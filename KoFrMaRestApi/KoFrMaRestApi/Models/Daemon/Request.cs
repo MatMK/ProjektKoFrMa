@@ -9,6 +9,6 @@ namespace KoFrMaRestApi.Models.Daemon
     {
         public DaemonInfo daemon { get; set; }
         public int[] IdTasks { get; set; }
-        public int[] BackupJournalNotNeeded { get; set; }
+        public List<int> BackupJournalNotNeeded { get; set; }
     }
 }
