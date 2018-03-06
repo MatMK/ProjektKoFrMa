@@ -197,7 +197,7 @@
     <Compile Include="Models\Daemon\Task\BackupJournal\BackupJournalObject.cs" />
     <Compile Include="Models\Daemon\Task\BackupJournal\FileInfoObject.cs" />
     <Compile Include="Models\Daemon\Task\BackupJournal\FolderObject.cs" />
-    <Compile Include="Models\EmailSettings.cs" />
+    <Compile Include="EmailSender\EmailSettings.cs" />
     <Compile Include="Models\Daemon\Task\Tasks.cs" />
     <Compile Include="Models\Token.cs" />
     <Compile Include="MySqlCom\MySqlAdmin.cs" />
