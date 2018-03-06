@@ -13,10 +13,10 @@ namespace KoFrMaDaemon.ConnectionToServer
 {
     public class Connection
     {
-        public List<Tasks> PostRequest(int[] TasksId, int[] BackupJournalNotNeeded)
+        public List<Tasks> PostRequest(int[] TasksId, List<int> JournalNotNeeded)
         {
             ServiceKoFrMa.debugLog.WriteToLog("Creating request to server...", 7);
-            Request request = new Request() {IdTasks = TasksId };
+            Request request = new Request() {IdTasks = TasksId, BackupJournalNotNeeded = JournalNotNeeded};
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(ConnectionInfo.ServerURL + @"/api/Daemon/GetInstructions");
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";

@@ -104,7 +104,6 @@ namespace KoFrMaRestApi.MySqlCom
         /// <param name="connection"></param>
         public void TaskCompletionRecieved(TaskComplete task, MySqlConnection connection)
         {
-            UpdateBackupJournal(task.IDTask, task.DatFile, connection);
             using (MySqlCommand command = new MySqlCommand(@"SELECT `RepeatInJSON`,`TimeOfExecution` FROM `tbTasks` WHERE Id = @Id", connection))
             {
                 command.Parameters.AddWithValue("@Id", task.IDTask);
@@ -121,7 +120,7 @@ namespace KoFrMaRestApi.MySqlCom
                         {
                             string json = (string)reader["RepeatInJSON"];
                             reader.Close();
-                            TaskExtend(task.IDTask, json, connection);
+                            TaskExtend(task, json, connection);
                         }
                     }
                 }
@@ -141,14 +140,14 @@ namespace KoFrMaRestApi.MySqlCom
             }
         }
         /// <summary>
-        /// Prodlouží task o dany počet minut
+        /// rodlouží task o dany počet minut
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="TimeInMinutes"></param>
-        /// <param name="time"></param>
+        /// <param name="taskComplete"></param>
+        /// <param name="JsonTime"></param>
         /// <param name="connection"></param>
-        private void TaskExtend(int IdTask, string JsonTime, MySqlConnection connection)
+        private void TaskExtend(TaskComplete taskComplete,string JsonTime, MySqlConnection connection)
         {
+
             TaskRepeating repeat = JsonConvert.DeserializeObject<TaskRepeating>(JsonTime);
             DateTime nextDate = repeat.ExecutionTimes.Last();
             bool DateChanged = false;
@@ -212,16 +211,49 @@ namespace KoFrMaRestApi.MySqlCom
             }
             if (repeat.ExecutionTimes.Count == 0)
             {
-                //pridat check pokud to neni potreba pro dokonceni neake zalohy
-                TaskRemove(IdTask, connection);
+                TaskRemove(taskComplete.IDTask, connection);
             }
             else
             {
-                using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbTasks` SET `TimeOfExecution`= @Time,`RepeatInJSON` = @NewJson WHERE `Id` = @Id", connection))
+                using (MySqlCommand command = new MySqlCommand(@"SELECT * FROM `tbTasks` WHERE Id = @Id", connection))
                 {
-                    command.Parameters.AddWithValue("@Id", IdTask);
-                    command.Parameters.AddWithValue("@Time", nextDate);
-                    command.Parameters.AddWithValue("@NewJson", JsonConvert.SerializeObject(repeat));
+                    int IdDaemon;
+                    string Task;
+                    DateTime TimeOfExecution;
+                    string RepeatInJSON;
+                    byte Completed;
+                    command.Parameters.AddWithValue("@Id", taskComplete.IDTask);
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            IdDaemon = (int)reader["IdDaemon"];
+                            Task = (string)reader["Task"];
+                            TimeOfExecution = (DateTime)reader["TimeOfExecution"];
+                            RepeatInJSON = (string)reader["RepeatInJSON"];
+                            Completed = (byte)reader["Completed"];
+                        }
+                        else
+                        {
+                            throw new Exception();
+                        }
+                    }
+                    Tasks TaskClass = JsonConvert.DeserializeObject<Tasks>(Task);
+                    TaskRemove(taskComplete.IDTask, connection);
+                    command.CommandText = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '3b1_kocourekmatej_db2' AND TABLE_NAME = 'tbTasks'";
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        taskComplete.IDTask = (int)reader["AUTO_INCREMENT"];
+                    }
+                    TaskClass.IDTask = taskComplete.IDTask;
+                    TaskClass.BackupJournalSource = taskComplete.DatFile;
+                    Task = JsonConvert.SerializeObject(TaskClass);
+                    command.CommandText = "INSERT INTO `tbTasks` VALUES (null, @IdDaemon, @Task, @TimeOfExecution, @RepeatInJSON, @Completed)";
+                    command.Parameters.AddWithValue("@IdDaemon", IdDaemon);
+                    command.Parameters.AddWithValue("@Task", Task);
+                    command.Parameters.AddWithValue("@TimeOfExecution", TimeOfExecution);
+                    command.Parameters.AddWithValue("@RepeatInJSON", RepeatInJSON);
+                    command.Parameters.AddWithValue("@Completed", Completed);
                     command.ExecuteNonQuery();
                 }
             }
