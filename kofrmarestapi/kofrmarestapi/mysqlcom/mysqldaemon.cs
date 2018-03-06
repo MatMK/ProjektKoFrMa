@@ -65,7 +65,7 @@ namespace KoFrMaRestApi.MySqlCom
                         command.Parameters.AddWithValue("@pc_unique", daemon.PC_Unique);
                         command.Parameters.AddWithValue("@password", Password);
                         command.ExecuteNonQuery();
-                        return GetDaemonId(daemon, connection);
+                        return GetDaemonId(daemon,connection);
                     }
                 }
             }
