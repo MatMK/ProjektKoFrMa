@@ -55,8 +55,6 @@ namespace KoFrMaRestApi.Controllers
                     {
                         tasks.RemoveAt(ToRemove[i]);
                     }
-
-
                     return tasks;
                 }
             }
