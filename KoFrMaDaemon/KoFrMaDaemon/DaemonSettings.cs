@@ -14,7 +14,6 @@ namespace KoFrMaDaemon
         public string LocalLogPath;
 
         private StreamReader r;
-        private StreamWriter w;
 
         public DaemonSettings()
         {

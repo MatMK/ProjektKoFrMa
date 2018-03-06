@@ -50,6 +50,7 @@ namespace KoFrMaDaemon.Backup
 
         private void CreateDirectory(string path)
         {
+            debugLog.WriteToLog("Creating folder " + path, 9);
             WebRequest request = WebRequest.Create(path);
             Stream ftpStream;
             request.Method = WebRequestMethods.Ftp.MakeDirectory;
