@@ -24,7 +24,7 @@ namespace KoFrMaRestApi.EmailSender
             mail.From=new MailAddress(SemailFrom);
             mail.To.Add(SemailTo);
             mail.Subject =Ssubject;
-            mail.Body =Spassword;
+            mail.Body =Sbody;
             SmtpClient smt = new SmtpClient();
             mail.IsBodyHtml = false;
             smt.Host = smtpAddress;
