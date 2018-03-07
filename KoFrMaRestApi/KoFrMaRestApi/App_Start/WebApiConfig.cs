@@ -14,7 +14,7 @@ namespace KoFrMaRestApi
 
         public static MySqlConnection Connection()
         {
-            string connectionS = "server=mysqlstudenti.litv.sssvt.cz;uid=kocourekmatej;pwd=123456;database=3b1_kocourekmatej_db2";
+            string connectionS = "server=mysqlstudenti.litv.sssvt.cz;uid=kocourekmatej;pwd=KoFrMa123456;database=3b1_kocourekmatej_db2";
 
             MySqlConnection Connection = new MySqlConnection(connectionS);
 

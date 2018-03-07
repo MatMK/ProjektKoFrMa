@@ -59,7 +59,7 @@ namespace KoFrMaRestApi.Controllers
                             }
                         }
                     }
-                    for (int i = BackupJournalNotNeeded.Count - 1; i <= 0; i--)
+                    for (int i = BackupJournalNotNeeded.Count - 1; i >= 0; i--)
                     {
                         tasks[BackupJournalNotNeeded[i]].BackupJournalSource = null;
                     }

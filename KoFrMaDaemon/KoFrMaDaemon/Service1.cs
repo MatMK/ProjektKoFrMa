@@ -35,6 +35,7 @@ namespace KoFrMaDaemon
 
         public ServiceKoFrMa()
         {
+
             InitializeComponent();
 
             
@@ -46,7 +47,7 @@ namespace KoFrMaDaemon
             timer = new Timer(5000);
             timer.Elapsed += new ElapsedEventHandler(OnTimerTick);
             timer.AutoReset = true;
-
+            Password password = Password.Instance;
             DaemonSettings daemonSettings = new DaemonSettings();
             this.logPath = daemonSettings.LocalLogPath;
 
@@ -63,14 +64,16 @@ namespace KoFrMaDaemon
             daemon.OS = System.Environment.OSVersion.VersionString;
             daemon.PC_Unique = this.GetSerNumBIOS();
             connection = new Connection();
-
             daemonPassword.SetPassword(daemonSettings.Password);
             ConnectionInfo.ServerURL = daemonSettings.ServerIP;
+            password.daemon = daemon;
+
         }
 
         protected override void OnStart(string[] args)
         {
             debugLog.WriteToLog("Service started", 4);
+            daemon.Token = connection.GetToken();
             timer.Start();
             debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique motherboard ID is " +daemon.PC_Unique, 6);
             //try
@@ -138,6 +141,7 @@ namespace KoFrMaDaemon
                             {
                                 item.InProgress = true;
                                 debugLog.WriteToLog("Task locked, starting the backup...", 6);
+                                debugLog.WriteToLog("Destination of the backup is "+item.WhereToBackup, 8);
                                 backupInstance.Backup(item.SourceOfBackup,item.BackupJournalSource, item.WhereToBackup,item.CompressionLevel,item.IDTask, debugLog);
                                 debugLog.WriteToLog("Task completed, setting task as successfully completed...", 6);
                                 connection.TaskCompleted(item, backupInstance.BackupJournalNew,debugLog, true);
