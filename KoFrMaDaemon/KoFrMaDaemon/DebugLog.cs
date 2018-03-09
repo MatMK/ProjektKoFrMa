@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Diagnostics;
 
 namespace KoFrMaDaemon
 {
@@ -25,13 +26,15 @@ namespace KoFrMaDaemon
         public byte _logLevel;
         private string _logPath;
         public List<string> logReport;
+        private bool writeToWindowsEventLog;
 
         private StreamWriter w;
-        public DebugLog(string logPath, byte logLevel)
+        public DebugLog(string logPath,bool writeToWindowsEventLog, byte logLevel)
         {
             logReport = new List<string>();
             this._logPath = logPath;
             this._logLevel = logLevel;
+            this.writeToWindowsEventLog = writeToWindowsEventLog;
             w = new StreamWriter(logPath, true);
             if (logLevel != 0)
             {
@@ -52,6 +55,10 @@ namespace KoFrMaDaemon
             {
                 logLevelBool = true;
                 logReport.Add(row);
+                if (writeToWindowsEventLog)
+                {
+                    this.WriteToWindowsLog(text, level);
+                }
             }
             else
             {
@@ -70,6 +77,14 @@ namespace KoFrMaDaemon
 
         }
 
+
+        private void WriteToWindowsLog(string text, byte level)
+        {
+            if (!EventLog.SourceExists("KoFrMaDaemon"))
+                EventLog.CreateEventSource("KoFrMaDaemon", "Application");
+
+            EventLog.WriteEntry("KoFrMaDaemon", text,(EventLogEntryType)level);
+        }
 
         //public string ReadLog()
         //{
