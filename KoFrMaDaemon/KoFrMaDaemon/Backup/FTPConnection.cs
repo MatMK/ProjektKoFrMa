@@ -31,7 +31,7 @@ namespace KoFrMaDaemon.Backup
             {
                 try
                 {
-                    this.CreateDirectory(this.FTPAddress + item);
+                    CreateDirectory(this.FTPAddress + item);
                 }
                 catch (Exception ex)
                 {

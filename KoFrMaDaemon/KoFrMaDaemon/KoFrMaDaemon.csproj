@@ -52,6 +52,9 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Renci.SshNet, Version=2016.1.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
+      <HintPath>..\packages\SSH.NET.2016.1.0\lib\net40\Renci.SshNet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression.FileSystem" />
@@ -76,6 +79,7 @@
     <Compile Include="Backup\Compression.cs" />
     <Compile Include="Backup\CopyErrorObject.cs" />
     <Compile Include="Backup\FTPConnection.cs" />
+    <Compile Include="Backup\SSHConnection.cs" />
     <Compile Include="ConnectionToServer\Connection.cs" />
     <Compile Include="ConnectionToServer\ConnectionInfo.cs" />
     <Compile Include="ConnectionToServer\DaemonInfo.cs" />
