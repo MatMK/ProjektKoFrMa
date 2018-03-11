@@ -26,7 +26,6 @@ namespace KoFrMaDaemon
         Password daemonPassword;
 
         private bool inProgress;
-        private string logPath;
 
         /// <summary>
         /// Naplánované úlohy přijaté od serveru se budou přidávat do tohoto listu
@@ -49,10 +48,9 @@ namespace KoFrMaDaemon
             timer.AutoReset = true;
             Password password = Password.Instance;
             DaemonSettings daemonSettings = new DaemonSettings();
-            this.logPath = daemonSettings.LocalLogPath;
 
 
-            debugLog = new DebugLog(this.logPath, 9);
+            debugLog = new DebugLog(daemonSettings.LocalLogPath,daemonSettings.WindowsLog, 9);
 
             /// <summary>
             /// Předávání informací o daemonovi a systému

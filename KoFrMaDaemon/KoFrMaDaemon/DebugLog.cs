@@ -26,7 +26,7 @@ namespace KoFrMaDaemon
         public byte _logLevel;
         private string _logPath;
         public List<string> logReport;
-        private bool writeToWindowsEventLog;
+        public bool writeToWindowsEventLog;
 
         private StreamWriter w;
         public DebugLog(string logPath,bool writeToWindowsEventLog, byte logLevel)
@@ -66,13 +66,13 @@ namespace KoFrMaDaemon
             }
             if (_logPath != null)
             {
-                w = new StreamWriter(this._logPath, true);
                 if (logLevelBool)
                 {
+                    w = new StreamWriter(this._logPath, true);
                     w.WriteLine(row);
+                    w.Close();
+                    w.Dispose();
                 }
-                w.Close();
-                w.Dispose();
             }
 
         }

@@ -12,6 +12,7 @@ namespace KoFrMaDaemon
         public string ServerIP;
         public string Password;
         public string LocalLogPath;
+        public bool WindowsLog;
 
         private StreamReader r;
 
@@ -46,7 +47,11 @@ namespace KoFrMaDaemon
                             }
 
                        }
-                }
+                        else if (tmpRow.StartsWith("WindowsLog="))
+                        {
+                            this.WindowsLog = Convert.ToBoolean(tmpRow.Substring(11));
+                        }
+                    }
                 r.Close();
                 r.Dispose();
                 }
