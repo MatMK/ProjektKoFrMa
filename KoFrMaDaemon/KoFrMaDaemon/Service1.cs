@@ -75,7 +75,7 @@ namespace KoFrMaDaemon
                 debugLog.WriteToLog("Service started", 4);
 
                 timer.Start();
-                //debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique motherboard ID is " +daemon.PC_Unique, 6);
+                debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique motherboard ID is " +daemon.PC_Unique, 7);
                 //try
                 //{
                 //    FTPConnection fTPConnection = new FTPConnection(@"ftp://e64.cz/WWWRoot/DRead/", "v013823a", "3wZ1ySRlLY8c7k6", debugLog);
@@ -105,6 +105,7 @@ namespace KoFrMaDaemon
             catch (Exception ex)
             {
                 debugLog.WriteToLog("Cannot start service because of error: "+ex.Message + ex, 1);
+                throw;
             }
             
 
@@ -124,7 +125,7 @@ namespace KoFrMaDaemon
 
         private void OnTimerTick(object sender, ElapsedEventArgs e)
         {
-            debugLog.WriteToLog("Timer tick", 7);
+            debugLog.WriteToLog("Timer tick", 8);
             if (!this.inProgress) //Pokud se service zrovna nevypíná, třeba aby při vypínání Windows nezačala běžet nová úloha nebo pokud se zrovna neprohledává seznam úloh (běží asynchonně)
             {
                 this.inProgress = true;
@@ -134,7 +135,8 @@ namespace KoFrMaDaemon
                     debugLog.WriteToLog("Trying to obtain token from the server...", 5);
                     try
                     {
-                        daemon.Token = connection.GetToken();
+                        //daemon.Token = connection.GetToken();
+                        debugLog.WriteToLog("Token obtained.", 5);
                     }
                     catch (Exception ex)
                     {
@@ -221,14 +223,22 @@ namespace KoFrMaDaemon
                     FileInfo[] JournalCacheListDir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\").GetFiles();
                     for (int x = 0; x < JournalCacheListDir.Length; x++)
                     {
-                        try
+                        if (JournalCacheListDir[i].Name.EndsWith(".dat"))
                         {
-                            JournalCacheList.Add(Convert.ToInt32(JournalCacheListDir[i].Name.Substring(0,JournalCacheListDir[i].Name.Length-3)));
+                            try
+                            {
+                                JournalCacheList.Add(Convert.ToInt32(Path.GetFileNameWithoutExtension(JournalCacheListDir[i].Name)));
+                            }
+                            catch (Exception)
+                            {
+                                debugLog.WriteToLog("File isn't named as ID of a task: " + JournalCacheListDir[i].Name, 3);
+                            }
                         }
-                        catch (Exception)
+                        else
                         {
                             debugLog.WriteToLog("Couldn't identify file from the cache folder. File name is: " + JournalCacheListDir[i].Name, 3);
                         }
+
                     }
                 }
                 catch (Exception)
