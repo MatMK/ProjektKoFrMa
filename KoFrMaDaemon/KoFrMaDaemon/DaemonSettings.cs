@@ -49,7 +49,15 @@ namespace KoFrMaDaemon
                        }
                         else if (tmpRow.StartsWith("WindowsLog="))
                         {
-                            this.WindowsLog = Convert.ToBoolean(tmpRow.Substring(11));
+                            string tmp = tmpRow.Substring(11);
+                            if (tmp == "0")
+                            {
+                                this.WindowsLog = false;
+                            }
+                            else if (tmp == "1")
+                            {
+                                this.WindowsLog = true;
+                            }
                         }
                     }
                 r.Close();

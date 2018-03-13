@@ -68,6 +68,18 @@ namespace KoFrMaLocalDaemonConfig
                             }
 
                         }
+                        else if (tmpRow.StartsWith("WindowsLog="))
+                        {
+                            string tmp = tmpRow.Substring(11);
+                            if (tmp == "0")
+                            {
+                                this.checkBox_LogWindows.Checked = false;
+                            }
+                            else if (tmp == "1")
+                            {
+                                this.checkBox_LogWindows.Checked = true;
+                            }
+                        }
                     }
                     r.Close();
                     r.Dispose();
@@ -113,6 +125,7 @@ namespace KoFrMaLocalDaemonConfig
                 {
                     w.WriteLine("LocalLogPath=");
                 }
+                w.WriteLine("WindowsLog=" + (this.checkBox_LogWindows.Checked?1:0));
 
                 w.Close();
                 w.Dispose();
