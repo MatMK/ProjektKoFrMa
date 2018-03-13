@@ -13,6 +13,7 @@ namespace KoFrMaDaemon.Backup
         protected DirectoryInfo sourceInfo;
         protected DirectoryInfo destinationInfo;
         public BackupJournalObject BackupJournalNew;
+        public DebugLog taskDebugLog;
 
         public void Backup(string source, BackupJournalObject backupJournalSource, string destination,  byte? compressionLevel, int TaskID,DebugLog debugLog)
         {

@@ -20,6 +20,11 @@ namespace KoFrMaDaemon.ConnectionToServer
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(ConnectionInfo.ServerURL + @"/api/Daemon/GetInstructions");
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
+
+            ///Timeout aby se aplikace nesekla když se nepřipojí, potom předělat na nastevní hodnoty ze serveru
+            httpWebRequest.Timeout = 5000;
+            httpWebRequest.ReadWriteTimeout = 32000;
+
             ServiceKoFrMa.debugLog.WriteToLog("Trying to send request to server at address " + ConnectionInfo.ServerURL + @"/api/Daemon/GetInstructions", 5);
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
