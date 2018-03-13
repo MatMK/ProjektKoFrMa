@@ -70,35 +70,43 @@ namespace KoFrMaDaemon
 
         protected override void OnStart(string[] args)
         {
-            debugLog.WriteToLog("Service started", 4);
-            daemon.Token = connection.GetToken();
-            timer.Start();
-            debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique motherboard ID is " +daemon.PC_Unique, 6);
-            //try
-            //{
-            //    FTPConnection fTPConnection = new FTPConnection(@"ftp://e64.cz/WWWRoot/DRead/", "v013823a", "3wZ1ySRlLY8c7k6", debugLog);
-            //    fTPConnection.UploadToFTP(@"d:\KoFrMa\BackupThisFolder\");
-            //}
-            //catch (Exception ex)
-            //{
-            //    debugLog.WriteToLog(ex.Message, 2);
-            //    throw;
-            //}
+            try
+            {
+                debugLog.WriteToLog("Service started", 4);
 
-            //BackupDifferential backupTest = new BackupDifferential();
-            //BackupFull fullbackupTestFull = new BackupFull();
-            //fullbackupTestFull.BackupFullProcess(@"d:\KoFrMa\BackupThisFolder\", @"d:\KoFrMa\BackupGoesHere\", debugLog);
-            //backupTest.BackupDifferentialProcess(@"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_24_15_14_39_Full\KoFrMaBackup.dat\", @"d:\tmp\testBackup\BackupGoesHere\", debugLog);
-            //BackupSwitch backupSwitchTest = new BackupSwitch();
-            //try
-            //{
-            //    backupSwitchTest.Backup(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\.zip", 0, debugLog);
-            //}
-            //catch (Exception ex)
-            //{
-            //    debugLog.WriteToLog(ex.Message, 2);
-            //    throw;
-            //}
+                timer.Start();
+                //debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique motherboard ID is " +daemon.PC_Unique, 6);
+                //try
+                //{
+                //    FTPConnection fTPConnection = new FTPConnection(@"ftp://e64.cz/WWWRoot/DRead/", "v013823a", "3wZ1ySRlLY8c7k6", debugLog);
+                //    fTPConnection.UploadToFTP(@"d:\KoFrMa\BackupThisFolder\");
+                //}
+                //catch (Exception ex)
+                //{
+                //    debugLog.WriteToLog(ex.Message, 2);
+                //    throw;
+                //}
+
+                //BackupDifferential backupTest = new BackupDifferential();
+                //BackupFull fullbackupTestFull = new BackupFull();
+                //fullbackupTestFull.BackupFullProcess(@"d:\KoFrMa\BackupThisFolder\", @"d:\KoFrMa\BackupGoesHere\", debugLog);
+                //backupTest.BackupDifferentialProcess(@"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_24_15_14_39_Full\KoFrMaBackup.dat\", @"d:\tmp\testBackup\BackupGoesHere\", debugLog);
+                //BackupSwitch backupSwitchTest = new BackupSwitch();
+                //try
+                //{
+                //    backupSwitchTest.Backup(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\.zip", 0, debugLog);
+                //}
+                //catch (Exception ex)
+                //{
+                //    debugLog.WriteToLog(ex.Message, 2);
+                //    throw;
+                //}
+            }
+            catch (Exception ex)
+            {
+                debugLog.WriteToLog("Cannot start service because of error: "+ex.Message + ex, 1);
+            }
+            
 
 
             //a.BackupFullFolder(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupThisFolder\", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\", debugLog);
@@ -120,6 +128,23 @@ namespace KoFrMaDaemon
             if (!this.inProgress) //Pokud se service zrovna nevypíná, třeba aby při vypínání Windows nezačala běžet nová úloha nebo pokud se zrovna neprohledává seznam úloh (běží asynchonně)
             {
                 this.inProgress = true;
+
+                if (daemon.Token == null)
+                {
+                    debugLog.WriteToLog("Trying to obtain token from the server...", 5);
+                    try
+                    {
+                        daemon.Token = connection.GetToken();
+                    }
+                    catch (Exception ex)
+                    {
+                        debugLog.WriteToLog("Token couldn't be obtained from the server. Waiting for next timer event to try to obtaine one. "+ex.Message, 3);
+                        this.inProgress = false;
+                        return;
+                    }
+                }
+
+
                 debugLog.WriteToLog("Updating list of scheduled tasks from the server...", 5);
                 this.GetTasks();
                 debugLog.WriteToLog("List of scheduled tasks now contains " + this.ScheduledTasks.Count + " tasks", 6);

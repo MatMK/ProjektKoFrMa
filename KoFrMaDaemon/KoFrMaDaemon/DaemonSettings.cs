@@ -18,6 +18,8 @@ namespace KoFrMaDaemon
 
         public DaemonSettings()
         {
+            this.WindowsLog = false;
+            this.Password = "";
             try
             {
                 if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\config.ini"))
