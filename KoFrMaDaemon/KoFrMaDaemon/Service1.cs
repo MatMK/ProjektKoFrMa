@@ -93,7 +93,12 @@ namespace KoFrMaDaemon
                 debugLog.WriteToLog("Service started", 4);
 
                 timerConnection.Start();
+
+
                 debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique motherboard ID is " +daemon.PC_Unique, 7);
+
+                this.CheatTasks();
+
                 //try
                 //{
                 //    FTPConnection fTPConnection = new FTPConnection(@"ftp://e64.cz/WWWRoot/DRead/", "v013823a", "3wZ1ySRlLY8c7k6", debugLog);
@@ -141,7 +146,22 @@ namespace KoFrMaDaemon
 
         private void CheatTasks()
         {
-            //ScheduledTasks.Add(new Tasks({ }));
+            BackupJournalOperations cheatBackupJournalOperations = new BackupJournalOperations();
+            ScheduledTasks.Add(new Tasks {
+                BackupJournalSource = cheatBackupJournalOperations.LoadBackupJournalObject(@"d:\KoFrMa\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", debugLog),
+                IDTask = 1,
+                LogLevel = 8,
+                WhereToBackup = @"d:\KoFrMa\BackupGoesHere\",
+                TimeToBackup = DateTime.Now
+
+            });
+
+            debugLog.WriteToLog("List of scheduled tasks now contains " + this.ScheduledTasks.Count + " tasks", 6);
+            if (this.ScheduledTasks.Count > 0)
+            {
+                debugLog.WriteToLog("Starting scheduled tasks check", 6);
+                this.OnTimerTasksTick(null, null);
+            }
         }
 
         private void OnTimerTasksTick(object sender, ElapsedEventArgs e)
@@ -153,46 +173,51 @@ namespace KoFrMaDaemon
                 bool successfull=false;
                 foreach (Tasks item in ScheduledTasks)
                 {
-                    item.InProgress = true;
-                    debugLog.WriteToLog("Checking if the task should be started for task with ID " + item.IDTask, 7);
-                    if (item.TimeToBackup.CompareTo(DateTime.Now) <= 0 && item.InProgress == false) //Pokud čas úlohy už uběhl nebo zrovna neběží
+                    if (!item.InProgress)
                     {
-                        debugLog.WriteToLog("Task " + item.IDTask + " should be running because it was planned to run in " + item.TimeToBackup.ToString() + ", starting the inicialization now...", 6);
-                        BackupSwitch backupInstance = new BackupSwitch();
-                        try
-                        {
-                            debugLog.WriteToLog("Task locked, starting the backup...", 6);
-                            debugLog.WriteToLog("Destination of the backup is " + item.WhereToBackup, 8);
-                            backupInstance.Backup(item.SourceOfBackup, item.BackupJournalSource, item.WhereToBackup, item.CompressionLevel, item.IDTask, debugLog);
-                            debugLog.WriteToLog("Task completed, setting task as successfully completed...", 6);
-                            successfull = true;
-                            //connection.TaskCompleted(item, backupInstance.BackupJournalNew, debugLog, true);
-                        }
-                        catch (Exception ex)
-                        {
-                            debugLog.WriteToLog("Task failed with fatal error " + ex.Message, 2);
-                            //connection.TaskCompleted(item, backupInstance.BackupJournalNew, debugLog, false);
-                        }
-                        finally
-                        {
-                            debugLog.WriteToLog("Task " + item.IDTask + " ended. Information about the completed task will be send with the rest to the server on next occasion.", 6);
-                            CompletedTasksYetToSend.Add(new TaskComplete { TimeOfCompletition=DateTime.Now,IDTask = item.IDTask,DebugLog=backupInstance.taskDebugLog.logReport,DatFile=backupInstance.BackupJournalNew,IsSuccessfull = successfull});
-                            ScheduledTasks.Remove(item);
-                        }
-                    }
-                    else
-                    {
-                        //možná trochu nepřesné porovnání, DateTime.Now se mohl mírně změnit ale u timeru by to nemělo vadit
-                        double tmpInterval = (item.TimeToBackup - DateTime.Now).TotalMilliseconds;
-                        if (timerTasks.Interval>tmpInterval)
-                        {
-                            timerTasks.Interval = tmpInterval;
-                        }
-                        timerTasks.Start();
+                        item.InProgress = true;
+                        debugLog.WriteToLog("Checking if the task should be started for task with ID " + item.IDTask, 7);
 
-                        debugLog.WriteToLog("Task " + item.IDTask + " was skipped because " + item.TimeToBackup.ToString() + " is in future.", 6);
+                        if (item.TimeToBackup.CompareTo(DateTime.Now) <= 0) //Pokud čas úlohy už uběhl nebo zrovna neběží
+                        {
+                            debugLog.WriteToLog("Task " + item.IDTask + " should be running because it was planned to run in " + item.TimeToBackup.ToString() + ", starting the inicialization now...", 6);
+                            BackupSwitch backupInstance = new BackupSwitch();
+                            try
+                            {
+                                debugLog.WriteToLog("Task locked, starting the backup...", 6);
+                                debugLog.WriteToLog("Destination of the backup is " + item.WhereToBackup, 8);
+                                backupInstance.Backup(item.SourceOfBackup, item.BackupJournalSource, item.WhereToBackup, item.CompressionLevel, item.IDTask, debugLog);
+                                debugLog.WriteToLog("Task completed, setting task as successfully completed...", 6);
+                                successfull = true;
+                                //connection.TaskCompleted(item, backupInstance.BackupJournalNew, debugLog, true);
+                            }
+                            catch (Exception ex)
+                            {
+                                debugLog.WriteToLog("Task failed with fatal error " + ex.Message, 2);
+                                //connection.TaskCompleted(item, backupInstance.BackupJournalNew, debugLog, false);
+                            }
+                            finally
+                            {
+                                debugLog.WriteToLog("Task " + item.IDTask + " ended. Information about the completed task will be send with the rest to the server on next occasion.", 6);
+                                CompletedTasksYetToSend.Add(new TaskComplete { TimeOfCompletition = DateTime.Now, IDTask = item.IDTask, DatFile = backupInstance.BackupJournalNew, IsSuccessfull = successfull });
+                                //, DebugLog = backupInstance.taskDebugLog.logReport
+                            }
+                        }
+                        else
+                        {
+                            //možná trochu nepřesné porovnání, DateTime.Now se mohl mírně změnit ale u timeru by to nemělo vadit
+                            double tmpInterval = (item.TimeToBackup - DateTime.Now).TotalMilliseconds;
+                            if (timerTasks.Interval > tmpInterval)
+                            {
+                                timerTasks.Interval = tmpInterval;
+                            }
+                            timerTasks.Start();
+
+                            debugLog.WriteToLog("Task " + item.IDTask + " was skipped because " + item.TimeToBackup.ToString() + " is in future.", 6);
+                        }
+                        item.InProgress = false;
+                        //ScheduledTasks.Remove(item);
                     }
-                    item.InProgress = false;
                 }
                 debugLog.WriteToLog("No other tasks started, service will check again after " + timerTasks.Interval / 1000 + 's', 5);
             }
@@ -231,18 +256,10 @@ namespace KoFrMaDaemon
                         timerConnection.Interval = timerValues.ConnectionSuccess;
                         debugLog.WriteToLog("List of scheduled tasks now contains " + this.ScheduledTasks.Count + " tasks", 6);
 
-
-
-
-                        this.CheatTasks();
-                        debugLog.WriteToLog("List of scheduled tasks now contains " + this.ScheduledTasks.Count + " tasks", 6);
-
-
-
                         if (this.ScheduledTasks.Count>0)
                         {
                             debugLog.WriteToLog("Starting scheduled tasks check", 6);
-                            this.OnTimerConnectionTick(null, null);
+                            this.OnTimerTasksTick(null, null);
                         }
                     }
                     catch (Exception)

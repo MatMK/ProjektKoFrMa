@@ -17,9 +17,10 @@ namespace KoFrMaDaemon.Backup
 
         public void Backup(string source, BackupJournalObject backupJournalSource, string destination,  byte? compressionLevel, int TaskID,DebugLog debugLog)
         {
+            
             if (backupJournalSource != null)
             {
-                debugLog.WriteToLog("Starting differential/incremental backup, because the path to source ends with .dat (" + source + ')', 5);
+                debugLog.WriteToLog("Starting differential/incremental backup, because journal was received from server", 5);
                 BackupDifferential backupDifferential = new BackupDifferential();
                 backupDifferential.BackupDifferentialProcess(backupJournalSource, Path.GetDirectoryName(destination),TaskID, debugLog);
                 this.sourceInfo = backupDifferential.sourceInfo;
@@ -28,7 +29,7 @@ namespace KoFrMaDaemon.Backup
             }
             else
             {
-                debugLog.WriteToLog("Starting full backup, because the path to source doesn't end with .dat (" + source + ')', 5);
+                debugLog.WriteToLog("Starting full backup, because the there is no info about backup jounrnal", 5);
                 BackupFull backupFull = new BackupFull();
                 backupFull.BackupFullProcess(source, Path.GetDirectoryName(destination), TaskID, debugLog);
                 this.sourceInfo = backupFull.sourceInfo;
@@ -36,9 +37,9 @@ namespace KoFrMaDaemon.Backup
                 BackupJournalNew = backupFull.BackupJournalNew;
             }
             
-            if (destination.EndsWith(".zip") || destination.EndsWith(".rar") || destination.EndsWith(".7z"))
+            if (destination.EndsWith(".zip"))
             {
-                debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip, .rar or .7z (" + destination + ')', 5);
+                debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip (" + destination + ')', 5);
                 Compression compression = new Compression(debugLog);
                 compression.CompressToZip(destinationInfo.FullName, destinationInfo.Parent.FullName + @"\"+this.destinationInfo.Name+".zip",compressionLevel);
                 debugLog.WriteToLog("Compression done, deleting temporary files that were needed for compression", 6);
