@@ -20,6 +20,11 @@ namespace KoFrMaDaemon.ConnectionToServer
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(ConnectionInfo.ServerURL + @"/api/Daemon/GetInstructions");
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
+
+            ///Timeout aby se aplikace nesekla když se nepřipojí, potom předělat na nastevní hodnoty ze serveru
+            httpWebRequest.Timeout = 5000;
+            httpWebRequest.ReadWriteTimeout = 32000;
+
             ServiceKoFrMa.debugLog.WriteToLog("Trying to send request to server at address " + ConnectionInfo.ServerURL + @"/api/Daemon/GetInstructions", 5);
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
@@ -30,7 +35,7 @@ namespace KoFrMaDaemon.ConnectionToServer
             }
             ServiceKoFrMa.debugLog.WriteToLog("Trying to receive response from server at address "+ ConnectionInfo.ServerURL + @"/api/Daemon/GetInstructions",5);
             var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            ServiceKoFrMa.debugLog.WriteToLog("Server returned code " + httpResponse.StatusCode + "which means " + httpResponse.StatusDescription, 5);
+            ServiceKoFrMa.debugLog.WriteToLog("Server returned code " + httpResponse.StatusCode + " which means " + httpResponse.StatusDescription, 5);
             string result;
             using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
             {
@@ -70,10 +75,11 @@ namespace KoFrMaDaemon.ConnectionToServer
         }
         public string GetToken()
         {
-
+            ServiceKoFrMa.debugLog.WriteToLog("Creating token request...", 7);
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(ConnectionInfo.ServerURL + @"/api/Daemon/RegisterToken");
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
+            ServiceKoFrMa.debugLog.WriteToLog("Trying to send token request to server at address " + ConnectionInfo.ServerURL + @"/api/Daemon/RegisterToken", 6);
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
                 string json = JsonConvert.SerializeObject(Password.Instance);
@@ -82,7 +88,9 @@ namespace KoFrMaDaemon.ConnectionToServer
                 streamWriter.Flush();
                 streamWriter.Close();
             }
+            ServiceKoFrMa.debugLog.WriteToLog("Trying to receive response from server...", 7);
             var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            ServiceKoFrMa.debugLog.WriteToLog("Server returned code " + httpResponse.StatusCode + " which means " + httpResponse.StatusDescription, 6);
             string result;
             using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
             {

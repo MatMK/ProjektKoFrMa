@@ -82,8 +82,19 @@ namespace KoFrMaDaemon
         {
             if (!EventLog.SourceExists("KoFrMaDaemon"))
                 EventLog.CreateEventSource("KoFrMaDaemon", "Application");
+            if (level<3)
+            {
+                EventLog.WriteEntry("KoFrMaDaemon", text, EventLogEntryType.Error);
+            }
+            if(level==3)
+            {
+                EventLog.WriteEntry("KoFrMaDaemon", text, EventLogEntryType.Warning);
+            }
+            if (level == 4)
+            {
+                EventLog.WriteEntry("KoFrMaDaemon", text, EventLogEntryType.Information);
+            }
 
-            EventLog.WriteEntry("KoFrMaDaemon", text,(EventLogEntryType)level);
         }
 
         //public string ReadLog()
