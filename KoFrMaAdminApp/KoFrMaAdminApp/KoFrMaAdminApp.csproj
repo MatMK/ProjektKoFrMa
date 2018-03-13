@@ -161,7 +161,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="app\StyleSheet1.css" />
+    <Content Include="app\bg.png" />
+    <Content Include="Views\Home\Dashboard.html" />
+    <Content Include="app\logincss.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="favicon.ico" />
