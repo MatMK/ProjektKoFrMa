@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
+//using System.ComponentModel;
+//using System.Data;
+//using System.Diagnostics;
+//using System.Linq;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
+//using System.Text;
+//using System.Threading.Tasks;
 using System.Timers;
 //using System.IO;
 //using System.Net;
@@ -19,32 +19,28 @@ namespace KoFrMaDaemon
 {
     public partial class ServiceKoFrMa : ServiceBase
     {
+        private bool inProgress;
         private Timer timerTasks;
         private Timer timerConnection;
         public static DebugLog debugLog;
         Connection connection;
         DaemonInfo daemon;
         Password daemonPassword;
+        TimerValues timerValues;
 
-        TimerValues timerValues = new TimerValues();
-
-
-
-
-        private bool inProgress;
 
         /// <summary>
         /// Naplánované úlohy přijaté od serveru se budou přidávat do tohoto listu
         /// </summary>
         private List<Tasks> ScheduledTasks;
+        /// <summary>
+        /// Dokončené úlohy se přidávají do tohoto listu, při připojení se odešlou na server
+        /// </summary>
         private List<TaskComplete> CompletedTasksYetToSend;
 
         public ServiceKoFrMa()
         {
-
             InitializeComponent();
-
-            
 
 
             ScheduledTasks = new List<Tasks>();
@@ -52,6 +48,7 @@ namespace KoFrMaDaemon
 
             inProgress = false;
 
+            timerValues = new TimerValues();
             this.timerValues.OnStart = 5000;
             this.timerValues.ConnectionSuccess = 5000;
             this.timerValues.ConnectionFailed = 5000;
@@ -64,16 +61,15 @@ namespace KoFrMaDaemon
             timerTasks = new Timer();
             timerTasks.Elapsed += new ElapsedEventHandler(OnTimerTasksTick);
             timerTasks.AutoReset = false;
+
+
             Password password = Password.Instance;
             DaemonSettings daemonSettings = new DaemonSettings();
 
 
             debugLog = new DebugLog(daemonSettings.LocalLogPath,daemonSettings.WindowsLog, 9);
 
-            /// <summary>
             /// Předávání informací o daemonovi a systému
-            /// </summary>
-
             daemon = DaemonInfo.Instance;
             daemonPassword = Password.Instance;
             daemon.Version = 101;
@@ -91,11 +87,9 @@ namespace KoFrMaDaemon
             try
             {
                 debugLog.WriteToLog("Service started", 4);
+                debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique motherboard ID is " +daemon.PC_Unique, 7);
 
                 timerConnection.Start();
-
-
-                debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique motherboard ID is " +daemon.PC_Unique, 7);
 
                 this.CheatTasks();
 
@@ -109,33 +103,13 @@ namespace KoFrMaDaemon
                 //    debugLog.WriteToLog(ex.Message, 2);
                 //    throw;
                 //}
-
-                //BackupDifferential backupTest = new BackupDifferential();
-                //BackupFull fullbackupTestFull = new BackupFull();
-                //fullbackupTestFull.BackupFullProcess(@"d:\KoFrMa\BackupThisFolder\", @"d:\KoFrMa\BackupGoesHere\", debugLog);
-                //backupTest.BackupDifferentialProcess(@"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_24_15_14_39_Full\KoFrMaBackup.dat\", @"d:\tmp\testBackup\BackupGoesHere\", debugLog);
-                //BackupSwitch backupSwitchTest = new BackupSwitch();
-                //try
-                //{
-                //    backupSwitchTest.Backup(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\.zip", 0, debugLog);
-                //}
-                //catch (Exception ex)
-                //{
-                //    debugLog.WriteToLog(ex.Message, 2);
-                //    throw;
-                //}
             }
             catch (Exception ex)
             {
                 debugLog.WriteToLog("Cannot start service because of error: "+ex.Message + ex, 1);
                 throw;
             }
-            
 
-
-            //a.BackupFullFolder(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupThisFolder\", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\", debugLog);
-            //a.BackupDifferential(@"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\", @"d:\Users\Matej\Desktop\KoFrMaBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", debugLog);
-            //a.BackupDifferential(@"d:\tmp\testBackup\BackupGoesHere\", @"d:\tmp\testBackup\BackupGoesHere\KoFrMaBackup_2018_02_18_13_58_48_Full\KoFrMaBackup.dat", debugLog);
         }
 
         protected override void OnStop()
@@ -148,10 +122,11 @@ namespace KoFrMaDaemon
         {
             BackupJournalOperations cheatBackupJournalOperations = new BackupJournalOperations();
             ScheduledTasks.Add(new Tasks {
-                BackupJournalSource = cheatBackupJournalOperations.LoadBackupJournalObject(@"d:\KoFrMa\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", debugLog),
+                SourceOfBackup = @"D:\KoFrMa\BackupThisFolder\",
+                //BackupJournalSource = cheatBackupJournalOperations.LoadBackupJournalObject(@"d:\KoFrMa\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", debugLog),
                 IDTask = 1,
                 LogLevel = 8,
-                WhereToBackup = @"d:\KoFrMa\BackupGoesHere\",
+                //WhereToBackup.Add(@"d:\KoFrMa\BackupGoesHere\"),
                 TimeToBackup = DateTime.Now
 
             });
@@ -185,8 +160,8 @@ namespace KoFrMaDaemon
                             try
                             {
                                 debugLog.WriteToLog("Task locked, starting the backup...", 6);
-                                debugLog.WriteToLog("Destination of the backup is " + item.WhereToBackup, 8);
-                                backupInstance.Backup(item.SourceOfBackup, item.BackupJournalSource, item.WhereToBackup, item.CompressionLevel, item.IDTask, debugLog);
+                                debugLog.WriteToLog("Destination of the backup is " + item.WhereToBackup[0], 8);
+                                backupInstance.Backup(item.SourceOfBackup, item.BackupJournalSource, item.WhereToBackup[0], item.CompressionLevel, item.IDTask, debugLog);
                                 debugLog.WriteToLog("Task completed, setting task as successfully completed...", 6);
                                 successfull = true;
                                 //connection.TaskCompleted(item, backupInstance.BackupJournalNew, debugLog, true);

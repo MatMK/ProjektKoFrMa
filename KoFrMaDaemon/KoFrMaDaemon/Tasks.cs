@@ -32,7 +32,7 @@ namespace KoFrMaDaemon
         /// <summary>
         /// Cíl zálohy, archiv nebo složka, může odkazovat na ftp server (ftp://...) nebo sdílené úložiště (//NASBackup/CilZalohy)
         /// </summary>
-        public string WhereToBackup { get; set; }
+        public List<string> WhereToBackup { get; set; }
 
         /// <summary>
         /// Jak často se má daemon ptát serveru na úlohu
