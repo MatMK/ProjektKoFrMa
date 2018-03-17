@@ -38,6 +38,8 @@
             this.checkBox_showPath = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.checkBox_LogWindows = new System.Windows.Forms.CheckBox();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button_cancel
@@ -78,7 +80,7 @@
             // 
             this.textBox_LogPath.Location = new System.Drawing.Point(101, 104);
             this.textBox_LogPath.Name = "textBox_LogPath";
-            this.textBox_LogPath.Size = new System.Drawing.Size(434, 20);
+            this.textBox_LogPath.Size = new System.Drawing.Size(405, 20);
             this.textBox_LogPath.TabIndex = 4;
             this.textBox_LogPath.Visible = false;
             // 
@@ -130,11 +132,22 @@
             this.checkBox_LogWindows.Text = "Log to Windows Events";
             this.checkBox_LogWindows.UseVisualStyleBackColor = true;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(512, 104);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(24, 20);
+            this.button1.TabIndex = 10;
+            this.button1.Text = "...";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(548, 180);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.checkBox_LogWindows);
             this.Controls.Add(this.checkBox_showPath);
             this.Controls.Add(this.label3);
@@ -164,6 +177,8 @@
         private System.Windows.Forms.CheckBox checkBox_showPath;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox checkBox_LogWindows;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.Button button1;
     }
 }
 

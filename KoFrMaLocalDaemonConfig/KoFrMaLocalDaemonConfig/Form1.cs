@@ -30,10 +30,12 @@ namespace KoFrMaLocalDaemonConfig
             if (checkBox_showPath.Checked)
             {
                 this.textBox_LogPath.Visible = true;
+                this.button1.Visible = true;
             }
             else
             {
                 this.textBox_LogPath.Visible = false;
+                this.button1.Visible = false;
             }
         }
         private StreamReader r;
@@ -117,14 +119,23 @@ namespace KoFrMaLocalDaemonConfig
                 w = new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\config.ini");
                 w.WriteLine("ServerIP=" + this.textBox_ServerIP.Text);
                 w.WriteLine("Password=" + this.textBox_Password.Text);
+                string tmp = this.textBox_LogPath.Text;
                 if (this.checkBox_showPath.Checked)
                 {
-                    w.WriteLine("LocalLogPath=" + this.textBox_LogPath.Text);
+                    if (!tmp.EndsWith(@"\"))
+                    {
+                        if (!tmp.Contains('.'))
+                        {
+                            tmp += @"\KoFrMaLog.log";
+                        }
+                    }
+                    w.WriteLine("LocalLogPath=" + tmp);
                 }
                 else
                 {
                     w.WriteLine("LocalLogPath=");
                 }
+
                 w.WriteLine("WindowsLog=" + (this.checkBox_LogWindows.Checked?1:0));
 
                 w.Close();
@@ -135,6 +146,12 @@ namespace KoFrMaLocalDaemonConfig
                 MessageBox.Show(ex.Message);
             }
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.folderBrowserDialog1.ShowDialog();
+            this.textBox_LogPath.Text = this.folderBrowserDialog1.SelectedPath;
         }
     }
 }
