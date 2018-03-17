@@ -12,11 +12,14 @@ namespace KoFrMaDaemon
         public string ServerIP;
         public string Password;
         public string LocalLogPath;
+        public bool WindowsLog;
 
         private StreamReader r;
 
         public DaemonSettings()
         {
+            this.WindowsLog = false;
+            this.Password = "";
             try
             {
                 if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\config.ini"))
@@ -46,7 +49,19 @@ namespace KoFrMaDaemon
                             }
 
                        }
-                }
+                        else if (tmpRow.StartsWith("WindowsLog="))
+                        {
+                            string tmp = tmpRow.Substring(11);
+                            if (tmp == "0")
+                            {
+                                this.WindowsLog = false;
+                            }
+                            else if (tmp == "1")
+                            {
+                                this.WindowsLog = true;
+                            }
+                        }
+                    }
                 r.Close();
                 r.Dispose();
                 }

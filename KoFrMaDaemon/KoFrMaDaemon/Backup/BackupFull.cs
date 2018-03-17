@@ -36,7 +36,7 @@ namespace KoFrMaDaemon.Backup
 
             serviceDebugLog.WriteToLog("Log of including operations is located in " + base.destinationInfo.Parent.FullName + @"\KoFrMaDebug.log", 4);
 
-            DebugLog DebugLog = new DebugLog(base.destinationInfo.Parent.FullName + @"\KoFrMaDebug.log", serviceDebugLog._logLevel);
+            DebugLog DebugLog = new DebugLog(base.destinationInfo.Parent.FullName + @"\KoFrMaDebug.log", serviceDebugLog.writeToWindowsEventLog, serviceDebugLog._logLevel);
 
             DebugLog.WriteToLog("Subdirectory for the backup was created at " + base.destinationInfo.FullName, 5);
 

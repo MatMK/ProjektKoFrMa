@@ -346,14 +346,14 @@ namespace KoFrMaRestApi.MySqlCom
             using (MySqlConnection connection = WebApiConfig.Connection())
             using (MySqlCommand command = new MySqlCommand(@"SELECT `Password` FROM `tbDaemons` WHERE `PC_Unique` = @PC_Unique", connection))
             {
-                Int64? DatabasePassword = null;
+                int? DatabasePassword = null;
                 connection.Open();
                 command.Parameters.AddWithValue("@PC_Unique", PC_Unique);
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        DatabasePassword = (Int64)reader["Password"];
+                        DatabasePassword = (int)reader["Password"];
                     }
                     reader.Close();
                 }
@@ -361,6 +361,7 @@ namespace KoFrMaRestApi.MySqlCom
                 {
                     command.CommandText = @"UPDATE `tbDaemons` SET `Token`= @Token WHERE `PC_Unique` = @PC_Unique";
                     command.Parameters.AddWithValue("@Token", Token);
+                    command.Parameters.AddWithValue("@PC_Unique", PC_Unique);
                     command.ExecuteNonQuery();
 
                 }

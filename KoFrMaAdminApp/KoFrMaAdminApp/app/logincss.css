@@ -1,0 +1,55 @@
+﻿body {
+    background-image: url("bg.png");
+    background-repeat: repeat;
+    background-color: lightgreen;
+}
+
+div {
+    margin: 0 auto;
+}
+#loginDiv {
+    height: 220px;
+    width: 302px;
+    background-color: aliceblue;
+    padding: 40px;
+    border: 1px solid #d3d3d3;
+    border-radius: 5px;
+    margin: 0 auto;
+    margin-bottom:10px;
+   box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
+}
+main {
+    padding: 50px;
+    background-color: rgba(255, 255, 255, 0.3);
+    margin: 0 auto;
+    width: 1000px;
+}
+input{
+    margin-bottom: 20px;
+}
+.g-recaptcha{
+    border: 0px;
+}
+input {
+    
+    border: none;
+    border-bottom: 1px solid #d3d3d3;
+    border-radius: 0px;
+}
+
+#loginSubmit {
+    background-color: white;
+    transition-duration: 0.4s;
+    -webkit-transition-duration: 0,4s;
+    border: 1px solid #d3d3d3;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16PX;
+    padding: 8px 16px;
+    color: black;
+}
+#loginSubmit:hover {
+    background-color: crimson;
+    color: yellow;
+    }

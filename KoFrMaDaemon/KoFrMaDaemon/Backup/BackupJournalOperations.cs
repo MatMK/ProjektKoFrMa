@@ -18,7 +18,7 @@ namespace KoFrMaDaemon.Backup
 
         private List<string> tmpList;
 
-        public void CreateBackupJournal(BackupJournalObject backupJournalObject, string pathToJournalFolder, int TaskID, DebugLog debugLog)
+        public void CreateBackupJournal(BackupJournalObject backupJournalObject, string pathToJournalFile, int TaskID, DebugLog debugLog)
         {
             try
             {
@@ -40,8 +40,9 @@ namespace KoFrMaDaemon.Backup
                     tmpList.Add(folderBackupJournalHash[i].RelativePath + '|' + folderBackupJournalHash[i].CreationTimeUtc.ToBinary().ToString() + '|' + folderBackupJournalHash[i].LastWriteTimeUtc.ToBinary().ToString() + '|' + folderBackupJournalHash[i].Attributes.ToString() + '|' + folderBackupJournalHash[i].HashRow.ToString());
                 }
                 debugLog.WriteToLog("Writing backup journal to disk...", 7);
-                w1 = new StreamWriter(pathToJournalFolder+ "KoFrMaBackup.dat");
-                w2 = new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\"+TaskID.ToString()+".dat");
+                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\");
+                w1 = new StreamWriter(pathToJournalFile);
+                w2 = new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\"+TaskID.ToString()+".dat",false);
                 for (int i = 0; i < tmpList.Count; i++)
                 {
                     w1.WriteLine(tmpList[i]);

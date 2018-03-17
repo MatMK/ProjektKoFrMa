@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Diagnostics;
 
 namespace KoFrMaDaemon
 {
@@ -25,21 +26,27 @@ namespace KoFrMaDaemon
         public byte _logLevel;
         private string _logPath;
         public List<string> logReport;
+        public bool writeToWindowsEventLog;
 
         private StreamWriter w;
-        public DebugLog(string logPath, byte logLevel)
+        public DebugLog(string logPath,bool writeToWindowsEventLog, byte logLevel)
         {
             logReport = new List<string>();
             this._logPath = logPath;
             this._logLevel = logLevel;
-            w = new StreamWriter(logPath, true);
-            if (logLevel != 0)
+            this.writeToWindowsEventLog = writeToWindowsEventLog;
+            if (logPath!= null)
             {
-                //w.WriteLine("Time of occurrence, Level of alert, Text");
-                w.WriteLine();
+                w = new StreamWriter(logPath, true);
+                if (logLevel != 0)
+                {
+                    //w.WriteLine("Time of occurrence, Level of alert, Text");
+                    w.WriteLine();
+                }
+                w.Close();
+                w.Dispose();
             }
-            w.Close();
-            w.Dispose();
+
         }
 
 
@@ -52,6 +59,10 @@ namespace KoFrMaDaemon
             {
                 logLevelBool = true;
                 logReport.Add(row);
+                if (writeToWindowsEventLog)
+                {
+                    this.WriteToWindowsLog(text, level);
+                }
             }
             else
             {
@@ -59,17 +70,36 @@ namespace KoFrMaDaemon
             }
             if (_logPath != null)
             {
-                w = new StreamWriter(this._logPath, true);
                 if (logLevelBool)
                 {
+                    w = new StreamWriter(this._logPath, true);
                     w.WriteLine(row);
+                    w.Close();
+                    w.Dispose();
                 }
-                w.Close();
-                w.Dispose();
             }
 
         }
 
+
+        private void WriteToWindowsLog(string text, byte level)
+        {
+            if (!EventLog.SourceExists("KoFrMaDaemon"))
+                EventLog.CreateEventSource("KoFrMaDaemon", "Application");
+            if (level<3)
+            {
+                EventLog.WriteEntry("KoFrMaDaemon", text, EventLogEntryType.Error);
+            }
+            if(level==3)
+            {
+                EventLog.WriteEntry("KoFrMaDaemon", text, EventLogEntryType.Warning);
+            }
+            if (level == 4)
+            {
+                EventLog.WriteEntry("KoFrMaDaemon", text, EventLogEntryType.Information);
+            }
+
+        }
 
         //public string ReadLog()
         //{
