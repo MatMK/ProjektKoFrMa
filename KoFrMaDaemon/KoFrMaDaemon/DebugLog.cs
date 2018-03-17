@@ -35,14 +35,18 @@ namespace KoFrMaDaemon
             this._logPath = logPath;
             this._logLevel = logLevel;
             this.writeToWindowsEventLog = writeToWindowsEventLog;
-            w = new StreamWriter(logPath, true);
-            if (logLevel != 0)
+            if (logPath!= null)
             {
-                //w.WriteLine("Time of occurrence, Level of alert, Text");
-                w.WriteLine();
+                w = new StreamWriter(logPath, true);
+                if (logLevel != 0)
+                {
+                    //w.WriteLine("Time of occurrence, Level of alert, Text");
+                    w.WriteLine();
+                }
+                w.Close();
+                w.Dispose();
             }
-            w.Close();
-            w.Dispose();
+
         }
 
 

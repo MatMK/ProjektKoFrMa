@@ -180,15 +180,27 @@ namespace KoFrMaDaemon
                         }
                         else
                         {
-                            //možná trochu nepřesné porovnání, DateTime.Now se mohl mírně změnit ale u timeru by to nemělo vadit
-                            double tmpInterval = (item.TimeToBackup - DateTime.Now).TotalMilliseconds;
-                            if (timerTasks.Interval > tmpInterval)
+                            TimeSpan tmp = item.TimeToBackup - DateTime.Now;
+                            if (tmp.TotalMilliseconds< 2147483647)
                             {
-                                timerTasks.Interval = tmpInterval;
+                                if (timerTasks.Interval > tmp.TotalMilliseconds)
+                                {
+                                    timerTasks.Stop();
+                                    timerTasks.Interval = tmp.TotalMilliseconds;
+                                    timerTasks.Start();
+                                    debugLog.WriteToLog("Timer value set to this task.", 7);
+                                }
+                                else
+                                {
+                                    debugLog.WriteToLog("There is another task planned earlier than this one, not changing the timer.", 7);
+                                }
                             }
-                            timerTasks.Start();
-
+                            else
+                            {
+                                debugLog.WriteToLog("Task is planned too far in the future, timer not set.", 7);
+                            }
                             debugLog.WriteToLog("Task " + item.IDTask + " was skipped because " + item.TimeToBackup.ToString() + " is in future.", 6);
+
                         }
                         item.InProgress = false;
                         //ScheduledTasks.Remove(item);
