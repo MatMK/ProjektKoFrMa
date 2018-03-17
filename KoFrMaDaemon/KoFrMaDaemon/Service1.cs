@@ -58,7 +58,7 @@ namespace KoFrMaDaemon
             timerConnection.Elapsed += new ElapsedEventHandler(OnTimerConnectionTick);
             timerConnection.AutoReset = false;
 
-            timerTasks = new Timer();
+            timerTasks = new Timer(1);
             timerTasks.Elapsed += new ElapsedEventHandler(OnTimerTasksTick);
             timerTasks.AutoReset = false;
 
@@ -121,13 +121,15 @@ namespace KoFrMaDaemon
         private void CheatTasks()
         {
             BackupJournalOperations cheatBackupJournalOperations = new BackupJournalOperations();
+            DateTime timeToBackup = DateTime.Now;
+
             ScheduledTasks.Add(new Tasks {
                 SourceOfBackup = @"D:\KoFrMa\BackupThisFolder\",
                 //BackupJournalSource = cheatBackupJournalOperations.LoadBackupJournalObject(@"d:\KoFrMa\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", debugLog),
                 IDTask = 1,
                 LogLevel = 8,
-                //WhereToBackup.Add(@"d:\KoFrMa\BackupGoesHere\"),
-                TimeToBackup = DateTime.Now
+                WhereToBackup = new List<string> { (@"d:\KoFrMa\BackupGoesHere\") },
+                TimeToBackup = timeToBackup.AddSeconds(10)
 
             });
 
@@ -142,6 +144,8 @@ namespace KoFrMaDaemon
         private void OnTimerTasksTick(object sender, ElapsedEventArgs e)
         {
             debugLog.WriteToLog("Task timer tick", 8);
+            this.timerTasks.Stop();
+            this.timerTasks.Interval = 2147483647;
             if (this.ScheduledTasks.Count > 0)
             {
                 debugLog.WriteToLog("Tasks found, starting to check if the time has come for each of the tasks", 5);
@@ -161,7 +165,7 @@ namespace KoFrMaDaemon
                             {
                                 debugLog.WriteToLog("Task locked, starting the backup...", 6);
                                 debugLog.WriteToLog("Destination of the backup is " + item.WhereToBackup[0], 8);
-                                backupInstance.Backup(item.SourceOfBackup, item.BackupJournalSource, item.WhereToBackup[0], item.CompressionLevel, item.IDTask, debugLog);
+                                backupInstance.Backup(item.SourceOfBackup, item.BackupJournalSource, item.WhereToBackup, item.CompressionLevel, item.IDTask, debugLog);
                                 debugLog.WriteToLog("Task completed, setting task as successfully completed...", 6);
                                 successfull = true;
                                 //connection.TaskCompleted(item, backupInstance.BackupJournalNew, debugLog, true);
@@ -206,7 +210,15 @@ namespace KoFrMaDaemon
                         //ScheduledTasks.Remove(item);
                     }
                 }
-                debugLog.WriteToLog("No other tasks started, service will check again after " + timerTasks.Interval / 1000 + 's', 5);
+                if (timerTasks.Interval== 2147483647)
+                {
+                    debugLog.WriteToLog("No other tasks planned", 5);
+                }
+                else
+                {
+                    debugLog.WriteToLog("No other tasks started, service will check again after " + timerTasks.Interval / 1000 + 's', 5);
+                }
+
             }
             else
             {
