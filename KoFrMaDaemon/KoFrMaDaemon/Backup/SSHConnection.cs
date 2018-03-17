@@ -9,7 +9,7 @@ using System.Net;
 
 namespace KoFrMaDaemon.Backup
 {
-    class SSHConnection
+    public class SSHConnection
     {
         private string SSHAddress;
         private NetworkCredential SSHCredentials;
@@ -19,6 +19,12 @@ namespace KoFrMaDaemon.Backup
         {
             debugLog.WriteToLog("Setting up settings needed for the SSH trasfer...", 7);
             SSHCredentials = new NetworkCredential(username, password);
+            this.SSHAddress = SSHAddress;
+        }
+        public SSHConnection(string SSHAddress, NetworkCredential networkCredential)
+        {
+            ServiceKoFrMa.debugLog.WriteToLog("Setting up settings needed for the SSH trasfer...", 7);
+            SSHCredentials = networkCredential;
             this.SSHAddress = SSHAddress;
         }
         public void UploadToSSH(string PathToFolder)

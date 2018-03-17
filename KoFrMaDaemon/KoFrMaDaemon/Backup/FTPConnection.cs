@@ -11,22 +11,26 @@ namespace KoFrMaDaemon.Backup
     public class FTPConnection
     {
         private string FTPAddress;
-        private DebugLog debugLog;
         private NetworkCredential FTPCredentials;
         private DirectoryInfo directoryInfo;
-        public FTPConnection(string FTPAddress,string username, string password,DebugLog debugLog)
+        public FTPConnection(string FTPAddress,string username, string password)
         {
-            debugLog.WriteToLog("Setting up settings needed for the FTP trasfer...", 7);
+            ServiceKoFrMa.debugLog.WriteToLog("Setting up settings needed for the FTP trasfer...", 7);
             FTPCredentials = new NetworkCredential(username, password);
             this.FTPAddress = FTPAddress;
-            this.debugLog = debugLog;
+        }
+        public FTPConnection(string FTPAddress, NetworkCredential networkCredential)
+        {
+            ServiceKoFrMa.debugLog.WriteToLog("Setting up settings needed for the FTP trasfer...", 7);
+            this.FTPCredentials = networkCredential;
+            this.FTPAddress = FTPAddress;
         }
 
         public void UploadToFTP(string path)
         {
-            debugLog.WriteToLog("Loading list of files and folders to copy...", 5);
+            ServiceKoFrMa.debugLog.WriteToLog("Loading list of files and folders to copy...", 5);
             List<string>[] listToCopy = this.LoadListToCopy(path);
-            debugLog.WriteToLog("Creating folder structure...", 5);
+            ServiceKoFrMa.debugLog.WriteToLog("Creating folder structure...", 5);
             foreach (string item in listToCopy[0])
             {
                 try
@@ -35,12 +39,12 @@ namespace KoFrMaDaemon.Backup
                 }
                 catch (Exception ex)
                 {
-                    debugLog.WriteToLog("Directory " + this.FTPAddress + item + " could not be created because of error " + ex.Message, 3);
+                    ServiceKoFrMa.debugLog.WriteToLog("Directory " + this.FTPAddress + item + " could not be created because of error " + ex.Message, 3);
                     throw;
                 }
                 
             }
-            debugLog.WriteToLog("Transfering files...", 5);
+            ServiceKoFrMa.debugLog.WriteToLog("Transfering files...", 5);
             foreach (string item in listToCopy[1])
             {
                 this.CopyFile(item, this.FTPAddress + item.Substring(0, path.Length));
@@ -50,7 +54,7 @@ namespace KoFrMaDaemon.Backup
 
         private void CreateDirectory(string path)
         {
-            debugLog.WriteToLog("Creating folder " + path, 9);
+            ServiceKoFrMa.debugLog.WriteToLog("Creating folder " + path, 9);
             WebRequest request = WebRequest.Create(path);
             Stream ftpStream;
             request.Method = WebRequestMethods.Ftp.MakeDirectory;
@@ -58,7 +62,7 @@ namespace KoFrMaDaemon.Backup
             request.Credentials = FTPCredentials;
             FtpWebResponse response = (FtpWebResponse)request.GetResponse();
             ftpStream = response.GetResponseStream();
-            debugLog.WriteToLog("FTP Folder creation completed with status " + response.StatusDescription, 9);
+            ServiceKoFrMa.debugLog.WriteToLog("FTP Folder creation completed with status " + response.StatusDescription, 9);
             ftpStream.Close();
             response.Close();
         }
@@ -84,30 +88,30 @@ namespace KoFrMaDaemon.Backup
 
             FtpWebResponse response = (FtpWebResponse)request.GetResponse();
 
-            debugLog.WriteToLog("FTP Upload completed with status " + response.StatusDescription, 9);
+            ServiceKoFrMa.debugLog.WriteToLog("FTP Upload completed with status " + response.StatusDescription, 9);
 
             response.Close();
         }
 
         private List<string>[] LoadListToCopy(string path)
         {
-            debugLog.WriteToLog("Creating lists for storing files and folders structure...", 7);
+            ServiceKoFrMa.debugLog.WriteToLog("Creating lists for storing files and folders structure...", 7);
             List<string>[] tmpArray = new List<string>[2];
 
             List<string> FileList = new List<string>();
 
             List<string> FolderList = new List<string>();
-            debugLog.WriteToLog("Filling lists...", 7);
+            ServiceKoFrMa.debugLog.WriteToLog("Filling lists...", 7);
             directoryInfo = new DirectoryInfo(path);
             ExploreDirectoryRecursively(directoryInfo, FileList, FolderList);
-            debugLog.WriteToLog("Reversing lists order for easier folder creation...", 7);
+            ServiceKoFrMa.debugLog.WriteToLog("Reversing lists order for easier folder creation...", 7);
             FolderList.Reverse();
             FileList.Reverse();
-            debugLog.WriteToLog("Setting references to created lists...", 7);
+            ServiceKoFrMa.debugLog.WriteToLog("Setting references to created lists...", 7);
             tmpArray[0] = FolderList;
             tmpArray[1] = FileList;
-            debugLog.WriteToLog("Firsts 3 folders are: " + FolderList[0] + ',' + FolderList[1] + ','+ FolderList[2], 8);
-            debugLog.WriteToLog("Returning array of lists...", 7);
+            ServiceKoFrMa.debugLog.WriteToLog("Firsts 3 folders are: " + FolderList[0] + ',' + FolderList[1] + ','+ FolderList[2], 8);
+            ServiceKoFrMa.debugLog.WriteToLog("Returning array of lists...", 7);
             return tmpArray;
 
         }
@@ -122,7 +126,7 @@ namespace KoFrMaDaemon.Backup
                 }
                 catch (Exception)
                 {
-                    debugLog.WriteToLog("Cannot load folder " + item.FullName + " from temporary backup loaction for FTP transfer. File will be skipped!", 3);
+                    ServiceKoFrMa.debugLog.WriteToLog("Cannot load folder " + item.FullName + " from temporary backup loaction for FTP transfer. File will be skipped!", 3);
                 }
 
             }
@@ -136,7 +140,7 @@ namespace KoFrMaDaemon.Backup
                 }
                 catch (Exception)
                 {
-                    debugLog.WriteToLog("Cannot load file " + item.FullName + " from temporary backup loaction for FTP transfer. Folder will be skipped!", 3);
+                    ServiceKoFrMa.debugLog.WriteToLog("Cannot load file " + item.FullName + " from temporary backup loaction for FTP transfer. Folder will be skipped!", 3);
                 }
 
             }

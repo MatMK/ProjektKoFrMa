@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.IO;
 using KoFrMaDaemon;
+using System.Net;
 
 namespace KoFrMaDaemon.Backup
 {
@@ -17,7 +18,7 @@ namespace KoFrMaDaemon.Backup
         public DebugLog taskDebugLog;
         private DirectoryInfo temporaryDestinationInfo;
 
-        public void Backup(string source, BackupJournalObject backupJournalSource, List<string> destinations, byte? compressionLevel, int TaskID, DebugLog debugLog)
+        public void Backup(string source, BackupJournalObject backupJournalSource, List<string> destinations, byte? compressionLevel,NetworkCredential networkCredential, int TaskID, DebugLog debugLog)
         {
             bool atLeastOneDestinationIsLocalFolder = false;
             for (int i = 0; i < destinations.Count; i++)
@@ -71,7 +72,7 @@ namespace KoFrMaDaemon.Backup
 
             for (int i = 0; i < destinations.Count; i++)
             {
-                this.FinishBackup(this.temporaryDestinationInfo.FullName, destinations[i], compressionLevel);
+                this.FinishBackup(this.temporaryDestinationInfo.FullName, destinations[i], compressionLevel,networkCredential);
                 //ServiceKoFrMa.debugLog.WriteToLog("Compression done, deleting temporary files that were needed for compression", 6);
                 //Directory.Delete(destinationInfo.FullName, true);
                 //ServiceKoFrMa.debugLog.WriteToLog("Files successfully deleted, compression is now completed.", 6);
@@ -105,7 +106,7 @@ namespace KoFrMaDaemon.Backup
 
         }
 
-        private void FinishBackup(string backupPath,string destination, byte? compressionLevel)
+        private void FinishBackup(string backupPath,string destination, byte? compressionLevel, NetworkCredential networkCredential)
         {
             if (destination.EndsWith(".zip"))
             {
@@ -116,18 +117,21 @@ namespace KoFrMaDaemon.Backup
             }
             else if (destination.StartsWith("\\"))
             {
-                ServiceKoFrMa.debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip (" + destination + ')', 5);
+                ServiceKoFrMa.debugLog.WriteToLog("Starting uploading files to samba/shared server, because the path to destination starts with \\ (" + destination + ')', 5);
 
             }
             else if (destination.StartsWith("ftp://"))
             {
                 ServiceKoFrMa.debugLog.WriteToLog("Starting uploading files to ftp, because the path to destination starts with ftp:// (" + destination + ')', 5);
+                FTPConnection fTPConnection = new FTPConnection(destination, networkCredential);
+                fTPConnection.UploadToFTP(backupPath);
 
             }
             else if (destination.StartsWith("sftp://"))
             {
                 ServiceKoFrMa.debugLog.WriteToLog("Starting uploading files to ftp, because the path to destination starts with sftp:// (" + destination + ')', 5);
-
+                SSHConnection sSHConnection = new SSHConnection(destination.Substring(7), networkCredential);
+                sSHConnection.UploadToSSH(backupPath);
             }
 
             else
