@@ -27,7 +27,7 @@ namespace KoFrMaDaemon
         DaemonInfo daemon;
         Password daemonPassword;
         TimerValues timerValues;
-
+        public static DaemonSettings daemonSettings;
 
         /// <summary>
         /// Naplánované úlohy přijaté od serveru se budou přidávat do tohoto listu
@@ -64,7 +64,7 @@ namespace KoFrMaDaemon
 
 
             Password password = Password.Instance;
-            DaemonSettings daemonSettings = new DaemonSettings();
+            daemonSettings = new DaemonSettings();
 
 
             debugLog = new DebugLog(daemonSettings.LocalLogPath,daemonSettings.WindowsLog, 9);
@@ -128,8 +128,9 @@ namespace KoFrMaDaemon
                 //BackupJournalSource = cheatBackupJournalOperations.LoadBackupJournalObject(@"d:\KoFrMa\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", debugLog),
                 IDTask = 1,
                 LogLevel = 8,
-                WhereToBackup = new List<string> { (@"d:\KoFrMa\BackupGoesHere\") },
-                TimeToBackup = timeToBackup.AddSeconds(10)
+                CompressionLevel = 5,
+                WhereToBackup = new List<string> { (@"d:\KoFrMa\BackupGoesHere\.7z") },
+                TimeToBackup = timeToBackup.AddSeconds(1)
 
             });
 
@@ -165,7 +166,7 @@ namespace KoFrMaDaemon
                             {
                                 debugLog.WriteToLog("Task locked, starting the backup...", 6);
                                 debugLog.WriteToLog("Destination of the backup is " + item.WhereToBackup[0], 8);
-                                backupInstance.Backup(item.SourceOfBackup, item.BackupJournalSource, item.WhereToBackup, item.CompressionLevel, item.IDTask, debugLog);
+                                backupInstance.Backup(item.SourceOfBackup, item.BackupJournalSource, item.WhereToBackup, item.CompressionLevel,item.NetworkCredentials, item.IDTask, debugLog);
                                 debugLog.WriteToLog("Task completed, setting task as successfully completed...", 6);
                                 successfull = true;
                                 //connection.TaskCompleted(item, backupInstance.BackupJournalNew, debugLog, true);

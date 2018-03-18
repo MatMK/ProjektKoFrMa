@@ -82,6 +82,14 @@ namespace KoFrMaLocalDaemonConfig
                                 this.checkBox_LogWindows.Checked = true;
                             }
                         }
+                        else if (tmpRow.StartsWith("WinRARPath="))
+                        {
+                            this.textBox_Winrar.Text = tmpRow.Substring(11);
+                        }
+                        else if (tmpRow.StartsWith("SevenZipPath="))
+                        {
+                            this.textBox_7zip.Text = tmpRow.Substring(13);
+                        }
                     }
                     r.Close();
                     r.Dispose();
@@ -138,6 +146,8 @@ namespace KoFrMaLocalDaemonConfig
 
                 w.WriteLine("WindowsLog=" + (this.checkBox_LogWindows.Checked?1:0));
 
+                w.WriteLine("WinRARPath=" + this.textBox_Winrar.Text);
+                w.WriteLine("SevenZipPath=" + this.textBox_7zip.Text);
                 w.Close();
                 w.Dispose();
             }
@@ -152,6 +162,90 @@ namespace KoFrMaLocalDaemonConfig
         {
             this.folderBrowserDialog1.ShowDialog();
             this.textBox_LogPath.Text = this.folderBrowserDialog1.SelectedPath;
+        }
+
+        private void button_browseWinrar_Click(object sender, EventArgs e)
+        {
+            this.folderBrowserDialog1.ShowDialog();
+            this.textBox_Winrar.Text = this.folderBrowserDialog1.SelectedPath;
+        }
+
+        private void button_browse7zip_Click(object sender, EventArgs e)
+        {
+            this.folderBrowserDialog1.ShowDialog();
+            this.textBox_7zip.Text = this.folderBrowserDialog1.SelectedPath;
+        }
+
+        private void button_WinrarSearch_Click(object sender, EventArgs e)
+        {
+            if (File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WinRAR", "Rar.exe")))
+            {
+                this.textBox_Winrar.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WinRAR");
+            }
+            else if (File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "WinRAR", "Rar.exe")))
+            {
+                this.textBox_Winrar.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "WinRAR");
+            }
+            else if (File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles), "WinRAR", "Rar.exe")))
+            {
+                this.textBox_Winrar.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles), "WinRAR");
+            }
+            else if (File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFilesX86), "WinRAR", "Rar.exe")))
+            {
+                this.textBox_Winrar.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFilesX86), "WinRAR");
+            }
+            else if (File.Exists(Path.Combine(@"C:\Program Files\", "WinRAR", "Rar.exe")))
+            {
+                this.textBox_Winrar.Text = Path.Combine(@"C:\Program Files\", "WinRAR");
+            }
+            else if (File.Exists(Path.Combine(@"C:\Program Files (x86)\", "WinRAR", "Rar.exe")))
+            {
+                this.textBox_Winrar.Text = Path.Combine(@"C:\Program Files (x86)\", "WinRAR");
+            }
+            else if (File.Exists(Path.Combine(@"D:\Program Files\", "WinRAR", "Rar.exe")))
+            {
+                this.textBox_Winrar.Text = Path.Combine(@"D:\Program Files\", "WinRAR");
+            }
+            else if (File.Exists(Path.Combine(@"D:\Program Files (x86)\", "WinRAR", "Rar.exe")))
+            {
+                this.textBox_Winrar.Text = Path.Combine(@"D:\Program Files (x86)\", "WinRAR");
+            }
+        }
+
+        private void button_7zipSearch_Click(object sender, EventArgs e)
+        {
+            if (File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "7-Zip", "7z.exe")))
+            {
+                this.textBox_7zip.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "7-Zip");
+            }
+            else if (File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "7-Zip", "7z.exe")))
+            {
+                this.textBox_7zip.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "7-Zip");
+            }
+            else if (File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles), "7-Zip", "7z.exe")))
+            {
+                this.textBox_7zip.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles), "7-Zip");
+            }
+            else if (File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFilesX86), "7-Zip", "7z.exe")))
+            {
+                this.textBox_7zip.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFilesX86), "7-Zip");
+            }
+            else if (File.Exists(Path.Combine(@"C:\Program Files\", "7-Zip", "7z.exe")))
+            {
+                this.textBox_7zip.Text = Path.Combine(@"C:\Program Files\", "7-Zip");
+            }
+            else if (File.Exists(Path.Combine(@"C:\Program Files (x86)\", "7-Zip", "7z.exe")))
+            {
+                this.textBox_7zip.Text = Path.Combine(@"C:\Program Files (x86)\", "7-Zip");
+            }
+            else if (File.Exists(Path.Combine(@"D:\Program Files\", "7-Zip", "7z.exe")))
+            {
+                this.textBox_7zip.Text = Path.Combine(@"D:\Program Files\", "7-Zip");
+            }
+            else if (File.Exists(Path.Combine(@"D:\Program Files (x86)\", "7-Zip", "7z.exe")))
+            {
+                this.textBox_7zip.Text = Path.Combine(@"D:\Program Files (x86)\", "7-Zip");
+            }
         }
     }
 }
