@@ -313,7 +313,7 @@ namespace KoFrMaRestApi.MySqlCom
         /// </summary>
         public void DaemonSeen(string DaemonId, MySqlConnection connection)
         {
-            using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbDaemons` SET `LastSeen`= Now() where ID = @Id", connection))
+            using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbDaemons` SET `LastSeen`= Now() where Id = @Id", connection))
             {
                 command.Parameters.AddWithValue("@Id", DaemonId);
                 command.ExecuteNonQuery();
