@@ -313,7 +313,7 @@ namespace KoFrMaRestApi.MySqlCom
         /// </summary>
         public void DaemonSeen(string DaemonId, MySqlConnection connection)
         {
-            using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbDaemons` SET `LastSeen`= Now() where ID = @Id", connection))
+            using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbDaemons` SET `LastSeen`= Now() where Id = @Id", connection))
             {
                 command.Parameters.AddWithValue("@Id", DaemonId);
                 command.ExecuteNonQuery();
@@ -346,14 +346,14 @@ namespace KoFrMaRestApi.MySqlCom
             using (MySqlConnection connection = WebApiConfig.Connection())
             using (MySqlCommand command = new MySqlCommand(@"SELECT `Password` FROM `tbDaemons` WHERE `PC_Unique` = @PC_Unique", connection))
             {
-                int? DatabasePassword = null;
+                Int64? DatabasePassword = null;
                 connection.Open();
                 command.Parameters.AddWithValue("@PC_Unique", PC_Unique);
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        DatabasePassword = (int)reader["Password"];
+                        DatabasePassword = (Int64)reader["Password"];
                     }
                     reader.Close();
                 }
@@ -361,7 +361,6 @@ namespace KoFrMaRestApi.MySqlCom
                 {
                     command.CommandText = @"UPDATE `tbDaemons` SET `Token`= @Token WHERE `PC_Unique` = @PC_Unique";
                     command.Parameters.AddWithValue("@Token", Token);
-                    command.Parameters.AddWithValue("@PC_Unique", PC_Unique);
                     command.ExecuteNonQuery();
 
                 }

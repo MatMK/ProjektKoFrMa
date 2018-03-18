@@ -5,10 +5,9 @@ using System.Web;
 
 namespace KoFrMaRestApi.Models.AdminApp
 {
-    public class AdminInfo
+    public class PostAdmin
     {
-        public string UserName { get; set; }
-        public string Token { get; set; }
-
+        public AdminInfo adminInfo { get; set; }
+        public List<SetTasks> setTasks { get; set; }
     }
 }

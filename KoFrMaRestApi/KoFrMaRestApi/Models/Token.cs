@@ -36,5 +36,9 @@ namespace KoFrMaRestApi.Models
             SqlAdmin.RegisterToken(login.UserName, login.Password, token);
             return token;
         }
+        public bool Authorized(PostAdmin postAdmin)
+        {
+            return SqlAdmin.Authorized(postAdmin.adminInfo.UserName, postAdmin.adminInfo.Token);
+        }
     }
 }

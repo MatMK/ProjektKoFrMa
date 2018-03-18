@@ -1,4 +1,4 @@
-﻿using KoFrMaRestApi.Models.Daemon;
+﻿/*using KoFrMaRestApi.Models.Daemon;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +32,7 @@ namespace KoFrMaRestApi.Models.AdminApp
                         using (MySqlCommand TaskId = new MySqlCommand("SELECT `auto_increment` FROM INFORMATION_SCHEMA.TABLES WHERE table_name = 'tbTasks'", connection))
                         using (MySqlDataReader reader = TaskId.ExecuteReader())
                         {
-                            while (reader.Read())
+                            if(reader.Read())
                             {
                                 task = new Tasks()
                                 {
@@ -47,15 +47,17 @@ namespace KoFrMaRestApi.Models.AdminApp
                                     InProgress = item.InProgress
                                 };
                             }
+                            else
+                                throw new Exception();
                         }
                         command.Parameters.AddWithValue("@DaemonId", item.DaemonId);
                         command.Parameters.AddWithValue("@Task", JsonConvert.SerializeObject(task));
                         command.Parameters.AddWithValue("@DateOfCompletion", item.TimeToBackup);
-                        command.Parameters.AddWithValue("@Repeating", item.RepeatingInMinutes);
+                        command.Parameters.AddWithValue("@Repeating", JsonConvert.SerializeObject(item.ExecutionTimes));
                         command.ExecuteNonQuery();
                     }
                 }
             }
         }
     }
-}
+}*/

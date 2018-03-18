@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Net;
+using KoFrMaRestApi.Models.AdminApp.RepeatingTasks;
 
 namespace KoFrMaRestApi.Models.AdminApp
 {
@@ -11,7 +12,7 @@ namespace KoFrMaRestApi.Models.AdminApp
     /// </summary>
     public class SetTasks
     {
-        public int? RepeatingInMinutes { get; set; }
+        public TaskRepeating ExecutionTimes { get; set; }
         /// <summary>
         /// Id daemona který má task dokončit
         /// </summary>

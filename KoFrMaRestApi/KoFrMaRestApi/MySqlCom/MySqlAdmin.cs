@@ -1,4 +1,7 @@
-﻿using MySql.Data.MySqlClient;
+﻿using KoFrMaRestApi.Models.AdminApp;
+using KoFrMaRestApi.Models.Daemon.Task;
+using KoFrMaRestApi.Models.Tables;
+using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -56,7 +59,66 @@ namespace KoFrMaRestApi.MySqlCom
                 connection.Close();
             }
             return result;
-            
+
+        }
+
+        /// <summary>
+        /// Uploads task to mySql database
+        /// </summary>
+        /// <param name="tasks">Defines task</param>
+        public void SetTasks(List<SetTasks> tasks)
+        {
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            {
+                connection.Open();
+                foreach (var item in tasks)
+                {
+
+                    using (MySqlCommand command = new MySqlCommand("INSERT INTO `tbTasks` VALUES (null, @DaemonId, @Task, @DateOfCompletion, @Repeating,0)", connection))
+                    {
+                        Tasks task = null;
+                        using (MySqlCommand TaskId = new MySqlCommand("SELECT `auto_increment` FROM INFORMATION_SCHEMA.TABLES WHERE table_name = 'tbTasks'", connection))
+                        using (MySqlDataReader reader = TaskId.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                task = new Tasks()
+                                {
+                                    IDTask = Convert.ToInt32(reader["auto_increment"]),
+                                    TimeToBackup = item.TimeToBackup,
+                                    SourceOfBackup = item.SourceOfBackup,
+                                    WhereToBackup = item.WhereToBackup,
+                                    TimerValue = item.TimerValue,
+                                    LogLevel = item.LogLevel,
+                                    CompressionLevel = item.CompressionLevel,
+                                    NetworkCredentials = item.NetworkCredentials,
+                                    InProgress = item.InProgress
+                                };
+                            }
+                        }
+                        dynamic Repeating;
+                        if (item.ExecutionTimes != null)
+                            Repeating = JsonConvert.SerializeObject(item.ExecutionTimes);
+                        else
+                            Repeating = DBNull.Value;
+                        command.Parameters.AddWithValue("@DaemonId", item.DaemonId);
+                        command.Parameters.AddWithValue("@Task", JsonConvert.SerializeObject(task));
+                        command.Parameters.AddWithValue("@DateOfCompletion", item.TimeToBackup);
+                        command.Parameters.AddWithValue("@Repeating", Repeating);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+        public void AlterTable(ChangeTable changeTable)
+        {
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand($"UPDATE `{changeTable.TableName}` SET `{changeTable.ColumnName}` = @Value WHERE `Id` = {changeTable.Id};",connection))
+            {
+                connection.Open();
+                command.Parameters.AddWithValue("@Value", changeTable.Value);
+                command.ExecuteNonQuery();
+            }
         }
     }
 }

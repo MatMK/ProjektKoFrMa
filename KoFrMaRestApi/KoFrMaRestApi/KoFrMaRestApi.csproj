@@ -186,6 +186,8 @@
     </Compile>
     <Compile Include="Models\AdminApp\AdminInfo.cs" />
     <Compile Include="Models\AdminApp\AdminLogin.cs" />
+    <Compile Include="Models\AdminApp\GetList\Data.cs" />
+    <Compile Include="Models\AdminApp\PostAdmin.cs" />
     <Compile Include="Models\AdminApp\RepeatingTasks\ExceptionDate.cs" />
     <Compile Include="Models\AdminApp\Settings.cs" />
     <Compile Include="Models\AdminApp\SetTasks.cs" />
@@ -199,6 +201,11 @@
     <Compile Include="Models\Daemon\Task\BackupJournal\FolderObject.cs" />
     <Compile Include="EmailSender\EmailSettings.cs" />
     <Compile Include="Models\Daemon\Task\Tasks.cs" />
+    <Compile Include="Models\Tables\ChangeTable.cs" />
+    <Compile Include="Models\Tables\Table.cs" />
+    <Compile Include="Models\Tables\tbAdminAccounts.cs" />
+    <Compile Include="Models\Tables\tbDaemons.cs" />
+    <Compile Include="Models\Tables\tbTasks.cs" />
     <Compile Include="Models\Token.cs" />
     <Compile Include="MySqlCom\MySqlAdmin.cs" />
     <Compile Include="MySqlCom\MySqlDaemon.cs" />
@@ -249,8 +256,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
