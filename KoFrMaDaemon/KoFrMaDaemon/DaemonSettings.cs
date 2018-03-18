@@ -12,6 +12,8 @@ namespace KoFrMaDaemon
         public string ServerIP;
         public string Password;
         public string LocalLogPath;
+        public string WinRARPath;
+        public string SevenZipPath;
         public bool WindowsLog;
 
         private StreamReader r;
@@ -50,16 +52,24 @@ namespace KoFrMaDaemon
 
                        }
                         else if (tmpRow.StartsWith("WindowsLog="))
+                       {
+                           string tmp = tmpRow.Substring(11);
+                           if (tmp == "0")
+                           {
+                               this.WindowsLog = false;
+                           }
+                           else if (tmp == "1")
+                           {
+                               this.WindowsLog = true;
+                           }
+                       }
+                       else if (tmpRow.StartsWith("WinRARPath="))
+                       {
+                            this.WinRARPath = tmpRow.Substring(11);
+                       }
+                        else if (tmpRow.StartsWith("SevenZipPath="))
                         {
-                            string tmp = tmpRow.Substring(11);
-                            if (tmp == "0")
-                            {
-                                this.WindowsLog = false;
-                            }
-                            else if (tmp == "1")
-                            {
-                                this.WindowsLog = true;
-                            }
+                            this.SevenZipPath = tmpRow.Substring(13);
                         }
                     }
                 r.Close();

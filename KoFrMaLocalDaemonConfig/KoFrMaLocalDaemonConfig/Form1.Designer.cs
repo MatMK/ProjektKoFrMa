@@ -40,11 +40,19 @@
             this.checkBox_LogWindows = new System.Windows.Forms.CheckBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.button1 = new System.Windows.Forms.Button();
+            this.textBox_Winrar = new System.Windows.Forms.TextBox();
+            this.textBox_7zip = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.button_browseWinrar = new System.Windows.Forms.Button();
+            this.button_browse7zip = new System.Windows.Forms.Button();
+            this.button_WinrarSearch = new System.Windows.Forms.Button();
+            this.button_7zipSearch = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button_cancel
             // 
-            this.button_cancel.Location = new System.Drawing.Point(281, 130);
+            this.button_cancel.Location = new System.Drawing.Point(252, 182);
             this.button_cancel.Name = "button_cancel";
             this.button_cancel.Size = new System.Drawing.Size(124, 37);
             this.button_cancel.TabIndex = 0;
@@ -54,7 +62,7 @@
             // 
             // button_apply
             // 
-            this.button_apply.Location = new System.Drawing.Point(411, 130);
+            this.button_apply.Location = new System.Drawing.Point(382, 182);
             this.button_apply.Name = "button_apply";
             this.button_apply.Size = new System.Drawing.Size(124, 37);
             this.button_apply.TabIndex = 1;
@@ -78,7 +86,7 @@
             // 
             // textBox_LogPath
             // 
-            this.textBox_LogPath.Location = new System.Drawing.Point(101, 104);
+            this.textBox_LogPath.Location = new System.Drawing.Point(101, 156);
             this.textBox_LogPath.Name = "textBox_LogPath";
             this.textBox_LogPath.Size = new System.Drawing.Size(405, 20);
             this.textBox_LogPath.TabIndex = 4;
@@ -105,7 +113,7 @@
             // checkBox_showPath
             // 
             this.checkBox_showPath.AutoSize = true;
-            this.checkBox_showPath.Location = new System.Drawing.Point(101, 81);
+            this.checkBox_showPath.Location = new System.Drawing.Point(101, 133);
             this.checkBox_showPath.Name = "checkBox_showPath";
             this.checkBox_showPath.Size = new System.Drawing.Size(72, 17);
             this.checkBox_showPath.TabIndex = 8;
@@ -116,7 +124,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 59);
+            this.label3.Location = new System.Drawing.Point(12, 110);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(59, 13);
             this.label3.TabIndex = 7;
@@ -125,7 +133,7 @@
             // checkBox_LogWindows
             // 
             this.checkBox_LogWindows.AutoSize = true;
-            this.checkBox_LogWindows.Location = new System.Drawing.Point(101, 58);
+            this.checkBox_LogWindows.Location = new System.Drawing.Point(101, 110);
             this.checkBox_LogWindows.Name = "checkBox_LogWindows";
             this.checkBox_LogWindows.Size = new System.Drawing.Size(139, 17);
             this.checkBox_LogWindows.TabIndex = 9;
@@ -134,7 +142,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(512, 104);
+            this.button1.Location = new System.Drawing.Point(512, 156);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(24, 20);
             this.button1.TabIndex = 10;
@@ -142,11 +150,91 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // textBox_Winrar
+            // 
+            this.textBox_Winrar.Location = new System.Drawing.Point(101, 58);
+            this.textBox_Winrar.Name = "textBox_Winrar";
+            this.textBox_Winrar.Size = new System.Drawing.Size(346, 20);
+            this.textBox_Winrar.TabIndex = 11;
+            // 
+            // textBox_7zip
+            // 
+            this.textBox_7zip.Location = new System.Drawing.Point(101, 84);
+            this.textBox_7zip.Name = "textBox_7zip";
+            this.textBox_7zip.Size = new System.Drawing.Size(346, 20);
+            this.textBox_7zip.TabIndex = 12;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 61);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(83, 13);
+            this.label4.TabIndex = 13;
+            this.label4.Text = "Path to WinRar:";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(12, 87);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(66, 13);
+            this.label5.TabIndex = 14;
+            this.label5.Text = "Path to 7zip:";
+            // 
+            // button_browseWinrar
+            // 
+            this.button_browseWinrar.Location = new System.Drawing.Point(453, 58);
+            this.button_browseWinrar.Name = "button_browseWinrar";
+            this.button_browseWinrar.Size = new System.Drawing.Size(24, 20);
+            this.button_browseWinrar.TabIndex = 15;
+            this.button_browseWinrar.Text = "...";
+            this.button_browseWinrar.UseVisualStyleBackColor = true;
+            this.button_browseWinrar.Click += new System.EventHandler(this.button_browseWinrar_Click);
+            // 
+            // button_browse7zip
+            // 
+            this.button_browse7zip.Location = new System.Drawing.Point(453, 84);
+            this.button_browse7zip.Name = "button_browse7zip";
+            this.button_browse7zip.Size = new System.Drawing.Size(24, 20);
+            this.button_browse7zip.TabIndex = 16;
+            this.button_browse7zip.Text = "...";
+            this.button_browse7zip.UseVisualStyleBackColor = true;
+            this.button_browse7zip.Click += new System.EventHandler(this.button_browse7zip_Click);
+            // 
+            // button_WinrarSearch
+            // 
+            this.button_WinrarSearch.Location = new System.Drawing.Point(484, 58);
+            this.button_WinrarSearch.Name = "button_WinrarSearch";
+            this.button_WinrarSearch.Size = new System.Drawing.Size(57, 20);
+            this.button_WinrarSearch.TabIndex = 17;
+            this.button_WinrarSearch.Text = "Search";
+            this.button_WinrarSearch.UseVisualStyleBackColor = true;
+            this.button_WinrarSearch.Click += new System.EventHandler(this.button_WinrarSearch_Click);
+            // 
+            // button_7zipSearch
+            // 
+            this.button_7zipSearch.Location = new System.Drawing.Point(484, 83);
+            this.button_7zipSearch.Name = "button_7zipSearch";
+            this.button_7zipSearch.Size = new System.Drawing.Size(57, 20);
+            this.button_7zipSearch.TabIndex = 18;
+            this.button_7zipSearch.Text = "Search";
+            this.button_7zipSearch.UseVisualStyleBackColor = true;
+            this.button_7zipSearch.Click += new System.EventHandler(this.button_7zipSearch_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(548, 180);
+            this.ClientSize = new System.Drawing.Size(548, 238);
+            this.Controls.Add(this.button_7zipSearch);
+            this.Controls.Add(this.button_WinrarSearch);
+            this.Controls.Add(this.button_browse7zip);
+            this.Controls.Add(this.button_browseWinrar);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.textBox_7zip);
+            this.Controls.Add(this.textBox_Winrar);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.checkBox_LogWindows);
             this.Controls.Add(this.checkBox_showPath);
@@ -179,6 +267,14 @@
         private System.Windows.Forms.CheckBox checkBox_LogWindows;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox textBox_Winrar;
+        private System.Windows.Forms.TextBox textBox_7zip;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button button_browseWinrar;
+        private System.Windows.Forms.Button button_browse7zip;
+        private System.Windows.Forms.Button button_WinrarSearch;
+        private System.Windows.Forms.Button button_7zipSearch;
     }
 }
 

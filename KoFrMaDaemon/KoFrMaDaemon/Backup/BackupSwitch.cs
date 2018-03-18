@@ -23,7 +23,7 @@ namespace KoFrMaDaemon.Backup
             bool atLeastOneDestinationIsLocalFolder = false;
             for (int i = 0; i < destinations.Count; i++)
             {
-                if (destinations[i].EndsWith(".zip"))
+                if (destinations[i].EndsWith(".zip")|| destinations[i].EndsWith(".7z")|| destinations[i].EndsWith(".rar"))
                 {
 
                     //debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip (" + destinations[i] + ')', 5);
@@ -64,12 +64,14 @@ namespace KoFrMaDaemon.Backup
 
             if (!atLeastOneDestinationIsLocalFolder)
             {
+                ServiceKoFrMa.debugLog.WriteToLog("No destination point to local path, creating temporary folder at "+ Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp"), 7);
                 Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp"));
-                this.destinationInfo = new DirectoryInfo(Path.Combine(Path.GetTempPath(),"KoFrMaBackupTemp"));
+                this.temporaryDestinationInfo = new DirectoryInfo(Path.Combine(Path.GetTempPath(),"KoFrMaBackupTemp"));
             }
 
+            ServiceKoFrMa.debugLog.WriteToLog("Starting the backup...", 7);
             this.BackupToFolder(source, backupJournalSource, this.temporaryDestinationInfo.FullName, TaskID, debugLog);
-
+            ServiceKoFrMa.debugLog.WriteToLog("Creating desired destination outputs...", 7);
             for (int i = 0; i < destinations.Count; i++)
             {
                 this.FinishBackup(this.temporaryDestinationInfo.FullName, destinations[i], compressionLevel,networkCredential);
@@ -85,6 +87,7 @@ namespace KoFrMaDaemon.Backup
         }
         private void BackupToFolder(string source, BackupJournalObject backupJournalSource, string destination, int TaskID,DebugLog debugLog)
         {
+            ServiceKoFrMa.debugLog.WriteToLog("Deciding what type backup it is...", 7);
             if (backupJournalSource != null)
             {
                 debugLog.WriteToLog("Starting differential/incremental backup, because journal was received from server", 5);
@@ -113,7 +116,18 @@ namespace KoFrMaDaemon.Backup
                 ServiceKoFrMa.debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip (" + destination + ')', 5);
                 Compression compression = new Compression();
                 compression.CompressToZip(backupPath, destination + @"\" + this.destinationInfo.Name + ".zip", compressionLevel);
-
+            }
+            if (destination.EndsWith(".7z"))
+            {
+                ServiceKoFrMa.debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .7z (" + destination + ')', 5);
+                Compression compression = new Compression();
+                compression.CompressTo7z(ServiceKoFrMa.daemonSettings.SevenZipPath,backupPath, destination + @"\" + this.destinationInfo.Name + "7z", compressionLevel);
+            }
+            if (destination.EndsWith(".rar"))
+            {
+                ServiceKoFrMa.debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .rar (" + destination + ')', 5);
+                //Compression compression = new Compression();
+                //compression.CompressTo7z(ServiceKoFrMa.daemonSettings.SevenZipPath, backupPath, destination + @"\" + this.destinationInfo.Name + "7z", compressionLevel);
             }
             else if (destination.StartsWith("\\"))
             {
@@ -136,7 +150,7 @@ namespace KoFrMaDaemon.Backup
 
             else
             {
-                if (!(backupPath==destination))
+                if (!(backupPath==destinationInfo.FullName))
                 {
                     ServiceKoFrMa.debugLog.WriteToLog("Copying files to another local folder...", 6);
                     Directory.CreateDirectory(destination);
