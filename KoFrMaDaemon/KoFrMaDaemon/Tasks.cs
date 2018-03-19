@@ -68,6 +68,13 @@ namespace KoFrMaDaemon
         /// 5 = Normal
         /// 7 = Maximum (not quite true)
         /// 9 = Ultra
+        /// Rar:
+        /// 0 = No Compression
+        /// 1 = Fastest
+        /// 2 = Fast
+        /// 3 = Normal
+        /// 4 = Good
+        /// 5 = Best
         /// </summary>
         public byte CompressionLevel { get; set; }
 

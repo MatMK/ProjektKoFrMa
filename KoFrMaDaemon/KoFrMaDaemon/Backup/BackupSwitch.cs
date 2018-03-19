@@ -116,7 +116,7 @@ namespace KoFrMaDaemon.Backup
             {
                 ServiceKoFrMa.debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip (" + destination + ')', 5);
                 Compression compression = new Compression();
-                compression.CompressToZip(backupPath, destination + @"\" + this.destinationInfo.Name + ".zip", compressionLevel);
+                compression.CompressToZip(backupPath, Path.GetDirectoryName(destination) + @"\" + destinationInfo.Name + ".zip", compressionLevel);
             }
             if (destination.EndsWith(".7z"))
             {
@@ -128,8 +128,9 @@ namespace KoFrMaDaemon.Backup
             if (destination.EndsWith(".rar"))
             {
                 ServiceKoFrMa.debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .rar (" + destination + ')', 5);
-                //Compression compression = new Compression();
-                //compression.CompressTo7z(ServiceKoFrMa.daemonSettings.SevenZipPath, backupPath, destination + @"\" + this.destinationInfo.Name + "7z", compressionLevel);
+                Compression compression = new Compression();
+                ServiceKoFrMa.debugLog.WriteToLog("Archive will be made from this folder " + backupPath + @"\ and put into this location " + Path.GetDirectoryName(destination) + @"\" + destinationInfo.Name + ".rar", 7);
+                compression.CompressToRar(ServiceKoFrMa.daemonSettings.WinRARPath, backupPath + @"\", Path.GetDirectoryName(destination) + @"\" + destinationInfo.Name + ".rar", compressionLevel);
             }
             else if (destination.StartsWith("\\"))
             {

@@ -128,7 +128,7 @@ namespace KoFrMaDaemon
                 //BackupJournalSource = cheatBackupJournalOperations.LoadBackupJournalObject(@"d:\KoFrMa\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", debugLog),
                 IDTask = 1,
                 LogLevel = 8,
-                CompressionLevel = 5,
+                CompressionLevel = 0,
                 WhereToBackup = new List<string> { (@"d:\KoFrMa\BackupGoesHere\.7z") },
                 TimeToBackup = timeToBackup.AddSeconds(1)
 
