@@ -189,7 +189,6 @@
     <Compile Include="Models\AdminApp\GetList\Data.cs" />
     <Compile Include="Models\AdminApp\PostAdmin.cs" />
     <Compile Include="Models\AdminApp\RepeatingTasks\ExceptionDate.cs" />
-    <Compile Include="Models\AdminApp\Settings.cs" />
     <Compile Include="Models\AdminApp\SetTasks.cs" />
     <Compile Include="Models\AdminApp\RepeatingTasks\TaskRepeating.cs" />
     <Compile Include="Models\Daemon\Request.cs" />
