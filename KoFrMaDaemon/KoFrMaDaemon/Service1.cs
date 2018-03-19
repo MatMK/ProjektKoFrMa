@@ -32,7 +32,7 @@ namespace KoFrMaDaemon
         /// <summary>
         /// Naplánované úlohy přijaté od serveru se budou přidávat do tohoto listu
         /// </summary>
-        private List<Tasks> ScheduledTasks;
+        private List<Task> ScheduledTasks;
         /// <summary>
         /// Dokončené úlohy se přidávají do tohoto listu, při připojení se odešlou na server
         /// </summary>
@@ -43,7 +43,7 @@ namespace KoFrMaDaemon
             InitializeComponent();
 
 
-            ScheduledTasks = new List<Tasks>();
+            ScheduledTasks = new List<Task>();
             CompletedTasksYetToSend = new List<TaskComplete>();
 
             inProgress = false;
@@ -123,7 +123,7 @@ namespace KoFrMaDaemon
             BackupJournalOperations cheatBackupJournalOperations = new BackupJournalOperations();
             DateTime timeToBackup = DateTime.Now;
 
-            ScheduledTasks.Add(new Tasks {
+            ScheduledTasks.Add(new Task {
                 SourceOfBackup = @"D:\KoFrMa\BackupThisFolder\",
                 //BackupJournalSource = cheatBackupJournalOperations.LoadBackupJournalObject(@"d:\KoFrMa\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", debugLog),
                 IDTask = 1,
@@ -151,7 +151,7 @@ namespace KoFrMaDaemon
             {
                 debugLog.WriteToLog("Tasks found, starting to check if the time has come for each of the tasks", 5);
                 bool successfull=false;
-                foreach (Tasks item in ScheduledTasks)
+                foreach (Task item in ScheduledTasks)
                 {
                     if (!item.InProgress)
                     {
@@ -284,7 +284,7 @@ namespace KoFrMaDaemon
         {
             int[] ScheduledTasksIdArray = new int[ScheduledTasks.Count];
             int i =0;
-            foreach (Tasks item in ScheduledTasks)
+            foreach (Task item in ScheduledTasks)
             {
                 ScheduledTasksIdArray[i] = item.IDTask;
                 i++;

@@ -8,7 +8,7 @@ using KoFrMaDaemon.Backup;
 
 namespace KoFrMaDaemon
 {
-    public class Tasks
+    public class Task
     {
         /// <summary>
         /// Jedinečné ID úlohy, bude na serveru spojené s databází a server může podle ID vynutit přerušení nebo smazání naplánované úlohy

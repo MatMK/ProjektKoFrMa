@@ -13,7 +13,7 @@ namespace KoFrMaDaemon.ConnectionToServer
 {
     public class Connection
     {
-        public List<Tasks> PostRequest(int[] TasksId, List<int> JournalNotNeeded)
+        public List<Task> PostRequest(int[] TasksId, List<int> JournalNotNeeded)
         {
             ServiceKoFrMa.debugLog.WriteToLog("Creating request to server...", 7);
             Request request = new Request() {IdTasks = TasksId, BackupJournalNotNeeded = JournalNotNeeded};
@@ -42,9 +42,9 @@ namespace KoFrMaDaemon.ConnectionToServer
                 result = streamReader.ReadToEnd();
             }
             ServiceKoFrMa.debugLog.WriteToLog("Performing deserialization of data that were received from the server...", 7);
-            return JsonConvert.DeserializeObject<List<Tasks>>(result);
+            return JsonConvert.DeserializeObject<List<Task>>(result);
         }
-        public void TaskCompleted(Tasks task, BackupJournalObject backupJournalNew, DebugLog debugLog, bool Successfull)
+        public void TaskCompleted(Task task, BackupJournalObject backupJournalNew, DebugLog debugLog, bool Successfull)
         {
             TaskComplete completedTask = new TaskComplete()
             {
