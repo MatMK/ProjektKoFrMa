@@ -16,6 +16,23 @@ namespace KoFrMaAdminApp.Controllers
         {
             return View();
         }
+        public ActionResult AdminAccounts()
+        {
+            return View();
+        }
+        public ActionResult Daemons()
+        {
+            return View();
+        }
+        public ActionResult Tasks()
+        {
+            return View();
+        }
+        public ActionResult AddTask()
+        {
+            return View();
+        }
+
 
 
         //public ActionResult About()

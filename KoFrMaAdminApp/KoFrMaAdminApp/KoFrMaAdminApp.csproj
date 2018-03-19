@@ -190,6 +190,10 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="systemjs-angular-loader.js" />
     <Content Include="systemjs.config.js" />
+    <None Include="Views\Home\AdminAccounts.cshtml" />
+    <None Include="Views\Home\AddTasks.cshtml" />
+    <None Include="Views\Home\Daemons.cshtml" />
+    <None Include="Views\Home\Tasks.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
