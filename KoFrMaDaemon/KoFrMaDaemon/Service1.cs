@@ -89,7 +89,7 @@ namespace KoFrMaDaemon
                 debugLog.WriteToLog("Service started", 4);
                 debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique motherboard ID is " +daemon.PC_Unique, 7);
 
-                timerConnection.Start();
+                //timerConnection.Start();
 
                 this.CheatTasks();
 
