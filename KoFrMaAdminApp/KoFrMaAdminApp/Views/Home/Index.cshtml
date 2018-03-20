@@ -9,16 +9,17 @@
 <body>
     <main>
         <div id="loginDiv">
-            <form id="loginForm">
-                <input type="text" placeholder="Username" name="Username" id="loginUsername"/>
+            <form (submit)="loginAdmin($event)" id="loginForm">
+                <input type="text" placeholder="Username" name="Username" id="loginUsername" />
                 <br />
                 <input type="password" placeholder="Password" name="Password" id="loginPassword" />
                 <br />
+
             </form>
             <a href="Dashboard">
-                <input type="submit" value="Login" id="loginSubmit" class="button"/>
+                <input type="submit" value="Login" id="loginSubmit" class="button" />
             </a>
-            <br />     
+            <br />
         </div>
         <div class="g-recaptcha" data-sitekey="6Ld6W0kUAAAAALawhd36UwQInSTUT5RfAHjy9Pje"></div>        
     </main>

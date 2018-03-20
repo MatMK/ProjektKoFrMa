@@ -16,7 +16,7 @@
 
 <?php
 // Connecting, selecting database
-$link = mysqli_connect('localhost', 'tapw', 'tapw2')
+$link = mysqli_connect('mysqlstudenti.litv.sssvt.cz', 'kocourekmatej', 'KoFrMa123456')
     or die('Could not connect: ' . mysqli_error());
 
 $sql_order = "";
@@ -26,11 +26,11 @@ if (isset($_GET['order'])) {
 
 mysqli_set_charset($link, 'utf8');
 
-mysqli_select_db($link, 'tapw') or die('Could not select database');
+mysqli_select_db($link, '3b1_kocourekmatej_db2') or die('Could not select database');
 
 // Performing SQL query
-$query = "SELECT isbn,nazov, jazyk, autori.meno, autori.priezvisko ".
-         "FROM knihy LEFT JOIN autori ON knihy.id_autora = autori.id ".
+$query = "SELECT Id, Username".
+         "FROM tbAdminAccounts".
          $sql_order;
 $result = mysqli_query($link, $query) or die('Query failed: ' . mysqli_error($link));
 
@@ -57,3 +57,4 @@ mysqli_free_result($result);
 // Closing connection
 mysqli_close($link);
 ?>
+@*"server=mysqlstudenti.litv.sssvt.cz;uid=kocourekmatej;pwd=KoFrMa123456;database=3b1_kocourekmatej_db2"*@

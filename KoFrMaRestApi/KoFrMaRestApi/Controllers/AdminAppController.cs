@@ -9,9 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace KoFrMaRestApi.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*", exposedHeaders: "X-My-Header")]
     public class AdminAppController : ApiController
     {
         Token token = new Token();
@@ -19,7 +21,7 @@ namespace KoFrMaRestApi.Controllers
         [HttpPost, Route(@"api/AdminApp/RegisterToken")]
         public string RegisterToken(AdminLogin adminLogin)
         {
-            return token.CreateToken(adminLogin);
+            return mySqlCom.RegisterToken(adminLogin);
         }
         [HttpPost, Route(@"api/AdminApp/SetTask")]
         public bool SetTask(PostAdmin postAdmin)
@@ -58,16 +60,20 @@ namespace KoFrMaRestApi.Controllers
         {
             mySqlCom.AlterTable(changeTable);
         }
-        [HttpPost, Route(@"api/AdminApp/test")]
-        public void test()
+        [HttpGet, Route(@"api/AdminApp/test")]
+        public string test()
         {
+            return "cau ";
+            /*
             mySqlCom.AlterTable(new ChangeTable()
             {
                 ColumnName = "IdDaemon",
                 Id = 2,
                 TableName = "tbTasks",
                 Value = 6
-            });
+            });*/
+
+
             /*
             List<SetTasks> list = new List<SetTasks>();
             list.Add(new SetTasks()

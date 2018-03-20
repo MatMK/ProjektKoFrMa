@@ -12,30 +12,22 @@ namespace KoFrMaRestApi.MySqlCom
 {
     public class MySqlAdmin
     {
-        public void RegisterToken(string UserName, Int64 Password, string Token)
+        public string RegisterToken(AdminLogin adminLogin)
         {
+            string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
             using (MySqlConnection connection = WebApiConfig.Connection())
-            using (MySqlCommand command = new MySqlCommand(@"SELECT `Password` FROM `tbAdminAccounts` WHERE `Username` = @Username", connection))
+            using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbAdminAccounts` SET `Token`= @Token WHERE `Username` = @Username and `Password` = @Password", connection))
             {
-                int? DatabasePassword = null;
                 connection.Open();
-                command.Parameters.AddWithValue("@Username", UserName);
-                using (MySqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        DatabasePassword = (int)reader["Password"];
-                    }
-                    reader.Close();
-                }
-                if (DatabasePassword == Password)
-                {
-                    command.CommandText = @"UPDATE `tbAdminAccounts` SET `Token`= @Token WHERE `Username` = @Username";
-                    command.Parameters.AddWithValue("@Token", Token);
-                    command.Parameters.AddWithValue("@Username", UserName);
-                    command.ExecuteNonQuery();
-
-                }
+                command.Parameters.AddWithValue("@Token", token);
+                command.Parameters.AddWithValue("@Username", adminLogin.UserName);
+                command.Parameters.AddWithValue("@Password", adminLogin.Password);
+                int i = command.ExecuteNonQuery();
+                if (i == 1)
+                    return token;
+                else if (i == 0)
+                    return null;
+                throw new Exception("Duplicate Admin account");
             }
         }
         public bool Authorized(string Username, string Token)
@@ -113,7 +105,7 @@ namespace KoFrMaRestApi.MySqlCom
         public void AlterTable(ChangeTable changeTable)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
-            using (MySqlCommand command = new MySqlCommand($"UPDATE `{changeTable.TableName}` SET `{changeTable.ColumnName}` = @Value WHERE `Id` = {changeTable.Id};",connection))
+            using (MySqlCommand command = new MySqlCommand($"UPDATE `{changeTable.TableName}` SET `{changeTable.ColumnName}` = @Value WHERE `Id` = {changeTable.Id};", connection))
             {
                 connection.Open();
                 command.Parameters.AddWithValue("@Value", changeTable.Value);
