@@ -231,7 +231,7 @@ namespace KoFrMaDaemon
                             }
                             else
                             {
-                                debugLog.WriteToLog("Task is planned too far in the future, timer not set.", 7);
+                                debugLog.WriteToLog("Task is planned too far in the future, timer not set. This is a problem of server sending tasks too early.", 3);
                             }
                             debugLog.WriteToLog("Task " + item.IDTask + " was skipped because " + item.TimeToBackup.ToString() + " is in future.", 6);
 
