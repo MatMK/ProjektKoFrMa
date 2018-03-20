@@ -7,8 +7,7 @@ namespace KoFrMaRestApi.Models.AdminApp
 {
     public class AdminLogin
     {
-        public AdminInfo AdminInfo { get; set; }
-        public string UserName{ get; set; }
-        public int Password { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
     }
 }

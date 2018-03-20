@@ -30,12 +30,6 @@ namespace KoFrMaRestApi.Models
             SqlDaemon.RegisterToken(daemon.PC_Unique, HashPassword, Token);
             return Token;
         }
-        public string CreateToken(AdminLogin login)
-        {
-            string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
-            SqlAdmin.RegisterToken(login.UserName, login.Password, token);
-            return token;
-        }
         public bool Authorized(PostAdmin postAdmin)
         {
             return SqlAdmin.Authorized(postAdmin.adminInfo.UserName, postAdmin.adminInfo.Token);
