@@ -76,7 +76,7 @@ namespace KoFrMaDaemon.Backup
             {
                 this.FinishBackup(this.destinationInfo.FullName, destinations[i], compressionLevel,networkCredential);
                 //ServiceKoFrMa.debugLog.WriteToLog("Compression done, deleting temporary files that were needed for compression", 6);
-                //Directory.Delete(destinationInfo.FullName, true);
+                Directory.Delete(destinationInfo.FullName, true);
                 //ServiceKoFrMa.debugLog.WriteToLog("Files successfully deleted, compression is now completed.", 6);
             }
             if (!atLeastOneDestinationIsLocalFolder)
