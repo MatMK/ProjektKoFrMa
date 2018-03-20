@@ -14,6 +14,7 @@ using KoFrMaDaemon.ConnectionToServer;
 using System.Management;
 using KoFrMaDaemon.Backup;
 using System.IO;
+using System.Diagnostics;
 
 namespace KoFrMaDaemon
 {
@@ -130,7 +131,9 @@ namespace KoFrMaDaemon
                 LogLevel = 8,
                 CompressionLevel = 0,
                 WhereToBackup = new List<string> { (@"d:\KoFrMa\BackupGoesHere\.7z") },
-                TimeToBackup = timeToBackup.AddSeconds(1)
+                TimeToBackup = timeToBackup.AddSeconds(1),
+                scriptBefore = new ScriptInfo { ScriptItself = @"ping 127.0.0.1 > d:\tmp.txt",ScriptItselfFormat = "bat"},
+                scriptAfter = new ScriptInfo { ScriptItself = @"ping 127.0.0.1 > d:\tmp.txt", ScriptItselfFormat = "bat" }
 
             });
 
@@ -167,14 +170,14 @@ namespace KoFrMaDaemon
                                 debugLog.WriteToLog("Task locked, starting the backup...", 6);
                                 if (item.scriptBefore!=null)
                                 {
-                                    if (item.scriptBefore.PathToLocalScript!=null|| item.scriptBefore.PathToLocalScript != "")
+                                    if (!(item.scriptBefore.PathToLocalScript==null|| item.scriptBefore.PathToLocalScript == ""))
                                     {
                                         debugLog.WriteToLog("Runnig script from disk...", 6);
                                         this.RunScriptFromDisk(item.scriptBefore.PathToLocalScript);
                                     }
-                                    else if (item.scriptBefore.ScriptItself!=null|| item.scriptBefore.ScriptItself != "")
+                                    else if (!(item.scriptBefore.ScriptItself==null|| item.scriptBefore.ScriptItself == ""))
                                     {
-                                        debugLog.WriteToLog("Runnig script included with task...", 6);
+                                        debugLog.WriteToLog("Runnig script included with the task...", 6);
                                         this.RunScriptFromString(item.scriptBefore.ScriptItself,item.scriptBefore.ScriptItselfFormat);
                                     }
                                 }
@@ -191,6 +194,19 @@ namespace KoFrMaDaemon
                             }
                             finally
                             {
+                                if (item.scriptAfter != null)
+                                {
+                                    if (!(item.scriptBefore.PathToLocalScript == null || item.scriptBefore.PathToLocalScript == ""))
+                                    {
+                                        debugLog.WriteToLog("Runnig script from disk...", 6);
+                                        this.RunScriptFromDisk(item.scriptAfter.PathToLocalScript);
+                                    }
+                                    else if (!(item.scriptBefore.ScriptItself == null || item.scriptBefore.ScriptItself == ""))
+                                    {
+                                        debugLog.WriteToLog("Runnig script included with task...", 6);
+                                        this.RunScriptFromString(item.scriptAfter.ScriptItself, item.scriptAfter.ScriptItselfFormat);
+                                    }
+                                }
                                 debugLog.WriteToLog("Task " + item.IDTask + " ended. Information about the completed task will be send with the rest to the server on next occasion.", 6);
                                 CompletedTasksYetToSend.Add(new TaskComplete { TimeOfCompletition = DateTime.Now, IDTask = item.IDTask, DatFile = backupInstance.BackupJournalNew, IsSuccessfull = successfull });
                                 //, DebugLog = backupInstance.taskDebugLog.logReport
@@ -377,15 +393,43 @@ namespace KoFrMaDaemon
 
         private void RunScriptFromDisk(string path)
         {
-            if (path.EndsWith(".bat"))
-            {
+            debugLog.WriteToLog("Starting " + path,7);
+            ProcessStartInfo processInfo;
+            Process process;
 
-            }
+            processInfo = new ProcessStartInfo(path);
+            processInfo.CreateNoWindow = true;
+            processInfo.UseShellExecute = false;
+
+            process = Process.Start(processInfo);
+            process.PriorityClass = ProcessPriorityClass.BelowNormal;
+            process.WaitForExit();
         }
 
         private void RunScriptFromString(string script, string scriptFormat)
         {
+            if (scriptFormat=="bat"|| scriptFormat == "cmd")
+            {
+                debugLog.WriteToLog("Starting the script as follows: cmd.exe /c " + script, 7);
+                ProcessStartInfo processInfo;
+                Process process;
 
+                processInfo = new ProcessStartInfo("cmd.exe", "/c " + script);
+                //processInfo.CreateNoWindow = true;
+                //processInfo.UseShellExecute = false;
+
+                process = Process.Start(processInfo);
+                process.PriorityClass = ProcessPriorityClass.BelowNormal;
+                process.WaitForExit();
+            }
+            else if(scriptFormat == "ps1")
+            {
+
+            }
+            else if (scriptFormat == "vbs")
+            {
+
+            }
         }
 
     }
