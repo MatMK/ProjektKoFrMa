@@ -58,7 +58,7 @@ input {
 .dashboardDiv {
     width: 213px;
     height: 213px;
-    background-color: cornsilk ;
+    background-color: darkgrey;
     float: left;
     margin: 5px;
     border: 1px solid black;

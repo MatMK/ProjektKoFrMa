@@ -74,7 +74,7 @@ namespace KoFrMaDaemon.Backup
             ServiceKoFrMa.debugLog.WriteToLog("Creating desired destination outputs...", 7);
             for (int i = 0; i < destinations.Count; i++)
             {
-                this.FinishBackup(this.destinationInfo.FullName, destinations[i], (byte)compressionLevel,networkCredential);
+                this.FinishBackup(this.destinationInfo.FullName, destinations[i], compressionLevel,networkCredential);
                 //ServiceKoFrMa.debugLog.WriteToLog("Compression done, deleting temporary files that were needed for compression", 6);
                 //Directory.Delete(destinationInfo.FullName, true);
                 //ServiceKoFrMa.debugLog.WriteToLog("Files successfully deleted, compression is now completed.", 6);
@@ -110,7 +110,7 @@ namespace KoFrMaDaemon.Backup
 
         }
 
-        private void FinishBackup(string backupPath,string destination, byte compressionLevel, NetworkCredential networkCredential)
+        private void FinishBackup(string backupPath,string destination, byte? compressionLevel, NetworkCredential networkCredential)
         {
             if (destination.EndsWith(".zip"))
             {
