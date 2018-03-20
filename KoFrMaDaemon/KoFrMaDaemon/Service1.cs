@@ -165,6 +165,19 @@ namespace KoFrMaDaemon
                             try
                             {
                                 debugLog.WriteToLog("Task locked, starting the backup...", 6);
+                                if (item.scriptBefore!=null)
+                                {
+                                    if (item.scriptBefore.PathToLocalScript!=null|| item.scriptBefore.PathToLocalScript != "")
+                                    {
+                                        debugLog.WriteToLog("Runnig script from disk...", 6);
+                                        this.RunScriptFromDisk(item.scriptBefore.PathToLocalScript);
+                                    }
+                                    else if (item.scriptBefore.ScriptItself!=null|| item.scriptBefore.ScriptItself != "")
+                                    {
+                                        debugLog.WriteToLog("Runnig script included with task...", 6);
+                                        this.RunScriptFromString(item.scriptBefore.ScriptItself,item.scriptBefore.ScriptItselfFormat);
+                                    }
+                                }
                                 debugLog.WriteToLog("Destination of the backup is " + item.WhereToBackup[0], 8);
                                 backupInstance.Backup(item.SourceOfBackup, item.BackupJournalSource, item.WhereToBackup, item.CompressionLevel,item.NetworkCredentials, item.IDTask, debugLog);
                                 debugLog.WriteToLog("Task completed, setting task as successfully completed...", 6);
@@ -359,6 +372,20 @@ namespace KoFrMaDaemon
             //searcher.Dispose();
 
             return lcPopis;
+        }
+
+
+        private void RunScriptFromDisk(string path)
+        {
+            if (path.EndsWith(".bat"))
+            {
+
+            }
+        }
+
+        private void RunScriptFromString(string script, string scriptFormat)
+        {
+
         }
 
     }

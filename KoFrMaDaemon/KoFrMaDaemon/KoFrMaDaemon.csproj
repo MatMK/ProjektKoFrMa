@@ -96,6 +96,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ScriptInfo.cs" />
     <Compile Include="Service1.cs">
       <SubType>Component</SubType>
     </Compile>

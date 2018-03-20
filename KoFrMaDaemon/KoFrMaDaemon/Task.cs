@@ -79,7 +79,7 @@ namespace KoFrMaDaemon
         public byte CompressionLevel { get; set; }
 
         /// <summary>
-        /// Obsahuje přihlašovací jméno a heslo, pokud je potřeba pro provedení tasku (FTP, SSH, Samba)
+        /// Obsahuje přihlašovací jméno a heslo, pokud je potřeba pro provedení tasku (FTP, SSH, Samba, SQL)
         /// </summary>
         public NetworkCredential NetworkCredentials { get; set; }
 
@@ -87,5 +87,9 @@ namespace KoFrMaDaemon
         /// Určuje, jestli úloha právě probíhá aby timer nespustil stejnou úlohu několikrát
         /// </summary>
         public bool InProgress { get; set; }
+
+        public ScriptInfo scriptBefore { get; set; }
+
+        public ScriptInfo scriptAfter { get; set; }
     }
 }
