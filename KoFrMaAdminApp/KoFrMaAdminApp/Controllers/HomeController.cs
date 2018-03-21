@@ -28,7 +28,7 @@ namespace KoFrMaAdminApp.Controllers
         {
             return View();
         }
-        public ActionResult AddTask()
+        public ActionResult AddTasks()
         {
             return View();
         }
