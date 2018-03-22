@@ -1,0 +1,122 @@
+body {
+    background-image: url('./bg.png');
+    background-repeat: repeat;
+    background-color: lightgreen;
+}
+
+div {
+    margin: 0 auto;
+}
+#loginDiv {
+    height: 220px;
+    width: 302px;
+    background-color: white;
+    padding: 40px;
+    border: 1px solid #d3d3d3;
+    border-radius: 5px;
+    margin: 0 auto;
+    margin-bottom:10px;
+   box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
+}
+main {
+    padding: 50px;
+    background-color: rgba(255, 255, 255, 0.3);
+    margin: 0 auto;
+    width: 1000px;
+}
+input{
+    margin-bottom: 20px;
+}
+.g-recaptcha{
+    border: 0px;
+}
+input {
+    
+    border: none;
+    border-bottom: 1px solid #d3d3d3;
+    border-radius: 0px;
+}
+
+.button {
+    background-color: rgb(220, 220, 220);
+    transition-duration: 0.4s;
+    -webkit-transition-duration: 0,4s;
+    border: 1px solid #d3d3d3;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16PX;
+    padding: 8px 16px;
+    color: black;
+}
+.button:hover {
+    background-color: white;
+    color: black;
+    text-decoration:none;
+    cursor:pointer;
+    }
+.dashboardDiv {
+    width: 213px;
+    height: 213px;
+    background-color: darkgrey;
+    float: left;
+    margin: 5px;
+    border: 1px solid black;
+    border-radius: 5px;
+    text-align: center;
+    padding-top: 80px;
+    font-size: 30px;
+    color: black;
+    -webkit-transition: 30s;
+    transition: 30s;
+ 
+}
+.dashboardDiv:hover {
+     cursor: pointer;
+     background-color: aliceblue;
+     transform: rotate(36000deg);
+     animation: 30s rainbow;
+     animation-iteration-count: infinite;
+}
+@keyframes rainbow {
+    0% {background-color: darkred}
+    15% {background-color: orange}
+    30% { background-color: yellow}
+    45%  {background-color: greenyellow}
+    60% {background-color: forestgreen}
+    75% {background-color: lightblue}
+    90% {background-color: darkblue}
+    100% {background-color: purple}
+}
+#div1{
+    padding-top: 59px;
+}
+#dashboardMain{
+    height:800px;
+    
+}
+#menuDiv .dashboardDiv{
+    font-size:12px;  
+    max-height: 40px;
+    width: 100px;
+    padding-top: 10px;
+    margin: auto;
+    float: left;
+    margin-left:10px;
+}
+#menuDiv {
+    background-color: rgba(255, 255, 255, 0.4);
+    
+    border: 0px solid white;
+    border-radius: 5px 5px 0px 0px;
+    padding-top: 10px;
+    height: 60px;
+    width: 1000PX;
+    margin: auto;
+    margin-bottom: 5px;
+}
+#TaskSubmit:hover {
+    cursor:pointer;
+
+    
+}
