@@ -28,7 +28,7 @@ namespace KoFrMaDaemon
         DaemonInfo daemon;
         Password daemonPassword;
         TimerValues timerValues;
-        public static DaemonSettings daemonSettings;
+        public static SettingsLoad daemonSettings;
 
         /// <summary>
         /// Naplánované úlohy přijaté od serveru se budou přidávat do tohoto listu
@@ -65,7 +65,7 @@ namespace KoFrMaDaemon
 
 
             Password password = Password.Instance;
-            daemonSettings = new DaemonSettings();
+            daemonSettings = new SettingsLoad();
 
 
             debugLog = new DebugLog(daemonSettings.LocalLogPath,daemonSettings.WindowsLog, 9);

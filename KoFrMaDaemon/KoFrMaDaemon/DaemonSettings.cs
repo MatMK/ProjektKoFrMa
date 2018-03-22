@@ -7,7 +7,7 @@ using System.IO;
 
 namespace KoFrMaDaemon
 {
-    public class DaemonSettings
+    public class SettingsLoad
     {
         public string ServerIP;
         public string Password;
@@ -18,7 +18,7 @@ namespace KoFrMaDaemon
 
         private StreamReader r;
 
-        public DaemonSettings()
+        public SettingsLoad()
         {
             this.WindowsLog = false;
             this.Password = "";
