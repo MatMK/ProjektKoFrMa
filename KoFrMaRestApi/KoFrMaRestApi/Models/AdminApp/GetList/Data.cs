@@ -8,11 +8,21 @@ namespace KoFrMaRestApi.Models.AdminApp.GetList
 {
     public class Data
     {
-        public Data()
+        public Data(List<int> getData)
         {
-            tbAdminAccounts = Table.GetAdminAccounts();
-            tbDaemons = Table.GetDaemons();
-            tbTasks = Table.GetTasks();
+            foreach (int item in getData)
+            {
+
+                //Data 1
+                if (item == 1)
+                    tbAdminAccounts = Table.GetAdminAccounts();
+                //Data 2
+                if (item == 2)
+                    tbDaemons = Table.GetDaemons();
+                //Data 3
+                if (item == 3)
+                    tbTasks = Table.GetTasks();
+            }
         }
         public List<tbAdminAccounts> tbAdminAccounts { get; set; }
         public List<tbDaemons> tbDaemons { get; set; }

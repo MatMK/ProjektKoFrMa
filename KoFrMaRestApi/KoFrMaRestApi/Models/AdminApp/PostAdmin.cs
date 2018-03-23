@@ -9,5 +9,6 @@ namespace KoFrMaRestApi.Models.AdminApp
     {
         public AdminInfo adminInfo { get; set; }
         public List<SetTasks> setTasks { get; set; }
+        public List<int> getData { get; set; }
     }
 }

@@ -13,4 +13,8 @@ export class ServerConnectionService{
                         .then(res => res.json())
                         .catch(msg => console.log('Error: ' + msg.status + ' ' + msg.statusText))
    }
+   GetData(Tables : Number[])
+   {
+       
+   }
 }

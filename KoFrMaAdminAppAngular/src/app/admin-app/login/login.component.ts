@@ -15,7 +15,6 @@ export class LoginComponent implements OnInit {
    }
   LogIn(Password : string, Username : string)
   {
-    alert()
     this.serverConnectionService.Login('123456','Pepa', 'http://localhost:49849/').then(res => {
       this.data.Token = res;
       if (this.data.Token != undefined)
