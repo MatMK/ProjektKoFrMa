@@ -1,6 +1,9 @@
+import { AdminInfo } from "./models/communication-models/admin-info.model";
+
 export class Data
 {
-    public Token : string;
-    public LoggedIn : boolean;
-    public ServerRootURL : string;
+    public LoggedIn : boolean = false;
+    public ServerRootURL : string = 'http://localhost:49849/';
+    public Loading : boolean = false;
+    public adminInfo : AdminInfo = new AdminInfo();
 }

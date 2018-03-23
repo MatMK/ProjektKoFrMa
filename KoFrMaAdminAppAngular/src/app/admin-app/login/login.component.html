@@ -1,22 +1,2 @@
-<!doctype html>
-<html lang="cs-cz">
-<head>
-    <title>Login</title>
-</head>
-<body>
-    <main>
-        <div id="loginDiv">
-            <form (submit)="loginAdmin($event)" id="loginForm">
-                <p><input type="text" placeholder="Username" name="Username" id="loginUsername" /></p>
-                <p><input type="password" placeholder="Password" name="Password" id="loginPassword" /></p>
-            </form>
-            <a href="Dashboard">
-                <input type="submit" value="Login" id="loginSubmit" class="button" (click)="LogIn(loginUsername,loginPassword)" />
-            </a>
-            <br />
-        </div>  
-    </main>
-</body>
-</html>
-
-
+<p (click)="test()">test</p>
+<p>{{data.LoggedIn}}</p>
