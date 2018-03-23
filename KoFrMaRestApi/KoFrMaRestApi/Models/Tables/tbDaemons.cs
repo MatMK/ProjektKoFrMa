@@ -13,7 +13,7 @@ namespace KoFrMaRestApi.Models.Tables
         public string PC_Unique { get; set; }
         public bool Allowed { get; set; }
         public DateTime? LastSeen { get; set; }
-        public Int64 Password{ get; set; }
-        public string Token { get; set; }
+        //public Int64 Password{ get; set; }
+        //public string Token { get; set; }
     }
 }

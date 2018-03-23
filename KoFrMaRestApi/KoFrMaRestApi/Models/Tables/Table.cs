@@ -6,9 +6,9 @@ using System.Web;
 
 namespace KoFrMaRestApi.Models.Tables
 {
-    public static class Table
+    public class Table
     {
-        public static List<tbAdminAccounts> GetAdminAccounts()
+        public List<tbAdminAccounts> GetAdminAccounts()
         {
             List<tbAdminAccounts> tb = new List<tbAdminAccounts>();
             try
@@ -25,9 +25,9 @@ namespace KoFrMaRestApi.Models.Tables
                             tb.Add(new tbAdminAccounts()
                             {
                                 Id = (int)reader["Id"],
+                                UserName = (string)reader["UserName"]/*,
                                 Password = (int)reader["Password"],
-                                UserName = (string)reader["UserName"],
-                                Token = (string)reader["Token"]
+                                Token = (string)reader["Token"]*/
                             });
                         }
                     }
@@ -39,7 +39,7 @@ namespace KoFrMaRestApi.Models.Tables
             }
             return tb;
         }
-        public static List<tbDaemons> GetDaemons()
+        public List<tbDaemons> GetDaemons()
         {
             List<tbDaemons> tb = new List<tbDaemons>();
             try
@@ -59,9 +59,9 @@ namespace KoFrMaRestApi.Models.Tables
                                 OS = (string)reader["OS"],
                                 PC_Unique = (string)reader["PC_Unique"],
                                 Allowed = Convert.ToBoolean(reader["Allowed"]),
-                                LastSeen = (object)reader["LastSeen"] == (object)DBNull.Value ? null: (DateTime?)reader["LastSeen"],
+                                LastSeen = (object)reader["LastSeen"] == (object)DBNull.Value ? null: (DateTime?)reader["LastSeen"]/*,
                                 Password = (Int64)reader["Password"],
-                                Token = (string)reader["Token"]
+                                Token = (string)reader["Token"]*/
                             });
                         }
                     }
@@ -73,7 +73,7 @@ namespace KoFrMaRestApi.Models.Tables
             }
             return tb;
         }
-        public static List<tbTasks> GetTasks()
+        public List<tbTasks> GetTasks()
         {
             List<tbTasks> tb = new List<tbTasks>();
             try

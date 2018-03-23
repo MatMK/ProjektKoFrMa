@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
-import { Data } from './data.module';
+import { Data } from './data.model';
 
 @Injectable()
 
@@ -13,8 +13,16 @@ export class ServerConnectionService{
                         .then(res => res.json())
                         .catch(msg => console.log('Error: ' + msg.status + ' ' + msg.statusText))
    }
-   GetData(Tables : Number[])
+   GetTbAdmins()
    {
-       
+
+   }
+   GetTbDaemons()
+   {
+
+   }
+   getTbTasks()
+   {
+
    }
 }
