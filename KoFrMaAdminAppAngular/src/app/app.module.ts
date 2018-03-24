@@ -7,12 +7,20 @@ import { AppComponent } from './app.component';
 import { ServerConnectionService } from './admin-app/server-connection/server-connection.service';
 import { LoginComponent } from './admin-app/login/login.component';
 import { Data } from './admin-app/server-connection/data.model';
+import { MainComponent } from './admin-app/settings/main/main.component';
+import { DaemonsComponent } from './admin-app/settings/tabs/daemons/daemons.component';
+import { TasksComponent } from './admin-app/settings/tabs/tasks/tasks.component';
+import { AdminAccountsComponent } from './admin-app/settings/tabs/admin-accounts/admin-accounts.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent
+    LoginComponent,
+    MainComponent,
+    DaemonsComponent,
+    TasksComponent,
+    AdminAccountsComponent
   ],
   imports: [
     BrowserModule,

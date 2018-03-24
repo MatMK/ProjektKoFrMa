@@ -1,2 +1,3 @@
-<app-login></app-login>
+<app-login *ngIf="!data.LoggedIn"></app-login>
+<app-main *ngIf="data.LoggedIn"></app-main>
 <p *ngIf="data.Loading">Loading...</p>

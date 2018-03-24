@@ -16,13 +16,16 @@ export class LoginComponent implements OnInit {
   
   name : string;
   password : string;
+  rootURL : string = 'http://localhost:49849/';
 
 
   LogIn()
   {
-    this.data.ServerRootURL = 'http://localhost:49849/';
+    if(!this.rootURL.endsWith('/'))
+      this.rootURL += '/';
+    this.data.ServerRootURL = this.rootURL;
     this.data.Loading = true;
-    this.serverConnectionService.Login(this.name,this.password).then(res => {
+    this.serverConnectionService.Login(this.password, this.name).then(res => {
       this.data.Loading = false;
       if (res != undefined)
       {
