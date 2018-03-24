@@ -3,8 +3,6 @@ import { Http } from '@angular/http';
 import { ServerConnectionService } from '../server-connection/server-connection.service';
 import { AppComponent } from '../../app.component';
 import { Data } from '../server-connection/data.model';
-import { AdminLogin } from '../server-connection/models/communication-models/admin-login.model';
-import { tbAdminAccounts } from '../server-connection/models/sql-data/data/tb-admin-accounts.model';
 
 @Component({
   selector: 'app-login',
@@ -13,14 +11,15 @@ import { tbAdminAccounts } from '../server-connection/models/sql-data/data/tb-ad
 })
 export class LoginComponent implements OnInit {
 
-  constructor(private serverConnectionService : ServerConnectionService, private data : Data) {
-   }
-  tbAdmins : tbAdminAccounts[];
+  constructor(private serverConnectionService : ServerConnectionService, private data : Data) { }
+  
   LogIn(Username : string, Password : string)
   {
+    Username = 'Pepa';
+    Password = '123456';
     this.data.ServerRootURL = 'http://localhost:49849/';
     this.data.Loading = true;
-    this.serverConnectionService.Login('123456','Pepa').then(res => {
+    this.serverConnectionService.Login(Password,Username).then(res => {
       this.data.Loading = false;
       if (res != undefined)
       {
@@ -33,13 +32,6 @@ export class LoginComponent implements OnInit {
         this.data.LoggedIn = false;
       }
     })
-  }
-  test()
-  {
-    this.serverConnectionService.GetTb([1])
-          .then(res => this.tbAdmins = res.AdminAccounts)
-          .catch(msg => console.log(msg));
-
   }
   ngOnInit() {
   }

@@ -24,37 +24,40 @@ export class ServerConnectionService{
                         .then(res => res.json())
                         .catch(msg => console.log('Error: ' + msg.status + ' ' + msg.statusText))
    }
-   GetTbAdmins() : tbAdminAccounts[]
+//tables -  1 : tbAdmins
+//          2 : tbDaemons
+//          3 : tbTasks
+   GettbAdminAccounts() : Promise<tbAdminAccounts[]>
    {
-       let admin : tbAdminAccounts[];
-       this.GetTb([1])
-            .then(res => admin = res.AdminAccounts)
-            .catch(msg => console.log(msg.status));;
-       return admin;
-   }
-   GetTbDaemons() : tbDaemons[]
-   {
-       let daemons : tbDaemons[];
-       this.GetTb([2])
-            .then(res => daemons = res.Daemons)
-            .catch(msg => console.log(msg.status));;
-       return daemons;
-   }
-   GetTbTasks() : tbTasks[]
-   {
-       let tasks : tbTasks[];
-       this.GetTb([3])
-            .then(res => tasks = res.Tasks)
-            .catch(msg => console.log(msg.status));
-
-       return tasks;
-   }
-   GetTb(tables : number[]) : Promise<SqlData>
-    {
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, null, tables);
-        let url = this.data.ServerRootURL + "api/AdminApp/GetList";
-        return this.http.post(url, PostAdmin  ).toPromise()
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, [], [1]);
+        let url = this.data.ServerRootURL + "api/AdminApp/GettbAdminAccounts";
+        return this.http.post(url,postAdmin).toPromise()
                         .then(res => res.json())
-                        .catch(msg => console.log('Error: ' + msg.status + ' ' + msg.statusText))
-   }
+                        .catch(msg => 
+                            {
+                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                            })
+    }
+    GetGettbDaemons() : Promise<tbDaemons[]>
+   {
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, [], [2]);
+        let url = this.data.ServerRootURL + "api/AdminApp/GettbDaemons";
+        return this.http.post(url,postAdmin).toPromise()
+                        .then(res => res.json())
+                        .catch(msg => 
+                            {
+                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                            })
+    }
+    GettbTasks() : Promise<tbTasks[]>
+   {
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, [], [3]);
+        let url = this.data.ServerRootURL + "api/AdminApp/GettbTasks";
+        return this.http.post(url,postAdmin).toPromise()
+                        .then(res => res.json())
+                        .catch(msg => 
+                            {
+                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                            })
+    }
 }

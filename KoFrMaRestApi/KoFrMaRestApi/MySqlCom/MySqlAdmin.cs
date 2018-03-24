@@ -33,13 +33,12 @@ namespace KoFrMaRestApi.MySqlCom
         public bool Authorized(string Username, string Token)
         {
             bool result;
-            string _token = JsonConvert.DeserializeObject<string>(Token);
             using (MySqlConnection connection = WebApiConfig.Connection())
             using (MySqlCommand command = new MySqlCommand(@"SELECT * FROM `tbAdminAccounts` WHERE `Username` = @Username and `Token` = @Token", connection))
             {
                 connection.Open();
                 command.Parameters.AddWithValue("@Username", Username);
-                command.Parameters.AddWithValue("@Token", _token);
+                command.Parameters.AddWithValue("@Token", Token);
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
                     if (reader.Read())
