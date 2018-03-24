@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpModule} from '@angular/http';
+import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { ServerConnectionService } from './admin-app/server-connection/server-connection.service';
@@ -15,7 +16,8 @@ import { Data } from './admin-app/server-connection/data.model';
   ],
   imports: [
     BrowserModule,
-    HttpModule
+    HttpModule,
+    FormsModule
   ],
   providers: [ServerConnectionService, Data],
   bootstrap: [AppComponent]

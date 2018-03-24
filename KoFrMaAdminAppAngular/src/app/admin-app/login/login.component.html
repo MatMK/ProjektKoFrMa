@@ -1,3 +1,22 @@
-<p (click)="test()">test</p>
-<p (click)="LogIn()">log in</p>
-<p>{{data.LoggedIn}}</p>
+<!doctype html>
+<html lang="cs-cz">
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <main>
+        <div id="loginDiv">
+            <form id="loginForm">
+                <input type="text" placeholder="Username" name="Username" id="loginUsername" [(ngModel)]="name"/>
+                <br />
+                <input type="password" placeholder="Password" name="Password" id="loginPassword" [(ngModel)]="password"/>
+                <br />
+            </form>
+            <a>
+                <input type="submit" value="Login" id="loginSubmit" class="button" (click)="LogIn()"/>
+            </a>
+            <br />
+        </div>
+    </main>
+</body>
+</html>
