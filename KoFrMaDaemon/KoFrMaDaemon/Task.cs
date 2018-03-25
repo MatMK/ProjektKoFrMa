@@ -88,8 +88,13 @@ namespace KoFrMaDaemon
         /// </summary>
         public bool InProgress { get; set; }
 
-        public ScriptInfo scriptBefore { get; set; }
+        public ScriptInfo ScriptBefore { get; set; }
 
-        public ScriptInfo scriptAfter { get; set; }
+        public ScriptInfo ScriptAfter { get; set; }
+
+        /// <summary>
+        /// Velikost v MB jak velká může v jednu chvíli maximálně být dočasná složka na disku C pokud se zálohuje do archivu nebo na vzdálené úložiště.
+        /// </summary>
+        public int? TemporaryFolderMaxBuffer { get; set; }
     }
 }

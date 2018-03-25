@@ -76,8 +76,6 @@
     <Compile Include="Backup\BackupJournalObject.cs" />
     <Compile Include="Backup\BackupJournalOperations.cs" />
     <Compile Include="Backup\BackupSwitch.cs" />
-    <Compile Include="Backup\BackupDifferential.cs" />
-    <Compile Include="Backup\BackupFull.cs" />
     <Compile Include="Backup\Compression.cs" />
     <Compile Include="Backup\CopyErrorObject.cs" />
     <Compile Include="Backup\FTPConnection.cs" />

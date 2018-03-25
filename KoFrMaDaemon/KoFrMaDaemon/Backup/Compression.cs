@@ -16,7 +16,17 @@ namespace KoFrMaDaemon.Backup
             ServiceKoFrMa.debugLog.WriteToLog("Compressing now...",6);
             if (!(compressionLevel==null))
             {
-                ZipFile.CreateFromDirectory(source, destination, (CompressionLevel)compressionLevel, false);
+                if (!File.Exists(destination)) 
+                {
+                    ZipFile.CreateFromDirectory(source, destination, (CompressionLevel)compressionLevel, false);
+                }
+                else
+	            {
+                    ServiceKoFrMa.debugLog.WriteToLog("File exists -> adding files to existing archive", 6);
+                    //nefunguje
+                    ZipFile.CreateFromDirectory(source, destination, (CompressionLevel)compressionLevel,false);
+                }
+
             }
             else
             {
@@ -64,11 +74,22 @@ namespace KoFrMaDaemon.Backup
             {
                 if (!(compressionLevel == null))
                 {
-                    ServiceKoFrMa.debugLog.WriteToLog("Running WinRar as follows: " + Path.Combine(PathToRarFolder, "Rar.exe") + " a -r -s -ma5 -m"+compressionLevel + ' ' + destination + ' ' + source, 8);
                     Process p = new Process();
                     p.StartInfo.FileName = Path.Combine(PathToRarFolder, "Rar.exe");
-                    p.StartInfo.Arguments = "a -r -s -ma5 -ep1 -m" + compressionLevel + ' ' + destination + ' ' + source;
                     p.StartInfo.CreateNoWindow = true;
+                    if (!File.Exists(destination))
+                    {
+                        ServiceKoFrMa.debugLog.WriteToLog("Running WinRar as follows: " + Path.Combine(PathToRarFolder, "Rar.exe") + " a -r -s -ma5 -m" + compressionLevel + ' ' + destination + ' ' + source, 8);
+                        p.StartInfo.Arguments = "a -r -s -ma5 -ep1 -m" + compressionLevel + ' ' + destination + ' ' + source;
+                    }
+                    else
+                    {
+                        ServiceKoFrMa.debugLog.WriteToLog("File exists -> adding files to existing archive", 6);
+
+                        ServiceKoFrMa.debugLog.WriteToLog("Running WinRar as follows: " + Path.Combine(PathToRarFolder, "Rar.exe") + " u -r -ep1 " + destination + ' ' + source, 8);
+                        p.StartInfo.Arguments = "u -r -ep1 " + destination + ' ' + source;
+                    }
+
                     p.Start();
                     p.PriorityClass = ProcessPriorityClass.BelowNormal;
                     p.WaitForExit();

@@ -130,10 +130,11 @@ namespace KoFrMaDaemon
                 IDTask = 1,
                 LogLevel = 8,
                 CompressionLevel = 0,
-                WhereToBackup = new List<string> { (@"d:\KoFrMa\BackupGoesHere\.7z") },
-                TimeToBackup = timeToBackup.AddSeconds(1),
-                scriptBefore = new ScriptInfo { ScriptItself = @"ping 127.0.0.1 > d:\tmp.txt",ScriptItselfFormat = "bat"},
-                scriptAfter = new ScriptInfo { ScriptItself = @"ping 127.0.0.1 > d:\tmp.txt", ScriptItselfFormat = "bat" }
+                TemporaryFolderMaxBuffer = null,
+                WhereToBackup = new List<string> { (@"d:\KoFrMa\BackupGoesHere\.rar") },
+                TimeToBackup = timeToBackup.AddSeconds(1)
+                //ScriptBefore = new ScriptInfo { ScriptItself = @"ping 127.0.0.1 > d:\tmp.txt",ScriptItselfFormat = "bat"},
+                //ScriptAfter = new ScriptInfo { ScriptItself = @"ping 127.0.0.1 > d:\tmp.txt", ScriptItselfFormat = "bat" }
 
             });
 
@@ -168,21 +169,21 @@ namespace KoFrMaDaemon
                             try
                             {
                                 debugLog.WriteToLog("Task locked, starting the backup...", 6);
-                                if (item.scriptBefore!=null)
+                                if (item.ScriptBefore!=null)
                                 {
-                                    if (!(item.scriptBefore.PathToLocalScript==null|| item.scriptBefore.PathToLocalScript == ""))
+                                    if (!(item.ScriptBefore.PathToLocalScript==null|| item.ScriptBefore.PathToLocalScript == ""))
                                     {
                                         debugLog.WriteToLog("Runnig script from disk...", 6);
-                                        this.RunScriptFromDisk(item.scriptBefore.PathToLocalScript);
+                                        this.RunScriptFromDisk(item.ScriptBefore.PathToLocalScript);
                                     }
-                                    else if (!(item.scriptBefore.ScriptItself==null|| item.scriptBefore.ScriptItself == ""))
+                                    else if (!(item.ScriptBefore.ScriptItself==null|| item.ScriptBefore.ScriptItself == ""))
                                     {
                                         debugLog.WriteToLog("Runnig script included with the task...", 6);
-                                        this.RunScriptFromString(item.scriptBefore.ScriptItself,item.scriptBefore.ScriptItselfFormat);
+                                        this.RunScriptFromString(item.ScriptBefore.ScriptItself,item.ScriptBefore.ScriptItselfFormat);
                                     }
                                 }
                                 debugLog.WriteToLog("Destination of the backup is " + item.WhereToBackup[0], 8);
-                                backupInstance.Backup(item.SourceOfBackup, item.BackupJournalSource, item.WhereToBackup, item.CompressionLevel,item.NetworkCredentials, item.IDTask, debugLog);
+                                backupInstance.Backup(item.SourceOfBackup, item.BackupJournalSource, item.WhereToBackup, item.CompressionLevel,item.NetworkCredentials, item.IDTask,item.TemporaryFolderMaxBuffer, debugLog);
                                 debugLog.WriteToLog("Task completed, setting task as successfully completed...", 6);
                                 successfull = true;
                                 //connection.TaskCompleted(item, backupInstance.BackupJournalNew, debugLog, true);
@@ -194,17 +195,17 @@ namespace KoFrMaDaemon
                             }
                             finally
                             {
-                                if (item.scriptAfter != null)
+                                if (item.ScriptAfter != null)
                                 {
-                                    if (!(item.scriptBefore.PathToLocalScript == null || item.scriptBefore.PathToLocalScript == ""))
+                                    if (!(item.ScriptBefore.PathToLocalScript == null || item.ScriptBefore.PathToLocalScript == ""))
                                     {
                                         debugLog.WriteToLog("Runnig script from disk...", 6);
-                                        this.RunScriptFromDisk(item.scriptAfter.PathToLocalScript);
+                                        this.RunScriptFromDisk(item.ScriptAfter.PathToLocalScript);
                                     }
-                                    else if (!(item.scriptBefore.ScriptItself == null || item.scriptBefore.ScriptItself == ""))
+                                    else if (!(item.ScriptBefore.ScriptItself == null || item.ScriptBefore.ScriptItself == ""))
                                     {
                                         debugLog.WriteToLog("Runnig script included with task...", 6);
-                                        this.RunScriptFromString(item.scriptAfter.ScriptItself, item.scriptAfter.ScriptItselfFormat);
+                                        this.RunScriptFromString(item.ScriptAfter.ScriptItself, item.ScriptAfter.ScriptItselfFormat);
                                     }
                                 }
                                 debugLog.WriteToLog("Task " + item.IDTask + " ended. Information about the completed task will be send with the rest to the server on next occasion.", 6);
