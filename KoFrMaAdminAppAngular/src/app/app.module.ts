@@ -11,7 +11,8 @@ import { MainComponent } from './admin-app/settings/main/main.component';
 import { DaemonsComponent } from './admin-app/settings/tabs/daemons/daemons.component';
 import { TasksComponent } from './admin-app/settings/tabs/tasks/tasks.component';
 import { AdminAccountsComponent } from './admin-app/settings/tabs/admin-accounts/admin-accounts.component';
-
+import { MatSidenavModule, MatToolbarModule } from '@angular/material'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,10 @@ import { AdminAccountsComponent } from './admin-app/settings/tabs/admin-accounts
   imports: [
     BrowserModule,
     HttpModule,
-    FormsModule
+    FormsModule, 
+    MatSidenavModule,
+    MatToolbarModule,
+    BrowserAnimationsModule
   ],
   providers: [ServerConnectionService, Data],
   bootstrap: [AppComponent]

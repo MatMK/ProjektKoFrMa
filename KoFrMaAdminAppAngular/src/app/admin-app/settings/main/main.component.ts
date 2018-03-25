@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatNavList} from '@angular/material';
 
 @Component({
   selector: 'app-main',
