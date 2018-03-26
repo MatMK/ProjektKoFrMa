@@ -35,11 +35,6 @@ namespace KoFrMaDaemon
         public List<string> WhereToBackup { get; set; }
 
         /// <summary>
-        /// Jak často se má daemon ptát serveru na úlohu
-        /// </summary>
-        public int TimerValue { get; set; }
-
-        /// <summary>
         /// Jaké data chce server vrátit až se dokončí úloha, viz. třída DebugLog (LogOperations)
         /// 0 = Don't create log
         /// 1 = Fatal errors only that shuts down whole service/program
