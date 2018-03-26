@@ -1,5 +1,5 @@
 
-  <div class="example-container mat-elevation-z8">
+  <div class="table-admin">
     <mat-table #table [dataSource]="data.AdminAccounts">
   
   
@@ -12,7 +12,7 @@
       <!-- Username Column -->
       <ng-container matColumnDef="Username">
         <mat-header-cell *matHeaderCellDef> Username </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.Username}} </mat-cell>
+        <mat-cell *matCellDef="let element"> {{element.UserName}} </mat-cell>
       </ng-container>
   
       <!-- Email Column -->
@@ -30,7 +30,7 @@
       <!-- Permission Column -->
       <ng-container matColumnDef="Permission">
         <mat-header-cell *matHeaderCellDef> Permission </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.symbol}} </mat-cell>
+        <mat-cell *matCellDef="let element"> {{element.Permission}} </mat-cell>
       </ng-container>
   
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
