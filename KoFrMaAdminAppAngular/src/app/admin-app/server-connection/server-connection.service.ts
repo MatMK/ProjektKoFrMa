@@ -86,4 +86,8 @@ export class ServerConnectionService{
                                 console.log('Error: ' + msg.status + ' ' + msg.statusText);
                             })
     }
+    HashString(toHash : string)
+    {
+        
+    }
 }
