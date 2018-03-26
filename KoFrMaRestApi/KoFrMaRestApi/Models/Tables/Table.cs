@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Diagnostics;
 
 namespace KoFrMaRestApi.Models.Tables
 {
@@ -25,8 +26,11 @@ namespace KoFrMaRestApi.Models.Tables
                             tb.Add(new tbAdminAccounts()
                             {
                                 Id = (int)reader["Id"],
-                                UserName = (string)reader["UserName"]/*,
-                                Password = (int)reader["Password"],
+                                UserName = (string)reader["UserName"],
+                                Email = (string)reader["Email"],
+                                Enabled = Convert.ToBoolean(reader["Enabled"]),
+                                Permission = (int?)reader["Permissions"]/*,
+                                Password = (string)reader["Password"],
                                 Token = (string)reader["Token"]*/
                             });
                         }

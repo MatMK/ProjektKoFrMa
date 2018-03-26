@@ -16,4 +16,9 @@ export class MainComponent implements OnInit {
   ngOnInit() {
   }
 
+
+  test()
+  {
+    this.service.GettbAdminAccounts().then(re => console.log(re));
+  }
 }

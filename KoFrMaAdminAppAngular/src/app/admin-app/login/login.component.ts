@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
       this.rootURL += '/';
     this.data.ServerRootURL = this.rootURL;
     this.data.Loading = true;
-    this.serverConnectionService.Login(this.password, this.name).then(res => {
+    this.serverConnectionService.Login(btoa("this.password"), this.name).then(res => {
       this.data.Loading = false;
       if (res != undefined)
       {

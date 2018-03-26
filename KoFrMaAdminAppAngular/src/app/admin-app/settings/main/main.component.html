@@ -1,10 +1,9 @@
 <mat-toolbar>
-  <h1>KoFrMaBackup</h1>
+  <h1 (click)="test()">KoFrMaBackup</h1>
 </mat-toolbar>
 
 
 <p><button mat-button (click)="sidenav.toggle()">Toggle sidenav</button></p>
-<div class="main"></div>
 <mat-sidenav-container>
   <mat-sidenav #sidenav mode="push" disableClose position="start" opened>
       <mat-nav-list>
