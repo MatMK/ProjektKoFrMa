@@ -5,7 +5,7 @@ import { MainTask } from "./models/communication-models/task/main-task.model";
 
 export class Data
 {
-    public LoggedIn : boolean = false;
+    public LoggedIn : boolean = true;
     public ServerRootURL : string = 'http://localhost:49849/';
     public Loading : boolean = false;
     public adminInfo : AdminInfo = new AdminInfo();
