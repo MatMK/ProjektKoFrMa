@@ -312,12 +312,12 @@ namespace KoFrMaDaemon
 
         private void GetTasks()
         {
-            int[] ScheduledTasksIdArray = new int[ScheduledTasks.Count];
-            int i =0;
+            //int[] ScheduledTasksIdArray = new int[ScheduledTasks.Count];
+            //int i =0;
+            List<TaskVersion> currentTasks = new List<TaskVersion>(ScheduledTasks.Count);
             foreach (Task item in ScheduledTasks)
             {
-                ScheduledTasksIdArray[i] = item.IDTask;
-                i++;
+                currentTasks.Add(new TaskVersion{ TaskID = item.IDTask, TaskDataHash = item.GetHashCode()});
             }
 
             debugLog.WriteToLog("Searching for cached journals in folder "+ Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\", 6);
@@ -327,7 +327,7 @@ namespace KoFrMaDaemon
                 try
                 {
                     FileInfo[] JournalCacheListDir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\").GetFiles();
-                    for (int x = 0; x < JournalCacheListDir.Length; x++)
+                    for (int i = 0; i < JournalCacheListDir.Length; i++)
                     {
                         if (JournalCacheListDir[i].Name.EndsWith(".dat"))
                         {
@@ -357,9 +357,36 @@ namespace KoFrMaDaemon
             {
                 debugLog.WriteToLog("The cache jounal folder doesn't exist, returning empty list of cached journals", 3);
             }
-            
 
-            ScheduledTasks.AddRange(connection.PostRequest(ScheduledTasksIdArray,JournalCacheList));
+            try
+            {
+                List<Task> taskListReceived = connection.PostRequest(currentTasks, JournalCacheList, CompletedTasksYetToSend);
+                //přidat ověření než se smažou
+                CompletedTasksYetToSend.Clear();
+                List<Task> taskListToDelete = new List<Task>();
+                foreach (Task taskReceived in taskListReceived)
+                {
+                    foreach (Task taskLocal in ScheduledTasks)
+                    {
+                        if (taskLocal.IDTask == taskReceived.IDTask)
+                        {
+                            taskListToDelete.Add(taskLocal);
+                        }
+                    }
+                }
+                for (int y = 0; y < taskListToDelete.Count; y++)
+                {
+                    ScheduledTasks.Remove(taskListToDelete[y]);
+                }
+                ScheduledTasks.AddRange(taskListReceived);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
         }
 
         private string GetSerNumBIOS()

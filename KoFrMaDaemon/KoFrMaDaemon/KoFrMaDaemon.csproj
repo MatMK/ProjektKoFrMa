@@ -88,7 +88,8 @@
     <Compile Include="ConnectionToServer\DaemonSettings.cs" />
     <Compile Include="ConnectionToServer\Password.cs" />
     <Compile Include="ConnectionToServer\Request.cs" />
-    <Compile Include="DaemonSettings.cs" />
+    <Compile Include="ConnectionToServer\TaskVersion.cs" />
+    <Compile Include="SettingsLoad.cs" />
     <Compile Include="DebugLog.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

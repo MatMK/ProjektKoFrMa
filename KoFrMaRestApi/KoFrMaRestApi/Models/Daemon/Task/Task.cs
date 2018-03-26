@@ -10,7 +10,7 @@ namespace KoFrMaRestApi.Models.Daemon.Task
     /// <summary>
     /// Obsahuje instrukce pro Daemon
     /// </summary>
-    public class Tasks
+    public class Task
     {
         /// <summary>
         /// Jedinečné ID úlohy, bude na serveru spojené s databází a server může podle ID vynutit přerušení nebo smazání naplánované úlohy
@@ -35,11 +35,6 @@ namespace KoFrMaRestApi.Models.Daemon.Task
         /// Cíl zálohy, archiv nebo složka, může odkazovat na ftp server (ftp://...) nebo sdílené úložiště (//NASBackup/CilZalohy)
         /// </summary>
         public List<string> WhereToBackup { get; set; }
-
-        /// <summary>
-        /// Jak často se má daemon ptát serveru na úlohu
-        /// </summary>
-        public int TimerValue { get; set; }
 
         /// <summary>
         /// Jaké data chce server vrátit až se dokončí úloha, viz. třída DebugLog (LogOperations)
