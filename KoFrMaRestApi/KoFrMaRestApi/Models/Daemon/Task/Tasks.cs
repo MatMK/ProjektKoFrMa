@@ -32,6 +32,11 @@ namespace KoFrMaRestApi.Models.Daemon.Task
         public BackupJournalObject BackupJournalSource { get; set; }
 
         /// <summary>
+        /// Cíl zálohy, archiv nebo složka, může odkazovat na ftp server (ftp://...) nebo sdílené úložiště (//NASBackup/CilZalohy)
+        /// </summary>
+        public List<string> WhereToBackup { get; set; }
+
+        /// <summary>
         /// Jak často se má daemon ptát serveru na úlohu
         /// </summary>
         public int TimerValue { get; set; }
@@ -53,15 +58,30 @@ namespace KoFrMaRestApi.Models.Daemon.Task
         public byte LogLevel { get; set; }
 
         /// <summary>
-        /// Jakou úrovní komprese komprimovat zip, pokud se do něj komprimuje
+        /// Jakou úrovní komprese komprimovat archiv, pokud se do něj komprimuje
+        /// ZIP:
         /// 0 = Optimal
         /// 1 = Fastest
         /// 2 = No Compression
+        /// 7z:
+        /// 0 = No Compression
+        /// 1 = Fastest
+        /// 3 = Fast
+        /// 5 = Normal
+        /// 7 = Maximum (not quite true)
+        /// 9 = Ultra
+        /// Rar:
+        /// 0 = No Compression
+        /// 1 = Fastest
+        /// 2 = Fast
+        /// 3 = Normal
+        /// 4 = Good
+        /// 5 = Best
         /// </summary>
         public byte CompressionLevel { get; set; }
 
         /// <summary>
-        /// Obsahuje přihlašovací jméno a heslo, pokud je potřeba pro provedení tasku (FTP, SSH, Samba)
+        /// Obsahuje přihlašovací jméno a heslo, pokud je potřeba pro provedení tasku (FTP, SSH, Samba, SQL)
         /// </summary>
         public NetworkCredential NetworkCredentials { get; set; }
 
@@ -69,6 +89,14 @@ namespace KoFrMaRestApi.Models.Daemon.Task
         /// Určuje, jestli úloha právě probíhá aby timer nespustil stejnou úlohu několikrát
         /// </summary>
         public bool InProgress { get; set; }
-        public string WhereToBackup { get; internal set; }
+
+        public ScriptInfo ScriptBefore { get; set; }
+
+        public ScriptInfo ScriptAfter { get; set; }
+
+        /// <summary>
+        /// Velikost v MB jak velká může v jednu chvíli maximálně být dočasná složka na disku C pokud se zálohuje do archivu nebo na vzdálené úložiště.
+        /// </summary>
+        public int? TemporaryFolderMaxBuffer { get; set; }
     }
 }

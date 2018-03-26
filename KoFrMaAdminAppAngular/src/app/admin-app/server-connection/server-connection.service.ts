@@ -8,6 +8,8 @@ import { SqlData } from './models/sql-data/sql-data.model';
 import { tbAdminAccounts } from './models/sql-data/data/tb-admin-accounts.model';
 import { tbDaemons } from './models/sql-data/data/tb-daemons.model';
 import { tbTasks } from './models/sql-data/data/tb-tasks.model';
+import { MainTask } from './models/communication-models/task/main-task.model';
+import { SetTask } from './models/communication-models/task/set-task.model';
 
 @Injectable()
 
@@ -24,9 +26,6 @@ export class ServerConnectionService{
                         .then(res => res.json())
                         .catch(msg => console.log('Error: ' + msg.status + ' ' + msg.statusText))
    }
-//tables -  1 : tbAdmins
-//          2 : tbDaemons
-//          3 : tbTasks
    GettbAdminAccounts() : Promise<tbAdminAccounts[]>
    {
         let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, [], [1]);
@@ -57,6 +56,33 @@ export class ServerConnectionService{
                         .then(res => res.json())
                         .catch(msg => 
                             {
+                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                            })
+    }
+    ConvertToMainTask(tbTask : tbTasks[]) : MainTask[]
+    {
+        let mainTask : MainTask[] = [];
+        tbTask.forEach(item => {
+            let tmp = new MainTask();
+            tmp.Id = item.Id;
+            tmp.IdDaemon = item.IdDaemon;
+            tmp.TimeOfExecution = item.TimeOfExecution;
+            tmp.Completed = item.Completed;
+            tmp.Task = JSON.parse(item.Task)
+            tmp.RepeatInJSON = JSON.parse(item.RepeatInJSON);
+            mainTask.push(tmp);
+        });
+        return mainTask;
+    }
+    SetTask(setTask:SetTask[]) 
+    {
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,setTask, null);
+        let url = this.data.ServerRootURL + "api/AdminApp/GettbTasks";
+        this.http.post(url,postAdmin).toPromise()
+                        .then(res => this.data.Loading = false)
+                        .catch(msg => 
+                            {
+                                this.data.Loading = false;
                                 console.log('Error: ' + msg.status + ' ' + msg.statusText);
                             })
     }

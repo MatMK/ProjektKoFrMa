@@ -205,6 +205,7 @@
     <Compile Include="Models\Daemon\Task\BackupJournal\FileInfoObject.cs" />
     <Compile Include="Models\Daemon\Task\BackupJournal\FolderObject.cs" />
     <Compile Include="EmailSender\EmailSettings.cs" />
+    <Compile Include="Models\Daemon\Task\ScriptInfo.cs" />
     <Compile Include="Models\Daemon\Task\Tasks.cs" />
     <Compile Include="Models\Tables\ChangeTable.cs" />
     <Compile Include="Models\Tables\Table.cs" />

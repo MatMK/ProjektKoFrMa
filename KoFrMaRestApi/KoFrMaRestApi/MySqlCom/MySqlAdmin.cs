@@ -64,7 +64,6 @@ namespace KoFrMaRestApi.MySqlCom
                 connection.Open();
                 foreach (var item in tasks)
                 {
-
                     using (MySqlCommand command = new MySqlCommand("INSERT INTO `tbTasks` VALUES (null, @DaemonId, @Task, @DateOfCompletion, @Repeating,0)", connection))
                     {
                         Tasks task = null;
@@ -83,7 +82,11 @@ namespace KoFrMaRestApi.MySqlCom
                                     LogLevel = item.LogLevel,
                                     CompressionLevel = item.CompressionLevel,
                                     NetworkCredentials = item.NetworkCredentials,
-                                    InProgress = item.InProgress
+                                    ScriptBefore = item.ScriptBefore,
+                                    ScriptAfter = item.ScriptAfter,
+                                    TemporaryFolderMaxBuffer = item.TemporaryFolderMaxBuffer,
+                                    InProgress = false,
+                                    BackupJournalSource = null
                                 };
                             }
                         }

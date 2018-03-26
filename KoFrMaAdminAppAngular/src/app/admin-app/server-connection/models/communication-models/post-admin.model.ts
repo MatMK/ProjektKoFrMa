@@ -1,5 +1,5 @@
 import { AdminInfo } from './admin-info.model';
-import { SetTask } from './set-task.model';
+import { SetTask } from './task/set-task.model';
 export class PostAdmin
 {
     constructor(   

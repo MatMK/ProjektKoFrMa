@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {MatSidenavModule} from '@angular/material/sidenav';
-import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatNavList} from '@angular/material';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatListModule } from '@angular/material/list';
+import { ServerConnectionService } from '../../server-connection/server-connection.service';
 
 @Component({
   selector: 'app-main',
@@ -10,8 +11,8 @@ import {MatNavList} from '@angular/material';
 })
 export class MainComponent implements OnInit {
 
-  constructor() { }
-
+  current : string = "cus";
+  constructor(private service : ServerConnectionService) { }
   ngOnInit() {
   }
 
