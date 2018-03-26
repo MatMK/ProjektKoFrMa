@@ -77,7 +77,7 @@ export class ServerConnectionService{
     SetTask(setTask:SetTask[]) 
     {
         let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,setTask, null);
-        let url = this.data.ServerRootURL + "api/AdminApp/GettbTasks";
+        let url = this.data.ServerRootURL + "api/AdminApp/SetTask";
         this.http.post(url,postAdmin).toPromise()
                         .then(res => this.data.Loading = false)
                         .catch(msg => 
