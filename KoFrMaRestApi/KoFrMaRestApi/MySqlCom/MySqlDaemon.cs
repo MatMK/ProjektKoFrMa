@@ -78,9 +78,9 @@ namespace KoFrMaRestApi.MySqlCom
         /// <param name="DaemonId">ID daemona v databázy, lze použí GetDaemonId()</param>
         /// <param name="connection"></param>
         /// <returns>Vrací repeat.ExecutionTimes tasku pro daemona</returns>
-        public List<Tasks> GetTasks(string DaemonId, MySqlConnection connection)
+        public List<Task> GetTasks(string DaemonId, MySqlConnection connection)
         {
-            List<Tasks> result = new List<Tasks>();
+            List<Task> result = new List<Task>();
             MySqlCommand sqlCommand = new MySqlCommand(@"SELECT Task, TimeOfExecution, Id FROM `tbTasks` WHERE `IdDaemon` = @Id and `Completed` = 0", connection);
             sqlCommand.Parameters.AddWithValue("@Id", DaemonId);
             MySqlDataReader reader = sqlCommand.ExecuteReader();
@@ -89,7 +89,7 @@ namespace KoFrMaRestApi.MySqlCom
                 if (Convert.ToDateTime(reader["TimeOfExecution"]) <= DateTime.Now)
                 {
                     string json = (string)reader["Task"];
-                    result.Add(JsonConvert.DeserializeObject<Tasks>(json));
+                    result.Add(JsonConvert.DeserializeObject<Task>(json));
                     result.Last().IDTask = (int)reader["Id"];
                 }
             }
@@ -238,7 +238,7 @@ namespace KoFrMaRestApi.MySqlCom
                             throw new Exception();
                         }
                     }
-                    Tasks TaskClass = JsonConvert.DeserializeObject<Tasks>(Task);
+                    Task TaskClass = JsonConvert.DeserializeObject<Task>(Task);
                     TaskRemove(taskComplete.IDTask, connection);
                     command.CommandText = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '3b1_kocourekmatej_db2' AND TABLE_NAME = 'tbTasks'";
                     using (MySqlDataReader reader = command.ExecuteReader())
@@ -262,12 +262,12 @@ namespace KoFrMaRestApi.MySqlCom
         {
             using (MySqlCommand command = new MySqlCommand("SELECT `Task` FROM `tbTasks` WHERE `Id` = @IdTask", connection))
             {
-                Tasks task = null;
+                Task task = null;
                 command.Parameters.AddWithValue("@IdTask", IdTask);
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
                     if (reader.Read())
-                        task = JsonConvert.DeserializeObject<Tasks>((string)reader["Task"]);
+                        task = JsonConvert.DeserializeObject<Task>((string)reader["Task"]);
                     reader.Close();
                 }
                 task.BackupJournalSource = backupJournal;

@@ -66,19 +66,18 @@ namespace KoFrMaRestApi.MySqlCom
                 {
                     using (MySqlCommand command = new MySqlCommand("INSERT INTO `tbTasks` VALUES (null, @DaemonId, @Task, @DateOfCompletion, @Repeating,0)", connection))
                     {
-                        Tasks task = null;
+                        Task task = null;
                         using (MySqlCommand TaskId = new MySqlCommand("SELECT `auto_increment` FROM INFORMATION_SCHEMA.TABLES WHERE table_name = 'tbTasks'", connection))
                         using (MySqlDataReader reader = TaskId.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                task = new Tasks()
+                                task = new Task()
                                 {
                                     IDTask = Convert.ToInt32(reader["auto_increment"]),
                                     TimeToBackup = item.TimeToBackup,
                                     SourceOfBackup = item.SourceOfBackup,
                                     WhereToBackup = item.WhereToBackup,
-                                    TimerValue = item.TimerValue,
                                     LogLevel = item.LogLevel,
                                     CompressionLevel = item.CompressionLevel,
                                     NetworkCredentials = item.NetworkCredentials,

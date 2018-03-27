@@ -28,7 +28,7 @@ namespace KoFrMaRestApi.Controllers
         /// <param name="daemon"></param>
         /// <returns>Obsahuje informace o deamonu zasílajicim informaci.</returns>
         [HttpPost, Route(@"api/Daemon/GetInstructions")]
-        public List<Tasks> GetInstructions(Request request)
+        public List<Task> GetInstructions(Request request)
         {
             if (token.Authorized(request.daemon))
             {
@@ -39,14 +39,14 @@ namespace KoFrMaRestApi.Controllers
                     string DaemonId = mySqlCom.GetDaemonId(request.daemon, connection);
                     mySqlCom.DaemonSeen(DaemonId, connection);
                     // Vybere task určený pro daemona.
-                    List<Tasks> tasks = mySqlCom.GetTasks(DaemonId, connection);
+                    List<Task> tasks = mySqlCom.GetTasks(DaemonId, connection);
                     List<int> ToRemove = new List<int>();
                     List<int> BackupJournalNotNeeded = new List<int>();
                     for (int i = 0; i < tasks.Count - 1; i++)
                     {
-                        foreach (var item in request.IdTasks)
+                        foreach (var item in request.TasksVersions)
                         {
-                            if (tasks[i].IDTask == item)
+                            if ((tasks[i].IDTask == item.TaskID)&&(tasks[i].GetHashCode()==item.TaskDataHash))
                             {
                                 ToRemove.Add(i);
                             }
