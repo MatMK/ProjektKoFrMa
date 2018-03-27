@@ -37,7 +37,7 @@ export class ServerConnectionService{
                                 console.log('Error: ' + msg.status + ' ' + msg.statusText);
                             })
     }
-    GetGettbDaemons() : Promise<tbDaemons[]>
+    GettbDaemons() : Promise<tbDaemons[]>
    {
         let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, [], [2]);
         let url = this.data.ServerRootURL + "api/AdminApp/GettbDaemons";

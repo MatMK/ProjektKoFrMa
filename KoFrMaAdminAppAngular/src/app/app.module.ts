@@ -19,16 +19,13 @@ import { DaemonInfoComponent } from './admin-app/settings/more-info/daemon-info/
 const routes : Routes = [
   {path: '', redirectTo:'login', pathMatch:'full'},
   {path: 'login', component: LoginComponent},
-  {path:':token', children: [
     {path: 'app', component: MainComponent, children: [
-      {path:'', redirectTo:'admin-accounts', pathMatch:'full'},
+      {path:'', redirectTo:'tasks', pathMatch:'full'},
       {path: 'admin-accounts', component: AdminAccountsComponent},
       {path: 'tasks', component: DaemonsComponent},
       {path: 'daemons', component: TasksComponent}
     ]},
-    {path: 'daemoninfo/:daemonid', component: DaemonInfoComponent}
-  ]},
-  {path: '', component: LoginComponent}
+  {path: 'daemoninfo/:daemonid', component: DaemonInfoComponent}
 ]
 
 @NgModule({

@@ -19,7 +19,7 @@ export class DaemonsComponent implements OnInit {
   displayedColumns = ['Id', 'Version', 'OS', 'PC_Unique', 'Allowed', 'LastSeen'];
   
   refresh() {
-    this.service.GetGettbDaemons().then(res => {this.data.Daemons = res;
+    this.service.GettbDaemons().then(res => {this.data.Daemons = res;
     console.log(res)});
   }
   ngOnInit() {

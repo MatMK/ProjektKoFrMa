@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit {
         this.data.adminInfo.Token = res;
         this.data.adminInfo.UserName = this.name;
         this.data.LoggedIn = true;
-        this.router.navigate([btoa(res),'app']);
+        this.router.navigate(['app']);
       }
       else
       {
