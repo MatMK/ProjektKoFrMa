@@ -7,7 +7,7 @@
         <mat-radio-button value="Backup">Differencial</mat-radio-button>
       </mat-radio-group><br>
       <input type="text" id="inputSource" placeholder="C:\Users" [(ngModel)]="sourcepath"><br>
-      <input type="datetime-local" id="inputDateExecution"><br>
+      <input type="datetime-local" id="inputDateExecution"><input type="date" placeholder="2018-03-18T18:00:00" id="inputDatetime" [(ngModel)]="DatetimeExe"><br>
       <input type="text" placeholder="C:\KoFrMaBackup\Backups" id="inputDestination" [(ngModel)]="destinationpath">
       <input type="submit" value="Save" id="inputSaveTask" [(ngModel)]="save">
     </main>
