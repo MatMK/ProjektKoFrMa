@@ -15,11 +15,8 @@ import { MatSidenavModule, MatToolbarModule, MatListModule, MatTableModule } fro
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes, Router, CanActivate } from '@angular/router';
 import { DaemonInfoComponent } from './admin-app/settings/more-info/daemon-info/daemon-info.component';
-<<<<<<< HEAD
 import { AuthGuard } from './admin-app/server-connection/auth.service';
-=======
 import {MatRadioModule} from '@angular/material/radio';
->>>>>>> ce2b2e3d393a7b52ec06b9ca0b1920692bb4f426
 
 const routes : Routes = [
   {path: '', redirectTo:'login', pathMatch:'full'},
@@ -28,9 +25,9 @@ const routes : Routes = [
     {path:'', redirectTo:'tasks', pathMatch:'full'},
     {path: 'admin-accounts', component: AdminAccountsComponent},
     {path: 'tasks', component: TasksComponent},
-    {path: 'daemons', component: DaemonsComponent}
-    ]},
-  {path: 'daemoninfo/:daemonid', component: DaemonInfoComponent}
+    {path: 'daemons', component: DaemonsComponent},
+    {path: 'daemoninfo/:daemonid', component: DaemonInfoComponent}
+    ]}
 ]
 
 @NgModule({
