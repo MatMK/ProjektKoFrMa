@@ -5,6 +5,7 @@ import { tbDaemons } from '../../../server-connection/models/sql-data/data/tb-da
 import { Data } from '../../../server-connection/data.model';
 import { DataSource } from '@angular/cdk/table';
 import { MatTableModule } from '@angular/material/table';
+import { RouterLink } from '@angular/router'
 
 @Component({
   selector: 'app-daemons',

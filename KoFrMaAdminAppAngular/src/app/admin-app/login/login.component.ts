@@ -4,7 +4,7 @@ import { ServerConnectionService } from '../server-connection/server-connection.
 import { AppComponent } from '../../app.component';
 import { Data } from '../server-connection/data.model';
 import { FormsModule } from '@angular/forms';
-import {Router} from "@angular/router";
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-login',

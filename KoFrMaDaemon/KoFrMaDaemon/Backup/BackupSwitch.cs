@@ -431,8 +431,8 @@ namespace KoFrMaDaemon.Backup
             journalObject.BackupJournalFiles = FileList;
             journalObject.BackupJournalFolders = FolderList;
             return journalObject;
-
         }
+
         private void ExploreDirectoryRecursively(DirectoryInfo path, List<FileInfoObject> FileList, List<FolderObject> FolderList)
         {
             foreach (FileInfo item in path.GetFiles())

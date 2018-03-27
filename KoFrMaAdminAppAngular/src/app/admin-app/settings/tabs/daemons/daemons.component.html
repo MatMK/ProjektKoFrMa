@@ -44,7 +44,7 @@
     <!-- More Info Column -->
     <ng-container matColumnDef="MoreInfo">
       <mat-header-cell *matHeaderCellDef> More Info </mat-header-cell>
-      <mat-cell *matCellDef="let element"> <a href="/daemoninfo/{{element.Id}}">More Info</a> </mat-cell>
+      <mat-cell *matCellDef="let element"> <a routerLink="/app/daemoninfo/{{element.Id}}">More Info</a> </mat-cell>
     </ng-container>
 
 

@@ -8,6 +8,7 @@ using System.IO;
 using System.Net;
 using Newtonsoft.Json;
 using KoFrMaDaemon.Backup;
+using System.Security.Cryptography;
 
 namespace KoFrMaDaemon.ConnectionToServer
 {
@@ -31,6 +32,8 @@ namespace KoFrMaDaemon.ConnectionToServer
                 
                 string json = JsonConvert.SerializeObject(request);
                 string jsonBase64 = this.EncodeBase64(System.Text.Encoding.UTF8, json);
+                //string jsonBase64Cipher;
+
                 streamWriter.Write(jsonBase64);
                 streamWriter.Flush();
                 streamWriter.Close();
@@ -87,7 +90,6 @@ namespace KoFrMaDaemon.ConnectionToServer
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
                 string json = JsonConvert.SerializeObject(Password.Instance);
-
                 streamWriter.Write(json);
                 streamWriter.Flush();
                 streamWriter.Close();
@@ -124,6 +126,12 @@ namespace KoFrMaDaemon.ConnectionToServer
 
             byte[] textAsBytes = System.Convert.FromBase64String(encodedText);
             return encoding.GetString(textAsBytes);
+        }
+        private string CipherString(string source, string key)
+        {
+            string tmp="";
+            //Aes.Create();
+            return tmp;
         }
 
     }
