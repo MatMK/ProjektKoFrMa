@@ -2,7 +2,6 @@
 <div class="table-task">
   <mat-table #table [dataSource]="data.Tasks">
 
-
     <!-- Id Column -->
     <ng-container matColumnDef="Id">
       <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
@@ -21,17 +20,23 @@
       <mat-cell *matCellDef="let element"> {{element.Task}} </mat-cell>
     </ng-container>
 
-    <!-- Enabled Column -->
-    <ng-container matColumnDef="Enabled">
-      <mat-header-cell *matHeaderCellDef> Enabled </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.Enabled}} </mat-cell>
+    <!-- TimeOfExecution Column -->
+    <ng-container matColumnDef="TimeOfExecution">
+      <mat-header-cell *matHeaderCellDef> TimeOfExecution </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.TimeOfExecution}} </mat-cell>
     </ng-container>
 
-    <!-- Permission Column -->
-    <ng-container matColumnDef="Permission">
-      <mat-header-cell *matHeaderCellDef> Permission </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.Permission}} </mat-cell>
+    <!-- RepeatInJSON Column -->
+    <ng-container matColumnDef="RepeatInJSON">
+      <mat-header-cell *matHeaderCellDef> RepeatInJSON </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.RepeatInJSON}} </mat-cell>
     </ng-container>
+
+      <!-- Completed Column -->
+      <ng-container matColumnDef="Completed">
+        <mat-header-cell *matHeaderCellDef> Completed </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.Completed}} </mat-cell>
+      </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>

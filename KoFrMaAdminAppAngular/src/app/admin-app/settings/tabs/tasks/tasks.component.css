@@ -1,0 +1,14 @@
+.table-task {
+    display: flex;
+    flex-direction: column;
+    max-height: 500px;
+    min-width: 300px;
+    background-color: rgb(255, 217, 0);
+  }
+  
+  
+  .mat-table {
+    overflow: auto;
+    max-height: 500px;
+  }
+  
