@@ -421,43 +421,103 @@ namespace KoFrMaDaemon
 
         private void RunScriptFromDisk(string path)
         {
-            debugLog.WriteToLog("Starting " + path,7);
-            ProcessStartInfo processInfo;
-            Process process;
-
-            processInfo = new ProcessStartInfo(path);
-            processInfo.CreateNoWindow = true;
-            processInfo.UseShellExecute = false;
-
-            process = Process.Start(processInfo);
-            process.PriorityClass = ProcessPriorityClass.BelowNormal;
-            process.WaitForExit();
-        }
-
-        private void RunScriptFromString(string script, string scriptFormat)
-        {
-            if (scriptFormat=="bat"|| scriptFormat == "cmd")
+            if (path.EndsWith(".bat")|| path.EndsWith(".cmd"))
             {
-                debugLog.WriteToLog("Starting the script as follows: cmd.exe /c " + script, 7);
+                debugLog.WriteToLog("Starting command line script located in " + path, 7);
                 ProcessStartInfo processInfo;
                 Process process;
 
-                processInfo = new ProcessStartInfo("cmd.exe", "/c " + script);
-                //processInfo.CreateNoWindow = true;
-                //processInfo.UseShellExecute = false;
+                processInfo = new ProcessStartInfo(path);
+                processInfo.CreateNoWindow = true;
+                processInfo.UseShellExecute = false;
 
                 process = Process.Start(processInfo);
                 process.PriorityClass = ProcessPriorityClass.BelowNormal;
                 process.WaitForExit();
             }
-            else if(scriptFormat == "ps1")
+            else if (path.EndsWith(".ps1"))
             {
+                debugLog.WriteToLog("Starting the powershell script as follows: powershell.exe -file " + path + "- nologo", 6);
+                ProcessStartInfo processInfo;
+                Process process;
 
+                processInfo = new ProcessStartInfo("powershell.exe", "-file " + path + " - nologo");
+                processInfo.CreateNoWindow = true;
+
+                process = Process.Start(processInfo);
+                process.PriorityClass = ProcessPriorityClass.BelowNormal;
+                process.WaitForExit();
             }
-            else if (scriptFormat == "vbs")
+            else if (path.EndsWith(".vbs"))
             {
+                debugLog.WriteToLog("Starting the VBScript as follows: cscript.exe" + @"//B //Nologo" + path, 6);
+                ProcessStartInfo processInfo;
+                Process process;
 
+                processInfo = new ProcessStartInfo("cscript.exe", @"//B //Nologo" + path);
+                processInfo.CreateNoWindow = true;
+
+                process = Process.Start(processInfo);
+                process.PriorityClass = ProcessPriorityClass.BelowNormal;
+                process.WaitForExit();
             }
+            else
+            {
+                debugLog.WriteToLog("Unknown file should be run as script, not my problem, trying to start it anyway."+path, 6);
+                ProcessStartInfo processInfo;
+                Process process;
+
+                processInfo = new ProcessStartInfo(path);
+                processInfo.CreateNoWindow = true;
+
+                process = Process.Start(processInfo);
+                process.PriorityClass = ProcessPriorityClass.BelowNormal;
+                process.WaitForExit();
+            }
+
+        }
+
+        private void RunScriptFromString(string script, string scriptFormat)
+        {
+            if (scriptFormat==null)
+            {
+                if (scriptFormat == "bat" || scriptFormat == "cmd")
+                {
+                    debugLog.WriteToLog("Starting the script as follows: cmd.exe /c " + script, 6);
+                    ProcessStartInfo processInfo;
+                    Process process;
+
+                    processInfo = new ProcessStartInfo("cmd.exe", "/c " + script);
+                    processInfo.CreateNoWindow = true;
+
+                    process = Process.Start(processInfo);
+                    process.PriorityClass = ProcessPriorityClass.BelowNormal;
+                    process.WaitForExit();
+                }
+                else if (scriptFormat == "ps1")
+                {
+                    debugLog.WriteToLog("Starting the script as follows: powershell.exe -command " + script + " -nologo", 6);
+                    ProcessStartInfo processInfo;
+                    Process process;
+
+                    processInfo = new ProcessStartInfo("powershell.exe", "-command " + script + " - nologo");
+                    processInfo.CreateNoWindow = true;
+                    //processInfo.UseShellExecute = false;
+
+                    process = Process.Start(processInfo);
+                    process.PriorityClass = ProcessPriorityClass.BelowNormal;
+                    process.WaitForExit();
+                }
+                else
+                {
+                    debugLog.WriteToLog("Unsupported script format: "+scriptFormat, 3);
+                }
+            }
+            else
+            {
+                debugLog.WriteToLog("Script format not set, script must be skipped.", 3);
+            }
+            
         }
 
     }
