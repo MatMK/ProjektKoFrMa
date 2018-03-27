@@ -37,13 +37,7 @@ export class LoginComponent implements OnInit {
       {
         this.data.LoggedIn = false;
       }
-      this.test();
     })
-  }
-  test()
-  {
-    this.serverConnectionService.GettbTasks().then(res=> 
-      console.log(this.serverConnectionService.ConvertToMainTask(res)));
   }
   ngOnInit() {
   }

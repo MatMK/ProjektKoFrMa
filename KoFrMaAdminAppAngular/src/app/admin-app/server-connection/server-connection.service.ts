@@ -88,6 +88,16 @@ export class ServerConnectionService{
     }
     HashString(toHash : string)
     {
-        
+        //unfinished
+    }
+    IsAuthorized() : Promise<boolean>
+    {
+        let url = this.data.ServerRootURL + "api/AdminApp/Authorized";
+        return this.http.post(url,this.data.adminInfo).toPromise()
+            .then(res => res.json())
+            .catch(msg => 
+                {
+                    console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                })
     }
 }

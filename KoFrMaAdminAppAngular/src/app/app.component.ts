@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Data } from './admin-app/server-connection/data.model';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

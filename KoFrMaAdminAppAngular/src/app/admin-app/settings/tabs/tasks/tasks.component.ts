@@ -16,7 +16,7 @@ export class TasksComponent implements OnInit {
   constructor(private service: ServerConnectionService, private data: Data) {
     this.refresh();
   }
-  displayedColumns = ['Id', 'IdDaemon', 'Task', 'TimeOfExecution', 'RepeatInJSON', 'Completed'];
+  displayedColumns = ['Id', 'IdDaemon', 'TimeOfExecution', 'Completed'];
   
   refresh() {
     this.service.GettbTasks().then(res => this.data.Tasks = this.service.ConvertToMainTask(res));
