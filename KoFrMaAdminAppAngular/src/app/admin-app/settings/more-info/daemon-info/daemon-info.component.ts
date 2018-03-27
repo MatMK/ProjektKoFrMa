@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
+import {MatRadioModule} from '@angular/material/radio';
 
 @Component({
   selector: 'app-daemon-info',

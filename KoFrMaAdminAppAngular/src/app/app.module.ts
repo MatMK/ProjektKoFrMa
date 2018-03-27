@@ -15,6 +15,7 @@ import { MatSidenavModule, MatToolbarModule, MatListModule, MatTableModule } fro
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes, Router } from '@angular/router';
 import { DaemonInfoComponent } from './admin-app/settings/more-info/daemon-info/daemon-info.component';
+import {MatRadioModule} from '@angular/material/radio';
 
 const routes : Routes = [
   {path: '', redirectTo:'login', pathMatch:'full'},
@@ -47,6 +48,7 @@ const routes : Routes = [
     MatListModule,
     MatTableModule,
     RouterModule.forRoot(routes, {useHash: false}),
+    MatRadioModule,
     BrowserAnimationsModule
   ],
   providers: [ServerConnectionService, Data],
