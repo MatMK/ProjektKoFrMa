@@ -1,8 +1,6 @@
 <mat-toolbar>
-  <h1 (click)="test()">KoFrMaBackup</h1>
+  <h1></h1>
 </mat-toolbar>
-
-
 <p><button mat-button (click)="sidenav.toggle()">Toggle sidenav</button></p>
 <mat-sidenav-container>
   <mat-sidenav #sidenav mode="push" disableClose position="start" opened>
@@ -13,6 +11,6 @@
         </mat-nav-list>
     </mat-sidenav>
   <mat-sidenav-content>
-      <router-outlet></router-outlet>>
+      <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

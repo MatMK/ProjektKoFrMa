@@ -13,10 +13,10 @@ import { TasksComponent } from './admin-app/settings/tabs/tasks/tasks.component'
 import { AdminAccountsComponent } from './admin-app/settings/tabs/admin-accounts/admin-accounts.component';
 import { MatSidenavModule, MatToolbarModule, MatListModule, MatTableModule } from '@angular/material'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterModule, Routes, Router, CanActivate } from '@angular/router';
+import { RouterModule, Routes, Router, CanActivate,RouterLink } from '@angular/router';
 import { DaemonInfoComponent } from './admin-app/settings/more-info/daemon-info/daemon-info.component';
 import { AuthGuard } from './admin-app/server-connection/auth.service';
-import {MatRadioModule} from '@angular/material/radio';
+import { MatRadioModule, MatRadioButton } from '@angular/material/radio';
 
 const routes : Routes = [
   {path: '', redirectTo:'login', pathMatch:'full'},
@@ -54,6 +54,7 @@ const routes : Routes = [
       ),
     RouterModule.forRoot(routes, {useHash: false}),
     MatRadioModule,
+    MatRadioButton,
     BrowserAnimationsModule
     
   ],
