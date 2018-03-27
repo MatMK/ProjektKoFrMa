@@ -16,19 +16,11 @@ export class TasksComponent implements OnInit {
   constructor(private service: ServerConnectionService, private data: Data) {
     this.refresh();
   }
-  displayedColumns = ['Id', 'IDaemon', 'Task', 'TimeOfExecution', 'RepeatInJSON', 'Completed'];
+  displayedColumns = ['Id', 'IdDaemon', 'Task', 'TimeOfExecution', 'RepeatInJSON', 'Completed'];
   
   refresh() {
-    this.service.GettbTasks().then(res => this.data.Tasks = res);
+    this.service.GettbTasks().then(res => this.data.Tasks = this.service.ConvertToMainTask(res));
   }
   ngOnInit() {
   }
-}
-export interface TaskTable {
-   Id: number;
-   IdDaemon: number;
-   Task: string;
-   TimeOfExecution: Date;
-   RepeatInJSON: string;
-  Completed: boolean;
 }

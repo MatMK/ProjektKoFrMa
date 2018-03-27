@@ -13,7 +13,23 @@ import { TasksComponent } from './admin-app/settings/tabs/tasks/tasks.component'
 import { AdminAccountsComponent } from './admin-app/settings/tabs/admin-accounts/admin-accounts.component';
 import { MatSidenavModule, MatToolbarModule, MatListModule, MatTableModule } from '@angular/material'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterModule, Routes, Router } from '@angular/router';
+import { DaemonInfoComponent } from './admin-app/settings/more-info/daemon-info/daemon-info.component';
 
+const routes : Routes = [
+  {path: '', redirectTo:'login', pathMatch:'full'},
+  {path: 'login', component: LoginComponent},
+  {path:':token', children: [
+    {path: 'app', component: MainComponent, children: [
+      {path:'', redirectTo:'admin-accounts', pathMatch:'full'},
+      {path: 'admin-accounts', component: AdminAccountsComponent},
+      {path: 'tasks', component: DaemonsComponent},
+      {path: 'daemons', component: TasksComponent}
+    ]},
+    {path: 'daemoninfo/:daemonid', component: DaemonInfoComponent}
+  ]},
+  {path: '', component: LoginComponent}
+]
 
 @NgModule({
   declarations: [
@@ -23,6 +39,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     DaemonsComponent,
     TasksComponent,
     AdminAccountsComponent,
+    DaemonInfoComponent,
   ],
   imports: [
     BrowserModule,
@@ -32,6 +49,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatToolbarModule,
     MatListModule,
     MatTableModule,
+    RouterModule.forRoot(routes, {useHash: false}),
     BrowserAnimationsModule
   ],
   providers: [ServerConnectionService, Data],
