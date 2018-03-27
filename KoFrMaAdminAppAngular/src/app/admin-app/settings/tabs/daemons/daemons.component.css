@@ -1,3 +1,10 @@
+body{
+  background-image: url("./bg.png");
+  background-repeat: repeat;
+  background-color: lightgreen;
+  height: 850px;
+}
+
 .table-daemon {
   display: flex;
   flex-direction: column;
