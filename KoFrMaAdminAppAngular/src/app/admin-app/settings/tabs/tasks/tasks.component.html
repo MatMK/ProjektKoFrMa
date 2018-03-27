@@ -1,3 +1,40 @@
-<p>
-  tasks works!
-</p>
+
+<div class="table-task">
+  <mat-table #table [dataSource]="data.AdminAccounts">
+
+
+    <!-- Id Column -->
+    <ng-container matColumnDef="Id">
+      <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
+    </ng-container>
+
+    <!-- IdDaemon Column -->
+    <ng-container matColumnDef="IdDaemon">
+      <mat-header-cell *matHeaderCellDef> IdDaemon </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.IdDaemon}} </mat-cell>
+    </ng-container>
+
+    <!-- Task Column -->
+    <ng-container matColumnDef="Task">
+      <mat-header-cell *matHeaderCellDef> Task </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.Task}} </mat-cell>
+    </ng-container>
+
+    <!-- Enabled Column -->
+    <ng-container matColumnDef="Enabled">
+      <mat-header-cell *matHeaderCellDef> Enabled </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.Enabled}} </mat-cell>
+    </ng-container>
+
+    <!-- Permission Column -->
+    <ng-container matColumnDef="Permission">
+      <mat-header-cell *matHeaderCellDef> Permission </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.Permission}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+</div>
+

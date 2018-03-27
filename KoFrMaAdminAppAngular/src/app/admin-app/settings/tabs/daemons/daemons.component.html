@@ -1,3 +1,46 @@
-<p>
-  daemons works!
-</p>
+
+<div class="table-daemon">
+  <mat-table #table [dataSource]="data.Daemons">
+
+
+    <!-- Id Column -->
+    <ng-container matColumnDef="Id">
+      <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
+    </ng-container>
+
+    <!-- Version Column -->
+    <ng-container matColumnDef="Version">
+      <mat-header-cell *matHeaderCellDef> Version </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.Version}} </mat-cell>
+    </ng-container>
+
+    <!-- OS Column -->
+    <ng-container matColumnDef="OS">
+      <mat-header-cell *matHeaderCellDef> OS </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.OS}} </mat-cell>
+    </ng-container>
+
+    <!-- PC_Unique Column -->
+    <ng-container matColumnDef="PC_Unique">
+      <mat-header-cell *matHeaderCellDef> PC_Unique </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.PC_Unique}} </mat-cell>
+    </ng-container>
+
+    <!-- Allowed Column -->
+    <ng-container matColumnDef="Allowed">
+      <mat-header-cell *matHeaderCellDef> Allowed </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.Allowed}} </mat-cell>
+    </ng-container>
+
+    <!-- LastSeen Column -->
+    <ng-container matColumnDef="LastSeen">
+      <mat-header-cell *matHeaderCellDef> LastSeen </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.LastSeen}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+</div>
+
