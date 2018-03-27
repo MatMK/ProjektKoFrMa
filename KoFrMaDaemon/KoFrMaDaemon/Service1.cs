@@ -90,7 +90,7 @@ namespace KoFrMaDaemon
                 debugLog.WriteToLog("Service started", 4);
                 debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique motherboard ID is " +daemon.PC_Unique, 7);
 
-                timerConnection.Start();
+                //timerConnection.Start();
 
                 this.CheatTasks();
 
@@ -135,6 +135,7 @@ namespace KoFrMaDaemon
                 TimeToBackup = timeToBackup.AddSeconds(1)
                 //ScriptBefore = new ScriptInfo { ScriptItself = @"ping 127.0.0.1 > d:\tmp.txt",ScriptItselfFormat = "bat"},
                 //ScriptAfter = new ScriptInfo { ScriptItself = @"ping 127.0.0.1 > d:\tmp.txt", ScriptItselfFormat = "bat" }
+                //ScriptAfter = new ScriptInfo { PathToLocalScript = @"c:\Windows\media\Windows Notify.wav" }
 
             });
 
@@ -171,12 +172,12 @@ namespace KoFrMaDaemon
                                 debugLog.WriteToLog("Task locked, starting the backup...", 6);
                                 if (item.ScriptBefore!=null)
                                 {
-                                    if (!(item.ScriptBefore.PathToLocalScript==null|| item.ScriptBefore.PathToLocalScript == ""))
+                                    if (item.ScriptBefore.PathToLocalScript!=null|| item.ScriptBefore.PathToLocalScript != "")
                                     {
                                         debugLog.WriteToLog("Runnig script from disk...", 6);
                                         this.RunScriptFromDisk(item.ScriptBefore.PathToLocalScript);
                                     }
-                                    else if (!(item.ScriptBefore.ScriptItself==null|| item.ScriptBefore.ScriptItself == ""))
+                                    else if (item.ScriptBefore.ScriptItself!=null|| item.ScriptBefore.ScriptItself != "")
                                     {
                                         debugLog.WriteToLog("Runnig script included with the task...", 6);
                                         this.RunScriptFromString(item.ScriptBefore.ScriptItself,item.ScriptBefore.ScriptItselfFormat);
@@ -197,12 +198,12 @@ namespace KoFrMaDaemon
                             {
                                 if (item.ScriptAfter != null)
                                 {
-                                    if (!(item.ScriptBefore.PathToLocalScript == null || item.ScriptBefore.PathToLocalScript == ""))
+                                    if (item.ScriptAfter.PathToLocalScript != null && item.ScriptAfter.PathToLocalScript != "")
                                     {
                                         debugLog.WriteToLog("Runnig script from disk...", 6);
                                         this.RunScriptFromDisk(item.ScriptAfter.PathToLocalScript);
                                     }
-                                    else if (!(item.ScriptBefore.ScriptItself == null || item.ScriptBefore.ScriptItself == ""))
+                                    else if (item.ScriptAfter.ScriptItself != null && item.ScriptAfter.ScriptItself != "")
                                     {
                                         debugLog.WriteToLog("Runnig script included with task...", 6);
                                         this.RunScriptFromString(item.ScriptAfter.ScriptItself, item.ScriptAfter.ScriptItselfFormat);
