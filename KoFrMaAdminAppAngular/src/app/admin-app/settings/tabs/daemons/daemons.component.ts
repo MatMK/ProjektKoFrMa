@@ -5,6 +5,7 @@ import { tbDaemons } from '../../../server-connection/models/sql-data/data/tb-da
 import { Data } from '../../../server-connection/data.model';
 import { DataSource } from '@angular/cdk/table';
 import { MatTableModule } from '@angular/material/table';
+import { RouterLink } from '@angular/router'
 
 @Component({
   selector: 'app-daemons',
@@ -16,11 +17,10 @@ export class DaemonsComponent implements OnInit {
   constructor(private service: ServerConnectionService, private data: Data) {
     this.refresh();
   }
-  displayedColumns = ['Id', 'Version', 'OS', 'PC_Unique', 'Allowed', 'LastSeen'];
+  displayedColumns = ['Id', 'Version', 'OS', 'PC_Unique', 'Allowed', 'LastSeen', 'MoreInfo'];
   
   refresh() {
-    this.service.GettbDaemons().then(res => {this.data.Daemons = res;
-    console.log(res)});
+    this.service.GettbDaemons().then(res => this.data.Daemons = res);
   }
   ngOnInit() {
   }

@@ -14,23 +14,13 @@
       <mat-cell *matCellDef="let element"> {{element.IdDaemon}} </mat-cell>
     </ng-container>
 
-    <!-- Task Column -->
-    <ng-container matColumnDef="Task">
-      <mat-header-cell *matHeaderCellDef> Task </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.Task}} </mat-cell>
-    </ng-container>
 
     <!-- TimeOfExecution Column -->
     <ng-container matColumnDef="TimeOfExecution">
       <mat-header-cell *matHeaderCellDef> TimeOfExecution </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.TimeOfExecution}} </mat-cell>
     </ng-container>
-
-    <!-- RepeatInJSON Column -->
-    <ng-container matColumnDef="RepeatInJSON">
-      <mat-header-cell *matHeaderCellDef> RepeatInJSON </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.RepeatInJSON}} </mat-cell>
-    </ng-container>
+    
 
       <!-- Completed Column -->
       <ng-container matColumnDef="Completed">
@@ -38,6 +28,7 @@
         <mat-cell *matCellDef="let element"> {{element.Completed}} </mat-cell>
       </ng-container>
 
+      
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
   </mat-table>

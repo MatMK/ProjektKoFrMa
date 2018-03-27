@@ -1,3 +1,17 @@
-<p>
-  daemon-info works!
-</p>
+<body>
+  <content>
+    <main>
+      <mat-radio-group id="radioBackup">
+        <mat-radio-button value="full" [(ng-model)]="backup">Full</mat-radio-button>
+        <mat-radio-button value="incremental" [(ng-model)]="backup">Incremental</mat-radio-button>
+        <mat-radio-button value="differencial" [(ng-model)]="backup">Differencial</mat-radio-button>
+      </mat-radio-group><br>
+      <input type="text" id="inputSource" placeholder="C:\Users" [(ngModel)]="sourcepath"><br>
+      <input type="datetime-local" id="inputDateExecution"><input type="date" placeholder="2018-03-18T18:00:00" id="inputDatetime" [(ngModel)]="DatetimeExe"><br>
+      <input type="text" placeholder="C:\KoFrMaBackup\Backups" id="inputDestination" [(ngModel)]="destinationpath">
+      <input type="submit" value="Save" id="inputSaveTask" [(ngModel)]="save">
+    </main>
+  </content>
+</body>
+
+<p (click)="test()">click me</p>

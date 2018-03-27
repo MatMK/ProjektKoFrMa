@@ -1,5 +1,7 @@
+import { AppComponent } from './../../../../app.component';
 import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
+import { MatRadioModule } from '@angular/material/radio';
 
 @Component({
   selector: 'app-daemon-info',
@@ -8,6 +10,9 @@ import {ActivatedRoute} from "@angular/router";
 })
 export class DaemonInfoComponent implements OnInit {
 
+  private sourcepath : string;
+  private destinationpath : string;
+  private backup : string;
   constructor(private activeRoute:ActivatedRoute) {
     this.activeRoute.params.subscribe(params => {
       this.daemonId = params.daemonid;
@@ -17,7 +22,12 @@ export class DaemonInfoComponent implements OnInit {
     });
    }
   private daemonId : number;
-
+  test()
+  {
+    console.log(this.backup);
+    console.log(this.sourcepath);
+    console.log(this.destinationpath);
+  }
   ngOnInit() {
   }
 

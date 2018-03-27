@@ -4,6 +4,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { ServerConnectionService } from '../../server-connection/server-connection.service';
 import { Router } from '@angular/router';
+import { Data } from '../../server-connection/data.model';
 
 @Component({
   selector: 'app-main',
@@ -27,5 +28,4 @@ export class MainComponent implements OnInit {
   }
   ngOnInit() {
   }
-
 }
