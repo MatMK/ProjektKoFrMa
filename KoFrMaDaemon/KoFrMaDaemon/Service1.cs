@@ -38,7 +38,7 @@ namespace KoFrMaDaemon
         /// Dokončené úlohy se přidávají do tohoto listu, při připojení se odešlou na server
         /// </summary>
         private List<TaskComplete> CompletedTasksYetToSend;
-
+        List<int> JournalCacheList;
         public ServiceKoFrMa()
         {
             InitializeComponent();
@@ -81,6 +81,7 @@ namespace KoFrMaDaemon
             ConnectionInfo.ServerURL = daemonSettings.ServerIP;
             password.daemon = daemon;
 
+            JournalCacheList = new List<int>();
         }
 
         protected override void OnStart(string[] args)
@@ -184,7 +185,39 @@ namespace KoFrMaDaemon
                                     }
                                 }
                                 debugLog.WriteToLog("Destination of the backup is " + item.WhereToBackup[0], 8);
-                                backupInstance.Backup(item.SourceOfBackup, item.BackupJournalSource, item.WhereToBackup, item.CompressionLevel,item.NetworkCredentials, item.IDTask,item.TemporaryFolderMaxBuffer, debugLog);
+
+                                BackupJournalObject backupJournalSource = new BackupJournalObject();
+                                if (item.BackupJournalSource != null)
+                                {
+                                    backupJournalSource = item.BackupJournalSource;
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        int sourceJournalId;
+                                        sourceJournalId = Convert.ToInt32(item.SourceOfBackup);
+                                        for (int i = 0; i < JournalCacheList.Count; i++)
+                                        {
+                                            if (sourceJournalId == JournalCacheList[i])
+                                            {
+                                                BackupJournalOperations o = new BackupJournalOperations();
+                                                backupJournalSource = o.LoadBackupJournalObject(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\" + item.SourceOfBackup, debugLog);
+                                            }
+                                            else
+                                            {
+                                                debugLog.WriteToLog("Task journal is not in cache, server needs to send one. Process fail is inevitable.", 2);
+                                            }
+                                        }
+                                        
+                                    }
+                                    catch (Exception)
+                                    {
+
+                                    }
+                                }
+
+                                backupInstance.Backup(item.SourceOfBackup, backupJournalSource, item.WhereToBackup, item.CompressionLevel,item.NetworkCredentials, item.IDTask,item.TemporaryFolderMaxBuffer, debugLog);
                                 debugLog.WriteToLog("Task completed, setting task as successfully completed...", 6);
                                 successfull = true;
                                 //connection.TaskCompleted(item, backupInstance.BackupJournalNew, debugLog, true);
@@ -322,7 +355,7 @@ namespace KoFrMaDaemon
             }
 
             debugLog.WriteToLog("Searching for cached journals in folder "+ Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\", 6);
-            List<int> JournalCacheList = new List<int>();
+
             if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\"))
             {
                 try
