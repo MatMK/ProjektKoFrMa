@@ -190,6 +190,7 @@ namespace KoFrMaDaemon
                                 if (item.BackupJournalSource != null)
                                 {
                                     backupJournalSource = item.BackupJournalSource;
+                                    debugLog.WriteToLog("Task from the server contains backup journal, using it as journal for incemental/differencial backup.", 7);
                                 }
                                 else
                                 {
@@ -203,17 +204,18 @@ namespace KoFrMaDaemon
                                             {
                                                 BackupJournalOperations o = new BackupJournalOperations();
                                                 backupJournalSource = o.LoadBackupJournalObject(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\" + item.SourceOfBackup, debugLog);
+                                                debugLog.WriteToLog("Task journal was loaded from local cache and will be used for incremental/differencial backup.", 7);
                                             }
                                             else
                                             {
-                                                debugLog.WriteToLog("Task journal is not in cache, server needs to send one. Process fail is inevitable.", 2);
+                                                debugLog.WriteToLog("Task journal should be differencial/incremental but is not in cache, server needs to send one. Process fail is inevitable.", 2);
                                             }
                                         }
                                         
                                     }
                                     catch (Exception)
                                     {
-
+                                        debugLog.WriteToLog("Task from the server doesn't contain backup journal, using the path entered for full backup.", 7);
                                     }
                                 }
 
