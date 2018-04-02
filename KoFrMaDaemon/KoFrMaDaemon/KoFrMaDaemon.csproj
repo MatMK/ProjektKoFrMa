@@ -89,6 +89,7 @@
     <Compile Include="ConnectionToServer\Password.cs" />
     <Compile Include="ConnectionToServer\Request.cs" />
     <Compile Include="ConnectionToServer\TaskVersion.cs" />
+    <Compile Include="RSACiphering.cs" />
     <Compile Include="SettingsLoad.cs" />
     <Compile Include="DebugLog.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
