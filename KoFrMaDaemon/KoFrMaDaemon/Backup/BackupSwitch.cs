@@ -179,8 +179,10 @@ namespace KoFrMaDaemon.Backup
 
         public void BackupDifferentialProcess(BackupJournalObject backupJournalSource, string destination, int TaskID, int? bufferSize, DebugLog serviceDebugLog)
         {
-            FilesCorrect = new List<FileInfoObject>(100);
-            FoldersCorrect = new List<FolderObject>(100);
+            FilesCorrect = backupJournalSource.BackupJournalFiles;
+            FoldersCorrect = backupJournalSource.BackupJournalFolders;
+            List<string> FilesToDelete = backupJournalSource.BackupJournalFilesDelete;
+            List<string> FoldersToDelete = backupJournalSource.BackupJournalFoldersDelete;
             FilesErrorLoad = new List<CopyErrorObject>(100);
             FilesErrorCopy = new List<CopyErrorObject>(100);
             FoldersErrorLoad = new List<CopyErrorObject>(100);
@@ -241,9 +243,8 @@ namespace KoFrMaDaemon.Backup
             DebugLog.WriteToLog("Comparing list of current files to original source of the backup...", 5);
 
             List<string> FilesToCopy = new List<string>(CurrentFiles.Count / 4);
-            List<string> FilesToDelete = new List<string>(CurrentFiles.Count / 4);
             List<string> FoldersToCreate = new List<string>(CurrentFolders.Count / 8);
-            List<string> FoldersToDelete = new List<string>(CurrentFolders.Count / 8);
+
 
             bool sameObject;
 
@@ -315,10 +316,10 @@ namespace KoFrMaDaemon.Backup
             {
                 if (!itemOriginal.Paired)
                 {
-                    FilesToDelete.Add(source + itemOriginal.RelativePath);
+                    FilesToDelete.Add(itemOriginal.RelativePath);
                 }
             }
-            DebugLog.WriteToLog("There is " + FilesToDelete.Count + " files that needs to be deleted since the original backup.", 5);
+            DebugLog.WriteToLog("There is " + (FilesToDelete.Count-backupJournalSource.BackupJournalFilesDelete.Count) + " files that needs to be deleted since the original backup.", 5);
 
 
 
@@ -385,11 +386,11 @@ namespace KoFrMaDaemon.Backup
             {
                 if (!itemOriginal.Paired)
                 {
-                    FoldersToDelete.Add(source + itemOriginal.RelativePath);
+                    FoldersToDelete.Add(itemOriginal.RelativePath);
                     //in FoldersToDelete při obnově mazat POUZE prázdné!!
                 }
             }
-            DebugLog.WriteToLog("There is " + FoldersToDelete.Count + " folders that needs to be deleted since the original backup.", 5);
+            DebugLog.WriteToLog("There is " + (FoldersToDelete.Count - backupJournalSource.BackupJournalFoldersDelete.Count) + " folders that needs to be deleted since the original backup.", 5);
 
 
 
@@ -406,7 +407,9 @@ namespace KoFrMaDaemon.Backup
             {
                 RelativePath = source,
                 BackupJournalFiles = FilesCorrect,
-                BackupJournalFolders = FoldersCorrect
+                BackupJournalFolders = FoldersCorrect,
+                BackupJournalFilesDelete = FilesToDelete,
+                BackupJournalFoldersDelete = FoldersToDelete
             };
             BackupJournal.CreateBackupJournal(BackupJournalNew, destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", TaskID, DebugLog);
             DebugLog.WriteToLog("Transaction log successfully created in destination " + destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", 5);
