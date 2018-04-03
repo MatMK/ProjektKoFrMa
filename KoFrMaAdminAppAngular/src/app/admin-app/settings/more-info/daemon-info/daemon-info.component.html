@@ -1,15 +1,17 @@
 <body>
-  <content>
-    <main>
-      <mat-radio-group id="radioBackup">
-        <mat-radio-button value="full">Full</mat-radio-button>
-        <mat-radio-button value="incremental">Incremental</mat-radio-button>
-        <mat-radio-button value="differencial">Differencial</mat-radio-button>
-      </mat-radio-group><br>
-      <input type="text" id="inputSource" placeholder="C:\Users" [(ngModel)]="sourcepath"><br>
-      <input type="datetime-local" id="inputDateExecution" [value] = "_date" (change) = "onDateChange($event.target.value)" ><br>
-      <input type="text" placeholder="C:\KoFrMaBackup\Backups" id="inputDestination" [(ngModel)]="destinationpath">
-      <input type="submit" value="Save" id="inputSaveTask" (click)="AddTask()">
-    </main>
-  </content>
+  <div text-align:center>
+    <content>
+      <main>
+        <mat-radio-group id="radioBackup">
+          <mat-radio-button value="full">Full</mat-radio-button>
+          <mat-radio-button value="incremental">Incremental</mat-radio-button>
+          <mat-radio-button value="differencial">Differencial</mat-radio-button>
+        </mat-radio-group><br>
+        <input type="text" id="inputSource" placeholder="C:\Users" [(ngModel)]="sourcepath"><br>
+        <input type="datetime-local" id="inputDateExecution" [value] = "_date" (change) = "onDateChange($event.target.value)" ><br>
+        <input type="text" placeholder="C:\KoFrMaBackup\Backups" id="inputDestination" [(ngModel)]="destinationpath">
+        <input type="submit" value="Save" id="inputSaveTask" (click)="AddTask()">
+      </main>
+    </content>
+  </div>
 </body>

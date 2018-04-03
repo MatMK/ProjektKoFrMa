@@ -6,10 +6,11 @@ import { MainTask } from "./models/communication-models/task/main-task.model";
 export class Data
 {
     public LoggedIn : boolean = false;
-    public ServerRootURL : string = 'http://localhost:49849/';
+    public ServerRootURL : string;
     public Loading : boolean = false;
     public adminInfo : AdminInfo = new AdminInfo();
     public AdminAccounts : tbAdminAccounts[];
     public Daemons : tbDaemons[];
     public Tasks : MainTask[];
+    public ErrorMessage : string;
 }

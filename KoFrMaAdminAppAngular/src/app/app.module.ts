@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, Component } from '@angular/core';
 import { HttpModule} from '@angular/http';
 import { FormsModule } from '@angular/forms';
 
@@ -16,7 +16,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes, Router, CanActivate,RouterLink } from '@angular/router';
 import { DaemonInfoComponent } from './admin-app/settings/more-info/daemon-info/daemon-info.component';
 import { AuthGuard } from './admin-app/server-connection/auth.service';
+import { PermissionGuard } from './admin-app/server-connection/perm.service';
 import { MatRadioModule, MatRadioButton } from '@angular/material/radio';
+import { NotFoundComponent } from './admin-app/not-found/not-found.component';
+import { AddAdminComponent } from './admin-app/settings/tabs/add-admin/add-admin.component';
 
 const routes : Routes = [
   {path: '', redirectTo:'login', pathMatch:'full'},
@@ -26,8 +29,10 @@ const routes : Routes = [
     {path: 'admin-accounts', component: AdminAccountsComponent},
     {path: 'tasks', component: TasksComponent},
     {path: 'daemons', component: DaemonsComponent},
+    {path: 'add-admin', component: AddAdminComponent, canActivate:[PermissionGuard], data: {roles: [1]}},
     {path: 'daemoninfo/:daemonid', component: DaemonInfoComponent}
-    ]}
+    ]},
+  {path: ':unknown', component: NotFoundComponent}
 ]
 
 @NgModule({
@@ -39,6 +44,8 @@ const routes : Routes = [
     TasksComponent,
     AdminAccountsComponent,
     DaemonInfoComponent,
+    NotFoundComponent,
+    AddAdminComponent
   ],
   imports: [
     BrowserModule,
@@ -48,16 +55,16 @@ const routes : Routes = [
     MatToolbarModule,
     MatListModule,
     MatTableModule,
+    MatRadioModule,
     RouterModule.forRoot(
         routes,
        {useHash: false},
       ),
     RouterModule.forRoot(routes, {useHash: false}),
-    MatRadioModule,
     BrowserAnimationsModule
     
   ],
-  providers: [ServerConnectionService, Data, AuthGuard],
+  providers: [ServerConnectionService, Data, AuthGuard, PermissionGuard ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
