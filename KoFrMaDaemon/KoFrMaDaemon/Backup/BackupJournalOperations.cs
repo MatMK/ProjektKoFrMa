@@ -32,11 +32,14 @@ namespace KoFrMaDaemon.Backup
                 {
                     tmpList.Add(fileBackupJournalHash[i].RelativePath + '|' + fileBackupJournalHash[i].Length.ToString() + '|' + fileBackupJournalHash[i].CreationTimeUtc.ToBinary().ToString() + '|' + fileBackupJournalHash[i].LastWriteTimeUtc.ToBinary().ToString() + '|' + fileBackupJournalHash[i].Attributes + '|' + fileBackupJournalHash[i].MD5 + '|' + fileBackupJournalHash[i].HashRow.ToString());
                 }
-                debugLog.WriteToLog("Writing list of deleted files to backup journal...", 7);
                 tmpList.Add("?");
-                for (int i = 0; i < backupJournalObject.BackupJournalFilesDelete.Count; i++)
+                if (backupJournalObject.BackupJournalFilesDelete !=null)
                 {
-                    tmpList.Add(backupJournalObject.BackupJournalFilesDelete[i]);
+                    debugLog.WriteToLog("Writing list of deleted files to backup journal...", 7);
+                    for (int i = 0; i < backupJournalObject.BackupJournalFilesDelete.Count; i++)
+                    {
+                        tmpList.Add(backupJournalObject.BackupJournalFilesDelete[i]);
+                    }
                 }
 
                 debugLog.WriteToLog("Writing list of folders to backup journal...", 7);
@@ -46,12 +49,16 @@ namespace KoFrMaDaemon.Backup
                 {
                     tmpList.Add(folderBackupJournalHash[i].RelativePath + '|' + folderBackupJournalHash[i].CreationTimeUtc.ToBinary().ToString() + '|' + folderBackupJournalHash[i].LastWriteTimeUtc.ToBinary().ToString() + '|' + folderBackupJournalHash[i].Attributes.ToString() + '|' + folderBackupJournalHash[i].HashRow.ToString());
                 }
-                debugLog.WriteToLog("Writing list of deleted folders to backup journal...", 7);
                 tmpList.Add("?");
-                for (int i = 0; i < backupJournalObject.BackupJournalFoldersDelete.Count; i++)
+                if (backupJournalObject.BackupJournalFoldersDelete != null)
                 {
-                    tmpList.Add(backupJournalObject.BackupJournalFoldersDelete[i]);
+                    debugLog.WriteToLog("Writing list of deleted folders to backup journal...", 7);
+                    for (int i = 0; i < backupJournalObject.BackupJournalFoldersDelete.Count; i++)
+                    {
+                        tmpList.Add(backupJournalObject.BackupJournalFoldersDelete[i]);
+                    }
                 }
+
 
 
 
@@ -90,7 +97,7 @@ namespace KoFrMaDaemon.Backup
                 debugLog.WriteToLog("Loading list of files from backup journal...", 7);
                 List<FileInfoObject> tmpListFiles = new List<FileInfoObject>(100);
                 string[] tmp;
-                while (!r.EndOfStream||r.Peek() != '?')
+                while (!r.EndOfStream&&r.Peek() != '?')
                 {
                     tmp = r.ReadLine().Split('|');
                     if (tmp.Length == 7)
@@ -111,7 +118,7 @@ namespace KoFrMaDaemon.Backup
 
                 debugLog.WriteToLog("Loading list of deleted files from backup journal...", 7);
                 List<string> tmpListDeletedFiles = new List<string>(100);
-                while (!r.EndOfStream||r.Peek() != ':')
+                while (!r.EndOfStream&&r.Peek() != ':')
                 {
                     tmpListDeletedFiles.Add(r.ReadLine());
                 }
@@ -120,7 +127,7 @@ namespace KoFrMaDaemon.Backup
                 debugLog.WriteToLog("Loading list of folders from backup journal...", 7);
                 List<FolderObject> tmpListFolders = new List<FolderObject>(100);
                 r.ReadLine();
-                while (!r.EndOfStream|| r.Peek() != '?')
+                while (!r.EndOfStream&& r.Peek() != '?')
                 {
                     tmp = r.ReadLine().Split('|');
                     if (tmp.Length == 5)

@@ -91,9 +91,17 @@ namespace KoFrMaDaemon
                 debugLog.WriteToLog("Service started", 4);
                 debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique motherboard ID is " +daemon.PC_Unique, 7);
 
-                //timerConnection.Start();
+                if (daemonSettings.ServerIP==""||daemonSettings.ServerIP==null)
+                {
+                    debugLog.WriteToLog("Server IP not entered in config file. Run local configurator to set it to your server, than restart this service or computer.", 1);
+                }
+                else
+                {
+                    timerConnection.Start();
+                }
 
-                this.CheatTasks();
+
+                //this.CheatTasks();
 
                 //try
                 //{
@@ -124,8 +132,8 @@ namespace KoFrMaDaemon
         {
             BackupJournalOperations cheatBackupJournalOperations = new BackupJournalOperations();
             DateTime timeToBackup = DateTime.Now;
-
-            ScheduledTasks.Add(new Task {
+            Task taskTest = new Task
+            {
                 SourceOfBackup = @"D:\KoFrMa\BackupThisFolder\",
                 //BackupJournalSource = cheatBackupJournalOperations.LoadBackupJournalObject(@"d:\KoFrMa\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", debugLog),
                 IDTask = 1,
@@ -137,8 +145,9 @@ namespace KoFrMaDaemon
                 //ScriptBefore = new ScriptInfo { ScriptItself = @"ping 127.0.0.1 > d:\tmp.txt",ScriptItselfFormat = "bat"},
                 //ScriptAfter = new ScriptInfo { ScriptItself = @"ping 127.0.0.1 > d:\tmp.txt", ScriptItselfFormat = "bat" }
                 //ScriptAfter = new ScriptInfo { PathToLocalScript = @"c:\Windows\media\Windows Notify.wav" }
-
-            });
+            };
+            debugLog.WriteJsonTaskToLog(taskTest);
+            ScheduledTasks.Add(taskTest);
 
             debugLog.WriteToLog("List of scheduled tasks now contains " + this.ScheduledTasks.Count + " tasks", 6);
             if (this.ScheduledTasks.Count > 0)
@@ -186,7 +195,7 @@ namespace KoFrMaDaemon
                                 }
                                 debugLog.WriteToLog("Destination of the backup is " + item.WhereToBackup[0], 8);
 
-                                BackupJournalObject backupJournalSource = new BackupJournalObject();
+                                BackupJournalObject backupJournalSource = null;
                                 if (item.BackupJournalSource != null)
                                 {
                                     backupJournalSource = item.BackupJournalSource;

@@ -19,7 +19,7 @@ namespace KoFrMaDaemon.ConnectionToServer
             ServiceKoFrMa.debugLog.WriteToLog("Creating request to server...", 7);
             Request request = new Request() {TasksVersions=currentTasks,BackupJournalNotNeeded = journalNotNeeded,CompletedTasks = completedTasks};
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(ConnectionInfo.ServerURL + @"/api/Daemon/GetInstructions");
-            httpWebRequest.ContentType = "application/base64";
+            httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
 
             ///Timeout aby se aplikace nesekla když se nepřipojí, potom předělat na nastevní hodnoty ze serveru
@@ -31,10 +31,8 @@ namespace KoFrMaDaemon.ConnectionToServer
             {
                 
                 string json = JsonConvert.SerializeObject(request);
-                string jsonBase64 = this.EncodeBase64(System.Text.Encoding.UTF8, json);
-                //string jsonBase64Cipher;
 
-                streamWriter.Write(jsonBase64);
+                streamWriter.Write(json);
                 streamWriter.Flush();
                 streamWriter.Close();
             }
@@ -42,13 +40,12 @@ namespace KoFrMaDaemon.ConnectionToServer
             var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
             ServiceKoFrMa.debugLog.WriteToLog("Server returned code " + httpResponse.StatusCode + " which means " + httpResponse.StatusDescription, 5);
             string result;
-            string resultBase64;
             using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
             {
-                resultBase64 = streamReader.ReadToEnd();
+                result = streamReader.ReadToEnd();
             }
             ServiceKoFrMa.debugLog.WriteToLog("Performing deserialization of data that were received from the server...", 7);
-            result = this.DecodeBase64(System.Text.Encoding.UTF8, resultBase64);
+            //result = this.DecodeBase64(System.Text.Encoding.UTF8, resultBase64);
             return JsonConvert.DeserializeObject<List<Task>>(result);
         }
         //public void TaskCompleted(Task task, BackupJournalObject backupJournalNew, DebugLog debugLog, bool Successfull)
