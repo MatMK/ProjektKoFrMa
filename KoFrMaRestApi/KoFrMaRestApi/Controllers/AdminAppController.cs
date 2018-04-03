@@ -26,8 +26,12 @@ namespace KoFrMaRestApi.Controllers
         [HttpPost, Route(@"api/AdminApp/Permitted")]
         public bool Permitted(AdminInfo adminInfo)
         {
-            int[] i = { 1, 3 };
-            return mySqlCom.HasPermission(1,i);
+            int? AdminId = mySqlCom.GetAdminId(adminInfo.UserName);
+            if (AdminId == null)
+            {
+                return false;
+            }
+            return mySqlCom.HasPermission((int)AdminId,adminInfo.Permission);
         }
         [HttpPost, Route(@"api/AdminApp/Authorized")]
         public bool Authorized(AdminInfo adminInfo)

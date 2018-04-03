@@ -1,12 +1,7 @@
 <!DOCTYPE html>
 <head>
     <script src="BUcheck.js"></script>
-    
 </head>
-<body>
-  <content>
-    <main>
-      
       <div id="backupType">
        Full <input type="radio" name="buChoice">  Incremental <input type="radio" name="buChoice">  Differencial <input type="radio" name="buChoice">
        <br>
@@ -18,11 +13,9 @@
         Username: <input type='text' id='distUser' name='dUser'[(ngModel)]="ncUsername" ><br>
         Password: <input type='text' id='distPass' name='dPass'[(ngModel)]="ncPassword">
     </div>
+    <div>
       <input type="text" id="inputSource" placeholder="C:\Users" [(ngModel)]="sourcepath"><br>
       <input type="datetime-local" id="inputDateExecution" [value] = "_date" (change) = "onDateChange($event.target.value)" ><br>
       <input type="text" placeholder="C:\KoFrMaBackup\Backups" id="inputDestination" [(ngModel)]="destinationpath">
       <input type="submit" value="Save" id="inputSaveTask" (click)="AddTask()">
-    
-    </main>
-  </content>
-</body>
+    </div>
