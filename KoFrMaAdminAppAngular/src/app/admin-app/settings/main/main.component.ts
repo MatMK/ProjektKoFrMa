@@ -26,6 +26,10 @@ export class MainComponent implements OnInit {
   {
     this.router.navigate(['app','tasks']);
   }
+  directToAddAdmin()
+  {
+    this.router.navigate(['app', 'add-admin'])
+  }
   ngOnInit() {
   }
 }

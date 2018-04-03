@@ -23,6 +23,16 @@ namespace KoFrMaRestApi.Controllers
         {
             return mySqlCom.RegisterToken(adminLogin);
         }
+        [HttpPost, Route(@"api/AdminApp/Permitted")]
+        public bool Permitted(AdminInfo adminInfo)
+        {
+            int? AdminId = mySqlCom.GetAdminId(adminInfo.UserName);
+            if (AdminId == null)
+            {
+                return false;
+            }
+            return mySqlCom.HasPermission((int)AdminId,adminInfo.Permission);
+        }
         [HttpPost, Route(@"api/AdminApp/Authorized")]
         public bool Authorized(AdminInfo adminInfo)
         {

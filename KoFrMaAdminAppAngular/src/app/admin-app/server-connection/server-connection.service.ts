@@ -100,4 +100,16 @@ export class ServerConnectionService{
                     console.log('Error: ' + msg.status + ' ' + msg.statusText);
                 })
     }
+    HasPermission(perm : number[]) : Promise<boolean>
+    {
+        let url = this.data.ServerRootURL + "api/AdminApp/Permitted";
+        let temp : AdminInfo = this.data.adminInfo;
+        temp.Permission = perm;
+        return this.http.post(url,temp).toPromise()
+            .then(res => res.json())
+            .catch(msg => 
+                {
+                    console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                })
+    }
 }

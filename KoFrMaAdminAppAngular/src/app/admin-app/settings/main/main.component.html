@@ -7,10 +7,13 @@
       <mat-nav-list>
         <p (click)="directToDaemons()">Daemons</p>
         <p (click)="directToTasks()">Tasks</p>
-        <p (click)="directToAdminAccounts()">AdminAccounts</p>
+        <p (click)="directToAdminAccounts()">Admin accounts</p>
+        <p (click)="directToAddAdmin()">Add Admin</p>
         </mat-nav-list>
     </mat-sidenav>
   <mat-sidenav-content>
+    <div>
       <router-outlet></router-outlet>
+    </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

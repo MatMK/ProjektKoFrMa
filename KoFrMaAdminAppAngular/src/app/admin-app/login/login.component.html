@@ -7,6 +7,8 @@
     <main>
         <div id="loginDiv">
             <form id="loginForm">
+                <input type="text" placeholder="Server Url" name="ServerURL" id="serverUrl" [(ngModel)]="rootURL"/>
+                <br />
                 <input type="text" placeholder="Username" name="Username" id="loginUsername" [(ngModel)]="name"/>
                 <br />
                 <input type="password" placeholder="Password" name="Password" id="loginPassword" [(ngModel)]="password"/>

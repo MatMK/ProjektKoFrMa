@@ -40,6 +40,7 @@ export class DaemonInfoComponent implements OnInit {
     t.WhereToBackup = [this.destinationpath];
     t.ExecutionTimes = new TaskRepeating();
     t.ExecutionTimes.ExecutionTimes = [this.date];
+    t.TimeToBackup = this.date;
     this.service.SetTask([t]);
     this.router.navigate(['app','tasks']);
   }
