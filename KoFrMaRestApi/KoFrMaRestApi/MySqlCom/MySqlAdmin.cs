@@ -52,7 +52,59 @@ namespace KoFrMaRestApi.MySqlCom
             return result;
 
         }
+        public bool HasPermission(int daemonId, int[] reqPermission)
+        {
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand(@"SELECT `Permission` FROM `tbPermissions` WHERE `IdAdmin` = @IdAdmin", connection))
+            {
+                connection.Open();
+                command.Parameters.AddWithValue("@IdAdmin", daemonId);
+                int count = 0;
+                foreach (int item in reqPermission)
+                {
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            if ((int)reader["Permission"] == item)
+                            {
+                                count++;
+                            }
+                        }
+                    }
+                }
+                if (reqPermission.Length == count)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+        public int? GetAdminId(string username)
+        {
+            int? result = null;
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand(@"SELECT `Id` FROM `tbAdminAccounts` WHERE `Username` = @username", connection))
+            {
+                connection.Open();
+                command.Parameters.AddWithValue("@username", username);
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    int count = 0;
+                    while (reader.Read())
+                    {
+                        count++;
+                        result = (int)reader["Id"];
+                    }
+                    if (count < 1)
+                    {
+                        throw new Exception("Multiple admin accounts with the same username");
+                    }
+                    return result;
+                }
+            }
 
+        }
         /// <summary>
         /// Uploads task to mySql database
         /// </summary>
