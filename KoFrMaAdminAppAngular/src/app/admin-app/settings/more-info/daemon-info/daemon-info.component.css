@@ -2,7 +2,8 @@ body{
     background-image: url("./bg.png");
     background-repeat: repeat;
     background-color: lightgreen;
-    height: 800px;
+    height: 1000px;
+    width: device-width;
 }
 #radioBackup
 {
@@ -20,4 +21,24 @@ background-color: aliceblue;
 
 #inputDatetimeExe{
     background-color: aliceblue; 
+}
+main{
+    height: 220px;
+    width: 302px;
+    background-color: white;
+    padding: 40px;
+    border: 1px solid #d3d3d3;
+    border-radius: 5px;
+    margin: 0 auto;
+    margin-bottom:10px;
+   box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
+}
+#backupType{
+    background-color: aliceblue;
+}
+#inputDateExecution{
+    background-color: aliceblue;
+}
+#destinationSelect{
+    background-color: aliceblue;
 }
