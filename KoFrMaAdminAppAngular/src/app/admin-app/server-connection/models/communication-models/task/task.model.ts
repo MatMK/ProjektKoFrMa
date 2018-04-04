@@ -1,4 +1,4 @@
-import { BackupJournalObject } from './backup-journal/backup-journal-object.model';
+import { BackupJournalObject } from './journal-backup/backup-journal-object.model';
 import { NetworkCredential } from './network-credential.model'
 import { ScriptInfo } from './script-info.model';
 

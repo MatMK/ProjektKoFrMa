@@ -21,7 +21,7 @@ export class DaemonInfoComponent implements OnInit {
 
 
   constructor(private activeRoute:ActivatedRoute, private service : ServerConnectionService, private router : Router) {
-    this.activeRoute.params.subscribe(params => {
+      this.activeRoute.params.subscribe(params => {
       this.daemonId = params.daemonid;
       //check if it is a number
       if (!(this.daemonId >= 0 || this.daemonId<0))
@@ -49,7 +49,9 @@ export class DaemonInfoComponent implements OnInit {
     this.date = value;
   }
 
+
   ngOnInit() {
+    this.date = new Date(2018,1,1,0,0)
   }
 
 }
