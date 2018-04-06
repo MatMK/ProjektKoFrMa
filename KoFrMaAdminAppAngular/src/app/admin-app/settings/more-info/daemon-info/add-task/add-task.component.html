@@ -1,0 +1,23 @@
+<body>
+        <div id="celek">
+          Daemon Id: <input type="text" id="daemonId" [(ngModel)]="daemonId" placeholder="Daemon Id" (change)="checkIfNumberValid()">
+              <div id="backupType">
+              Full <input type="radio" name="buChoice">  Incremental <input type="radio" name="buChoice">  Differencial <input type="radio" name="buChoice"><br>
+              </div>
+             
+              <div id="destinationSelect">
+            FTP/SFTP <input type="radio" onclick="javascript:BUcheck()" name="type" id="distant"> Local <input type="radio" onclick="javascript:BUcheck()" name="type" id="local">
+              </div>
+              <br>
+              <div id="ifServer" style="visibility:visible">
+              Username:<input type='text' id='distUser' name='dUser'[(ngModel)]="ncUsername" ><br>
+              Password:<input type='text' id='distPass' name='dPass'[(ngModel)]="ncPassword">
+             </div>
+          
+            <input type="text" id="inputSource" placeholder="C:\Users" [(ngModel)]="sourcepath"><br>
+            <input type="datetime-local" id="inputDateExecution" [value] = "_date" (change) = "onDateChange($event.target.value)" ><br>
+            <input type="text" placeholder="C:\KoFrMaBackup\Backups" id="inputDestination" [(ngModel)]="destinationpath">
+            <input type="submit" value="Save" id="inputSaveTask" (click)="AddTask()">
+       </div>
+      </body>
+        

@@ -12,46 +12,28 @@ import { ServerConnectionService } from '../../../server-connection/server-conne
   styleUrls: ['./daemon-info.component.css']
 })
 export class DaemonInfoComponent implements OnInit {
-
-  private daemonId : number;
-  private sourcepath : string;
-  private destinationpath : string;
-  private backuptype : string;
-  private date : Date;
-
-
-  constructor(private activeRoute:ActivatedRoute, private service : ServerConnectionService, private router : Router) {
-      this.activeRoute.params.subscribe(params => {
+  daemonId : number
+  constructor(private activeRoute:ActivatedRoute, private service : ServerConnectionService, private router : Router)
+  {
+    this.activeRoute.params.subscribe(params => {
       this.daemonId = params.daemonid;
-      //check if it is a number
-      if (!(this.daemonId >= 0 || this.daemonId<0))
-      {
-        this.daemonId = undefined;
-        alert("Error, unsupported daemon type!")
-      }
-
-    });
+      this.checkIfNumberValid();
+    })
+  }
+  checkIfNumberValid()
+   {
+    if (!(this.daemonId >= 0 || this.daemonId<0))
+    {
+      this.daemonId = undefined;
+      alert("Error, unsupported daemon type!")
+    this.router.navigate(['backup', 'app','daemons']);
+    }
    }
-  AddTask()
+  addTask()
   {
-    let t : SetTask = new SetTask()
-    t.DaemonId = this.daemonId;
-    t.SourceOfBackup = this.sourcepath;
-    t.WhereToBackup = [this.destinationpath];
-    t.ExecutionTimes = new TaskRepeating();
-    t.ExecutionTimes.ExecutionTimes = [this.date];
-    t.TimeToBackup = this.date;
-    this.service.SetTask([t]);
-    this.router.navigate(['app','tasks']);
+    this.router.navigate(['backup','add-task', this.daemonId]);
   }
-  private onDateChange(value : Date)
-  {
-    this.date = value;
-  }
-
-
   ngOnInit() {
-    this.date = new Date(2018,1,1,0,0)
   }
 
 }

@@ -23,6 +23,7 @@
     "@angular/platform-browser": "^5.2.9",
     "@angular/platform-browser-dynamic": "^5.2.0",
     "@angular/router": "^5.2.0",
+    "angular-local-storage": "^0.7.1",
     "angular-material": "^1.1.8",
     "core-js": "^2.4.1",
     "rxjs": "^5.5.6",

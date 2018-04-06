@@ -26,16 +26,14 @@ export class LoginComponent implements OnInit {
     this.data.Loading = true;
     this.serverConnectionService.Login(btoa(this.password), this.name).then(res => {
       this.data.Loading = false;
-      if (res != undefined)
+      if (res != undefined && res != null)
       {
         this.data.adminInfo.Token = res;
         this.data.adminInfo.UserName = this.name;
-        this.data.LoggedIn = true;
-        this.router.navigate(['app']);
-      }
-      else
-      {
-        this.data.LoggedIn = false;
+        localStorage.clear();
+        localStorage.setItem('adminInfo', JSON.stringify(this.data.adminInfo));
+        localStorage.setItem('url', this.data.ServerRootURL);
+        this.router.navigate(['backup', 'app']);
       }
     })
   }

@@ -2,7 +2,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, Component } from '@angular/core';
 import { HttpModule} from '@angular/http';
 import { FormsModule } from '@angular/forms';
-
 import { AppComponent } from './app.component';
 import { ServerConnectionService } from './admin-app/server-connection/server-connection.service';
 import { LoginComponent } from './admin-app/login/login.component';
@@ -19,19 +18,22 @@ import { AuthGuard } from './admin-app/server-connection/auth.service';
 import { PermissionGuard } from './admin-app/server-connection/perm.service';
 import { MatRadioModule, MatRadioButton } from '@angular/material/radio';
 import { NotFoundComponent } from './admin-app/not-found/not-found.component';
-import { AddAdminComponent } from './admin-app/settings/tabs/add-admin/add-admin.component';
+import { ToolbarComponent } from './admin-app/settings/toolbar/toolbar.component';
+import { AddTaskComponent } from './admin-app/settings/more-info/daemon-info/add-task/add-task.component';
 
 const routes : Routes = [
   {path: '', redirectTo:'login', pathMatch:'full'},
   {path: 'login', component: LoginComponent},
-  {path: 'app', component: MainComponent,canActivate:[AuthGuard], children: [
-    {path:'', redirectTo:'tasks', pathMatch:'full'},
-    {path: 'admin-accounts', component: AdminAccountsComponent},
-    {path: 'tasks', component: TasksComponent},
-    {path: 'daemons', component: DaemonsComponent},
-    {path: 'add-admin', component: AddAdminComponent, canActivate:[PermissionGuard], data: {roles: [1]}},
-    {path: 'daemoninfo/:daemonid', component: DaemonInfoComponent}
-    ]},
+  {path: 'backup', component: ToolbarComponent, canActivate: [AuthGuard], children : [
+    {path: 'app', component: MainComponent, children: [
+      {path:'', redirectTo:'tasks', pathMatch:'full'},
+      {path: 'admin-accounts', component: AdminAccountsComponent},
+      {path: 'tasks', component: TasksComponent},
+      {path: 'daemons', component: DaemonsComponent},
+      ]},
+    {path: 'daemoninfo/:daemonid', component: DaemonInfoComponent},
+    {path: 'add-task/:daemonid', component:AddTaskComponent}
+  ]},
   {path: ':unknown', component: NotFoundComponent}
 ]
 
@@ -45,7 +47,8 @@ const routes : Routes = [
     AdminAccountsComponent,
     DaemonInfoComponent,
     NotFoundComponent,
-    AddAdminComponent
+    ToolbarComponent,
+    AddTaskComponent
   ],
   imports: [
     BrowserModule,

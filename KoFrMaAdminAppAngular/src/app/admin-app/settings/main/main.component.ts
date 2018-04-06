@@ -16,19 +16,15 @@ export class MainComponent implements OnInit {
   constructor(private service : ServerConnectionService, private router: Router) { }
   directToDaemons()
   {
-    this.router.navigate(['app','daemons']);
+    this.router.navigate(['backup','app','daemons']);
   }
   directToAdminAccounts()
   {
-    this.router.navigate(['app','admin-accounts']);
+    this.router.navigate(['backup','app','admin-accounts']);
   }
   directToTasks()
   {
-    this.router.navigate(['app','tasks']);
-  }
-  directToAddAdmin()
-  {
-    this.router.navigate(['app', 'add-admin'])
+    this.router.navigate(['backup','app','tasks']);
   }
   ngOnInit() {
   }
