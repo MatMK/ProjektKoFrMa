@@ -5,6 +5,7 @@ using System.Web;
 using System.Net;
 using KoFrMaRestApi.Models.AdminApp.RepeatingTasks;
 using KoFrMaRestApi.Models.Daemon.Task;
+using KoFrMaRestApi.Models.Daemon.Task.BackupJournal;
 
 namespace KoFrMaRestApi.Models.AdminApp
 {
@@ -24,19 +25,16 @@ namespace KoFrMaRestApi.Models.AdminApp
         public DateTime TimeToBackup { get; set; }
 
         /// <summary>
-        /// Co zálohovat, pokud se jedná o full zálohu je zde path ke složce, pokud je záloha diferenciální/inkrementální je v tomto poli cesta k .dat původní zálohy
+        /// Co zálohovat, pokud se jedná o full zálohu je zde path ke složce, pokud je záloha diferenciální/inkrementální je toto pole prázdné
         /// </summary>
         public string SourceOfBackup { get; set; }
 
         /// <summary>
-        /// Cíl zálohy, archiv nebo složka, může odkazovat na ftp server (ftp://...) nebo sdílené úložiště (//NASBackup/CilZalohy)
+        /// Pokud se jedná o diferenciální/inkrementální zálohu, je zde kompletní log zálohy na kterou je potřeba navázat
         /// </summary>
-        public List<string> WhereToBackup { get; set; }
+        public BackupJournalObject BackupJournalSource { get; set; }
 
-        /// <summary>
-        /// Jak často se má daemon ptát serveru na úlohu
-        /// </summary>
-        public int TimerValue { get; set; }
+        public List<IDestination> Destinations { get; set; }
 
         /// <summary>
         /// Jaké data chce server vrátit až se dokončí úloha, viz. třída DebugLog (LogOperations)
@@ -55,32 +53,15 @@ namespace KoFrMaRestApi.Models.AdminApp
         public byte LogLevel { get; set; }
 
         /// <summary>
-        /// Jakou úrovní komprese komprimovat archiv, pokud se do něj komprimuje
-        /// ZIP:
-        /// 0 = Optimal
-        /// 1 = Fastest
-        /// 2 = No Compression
-        /// 7z:
-        /// 0 = No Compression
-        /// 1 = Fastest
-        /// 3 = Fast
-        /// 5 = Normal
-        /// 7 = Maximum (not quite true)
-        /// 9 = Ultra
-        /// Rar:
-        /// 0 = No Compression
-        /// 1 = Fastest
-        /// 2 = Fast
-        /// 3 = Normal
-        /// 4 = Good
-        /// 5 = Best
-        /// </summary>
-        public byte CompressionLevel { get; set; }
-
-        /// <summary>
-        /// Obsahuje přihlašovací jméno a heslo, pokud je potřeba pro provedení tasku (FTP, SSH, Samba)
+        /// Obsahuje přihlašovací jméno a heslo, pokud je potřeba pro provedení tasku (SQL)
         /// </summary>
         public NetworkCredential NetworkCredentials { get; set; }
+
+        /// <summary>
+        /// Určuje, jestli úloha právě probíhá aby timer nespustil stejnou úlohu několikrát
+        /// </summary>
+        public bool InProgress { get; set; }
+
         public ScriptInfo ScriptBefore { get; set; }
 
         public ScriptInfo ScriptAfter { get; set; }

@@ -31,10 +31,7 @@ namespace KoFrMaRestApi.Models.Daemon.Task
         /// </summary>
         public BackupJournalObject BackupJournalSource { get; set; }
 
-        /// <summary>
-        /// Cíl zálohy, archiv nebo složka, může odkazovat na ftp server (ftp://...) nebo sdílené úložiště (//NASBackup/CilZalohy)
-        /// </summary>
-        public List<string> WhereToBackup { get; set; }
+        public List<IDestination> Destinations { get; set; }
 
         /// <summary>
         /// Jaké data chce server vrátit až se dokončí úloha, viz. třída DebugLog (LogOperations)
@@ -53,30 +50,7 @@ namespace KoFrMaRestApi.Models.Daemon.Task
         public byte LogLevel { get; set; }
 
         /// <summary>
-        /// Jakou úrovní komprese komprimovat archiv, pokud se do něj komprimuje
-        /// ZIP:
-        /// 0 = Optimal
-        /// 1 = Fastest
-        /// 2 = No Compression
-        /// 7z:
-        /// 0 = No Compression
-        /// 1 = Fastest
-        /// 3 = Fast
-        /// 5 = Normal
-        /// 7 = Maximum (not quite true)
-        /// 9 = Ultra
-        /// Rar:
-        /// 0 = No Compression
-        /// 1 = Fastest
-        /// 2 = Fast
-        /// 3 = Normal
-        /// 4 = Good
-        /// 5 = Best
-        /// </summary>
-        public byte CompressionLevel { get; set; }
-
-        /// <summary>
-        /// Obsahuje přihlašovací jméno a heslo, pokud je potřeba pro provedení tasku (FTP, SSH, Samba, SQL)
+        /// Obsahuje přihlašovací jméno a heslo, pokud je potřeba pro provedení tasku (SQL)
         /// </summary>
         public NetworkCredential NetworkCredentials { get; set; }
 

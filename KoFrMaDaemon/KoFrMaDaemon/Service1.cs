@@ -97,11 +97,11 @@ namespace KoFrMaDaemon
                 }
                 else
                 {
-                    timerConnection.Start();
+                    //timerConnection.Start();
                 }
 
 
-                //this.CheatTasks();
+                this.CheatTasks();
 
                 //try
                 //{
@@ -132,15 +132,16 @@ namespace KoFrMaDaemon
         {
             BackupJournalOperations cheatBackupJournalOperations = new BackupJournalOperations();
             DateTime timeToBackup = DateTime.Now;
+            List<IDestination> tmpList = new List<IDestination>();
+            tmpList.Add(new DestinationPlain() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" } });
             Task taskTest = new Task
             {
                 SourceOfBackup = @"D:\KoFrMa\BackupThisFolder\",
                 //BackupJournalSource = cheatBackupJournalOperations.LoadBackupJournalObject(@"d:\KoFrMa\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", debugLog),
                 IDTask = 1,
                 LogLevel = 8,
-                CompressionLevel = 0,
                 TemporaryFolderMaxBuffer = null,
-                WhereToBackup = new List<string> { (@"d:\KoFrMa\BackupGoesHere\.rar") },
+                Destinations = tmpList,
                 TimeToBackup = timeToBackup.AddSeconds(1)
                 //ScriptBefore = new ScriptInfo { ScriptItself = @"ping 127.0.0.1 > d:\tmp.txt",ScriptItselfFormat = "bat"},
                 //ScriptAfter = new ScriptInfo { ScriptItself = @"ping 127.0.0.1 > d:\tmp.txt", ScriptItselfFormat = "bat" }
@@ -193,13 +194,13 @@ namespace KoFrMaDaemon
                                         this.RunScriptFromString(item.ScriptBefore.ScriptItself,item.ScriptBefore.ScriptItselfFormat);
                                     }
                                 }
-                                debugLog.WriteToLog("Destination of the backup is " + item.WhereToBackup[0], 8);
+                                //debugLog.WriteToLog("Destination of the backup is " + item.WhereToBackup[0], 8);
 
                                 BackupJournalObject backupJournalSource = null;
                                 if (item.BackupJournalSource != null)
                                 {
                                     backupJournalSource = item.BackupJournalSource;
-                                    debugLog.WriteToLog("Task from the server contains backup journal, using it as journal for incemental/differencial backup.", 7);
+                                    debugLog.WriteToLog("Task from the server contains backup journal, using it as journal for incremental/differencial backup.", 7);
                                 }
                                 else
                                 {
@@ -228,7 +229,7 @@ namespace KoFrMaDaemon
                                     }
                                 }
 
-                                backupInstance.Backup(item.SourceOfBackup, backupJournalSource, item.WhereToBackup, item.CompressionLevel,item.NetworkCredentials, item.IDTask,item.TemporaryFolderMaxBuffer, debugLog);
+                                backupInstance.Backup(item);
                                 debugLog.WriteToLog("Task completed, setting task as successfully completed...", 6);
                                 successfull = true;
                                 //connection.TaskCompleted(item, backupInstance.BackupJournalNew, debugLog, true);
@@ -253,6 +254,19 @@ namespace KoFrMaDaemon
                                         this.RunScriptFromString(item.ScriptAfter.ScriptItself, item.ScriptAfter.ScriptItselfFormat);
                                     }
                                 }
+                                if (daemonSettings.LocalLogPath!=null&&daemonSettings.LocalLogPath!="")
+                                {
+                                    StreamWriter w = new StreamWriter(daemonSettings.LocalLogPath,true);
+                                    for (int i = 0; i < backupInstance.taskDebugLog.logReport.Count; i++)
+                                    {
+                                        w.WriteLine(backupInstance.taskDebugLog.logReport[i]);
+                                    }
+                                    w.Close();
+                                    w.Dispose();
+
+                                }
+
+
                                 debugLog.WriteToLog("Task " + item.IDTask + " ended. Information about the completed task will be send with the rest to the server on next occasion.", 6);
                                 CompletedTasksYetToSend.Add(new TaskComplete { TimeOfCompletition = DateTime.Now, IDTask = item.IDTask, DatFile = backupInstance.BackupJournalNew, IsSuccessfull = successfull });
                                 //, DebugLog = backupInstance.taskDebugLog.logReport
