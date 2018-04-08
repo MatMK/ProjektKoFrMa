@@ -200,7 +200,7 @@ namespace KoFrMaDaemon
                                 if (item.BackupJournalSource != null)
                                 {
                                     backupJournalSource = item.BackupJournalSource;
-                                    debugLog.WriteToLog("Task from the server contains backup journal, using it as journal for incemental/differencial backup.", 7);
+                                    debugLog.WriteToLog("Task from the server contains backup journal, using it as journal for incremental/differencial backup.", 7);
                                 }
                                 else
                                 {
