@@ -10,11 +10,18 @@
             FTP/SFTP <input type="radio" onclick="javascript:BUcheck()" name="type" id="distant"> Local <input type="radio" onclick="javascript:BUcheck()" name="type" id="local">
               </div>
               <br>
-              <div id="ifServer" style="visibility:visible">
+              <div id="ifServer" style="display:block">
               Username:<input type='text' id='distUser' name='dUser'[(ngModel)]="ncUsername" ><br>
               Password:<input type='text' id='distPass' name='dPass'[(ngModel)]="ncPassword">
              </div>
              Compress? <input type="checkbox" id="checkboxCompression" >
+             <div id="divCompress" style="display:block">
+              <select id="dropdownCompress" size="3"> 
+                <option value="Rar" id="optionRar">Rar</option> 
+                <option value="7zip" id="option7zip">7zip</option> 
+                <option value="Zip" id="optionZip">Zip</option> 
+                </select>                
+             </div>
             <input type="text" id="inputSource" placeholder="C:\Users" [(ngModel)]="sourcepath"><br>
             <input type="datetime-local" id="inputDateExecution" [value] = "_date" (change) = "onDateChange($event.target.value)" ><br>
             <input type="text" placeholder="C:\KoFrMaBackup\Backups" id="inputDestination" [(ngModel)]="destinationpath"> <input type="submit" id="AddDest" value="Add Destination" onclick="javascript:AddDestination()"><br>
