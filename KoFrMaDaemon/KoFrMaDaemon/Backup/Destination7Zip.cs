@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace KoFrMaDaemon.Backup
+{
+    class Destination7Zip : IDestination
+    {
+        /// <summary>
+        /// Cesta ke složce, kde bude výsledný 7z
+        /// </summary>
+        public string Path { get; set; }
+
+        /// Jaká úroveň komprese bude použita
+        /// 0 = No Compression
+        /// 1 = Fastest
+        /// 3 = Fast
+        /// 5 = Normal
+        /// 7 = Maximum (not quite true)
+        /// 9 = Ultra
+        public byte CompressionLevel { get; set; }
+    }
+}
