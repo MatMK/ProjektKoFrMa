@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace KoFrMaDaemon.Backup
 {
-    class DestinationPlain : IDestination
+    public class DestinationPlain : IDestination
     {
-        public string Path { get; set; }
+        /// <summary>
+        /// Nastavení cesty, kde bude umístěna záloha jako obyčejná složka
+        /// </summary>
+        public IDestinationPath Path { get; set; }
     }
 }

@@ -18,9 +18,11 @@ namespace KoFrMaDaemon.Backup
         public DebugLog taskDebugLog;
         private DirectoryInfo temporaryDestinationInfo;
 
-        private List<string> destinations;
-        private byte? compressionLevel;
-        private NetworkCredential networkCredential;
+        private Task task = null;
+
+        //private List<string> destinations;
+        //private byte? compressionLevel;
+        //private NetworkCredential networkCredential;
         private bool atLeastOneDestinationIsLocalFolder = false;
 
 
@@ -33,84 +35,107 @@ namespace KoFrMaDaemon.Backup
         public List<CopyErrorObject> FilesErrorLoad;
         public List<CopyErrorObject> FoldersErrorLoad;
 
-        public void Backup(string source, BackupJournalObject backupJournalSource, List<string> destinations, byte? compressionLevel,NetworkCredential networkCredential, int TaskID,int? bufferSize, DebugLog debugLog)
+        public void Backup(Task task)
         {
-            this.networkCredential = networkCredential;
-            this.compressionLevel = compressionLevel;
-            this.destinations = destinations;
-            for (int i = 0; i < destinations.Count; i++)
+            this.task = task;
+            taskDebugLog = new DebugLog(null, false, task.LogLevel);
+            this.taskDebugLog.WriteToLog("Inicializing the backup instance...", 5);
+            foreach (IDestination item in task.Destinations)
             {
-                if (destinations[i].EndsWith(".zip")|| destinations[i].EndsWith(".7z")|| destinations[i].EndsWith(".rar"))
+                if (item is DestinationPlain)
                 {
-
-                    //debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip (" + destinations[i] + ')', 5);
-                    //Compression compression = new Compression(debugLog);
-                    //compression.CompressToZip(destinationInfo.FullName, destinationInfo.Parent.FullName + @"\" + this.destinationInfo.Name + ".zip", compressionLevel);
-                    //debugLog.WriteToLog("Compression done, deleting temporary files that were needed for compression", 6);
-                    //Directory.Delete(destinationInfo.FullName, true);
-                    //debugLog.WriteToLog("Files successfully deleted, compression is now completed.", 6);
-                }
-                else if (destinations[i].StartsWith("\\"))
-                {
-
-                }
-                else if (destinations[i].StartsWith("ftp://"))
-                {
-
-                }
-                else if (destinations[i].StartsWith("sftp://"))
-                {
-
-                }
-                else
-                {
-                    if (!atLeastOneDestinationIsLocalFolder)
+                    if (item.Path is DestinationPathLocal)
                     {
-                        this.temporaryDestinationInfo = new DirectoryInfo(destinations[i]);
-                        atLeastOneDestinationIsLocalFolder = true;
+                        this.atLeastOneDestinationIsLocalFolder = true;
+                        this.temporaryDestinationInfo = new DirectoryInfo(item.Path.Path);
                     }
                 }
-                //else
-                //{
-                //    debugLog.WriteToLog("Keeping the plain backup because the task doesn't want to archive", 5);
-                //}
-                //debugLog.WriteToLog("Backup done, ending the backup instance", 7);
-
-
             }
+
+
+
+            //this.networkCredential = networkCredential;
+            //this.compressionLevel = compressionLevel;
+            //this.destinations = task.Destinations;
+            //for (int i = 0; i < destinations.Count; i++)
+            //{
+
+
+            //    //if (destinations[i].EndsWith(".zip")|| destinations[i].EndsWith(".7z")|| destinations[i].EndsWith(".rar"))
+            //    //{
+
+            //    //    //debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip (" + destinations[i] + ')', 5);
+            //    //    //Compression compression = new Compression(debugLog);
+            //    //    //compression.CompressToZip(destinationInfo.FullName, destinationInfo.Parent.FullName + @"\" + this.destinationInfo.Name + ".zip", compressionLevel);
+            //    //    //debugLog.WriteToLog("Compression done, deleting temporary files that were needed for compression", 6);
+            //    //    //Directory.Delete(destinationInfo.FullName, true);
+            //    //    //debugLog.WriteToLog("Files successfully deleted, compression is now completed.", 6);
+            //    //}
+            //    //else if (destinations[i].StartsWith("\\"))
+            //    //{
+
+            //    //}
+            //    //else if (destinations[i].StartsWith("ftp://"))
+            //    //{
+
+            //    //}
+            //    //else if (destinations[i].StartsWith("sftp://"))
+            //    //{
+
+            //    //}
+            //    //else
+            //    //{
+            //    //    if (!atLeastOneDestinationIsLocalFolder)
+            //    //    {
+            //    //        this.temporaryDestinationInfo = new DirectoryInfo(destinations[i]);
+            //    //        atLeastOneDestinationIsLocalFolder = true;
+            //    //    }
+            //    //}
+            //    ////else
+            //    ////{
+            //    ////    debugLog.WriteToLog("Keeping the plain backup because the task doesn't want to archive", 5);
+            //    ////}
+            //    ////debugLog.WriteToLog("Backup done, ending the backup instance", 7);
+
+
+            //}
 
             if (!atLeastOneDestinationIsLocalFolder)
             {
-                ServiceKoFrMa.debugLog.WriteToLog("No destination point to local path, creating temporary folder at "+ Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp"), 7);
+                ServiceKoFrMa.debugLog.WriteToLog("No destination points to local path, creating temporary folder at "+ Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp"), 5);
                 Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp"));
                 this.temporaryDestinationInfo = new DirectoryInfo(Path.Combine(Path.GetTempPath(),"KoFrMaBackupTemp"));
             }
-
-            ServiceKoFrMa.debugLog.WriteToLog("Starting the backup...", 7);
-            this.BackupToFolder(source, backupJournalSource, this.temporaryDestinationInfo.FullName, TaskID, bufferSize,debugLog);
-            ServiceKoFrMa.debugLog.WriteToLog("Creating desired destination outputs...", 7);
-            this.FinishBackup();
-            ServiceKoFrMa.debugLog.WriteToLog("Backup done, ending the backup instance.", 7);
-        }
-        private void BackupToFolder(string source, BackupJournalObject backupJournalSource, string destination, int TaskID,int? bufferSize,DebugLog debugLog)
-        {
-            ServiceKoFrMa.debugLog.WriteToLog("Deciding what type of backup it is...", 7);
-            if (backupJournalSource != null)
+            else
             {
-                debugLog.WriteToLog("Starting differential/incremental backup, because journal was received from the server", 5);
-                this.BackupDifferentialProcess(backupJournalSource, destination,TaskID,bufferSize, debugLog);
+                this.taskDebugLog.WriteToLog("At least one of destinations is plain local backup, there is no need to create temporary folder.", 6);
+            }
+
+            this.taskDebugLog.WriteToLog("Starting the backup...", 4);
+            this.BackupToFolder(task, this.temporaryDestinationInfo);
+            this.taskDebugLog.WriteToLog("Creating desired destination outputs...", 5);
+            this.FinishBackup();
+            this.taskDebugLog.WriteToLog("Backup done, ending the backup instance.", 4);
+        }
+        private void BackupToFolder(Task task, DirectoryInfo destination)
+        {
+            this.taskDebugLog.WriteToLog("Deciding what type of backup it is...", 7);
+            if (task.BackupJournalSource != null)
+            {
+                this.taskDebugLog.WriteToLog("Starting differential/incremental backup, because journal was received from the server", 5);
+                this.BackupDifferentialProcess(task, destination);
             }
             else
             {
-                debugLog.WriteToLog("Starting full backup, because the there is no info about backup journal", 5);
-                this.BackupFullProcess(source, destination, TaskID,bufferSize, debugLog);
+                this.taskDebugLog.WriteToLog("Starting full backup, because the there is no info about backup journal", 5);
+                this.BackupFullProcess(task, destination);
                 //this.sourceInfo = backupFull.sourceInfo.Parent;
                 //this.destinationInfo = backupFull.destinationInfo.Parent;
                 //BackupJournalNew = backupFull.BackupJournalNew;
             }
 
         }
-        public void BackupFullProcess(string source, string destination, int TaskID, int? bufferSize, DebugLog serviceDebugLog)
+        public void BackupFullProcess(Task task,DirectoryInfo destination)
         {
             FilesCorrect = new List<FileInfoObject>(100);
             FoldersCorrect = new List<FolderObject>(100);
@@ -120,32 +145,32 @@ namespace KoFrMaDaemon.Backup
             DateTime timeOfBackup = DateTime.Now;
 
             string temporaryDebugInfo = "";
-            if (serviceDebugLog._logLevel >= 4)
+            if (ServiceKoFrMa.debugLog._logLevel >= 4)
                 temporaryDebugInfo = "Full backup started at  " + timeOfBackup.ToString();
-            Directory.CreateDirectory(destination + @"\KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup) + @"_Full\KoFrMaBackup");
+            Directory.CreateDirectory(destination.FullName + @"\KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup) + @"_Full\KoFrMaBackup");
             destinationInfo = new DirectoryInfo(destination + @"\KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup) + @"_Full\KoFrMaBackup");
 
-            serviceDebugLog.WriteToLog("Log of including operations is located in " + destinationInfo.Parent.FullName + @"\KoFrMaDebug.log", 4);
+            ServiceKoFrMa.debugLog.WriteToLog("Log of including operations is located in " + destinationInfo.Parent.FullName + @"\KoFrMaDebug.log", 4);
 
-            DebugLog DebugLog = new DebugLog(destinationInfo.Parent.FullName + @"\KoFrMaDebug.log", serviceDebugLog.writeToWindowsEventLog, serviceDebugLog._logLevel);
+            //this.taskDebugLog = new DebugLog(destinationInfo.Parent.FullName + @"\KoFrMaDebug.log", ServiceKoFrMa.debugLog.writeToWindowsEventLog, ServiceKoFrMa.debugLog._logLevel);
 
-            DebugLog.WriteToLog("Subdirectory for the backup was created at " + destinationInfo.FullName, 5);
+            this.taskDebugLog.WriteToLog("Subdirectory for the backup was created at " + destinationInfo.FullName, 5);
 
-            DebugLog.WriteToLog(temporaryDebugInfo, 4);
+            this.taskDebugLog.WriteToLog(temporaryDebugInfo, 4);
             temporaryDebugInfo = null;
 
-            sourceInfo = new DirectoryInfo(source);
+            sourceInfo = new DirectoryInfo(task.SourceOfBackup);
 
             if (!sourceInfo.Exists)
             {
-                DebugLog.WriteToLog("Fatal Error: Cannot backup because source folder doesn't exists!", 2);
+                this.taskDebugLog.WriteToLog("Fatal Error: Cannot backup because source folder doesn't exists!", 2);
             }
 
 
 
             try
             {
-                DebugLog.WriteToLog("Backuping now...", 4);
+                this.taskDebugLog.WriteToLog("Backuping now...", 4);
                 List<FileInfoObject> FileList = new List<FileInfoObject>() ;
                 List<FolderObject> FolderList= new List<FolderObject>();
                 this.ExploreDirectoryRecursively(sourceInfo,FileList,FolderList);
@@ -159,30 +184,30 @@ namespace KoFrMaDaemon.Backup
                 {
                     FolderListString.Add(FolderList[i].RelativePath);
                 }
-                this.BackupFileCopy(sourceInfo.FullName, FileListString, FolderListString, bufferSize,DebugLog);
-                DebugLog.WriteToLog("Backup done, " + FilesCorrect.Count.ToString() + " files and " + FoldersCorrect.Count.ToString() + " folders successfully backuped, it was unable to backup " + FilesErrorCopy.Count + " files and " + FoldersErrorCopy.Count + " folders", 5);
+                this.BackupFileCopy(sourceInfo.FullName, FileListString, FolderListString, task.TemporaryFolderMaxBuffer);
+                this.taskDebugLog.WriteToLog("Backup done, " + FilesCorrect.Count.ToString() + " files and " + FoldersCorrect.Count.ToString() + " folders successfully backuped, it was unable to backup " + FilesErrorCopy.Count + " files and " + FoldersErrorCopy.Count + " folders", 5);
             }
             catch (Exception x)
             {
-                DebugLog.WriteToLog("Error " + x.Message + " occured and backup couldn't be fully done", 3);
+                this.taskDebugLog.WriteToLog("Error " + x.Message + " occured and backup couldn't be fully done", 3);
             }
 
-            DebugLog.WriteToLog("Creating transaction jounal of successfully backuped files and folders...", 5);
+            this.taskDebugLog.WriteToLog("Creating transaction jounal of successfully backuped files and folders...", 5);
             BackupJournalOperations BackupJournal = new BackupJournalOperations();
-            BackupJournalNew = new BackupJournalObject() { RelativePath = source, BackupJournalFiles = FilesCorrect, BackupJournalFolders = FoldersCorrect };
-            BackupJournal.CreateBackupJournal(BackupJournalNew, destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", TaskID, DebugLog);
-            DebugLog.WriteToLog("Journal successfully created", 5);
+            BackupJournalNew = new BackupJournalObject() { RelativePath = task.SourceOfBackup, BackupJournalFiles = FilesCorrect, BackupJournalFolders = FoldersCorrect };
+            BackupJournal.CreateBackupJournal(BackupJournalNew, destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", task.IDTask, this.taskDebugLog);
+            this.taskDebugLog.WriteToLog("Journal successfully created", 5);
             TimeSpan backupTook = DateTime.Now - timeOfBackup;
-            DebugLog.WriteToLog("Full backup was completed in " + backupTook.TotalSeconds + " s", 4);
+            this.taskDebugLog.WriteToLog("Full backup was completed in " + backupTook.TotalSeconds + " s", 4);
         }
 
 
-        public void BackupDifferentialProcess(BackupJournalObject backupJournalSource, string destination, int TaskID, int? bufferSize, DebugLog serviceDebugLog)
+        public void BackupDifferentialProcess(Task task,DirectoryInfo destination)
         {
-            FilesCorrect = backupJournalSource.BackupJournalFiles;
-            FoldersCorrect = backupJournalSource.BackupJournalFolders;
-            List<string> FilesToDelete = backupJournalSource.BackupJournalFilesDelete;
-            List<string> FoldersToDelete = backupJournalSource.BackupJournalFoldersDelete;
+            FilesCorrect = task.BackupJournalSource.BackupJournalFiles;
+            FoldersCorrect = task.BackupJournalSource.BackupJournalFolders;
+            List<string> FilesToDelete = task.BackupJournalSource.BackupJournalFilesDelete;
+            List<string> FoldersToDelete = task.BackupJournalSource.BackupJournalFoldersDelete;
             FilesErrorLoad = new List<CopyErrorObject>(100);
             FilesErrorCopy = new List<CopyErrorObject>(100);
             FoldersErrorLoad = new List<CopyErrorObject>(100);
@@ -191,42 +216,42 @@ namespace KoFrMaDaemon.Backup
             DateTime timeOfBackup = DateTime.Now;
 
             string temporaryDebugInfo = "";
-            if (serviceDebugLog._logLevel >= 4)
+            if (ServiceKoFrMa.debugLog._logLevel >= 4)
                 temporaryDebugInfo = "Starting the differential/incremental backup in " + timeOfBackup.ToString();
 
-            destinationInfo = new DirectoryInfo(destination).CreateSubdirectory("KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup)).CreateSubdirectory("KoFrMaBackup");
+            destinationInfo = new DirectoryInfo(destination.FullName).CreateSubdirectory("KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup)).CreateSubdirectory("KoFrMaBackup");
 
-            serviceDebugLog.WriteToLog("Log of including operations is located in " + destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log", 4);
+            ServiceKoFrMa.debugLog.WriteToLog("Log of including operations is located in " + destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log", 4);
 
-            DebugLog DebugLog = new DebugLog(destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log", serviceDebugLog.writeToWindowsEventLog, serviceDebugLog._logLevel);
+            //DebugLog DebugLog = new DebugLog(destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log", ServiceKoFrMa.debugLog.writeToWindowsEventLog, ServiceKoFrMa.debugLog._logLevel);
 
-            DebugLog.WriteToLog("Subdirectory for the backup was created at " + destinationInfo.FullName, 5);
+            this.taskDebugLog.WriteToLog("Subdirectory for the backup was created at " + destinationInfo.FullName, 5);
 
-            DebugLog.WriteToLog(temporaryDebugInfo, 4);
+            this.taskDebugLog.WriteToLog(temporaryDebugInfo, 4);
             temporaryDebugInfo = null;
 
 
-            DebugLog.WriteToLog("Loading journal of original backup from backup journal received from server...", 5);
+            this.taskDebugLog.WriteToLog("Loading journal of original backup from backup journal received from server...", 5);
             BackupJournalOperations BackupJournal = new BackupJournalOperations();
             //BackupJournalObject backupJournalObject = BackupJournal.LoadBackupJournalObject(OriginalBackupDatFilePath, DebugLog);
-            BackupJournalObject backupJournalObject = backupJournalSource;
+            BackupJournalObject backupJournalObject = task.BackupJournalSource;
             string source = backupJournalObject.RelativePath;
             List<FileInfoObject> OriginalFiles = backupJournalObject.BackupJournalFiles;
             List<FolderObject> OriginalFolders = backupJournalObject.BackupJournalFolders;
-            DebugLog.WriteToLog("List of original files and folders loaded, containing " + OriginalFiles.Count + " files and " + OriginalFolders.Count + " folders.", 5);
+            this.taskDebugLog.WriteToLog("List of original files and folders loaded, containing " + OriginalFiles.Count + " files and " + OriginalFolders.Count + " folders.", 5);
 
 
-            DebugLog.WriteToLog("Creating list of current files and folders...", 5);
+            this.taskDebugLog.WriteToLog("Creating list of current files and folders...", 5);
             sourceInfo = new DirectoryInfo(source);
             BackupJournalObject currentJournalObject = this.JournalCurrent(sourceInfo);
-            DebugLog.WriteToLog("List of current files and folders loaded, containing " + currentJournalObject.BackupJournalFiles.Count + " files and " + currentJournalObject.BackupJournalFolders.Count + " folders.", 5);
+            this.taskDebugLog.WriteToLog("List of current files and folders loaded, containing " + currentJournalObject.BackupJournalFiles.Count + " files and " + currentJournalObject.BackupJournalFolders.Count + " folders.", 5);
 
-            DebugLog.WriteToLog("Adding hash column to lists of current files and folders...", 7);
+            this.taskDebugLog.WriteToLog("Adding hash column to lists of current files and folders...", 7);
             List<FileInfoObject> CurrentFiles = BackupJournal.ReturnHashCodesFiles(currentJournalObject.BackupJournalFiles);
             List<FolderObject> CurrentFolders = BackupJournal.ReturnHashCodesFolders(currentJournalObject.BackupJournalFolders);
 
 
-            DebugLog.WriteToLog("List of current files and folders successfully created, containing " + CurrentFiles.Count + " files and " + CurrentFolders.Count + " folders. Unable to load " + FilesErrorLoad.Count + " files and " + FoldersErrorLoad.Count + " folders.", 5);
+            this.taskDebugLog.WriteToLog("List of current files and folders successfully created, containing " + CurrentFiles.Count + " files and " + CurrentFolders.Count + " folders. Unable to load " + FilesErrorLoad.Count + " files and " + FoldersErrorLoad.Count + " folders.", 5);
 
 
             //if (serviceDebugLog._logLevel >= 7)
@@ -240,7 +265,7 @@ namespace KoFrMaDaemon.Backup
 
 
 
-            DebugLog.WriteToLog("Comparing list of current files to original source of the backup...", 5);
+            this.taskDebugLog.WriteToLog("Comparing list of current files to original source of the backup...", 5);
 
             List<string> FilesToCopy = new List<string>(CurrentFiles.Count / 4);
             List<string> FoldersToCreate = new List<string>(CurrentFolders.Count / 8);
@@ -266,37 +291,37 @@ namespace KoFrMaDaemon.Backup
                             sameObject = true;
                             itemOriginal.Paired = true;
 
-                            if (DebugLog._logLevel >= 9)
-                                DebugLog.WriteToLog("Same object = true", 9);
+                            if (this.taskDebugLog._logLevel >= 9)
+                                this.taskDebugLog.WriteToLog("Same object = true", 9);
 
                             break;
                         }
 
-                        else if (DebugLog._logLevel >= 8)
+                        else if (this.taskDebugLog._logLevel >= 8)
                         {
                             if (itemCurrent.RelativePath != itemOriginal.RelativePath)
                             {
-                                DebugLog.WriteToLog("RelativePathName Error: " + itemCurrent.RelativePath + " is not " + itemOriginal.RelativePath, 8);
+                                this.taskDebugLog.WriteToLog("RelativePathName Error: " + itemCurrent.RelativePath + " is not " + itemOriginal.RelativePath, 8);
                             }
                             if (itemCurrent.Length != itemOriginal.Length)
                             {
-                                DebugLog.WriteToLog("Length Error: " + itemCurrent.Length.ToString() + " is not " + itemOriginal.Length.ToString(), 8);
+                                this.taskDebugLog.WriteToLog("Length Error: " + itemCurrent.Length.ToString() + " is not " + itemOriginal.Length.ToString(), 8);
                             }
                             if (itemCurrent.CreationTimeUtc != itemOriginal.CreationTimeUtc)
                             {
-                                DebugLog.WriteToLog("CreationTimeUtc Error: " + itemCurrent.CreationTimeUtc.ToString() + " is not " + itemOriginal.CreationTimeUtc.ToString(), 8);
+                                this.taskDebugLog.WriteToLog("CreationTimeUtc Error: " + itemCurrent.CreationTimeUtc.ToString() + " is not " + itemOriginal.CreationTimeUtc.ToString(), 8);
                             }
                             if (itemCurrent.LastWriteTimeUtc != itemOriginal.LastWriteTimeUtc)
                             {
-                                DebugLog.WriteToLog("LastWriteTimeUtc Error: " + itemCurrent.LastWriteTimeUtc.ToString() + " is not " + itemOriginal.LastWriteTimeUtc.ToString(), 8);
+                                this.taskDebugLog.WriteToLog("LastWriteTimeUtc Error: " + itemCurrent.LastWriteTimeUtc.ToString() + " is not " + itemOriginal.LastWriteTimeUtc.ToString(), 8);
                             }
                             if (itemCurrent.MD5 != itemOriginal.MD5)
                             {
-                                DebugLog.WriteToLog("MD5 Error: " + itemCurrent.MD5 + " is not " + itemOriginal.MD5, 8);
+                                this.taskDebugLog.WriteToLog("MD5 Error: " + itemCurrent.MD5 + " is not " + itemOriginal.MD5, 8);
                             }
                             if (itemCurrent.Attributes != itemOriginal.Attributes)
                             {
-                                DebugLog.WriteToLog("Attributes Error: " + itemCurrent.Attributes + " is not " + itemOriginal.Attributes, 8);
+                                this.taskDebugLog.WriteToLog("Attributes Error: " + itemCurrent.Attributes + " is not " + itemOriginal.Attributes, 8);
                             }
                         }
                     }
@@ -309,9 +334,9 @@ namespace KoFrMaDaemon.Backup
                     FilesToCopy.Add(itemCurrent.RelativePath);
                 }
             }
-            DebugLog.WriteToLog("Comparison of files successfully done, " + FilesToCopy.Count + " files were created or modified since original backup.", 5);
+            this.taskDebugLog.WriteToLog("Comparison of files successfully done, " + FilesToCopy.Count + " files were created or modified since original backup.", 5);
 
-            DebugLog.WriteToLog("Creating list of files that were changed or no longer exists...", 5);
+            this.taskDebugLog.WriteToLog("Creating list of files that were changed or no longer exists...", 5);
             foreach (FileInfoObject itemOriginal in OriginalFiles)
             {
                 if (!itemOriginal.Paired)
@@ -319,13 +344,13 @@ namespace KoFrMaDaemon.Backup
                     FilesToDelete.Add(itemOriginal.RelativePath);
                 }
             }
-            DebugLog.WriteToLog("There is " + (FilesToDelete.Count-backupJournalSource.BackupJournalFilesDelete.Count) + " files that needs to be deleted since the original backup.", 5);
+            this.taskDebugLog.WriteToLog("There is " + (FilesToDelete.Count-task.BackupJournalSource.BackupJournalFilesDelete.Count) + " files that needs to be deleted since the original backup.", 5);
 
 
 
 
 
-            DebugLog.WriteToLog("Comparing list of current folders to original source of backup...", 5);
+            this.taskDebugLog.WriteToLog("Comparing list of current folders to original source of backup...", 5);
             foreach (FolderObject itemCurrent in CurrentFolders)
             {
                 sameObject = false;
@@ -342,29 +367,29 @@ namespace KoFrMaDaemon.Backup
                             sameObject = true;
                             itemOriginal.Paired = true;
 
-                            if (DebugLog._logLevel >= 9)
-                                DebugLog.WriteToLog("Same object = true", 9);
+                            if (this.taskDebugLog._logLevel >= 9)
+                                this.taskDebugLog.WriteToLog("Same object = true", 9);
 
                             break;
                         }
 
-                        else if (DebugLog._logLevel >= 8)
+                        else if (this.taskDebugLog._logLevel >= 8)
                         {
                             if (itemCurrent.RelativePath != itemOriginal.RelativePath)
                             {
-                                DebugLog.WriteToLog("FolderPath Error: " + itemCurrent.RelativePath + " is not " + itemOriginal.RelativePath, 8);
+                                this.taskDebugLog.WriteToLog("FolderPath Error: " + itemCurrent.RelativePath + " is not " + itemOriginal.RelativePath, 8);
                             }
                             if (itemCurrent.CreationTimeUtc != itemOriginal.CreationTimeUtc)
                             {
-                                DebugLog.WriteToLog("CreationTimeUtc Error: " + itemCurrent.CreationTimeUtc.ToString() + " is not " + itemOriginal.CreationTimeUtc.ToString(), 8);
+                                this.taskDebugLog.WriteToLog("CreationTimeUtc Error: " + itemCurrent.CreationTimeUtc.ToString() + " is not " + itemOriginal.CreationTimeUtc.ToString(), 8);
                             }
                             if (itemCurrent.LastWriteTimeUtc != itemOriginal.LastWriteTimeUtc)
                             {
-                                DebugLog.WriteToLog("LastWriteTimeUtc Error: " + itemCurrent.LastWriteTimeUtc.ToString() + " is not " + itemOriginal.LastWriteTimeUtc.ToString(), 8);
+                                this.taskDebugLog.WriteToLog("LastWriteTimeUtc Error: " + itemCurrent.LastWriteTimeUtc.ToString() + " is not " + itemOriginal.LastWriteTimeUtc.ToString(), 8);
                             }
                             if (itemCurrent.Attributes != itemOriginal.Attributes)
                             {
-                                DebugLog.WriteToLog("Attributes Error: " + itemCurrent.Attributes + " is not " + itemOriginal.Attributes, 8);
+                                this.taskDebugLog.WriteToLog("Attributes Error: " + itemCurrent.Attributes + " is not " + itemOriginal.Attributes, 8);
                             }
                         }
                     }
@@ -377,11 +402,11 @@ namespace KoFrMaDaemon.Backup
                     FoldersToCreate.Add(itemCurrent.RelativePath);
                 }
             }
-            DebugLog.WriteToLog("Comparison of folders successfully done, " + FoldersToCreate.Count + " folders were created or changed since the original backup.", 5);
+            this.taskDebugLog.WriteToLog("Comparison of folders successfully done, " + FoldersToCreate.Count + " folders were created or changed since the original backup.", 5);
 
 
 
-            DebugLog.WriteToLog("Creating list of folders that were modified or no longer exists...", 5);
+            this.taskDebugLog.WriteToLog("Creating list of folders that were modified or no longer exists...", 5);
             foreach (FolderObject itemOriginal in OriginalFolders)
             {
                 if (!itemOriginal.Paired)
@@ -390,19 +415,19 @@ namespace KoFrMaDaemon.Backup
                     //in FoldersToDelete při obnově mazat POUZE prázdné!!
                 }
             }
-            DebugLog.WriteToLog("There is " + (FoldersToDelete.Count - backupJournalSource.BackupJournalFoldersDelete.Count) + " folders that needs to be deleted since the original backup.", 5);
+            this.taskDebugLog.WriteToLog("There is " + (FoldersToDelete.Count - task.BackupJournalSource.BackupJournalFoldersDelete.Count) + " folders that needs to be deleted since the original backup.", 5);
 
 
 
 
 
 
-            DebugLog.WriteToLog("Starting to backup files and folders to " + destinationInfo.FullName + @"\", 4);
+            this.taskDebugLog.WriteToLog("Starting to backup files and folders to " + destinationInfo.FullName + @"\", 4);
 
-            this.BackupFileCopy(source, FilesToCopy, FoldersToCreate, bufferSize, DebugLog);
+            this.BackupFileCopy(source, FilesToCopy, FoldersToCreate, task.TemporaryFolderMaxBuffer);
 
 
-            DebugLog.WriteToLog("Creating transaction log of successfully copied files and folders...", 5);
+            this.taskDebugLog.WriteToLog("Creating transaction log of successfully copied files and folders...", 5);
             BackupJournalNew = new BackupJournalObject()
             {
                 RelativePath = source,
@@ -411,13 +436,13 @@ namespace KoFrMaDaemon.Backup
                 BackupJournalFilesDelete = FilesToDelete,
                 BackupJournalFoldersDelete = FoldersToDelete
             };
-            BackupJournal.CreateBackupJournal(BackupJournalNew, destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", TaskID, DebugLog);
-            DebugLog.WriteToLog("Transaction log successfully created in destination " + destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", 5);
+            BackupJournal.CreateBackupJournal(BackupJournalNew, destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", task.IDTask, this.taskDebugLog);
+            this.taskDebugLog.WriteToLog("Transaction log successfully created in destination " + destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", 5);
 
 
 
             TimeSpan backupTook = DateTime.Now - timeOfBackup;
-            DebugLog.WriteToLog("Differential/Incremental backup done in " + backupTook.TotalSeconds + " s", 4);
+            this.taskDebugLog.WriteToLog("Differential/Incremental backup done in " + backupTook.TotalSeconds + " s", 4);
 
         }
 
@@ -466,10 +491,10 @@ namespace KoFrMaDaemon.Backup
             }
         }
 
-        private void BackupFileCopy(string source, List<string> filesToCopy,List<string> foldersToCreate,int? bufferSize,DebugLog DebugLog)
+        private void BackupFileCopy(string source, List<string> filesToCopy,List<string> foldersToCreate,int? bufferSize)
         {
 
-            DebugLog.WriteToLog("Backuping modified folder structure...", 5);
+            this.taskDebugLog.WriteToLog("Backuping modified folder structure...", 5);
             FilesCorrect = new List<FileInfoObject>();
             FoldersCorrect = new List<FolderObject>();
             DirectoryInfo tmpDirectoryInfo;
@@ -487,7 +512,7 @@ namespace KoFrMaDaemon.Backup
                     this.FoldersErrorCopy.Add(new CopyErrorObject() { FullPath = tmpDirectoryInfo.FullName, ExceptionMessage = ex.Message });
                 }
             }
-            DebugLog.WriteToLog("Backup of folder structure is done, " + this.FoldersCorrect.Count + " folders were successfully created, it was unable to create " + this.FoldersErrorCopy.Count + " folders", 5);
+            this.taskDebugLog.WriteToLog("Backup of folder structure is done, " + this.FoldersCorrect.Count + " folders were successfully created, it was unable to create " + this.FoldersErrorCopy.Count + " folders", 5);
 
 
 
@@ -495,7 +520,7 @@ namespace KoFrMaDaemon.Backup
 
 
 
-            DebugLog.WriteToLog("Backuping new or modified files...", 5);
+            this.taskDebugLog.WriteToLog("Backuping new or modified files...", 5);
             FileInfo tmpFileInfo;
             Int64 currentSizeSum = 0;
 
@@ -527,13 +552,13 @@ namespace KoFrMaDaemon.Backup
                 catch (Exception ex)
                 {
                     this.FilesErrorCopy.Add(new CopyErrorObject() { FullPath = tmpFileInfo.FullName, ExceptionMessage = ex.Message });
-                    DebugLog.WriteToLog("Unable to copy " + tmpFileInfo.FullName + " to " + destinationInfo.FullName + @"\" + filesToCopy[i] + " because of exception " + ex.Message + ". Path to destination folder: " + tmpFileInfo.Directory.FullName, 8);
+                    this.taskDebugLog.WriteToLog("Unable to copy " + tmpFileInfo.FullName + " to " + destinationInfo.FullName + @"\" + filesToCopy[i] + " because of exception " + ex.Message + ". Path to destination folder: " + tmpFileInfo.Directory.FullName, 8);
                 }
 
             }
 
 
-            DebugLog.WriteToLog("File backup is done, " + this.FilesCorrect.Count + " files were successfully copied, it was unable to copy " + this.FilesErrorCopy.Count + " files", 5);
+            this.taskDebugLog.WriteToLog("File backup is done, " + this.FilesCorrect.Count + " files were successfully copied, it was unable to copy " + this.FilesErrorCopy.Count + " files", 5);
 
 
         }
@@ -541,9 +566,9 @@ namespace KoFrMaDaemon.Backup
         private void FinishBackup()
         {
 
-            for (int i = 0; i < destinations.Count; i++)
+            for (int i = 0; i < task.Destinations.Count; i++)
             {
-                this.CreateDestination(this.destinationInfo.Parent.FullName, destinations[i], compressionLevel, networkCredential);
+                this.CreateDestinationFormat(this.destinationInfo.Parent.FullName, task.Destinations[i]);
                 //ServiceKoFrMa.debugLog.WriteToLog("Compression done, deleting temporary files that were needed for compression", 6);
                 //ServiceKoFrMa.debugLog.WriteToLog("Files successfully deleted, compression is now completed.", 6);
             }
@@ -581,66 +606,106 @@ namespace KoFrMaDaemon.Backup
             }
         }
 
-        private void CreateDestination(string backupPath,string destination, byte? compressionLevel, NetworkCredential networkCredential)
+        private void CreateDestinationFormat(string backupPath,IDestination destination)
         {
-            if (destination.EndsWith(".zip"))
+            if (destination is DestinationZip)
             {
                 ServiceKoFrMa.debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip (" + destination + ')', 5);
+                DestinationZip destinationZip = (DestinationZip)destination;
                 Compression compression = new Compression();
-                compression.CompressToZip(backupPath, Path.GetDirectoryName(destination) + @"\" + destinationInfo.Parent.Name + ".zip", compressionLevel);
-            }
-            if (destination.EndsWith(".7z"))
-            {
-                ServiceKoFrMa.debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .7z (" + destination + ')', 5);
-                Compression compression = new Compression();
-                ServiceKoFrMa.debugLog.WriteToLog("Archive will be made from this folder "+backupPath +@"\ and put into this location "+ Path.GetDirectoryName(destination)+@"\"+destinationInfo.Parent.Name+".7z", 7);
-                compression.CompressTo7z(ServiceKoFrMa.daemonSettings.SevenZipPath,backupPath + @"\", Path.GetDirectoryName(destination) + @"\" + destinationInfo.Parent.Name + ".7z", compressionLevel);
-            }
-            if (destination.EndsWith(".rar"))
-            {
-                ServiceKoFrMa.debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .rar (" + destination + ')', 5);
-                Compression compression = new Compression();
-                ServiceKoFrMa.debugLog.WriteToLog("Archive will be made from this folder " + backupPath + @"\ and put into this location " + Path.GetDirectoryName(destination) + @"\" + destinationInfo.Parent.Name + ".rar", 7);
-                compression.CompressToRar(ServiceKoFrMa.daemonSettings.WinRARPath, backupPath + @"\", Path.GetDirectoryName(destination) + @"\" + destinationInfo.Parent.Name + ".rar", compressionLevel);
-            }
-            else if (destination.StartsWith("\\"))
-            {
-                ServiceKoFrMa.debugLog.WriteToLog("Starting uploading files to samba/shared server, because the path to destination starts with \\ (" + destination + ')', 5);
-
-            }
-            else if (destination.StartsWith("ftp://"))
-            {
-                ServiceKoFrMa.debugLog.WriteToLog("Starting uploading files to ftp, because the path to destination starts with ftp:// (" + destination + ')', 5);
-                FTPConnection fTPConnection = new FTPConnection(destination, networkCredential);
-                fTPConnection.UploadToFTP(backupPath);
-
-            }
-            else if (destination.StartsWith("sftp://"))
-            {
-                ServiceKoFrMa.debugLog.WriteToLog("Starting uploading files to ftp, because the path to destination starts with sftp:// (" + destination + ')', 5);
-                SSHConnection sSHConnection = new SSHConnection(destination.Substring(7), networkCredential);
-                sSHConnection.UploadToSSH(backupPath);
-            }
-
-            else
-            {
-                if (!(backupPath==destinationInfo.Parent.FullName))
+                if (destination.Path is DestinationPathLocal)
                 {
-                    ServiceKoFrMa.debugLog.WriteToLog("Copying files to another local folder...", 6);
-                    ServiceKoFrMa.debugLog.WriteToLog("because "+backupPath +" is not "+destinationInfo.Parent.FullName, 6);
-                    Directory.CreateDirectory(destination);
-                    this.CopyDirectoryRecursivlyWithoutLog(new DirectoryInfo(backupPath), new DirectoryInfo(destination));
+                    compression.CompressToZip(backupPath, destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".zip", destinationZip.CompressionLevel);
+                }
+                else
+                {
+                    compression.CompressToZip(backupPath, temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".zip", destinationZip.CompressionLevel);
+                    this.CreateDestination(temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".zip", destination.Path);
+                }
+
+            }
+            else if (destination is Destination7z destination7z)
+            {
+                Compression compression = new Compression();
+                if (destination.Path is DestinationPathLocal)
+                {
+                    ServiceKoFrMa.debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .7z (" + destination + ')', 5);
+                    ServiceKoFrMa.debugLog.WriteToLog("Archive will be made from this folder " + backupPath + @"\ and put into this location " + destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".7z", 7);
+                    compression.CompressTo7z(ServiceKoFrMa.daemonSettings.SevenZipPath, backupPath + @"\", destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".7z", destination7z.CompressionLevel);
+                }
+                else
+                {
+                    compression.CompressTo7z(ServiceKoFrMa.daemonSettings.SevenZipPath, backupPath + @"\", temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".7z", destination7z.CompressionLevel);
+                    this.CreateDestination(temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".7z", destination.Path);
+                }
+
+            }
+            else if (destination is DestinationRar destinationRar)
+            {
+                Compression compression = new Compression();
+                if (destination.Path is DestinationPathLocal)
+                {
+                    ServiceKoFrMa.debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .rar (" + destination + ')', 5);
+                    ServiceKoFrMa.debugLog.WriteToLog("Archive will be made from this folder " + backupPath + @"\ and put into this location " + destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".rar", 7);
+                    compression.CompressToRar(ServiceKoFrMa.daemonSettings.WinRARPath, backupPath + @"\", destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".rar", destinationRar.CompressionLevel);
+                }
+                else
+                {
+                    compression.CompressToRar(ServiceKoFrMa.daemonSettings.WinRARPath, backupPath + @"\", temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".rar", destinationRar.CompressionLevel);
+                    this.CreateDestination(temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".7z", destination.Path);
+                }
+
+            }
+
+
+            else if (destination is DestinationPlain)
+            {
+                if (!(backupPath == destinationInfo.Parent.FullName))
+                {
+                    if (destination.Path is DestinationPathLocal)
+                    {
+                        ServiceKoFrMa.debugLog.WriteToLog("Copying files to another local folder...", 6);
+                        ServiceKoFrMa.debugLog.WriteToLog("because " + backupPath + " is not " + destinationInfo.Parent.FullName, 6);
+                        Directory.CreateDirectory(destination.Path.Path);
+                        this.CopyDirectoryRecursivlyWithoutLog(new DirectoryInfo(backupPath), new DirectoryInfo(destination.Path.Path));
+                    }
+                    else
+                    {
+                        this.CreateDestination(backupPath, destination.Path);
+                    }
+
                 }
                 else
                 {
                     ServiceKoFrMa.debugLog.WriteToLog("Keeping the plain backup where it is.", 6);
                 }
 
+
+
             }
 
         }
 
+        private void CreateDestination(string backupPath,IDestinationPath destinationPath)
+        {
+            if (destinationPath is DestinationPathNetworkShare destinationPathNetworkShare)
+            {
+                ServiceKoFrMa.debugLog.WriteToLog("Starting uploading files to samba/shared server, because the path to destination starts with \\ (" + destinationPath.Path + ')', 5);
 
+            }
+            else if (destinationPath is DestinationPathFTP destinationPathFTP)
+            {
+                ServiceKoFrMa.debugLog.WriteToLog("Starting uploading files to ftp, because the path to destination starts with ftp:// (" + destinationPath.Path + ')', 5);
+                FTPConnection fTPConnection = new FTPConnection(destinationPathFTP);
+                fTPConnection.UploadToFTP(backupPath);
+            }
+            else if (destinationPath is DestinationPathSFTP destinationPathSFTP)
+            {
+                ServiceKoFrMa.debugLog.WriteToLog("Starting uploading files to ftp, because the path to destination starts with sftp:// (" + destinationPath.Path + ')', 5);
+                SSHConnection sSHConnection = new SSHConnection(destinationPathSFTP);
+                sSHConnection.UploadToSSH(backupPath);
+            }
+        }
             
 
 
@@ -664,41 +729,41 @@ namespace KoFrMaDaemon.Backup
             }
         }
 
-        private void CopyDirectoryRecursivly(DirectoryInfo from, DirectoryInfo to)
-        {
-            if (!to.Exists)
-            {
-                to.Create();
-            }
+        //private void CopyDirectoryRecursivly(DirectoryInfo from, DirectoryInfo to)
+        //{
+        //    if (!to.Exists)
+        //    {
+        //        to.Create();
+        //    }
 
-            foreach (FileInfo item in from.GetFiles())
-            {
-                try
-                {
-                    item.CopyTo(to.FullName + @"\" + item.Name);
-                    FilesCorrect.Add(new FileInfoObject { RelativePath = item.FullName.Remove(0, sourceInfo.FullName.Length), Length = item.Length, CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString(), MD5 = this.CalculateMD5(item.FullName) });
-                }
-                catch (Exception ex)
-                {
-                    this.FilesErrorCopy.Add(new CopyErrorObject() { FullPath = item.FullName, ExceptionMessage = ex.Message });
-                }
+        //    foreach (FileInfo item in from.GetFiles())
+        //    {
+        //        try
+        //        {
+        //            item.CopyTo(to.FullName + @"\" + item.Name);
+        //            FilesCorrect.Add(new FileInfoObject { RelativePath = item.FullName.Remove(0, sourceInfo.FullName.Length), Length = item.Length, CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString(), MD5 = this.CalculateMD5(item.FullName) });
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            this.FilesErrorCopy.Add(new CopyErrorObject() { FullPath = item.FullName, ExceptionMessage = ex.Message });
+        //        }
 
-            }
+        //    }
 
-            foreach (DirectoryInfo item in from.GetDirectories())
-            {
-                try
-                {
-                    this.CopyDirectoryRecursivly(item, to.CreateSubdirectory(item.Name));
-                    this.FoldersCorrect.Add(new FolderObject() { RelativePath = item.FullName.Remove(0, sourceInfo.FullName.Length), CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString() });
-                }
-                catch (Exception ex)
-                {
-                    this.FoldersErrorCopy.Add(new CopyErrorObject() { FullPath = item.FullName, ExceptionMessage = ex.Message });
-                }
+        //    foreach (DirectoryInfo item in from.GetDirectories())
+        //    {
+        //        try
+        //        {
+        //            this.CopyDirectoryRecursivly(item, to.CreateSubdirectory(item.Name));
+        //            this.FoldersCorrect.Add(new FolderObject() { RelativePath = item.FullName.Remove(0, sourceInfo.FullName.Length), CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString() });
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            this.FoldersErrorCopy.Add(new CopyErrorObject() { FullPath = item.FullName, ExceptionMessage = ex.Message });
+        //        }
 
-            }
-        }
+        //    }
+        //}
 
         protected string CalculateMD5(string filename)
         {

@@ -9,7 +9,7 @@ namespace KoFrMaDaemon.Backup
     class Destination7z : IDestination
     {
         /// <summary>
-        /// Cesta ke složce, kde bude výsledný 7z
+        /// Nastavení cesty, kde bude výsledný 7z
         /// </summary>
         public IDestinationPath Path { get; set; }
 

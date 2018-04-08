@@ -78,7 +78,17 @@
     <Compile Include="Backup\BackupSwitch.cs" />
     <Compile Include="Backup\Compression.cs" />
     <Compile Include="Backup\CopyErrorObject.cs" />
+    <Compile Include="Backup\Destination7z.cs" />
+    <Compile Include="Backup\DestinationPathFTP.cs" />
+    <Compile Include="Backup\DestinationPathLocal.cs" />
+    <Compile Include="Backup\DestinationPathNetworkShare.cs" />
+    <Compile Include="Backup\DestinationPathSFTP.cs" />
+    <Compile Include="Backup\DestinationPlain.cs" />
+    <Compile Include="Backup\DestinationRar.cs" />
+    <Compile Include="Backup\DestinationZip.cs" />
     <Compile Include="Backup\FTPConnection.cs" />
+    <Compile Include="Backup\IDestination.cs" />
+    <Compile Include="Backup\IDestinationPath.cs" />
     <Compile Include="Backup\SSHConnection.cs" />
     <Compile Include="ConnectionToServer\Connection.cs" />
     <Compile Include="ConnectionToServer\ConnectionInfo.cs" />

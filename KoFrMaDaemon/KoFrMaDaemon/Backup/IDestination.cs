@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace KoFrMaDaemon.Backup
 {
-    interface IDestination
+    public interface IDestination
     {
-        string Path { get; set; }
+        /// <summary>
+        /// Nastavení cíle zálohy, může být archiv (ZIP/RAR/7z) nebo obyčejná složka, obsahuje také cestu k cíli
+        /// </summary>
+        IDestinationPath Path { get; set; }
     }
 }

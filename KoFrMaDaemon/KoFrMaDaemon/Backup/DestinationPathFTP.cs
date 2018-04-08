@@ -7,9 +7,15 @@ using System.Threading.Tasks;
 
 namespace KoFrMaDaemon.Backup
 {
-    class DestinationPathFTP
+    public class DestinationPathFTP:IDestinationPath
     {
+        /// <summary>
+        /// Adresa FTP serveru a podsložka pro nahrání zálohy
+        /// </summary>
         public string Path { get; set; }
-        public NetworkCredential NetworkCredentials { get; set; }
+        /// <summary>
+        /// Přístupové údaje k FTP serveru
+        /// </summary>
+        public NetworkCredential NetworkCredential { get; set; }
     }
 }

@@ -12,26 +12,32 @@ namespace KoFrMaDaemon.Backup
     public class SSHConnection
     {
         private string SSHAddress;
-        private NetworkCredential SSHCredentials;
+        private NetworkCredential SSHCredential;
         private SftpClient client;
         private DirectoryInfo directoryInfo;
         public SSHConnection(string SSHAddress, string username, string password, DebugLog debugLog)
         {
             debugLog.WriteToLog("Setting up settings needed for the SSH trasfer...", 7);
-            SSHCredentials = new NetworkCredential(username, password);
+            SSHCredential = new NetworkCredential(username, password);
             this.SSHAddress = SSHAddress;
         }
         public SSHConnection(string SSHAddress, NetworkCredential networkCredential)
         {
             ServiceKoFrMa.debugLog.WriteToLog("Setting up settings needed for the SSH trasfer...", 7);
-            SSHCredentials = networkCredential;
+            SSHCredential = networkCredential;
             this.SSHAddress = SSHAddress;
+        }
+        public SSHConnection(DestinationPathSFTP destinationPathSFTP)
+        {
+            ServiceKoFrMa.debugLog.WriteToLog("Setting up settings needed for the SSH trasfer...", 7);
+            SSHCredential = destinationPathSFTP.NetworkCredential;
+            this.SSHAddress = destinationPathSFTP.Path;
         }
         public void UploadToSSH(string PathToFolder)
         {
             ServiceKoFrMa.debugLog.WriteToLog("Connecting to SSH server...", 5);
             //Passing the sftp host without the "sftp://"
-            client = new SftpClient(this.SSHAddress, 22, SSHCredentials.UserName, SSHCredentials.Password);
+            client = new SftpClient(this.SSHAddress, 22, SSHCredential.UserName, SSHCredential.Password);
             client.Connect();
 
 

@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace KoFrMaDaemon.Backup
 {
-    class DestinationRAR : IDestination
+    public class DestinationRar : IDestination
     {
         /// <summary>
-        /// Cesta ke složce, kde bude výsledný rar
+        /// Nastavení cesty, kde bude výsledný rar
         /// </summary>
-        public string Path { get; set; }
+        public IDestinationPath Path { get; set; }
 
         /// Jaká úroveň komprese bude použita
         /// 0 = No Compression

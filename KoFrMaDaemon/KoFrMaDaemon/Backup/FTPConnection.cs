@@ -11,19 +11,25 @@ namespace KoFrMaDaemon.Backup
     public class FTPConnection
     {
         private string FTPAddress;
-        private NetworkCredential FTPCredentials;
+        private NetworkCredential FTPCredential;
         private DirectoryInfo directoryInfo;
         public FTPConnection(string FTPAddress,string username, string password)
         {
             ServiceKoFrMa.debugLog.WriteToLog("Setting up settings needed for the FTP trasfer...", 7);
-            FTPCredentials = new NetworkCredential(username, password);
+            FTPCredential = new NetworkCredential(username, password);
             this.FTPAddress = FTPAddress;
         }
         public FTPConnection(string FTPAddress, NetworkCredential networkCredential)
         {
             ServiceKoFrMa.debugLog.WriteToLog("Setting up settings needed for the FTP trasfer...", 7);
-            this.FTPCredentials = networkCredential;
+            this.FTPCredential = networkCredential;
             this.FTPAddress = FTPAddress;
+        }
+        public FTPConnection(DestinationPathFTP destinationPathFTP)
+        {
+            ServiceKoFrMa.debugLog.WriteToLog("Setting up settings needed for the FTP trasfer...", 7);
+            this.FTPCredential = destinationPathFTP.NetworkCredential;
+            this.FTPAddress = destinationPathFTP.Path;
         }
 
         public void UploadToFTP(string path)
@@ -59,7 +65,7 @@ namespace KoFrMaDaemon.Backup
             Stream ftpStream;
             request.Method = WebRequestMethods.Ftp.MakeDirectory;
             //request.UseBinary = true;
-            request.Credentials = FTPCredentials;
+            request.Credentials = FTPCredential;
             FtpWebResponse response = (FtpWebResponse)request.GetResponse();
             ftpStream = response.GetResponseStream();
             ServiceKoFrMa.debugLog.WriteToLog("FTP Folder creation completed with status " + response.StatusDescription, 9);
@@ -74,7 +80,7 @@ namespace KoFrMaDaemon.Backup
             request.Method = WebRequestMethods.Ftp.UploadFile;
 
             // This example assumes the FTP site uses anonymous logon.  
-            request.Credentials = new NetworkCredential(FTPCredentials.UserName, FTPCredentials.Password);
+            request.Credentials = new NetworkCredential(FTPCredential.UserName, FTPCredential.Password);
 
             // Copy the contents of the file to the request stream.  
             StreamReader sourceStream = new StreamReader(pathSource);

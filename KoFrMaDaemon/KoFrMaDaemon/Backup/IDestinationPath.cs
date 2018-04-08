@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace KoFrMaDaemon.Backup
 {
-    interface IDestinationPath
+    public interface IDestinationPath
     {
+        /// <summary>
+        /// Cesta cíli zálohy, může odkazovat na lokální disk, ftp server (ftp://...), sftp server (sftp://) nebo sdílené úložiště (//NASBackup/CilZalohy)
+        /// </summary>
         string Path { get; set; }
     }
 }
