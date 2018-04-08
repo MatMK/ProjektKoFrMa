@@ -206,6 +206,16 @@
     <Compile Include="Models\Daemon\Task\BackupJournal\FileInfoObject.cs" />
     <Compile Include="Models\Daemon\Task\BackupJournal\FolderObject.cs" />
     <Compile Include="EmailSender\EmailSettings.cs" />
+    <Compile Include="Models\Daemon\Task\Destination7z.cs" />
+    <Compile Include="Models\Daemon\Task\DestinationPathFTP.cs" />
+    <Compile Include="Models\Daemon\Task\DestinationPathLocal.cs" />
+    <Compile Include="Models\Daemon\Task\DestinationPathNetworkShare.cs" />
+    <Compile Include="Models\Daemon\Task\DestinationPathSFTP.cs" />
+    <Compile Include="Models\Daemon\Task\DestinationPlain.cs" />
+    <Compile Include="Models\Daemon\Task\DestinationRar.cs" />
+    <Compile Include="Models\Daemon\Task\DestinationZip.cs" />
+    <Compile Include="Models\Daemon\Task\IDestination.cs" />
+    <Compile Include="Models\Daemon\Task\IDestinationPath.cs" />
     <Compile Include="Models\Daemon\Task\ScriptInfo.cs" />
     <Compile Include="Models\Daemon\Task\Task.cs" />
     <Compile Include="Models\Tables\ChangeTable.cs" />
