@@ -10,7 +10,7 @@ import { MainComponent } from './admin-app/settings/main/main.component';
 import { DaemonsComponent } from './admin-app/settings/tabs/daemons/daemons.component';
 import { TasksComponent } from './admin-app/settings/tabs/tasks/tasks.component';
 import { AdminAccountsComponent } from './admin-app/settings/tabs/admin-accounts/admin-accounts.component';
-import { MatSidenavModule, MatToolbarModule, MatListModule, MatTableModule } from '@angular/material'
+import { MatSidenavModule, MatToolbarModule, MatListModule, MatTableModule, MatPaginator, MatTableDataSource, MatPaginatorModule, MatSelectModule } from '@angular/material'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes, Router, CanActivate,RouterLink } from '@angular/router';
 import { DaemonInfoComponent } from './admin-app/settings/more-info/daemon-info/daemon-info.component';
@@ -59,6 +59,8 @@ const routes : Routes = [
     MatListModule,
     MatTableModule,
     MatRadioModule,
+    MatPaginatorModule,
+    MatSelectModule,
     RouterModule.forRoot(
         routes,
        {useHash: false},

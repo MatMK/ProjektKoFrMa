@@ -28,8 +28,7 @@ namespace KoFrMaRestApi.Models.Tables
                                 Id = (int)reader["Id"],
                                 UserName = (string)reader["UserName"],
                                 Email = (string)reader["Email"],
-                                Enabled = Convert.ToBoolean(reader["Enabled"]),
-                                Permission = (int?)reader["Permissions"]/*,
+                                Enabled = Convert.ToBoolean(reader["Enabled"]),/*
                                 Password = (string)reader["Password"],
                                 Token = (string)reader["Token"]*/
                             });

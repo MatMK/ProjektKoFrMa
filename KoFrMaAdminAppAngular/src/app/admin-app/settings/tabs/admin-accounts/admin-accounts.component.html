@@ -1,8 +1,10 @@
 <body>
+  <div>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+  </div>
+  
   <div class="table-admin">
     <mat-table #table [dataSource]="data.AdminAccounts">
-  
-  
       <!-- Id Column -->
       <ng-container matColumnDef="Id">
         <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
@@ -36,5 +38,6 @@
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
+  
   </div>
 </body>
