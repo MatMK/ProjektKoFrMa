@@ -7,3 +7,5 @@ function BUcheck() {
     else document.getElementById('ifServer').style.visibility = 'hidden';
 
 }
+
+

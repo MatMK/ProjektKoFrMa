@@ -16,7 +16,7 @@
           
             <input type="text" id="inputSource" placeholder="C:\Users" [(ngModel)]="sourcepath"><br>
             <input type="datetime-local" id="inputDateExecution" [value] = "_date" (change) = "onDateChange($event.target.value)" ><br>
-            <input type="text" placeholder="C:\KoFrMaBackup\Backups" id="inputDestination" [(ngModel)]="destinationpath">
+            <input type="text" placeholder="C:\KoFrMaBackup\Backups" id="inputDestination" [(ngModel)]="destinationpath"> <input type="submit" id="AddDest" value="Add Destination" onclick="javascript:AddDestination()">
             <input type="submit" value="Save" id="inputSaveTask" (click)="AddTask()">
        </div>
       </body>
