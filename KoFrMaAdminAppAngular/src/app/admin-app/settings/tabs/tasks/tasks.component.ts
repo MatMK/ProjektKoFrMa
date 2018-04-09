@@ -4,6 +4,8 @@ import { tbTasks } from '../../../server-connection/models/sql-data/data/tb-task
 import { Data } from '../../../server-connection/data.model';
 import { DataSource } from '@angular/cdk/table';
 import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material';
+import { MainTask } from '../../../server-connection/models/communication-models/task/main-task.model';
 
 @Component({
   selector: 'app-tasks',
@@ -19,7 +21,19 @@ export class TasksComponent implements OnInit {
   displayedColumns = ['Id', 'IdDaemon', 'TimeOfExecution', 'Completed'];
   
   refresh() {
-    this.service.GettbTasks().then(res => this.data.Tasks = this.service.ConvertToMainTask(res));
+    this.service.GettbTasks().then(res => this.data.Tasks = new MatTableDataSource<MainTask>(this.service.ConvertToMainTask(res)));
+  }
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.data.Tasks.filterPredicate = (data: MainTask, filter: string) => this.customFilter(data,filter);
+    this.data.Tasks.filter = filterValue;
+  }
+  private customFilter(Data : MainTask, filter : string) : boolean
+  {
+    if(Data.Id.toString() == filter)
+      return true;
+    return false;
   }
   ngOnInit() {
   }

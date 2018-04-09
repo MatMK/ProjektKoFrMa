@@ -10,9 +10,11 @@ import { MainComponent } from './admin-app/settings/main/main.component';
 import { DaemonsComponent } from './admin-app/settings/tabs/daemons/daemons.component';
 import { TasksComponent } from './admin-app/settings/tabs/tasks/tasks.component';
 import { AdminAccountsComponent } from './admin-app/settings/tabs/admin-accounts/admin-accounts.component';
-import { MatSidenavModule, MatToolbarModule, MatListModule, MatTableModule, MatPaginator, MatTableDataSource, MatPaginatorModule, MatSelectModule } from '@angular/material'
+import { MatSidenavModule, MatToolbarModule, MatListModule, MatTableModule, 
+  MatPaginator, MatTableDataSource, MatPaginatorModule, MatSelectModule,
+  MatCheckboxModule} from '@angular/material'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterModule, Routes, Router, CanActivate,RouterLink } from '@angular/router';
+import { RouterModule, Routes, Router, CanActivate,RouterLink, RouterLinkActive } from '@angular/router';
 import { DaemonInfoComponent } from './admin-app/settings/more-info/daemon-info/daemon-info.component';
 import { AuthGuard } from './admin-app/server-connection/auth.service';
 import { PermissionGuard } from './admin-app/server-connection/perm.service';
@@ -20,6 +22,7 @@ import { MatRadioModule, MatRadioButton } from '@angular/material/radio';
 import { NotFoundComponent } from './admin-app/not-found/not-found.component';
 import { ToolbarComponent } from './admin-app/settings/toolbar/toolbar.component';
 import { AddTaskComponent } from './admin-app/settings/more-info/daemon-info/add-task/add-task.component';
+import { AddAdminComponent } from './admin-app/settings/tabs/admin-accounts/add-admin/add-admin.component';
 
 const routes : Routes = [
   {path: '', redirectTo:'login', pathMatch:'full'},
@@ -32,7 +35,8 @@ const routes : Routes = [
       {path: 'daemons', component: DaemonsComponent},
       ]},
     {path: 'daemoninfo/:daemonid', component: DaemonInfoComponent},
-    {path: 'add-task/:daemonid', component:AddTaskComponent}
+    {path: 'add-task/:daemonid', component:AddTaskComponent},
+    {path: 'add-admin', component: AddAdminComponent, canActivate: [PermissionGuard], data: {roles: [1]}}
   ]},
   {path: ':unknown', component: NotFoundComponent}
 ]
@@ -48,7 +52,8 @@ const routes : Routes = [
     DaemonInfoComponent,
     NotFoundComponent,
     ToolbarComponent,
-    AddTaskComponent
+    AddTaskComponent,
+    AddAdminComponent
   ],
   imports: [
     BrowserModule,
@@ -61,6 +66,7 @@ const routes : Routes = [
     MatRadioModule,
     MatPaginatorModule,
     MatSelectModule,
+    MatCheckboxModule,
     RouterModule.forRoot(
         routes,
        {useHash: false},

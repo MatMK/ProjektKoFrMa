@@ -4,7 +4,7 @@ import { ServerConnectionService } from '../../../server-connection/server-conne
 import { tbDaemons } from '../../../server-connection/models/sql-data/data/tb-daemons.model';
 import { Data } from '../../../server-connection/data.model';
 import { DataSource } from '@angular/cdk/table';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { RouterLink } from '@angular/router'
 
 @Component({
@@ -20,7 +20,19 @@ export class DaemonsComponent implements OnInit {
   displayedColumns = ['Id', 'Version', 'OS', 'PC_Unique', 'Allowed', 'LastSeen', 'MoreInfo'];
   
   refresh() {
-    this.service.GettbDaemons().then(res => this.data.Daemons = res);
+    this.service.GettbDaemons().then(res => this.data.Daemons = new MatTableDataSource<tbDaemons>(res));
+  }
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.data.Daemons.filterPredicate = (data: tbDaemons, filter: string) => this.customFilter(data,filter);
+    this.data.Daemons.filter = filterValue;
+  }
+  private customFilter(Data : tbDaemons, filter : string) : boolean
+  {
+    if(Data.Id.toString() == filter)
+      return true;
+    return false;
   }
   ngOnInit() {
   }

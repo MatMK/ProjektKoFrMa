@@ -10,7 +10,7 @@ export class Data
     public Loading : boolean = false;
     public adminInfo : AdminInfo = new AdminInfo();
     public AdminAccounts : MatTableDataSource<tbAdminAccounts> = new MatTableDataSource<tbAdminAccounts>();
-    public Daemons : tbDaemons[];
-    public Tasks : MainTask[];
+    public Daemons : MatTableDataSource<tbDaemons> = new MatTableDataSource<tbDaemons>();
+    public Tasks : MatTableDataSource<MainTask> = new MatTableDataSource<MainTask>();
     public ErrorMessage : string;
 }

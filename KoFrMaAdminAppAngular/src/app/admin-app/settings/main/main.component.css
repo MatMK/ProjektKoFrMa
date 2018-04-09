@@ -3,3 +3,14 @@
     background-repeat: repeat;
     background-color: lightgreen;
 }
+.sidnav{
+    background-color: white;
+    padding-left: 15px;
+    width: 170px;
+}
+p{
+    color: black;
+}
+p.active-link{
+    font-weight: 900;
+}
