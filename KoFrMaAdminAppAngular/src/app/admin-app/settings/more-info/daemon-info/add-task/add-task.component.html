@@ -1,4 +1,8 @@
 <html>
+  <head>
+       <script type="text/javascript" src=Check.js></script>
+      <script type="text/javascript" src=AddDestinationcheck.js></script>
+  </head>
 <body>
         <div id="celek">
           Daemon Id: <input type="text" id="daemonId" [(ngModel)]="daemonId" placeholder="Daemon Id" (change)="checkIfNumberValid()">
@@ -7,7 +11,7 @@
               </div>
              
               <div id="destinationSelect">
-            FTP/SFTP <input type="radio" onclick="javascript:BUcheck()" name="type" id="distant"> Local <input type="radio" onclick="javascript:BUcheck()" name="type" id="local">
+            FTP/SFTP <input type="radio" onclick="BUcheck()" name="type" id="distant"> Local <input type="radio" onclick="BUcheck()" name="type" id="local">
               </div>
               <br>
               <div id="ifServer" style="display:block">
@@ -24,11 +28,10 @@
              </div>
             <input type="text" id="inputSource" placeholder="C:\Users" [(ngModel)]="sourcepath"><br>
             <input type="datetime-local" id="inputDateExecution" [value] = "_date" (change) = "onDateChange($event.target.value)" ><br>
-            <input type="text" placeholder="C:\KoFrMaBackup\Backups" id="inputDestination" [(ngModel)]="destinationpath"> <input type="submit" id="AddDest" value="Add Destination" onclick="javascript:AddDestination()"><br>
+            <input type="text" placeholder="C:\KoFrMaBackup\Backups" id="inputDestination" [(ngModel)]="destinationpath"> <input type="submit" id="AddDest" value="Add Destination" onclick="AddDestination()"><br>
             <input type="submit" value="Save" id="inputSaveTask" (click)="AddTask()">
        </div>
       </body>
-      <script type="text/javascript" src=BUcheck.js></script>
-      <script type="text/javascript" src=AddDestination.js></script>
+   
       </html>
         

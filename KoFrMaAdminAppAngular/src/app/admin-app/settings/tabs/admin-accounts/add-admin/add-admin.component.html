@@ -1,0 +1,24 @@
+<p>
+  Username: 
+  <input type="text" id="new-admin-name" placeholder="Username" [(ngModel)]="username" autocomplete="nope">
+</p>
+<p>
+  Password: 
+  <input type="password" id="new-admin-password" placeholder="Password" [(ngModel)]="password" autocomplete="new-password">
+</p>
+<p>
+  Email: 
+  <input type="text" id="new-admin-email" placeholder="Email" [(ngModel)]="email" autocomplete="nope">
+</p>
+<p>
+    Enabled: 
+  <mat-checkbox></mat-checkbox>
+</p>
+<p>
+  Permissions: 
+  <mat-selection-list #permissions>
+      <mat-list-option *ngFor="let perm of Permissions">
+        {{perm.name}}
+      </mat-list-option>
+    </mat-selection-list>
+</p>

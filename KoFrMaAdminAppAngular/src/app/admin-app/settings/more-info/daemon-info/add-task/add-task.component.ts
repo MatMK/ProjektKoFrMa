@@ -22,22 +22,23 @@ export class AddTaskComponent implements OnInit {
   constructor(private activeRoute:ActivatedRoute, private service : ServerConnectionService, private router : Router) {
       this.activeRoute.params.subscribe(params => {
       this.daemonId = params.daemonid;
-      //check if it is a number
+      this.checkIfNumberValid(false);
     });
    }
-   checkIfNumberValid() : boolean
+   checkIfNumberValid(showMsg : boolean) : boolean
    {
     if (!(this.daemonId >= 0 || this.daemonId<0))
     {
       this.daemonId = undefined;
-      alert("Daemon Id is not valid!")
+      if(showMsg == true)
+        alert("Daemon Id is not valid!")
       return false;
     }
     return true;
    }
   AddTask()
   {
-    if(this.checkIfNumberValid())
+    if(this.checkIfNumberValid(true))
     {
       let t : SetTask = new SetTask()
       t.DaemonId = this.daemonId;

@@ -12,6 +12,10 @@ export class PermissionGuard implements CanActivate
     constructor(private serverConnectionService : ServerConnectionService, private router : Router, private data : Data) {}
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot)
     {
+        /*this is only for development DONT FORGET TO GET RID OF IT LATER!*/
+        return true;
+        /*^^^^^^^^^^^^*/
+        /*
         let permissions : number[] =  route.data["roles"]
         return this.serverConnectionService.HasPermission(permissions).then(res => {
             if(res)
@@ -23,6 +27,6 @@ export class PermissionGuard implements CanActivate
             this.data.ErrorMessage = "required";
             alert(this.data.ErrorMessage);
             return false;
-        })
+        })*/
     }
 }
