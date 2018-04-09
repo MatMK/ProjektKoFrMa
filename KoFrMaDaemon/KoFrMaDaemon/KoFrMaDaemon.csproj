@@ -51,6 +51,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DotNetZip, Version=1.10.1.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetZip.1.10.1\lib\net20\DotNetZip.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -96,8 +99,10 @@
     <Compile Include="Backup\FileInfoObject.cs" />
     <Compile Include="Backup\FolderObject.cs" />
     <Compile Include="ConnectionToServer\DaemonSettings.cs" />
+    <Compile Include="ConnectionToServer\JsonSerializationUtility.cs" />
     <Compile Include="ConnectionToServer\Password.cs" />
     <Compile Include="ConnectionToServer\Request.cs" />
+    <Compile Include="ConnectionToServer\SettingsSerializationBinder.cs" />
     <Compile Include="ConnectionToServer\TaskVersion.cs" />
     <Compile Include="RSACiphering.cs" />
     <Compile Include="SettingsLoad.cs" />

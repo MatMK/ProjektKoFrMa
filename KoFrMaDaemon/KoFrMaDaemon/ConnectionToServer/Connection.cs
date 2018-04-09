@@ -29,9 +29,8 @@ namespace KoFrMaDaemon.ConnectionToServer
             ServiceKoFrMa.debugLog.WriteToLog("Trying to send request to server at address " + ConnectionInfo.ServerURL + @"/api/Daemon/GetInstructions", 5);
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
-                
-                string json = JsonConvert.SerializeObject(request);
 
+                string json = JsonSerializationUtility.Serialize(request);
                 streamWriter.Write(json);
                 streamWriter.Flush();
                 streamWriter.Close();
@@ -46,7 +45,7 @@ namespace KoFrMaDaemon.ConnectionToServer
             }
             ServiceKoFrMa.debugLog.WriteToLog("Performing deserialization of data that were received from the server...", 7);
             //result = this.DecodeBase64(System.Text.Encoding.UTF8, resultBase64);
-            return JsonConvert.DeserializeObject<List<Task>>(result);
+            return JsonSerializationUtility.Deserialize<List<Task>>(result);
         }
         //public void TaskCompleted(Task task, BackupJournalObject backupJournalNew, DebugLog debugLog, bool Successfull)
         //{

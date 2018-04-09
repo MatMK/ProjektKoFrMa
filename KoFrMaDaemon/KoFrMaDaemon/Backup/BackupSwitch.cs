@@ -615,11 +615,11 @@ namespace KoFrMaDaemon.Backup
                 Compression compression = new Compression();
                 if (destination.Path is DestinationPathLocal)
                 {
-                    compression.CompressToZip(backupPath, destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".zip", destinationZip.CompressionLevel);
+                    compression.CompressToZip(backupPath, destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".zip", destinationZip.CompressionLevel,destinationZip.SplitAfter);
                 }
                 else
                 {
-                    compression.CompressToZip(backupPath, temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".zip", destinationZip.CompressionLevel);
+                    compression.CompressToZip(backupPath, temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".zip", destinationZip.CompressionLevel, destinationZip.SplitAfter);
                     this.CreateDestination(temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".zip", destination.Path);
                 }
 
@@ -631,11 +631,11 @@ namespace KoFrMaDaemon.Backup
                 {
                     ServiceKoFrMa.debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .7z (" + destination + ')', 5);
                     ServiceKoFrMa.debugLog.WriteToLog("Archive will be made from this folder " + backupPath + @"\ and put into this location " + destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".7z", 7);
-                    compression.CompressTo7z(ServiceKoFrMa.daemonSettings.SevenZipPath, backupPath + @"\", destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".7z", destination7z.CompressionLevel);
+                    compression.CompressTo7z(ServiceKoFrMa.daemonSettings.SevenZipPath, backupPath + @"\", destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".7z", destination7z.CompressionLevel, destination7z.SplitAfter);
                 }
                 else
                 {
-                    compression.CompressTo7z(ServiceKoFrMa.daemonSettings.SevenZipPath, backupPath + @"\", temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".7z", destination7z.CompressionLevel);
+                    compression.CompressTo7z(ServiceKoFrMa.daemonSettings.SevenZipPath, backupPath + @"\", temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".7z", destination7z.CompressionLevel,destination7z.SplitAfter);
                     this.CreateDestination(temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".7z", destination.Path);
                 }
 
@@ -647,11 +647,11 @@ namespace KoFrMaDaemon.Backup
                 {
                     ServiceKoFrMa.debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .rar (" + destination + ')', 5);
                     ServiceKoFrMa.debugLog.WriteToLog("Archive will be made from this folder " + backupPath + @"\ and put into this location " + destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".rar", 7);
-                    compression.CompressToRar(ServiceKoFrMa.daemonSettings.WinRARPath, backupPath + @"\", destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".rar", destinationRar.CompressionLevel);
+                    compression.CompressToRar(ServiceKoFrMa.daemonSettings.WinRARPath, backupPath + @"\", destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".rar", destinationRar.CompressionLevel, destinationRar.SplitAfter);
                 }
                 else
                 {
-                    compression.CompressToRar(ServiceKoFrMa.daemonSettings.WinRARPath, backupPath + @"\", temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".rar", destinationRar.CompressionLevel);
+                    compression.CompressToRar(ServiceKoFrMa.daemonSettings.WinRARPath, backupPath + @"\", temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".rar", destinationRar.CompressionLevel, destinationRar.SplitAfter);
                     this.CreateDestination(temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".7z", destination.Path);
                 }
 

@@ -21,5 +21,10 @@ namespace KoFrMaDaemon.Backup
         /// 7 = Maximum (not quite true)
         /// 9 = Ultra
         public byte CompressionLevel { get; set; }
+
+        /// <summary>
+        /// Po kolika MB se budou archivy rozdělovat (nepovinné, pokud nezadáno nebo 0 nebudou se rozdělovat)
+        /// </summary>
+        public int? SplitAfter { get; set; }
     }
 }
