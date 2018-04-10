@@ -190,10 +190,15 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AdminApp\AddAdmin.cs" />
     <Compile Include="Models\AdminApp\AdminInfo.cs" />
     <Compile Include="Models\AdminApp\AdminLogin.cs" />
     <Compile Include="Models\AdminApp\GetList\Data.cs" />
-    <Compile Include="Models\AdminApp\PostAdmin.cs" />
+    <Compile Include="Models\AdminApp\PostAdmin\AddAdminRequest.cs" />
+    <Compile Include="Models\AdminApp\PostAdmin\GetDataRequest.cs" />
+    <Compile Include="Models\AdminApp\PostAdmin\IRequest.cs" />
+    <Compile Include="Models\AdminApp\PostAdmin\PostAdmin.cs" />
+    <Compile Include="Models\AdminApp\PostAdmin\SetTasksRequest.cs" />
     <Compile Include="Models\AdminApp\RepeatingTasks\ExceptionDate.cs" />
     <Compile Include="Models\AdminApp\SetTasks.cs" />
     <Compile Include="Models\AdminApp\RepeatingTasks\TaskRepeating.cs" />
@@ -218,6 +223,8 @@
     <Compile Include="Models\Daemon\Task\IDestinationPath.cs" />
     <Compile Include="Models\Daemon\Task\ScriptInfo.cs" />
     <Compile Include="Models\Daemon\Task\Task.cs" />
+    <Compile Include="Models\JsonSerializationUtility.cs" />
+    <Compile Include="Models\SettingsSerializationBinder.cs" />
     <Compile Include="Models\Tables\ChangeTable.cs" />
     <Compile Include="Models\Tables\Table.cs" />
     <Compile Include="Models\Tables\tbAdminAccounts.cs" />

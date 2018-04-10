@@ -6,6 +6,7 @@ using System.Web;
 using MySql.Data.MySqlClient;
 using KoFrMaRestApi.Models.AdminApp;
 using KoFrMaRestApi.MySqlCom;
+using KoFrMaRestApi.Models.AdminApp.PostAdmin;
 
 namespace KoFrMaRestApi.Models
 {

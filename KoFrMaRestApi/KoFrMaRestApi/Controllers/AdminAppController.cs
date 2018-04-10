@@ -1,6 +1,7 @@
 ﻿using KoFrMaRestApi.Models;
 using KoFrMaRestApi.Models.AdminApp;
 using KoFrMaRestApi.Models.AdminApp.GetList;
+using KoFrMaRestApi.Models.AdminApp.PostAdmin;
 using KoFrMaRestApi.Models.Tables;
 using KoFrMaRestApi.MySqlCom;
 using MySql.Data.MySqlClient;
@@ -99,10 +100,15 @@ namespace KoFrMaRestApi.Controllers
         {
             mySqlCom.AlterTable(changeTable);
         }
-        [HttpGet, Route(@"api/AdminApp/test")]
-        public string test()
+        [HttpPost, Route(@"api/AdminApp/AddAdmin")]
+        public void AddAdmin(PostAdmin postAdmin)
         {
-            return "cau ";
+            mySqlCom.AddAdmin(postAdmin.addAdmin);
+        }
+        [HttpGet, Route(@"api /AdminApp/test")]
+        public int test()
+        {
+            return mySqlCom.NextAutoIncrement("tbTjjjjasks");
             /*
             mySqlCom.AlterTable(new ChangeTable()
             {
