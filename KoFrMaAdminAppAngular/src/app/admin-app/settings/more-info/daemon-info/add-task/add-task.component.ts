@@ -125,13 +125,14 @@ ShowCompressOption(){
  
 }
 AddLocalDestination(){
-      var AddDesti = <HTMLInputElement>document.getElementById("distant")   
+      var newDiv = this.renderer.createElement('div'); 
+      newDiv.Id='idNewDiv'
+      newDiv.className='aditionalDivClass'
       var inputDestination = <HTMLDivElement>document.getElementById("inputDestiDiv");
       var input = this.renderer.createElement('input');
       input.type = 'text';
-      input.name = 'trying';
-      input.Ngmodel ='kokotko';
-      input.class = 'autoDestiLocal'
+      input.Ngmodel ='kokong';
+      input.className = 'autoDestiLocal'
       input.placeholder ='Aditional destination'
       var button = this.renderer.createElement('button'); 
       button.innerHTML = 'Remove';
@@ -139,9 +140,10 @@ AddLocalDestination(){
       this.renderer.listen(button, 'click', (event) => this.RemoveLocalDestination(event));
     
       var br = this.renderer.createElement("br");
-      this.renderer.appendChild(inputDestination, input);
-      this.renderer.appendChild(inputDestination,button);
-      this.renderer.appendChild(inputDestination, br);
+      this.renderer.appendChild(newDiv, input);
+      this.renderer.appendChild(inputDestination,newDiv);
+      this.renderer.appendChild(newDiv,button);
+      this.renderer.appendChild(newDiv, br);
       /*inputDestination.appendChild(input);*/
       /*inputDestination.appendChild(br);*/
       
@@ -149,7 +151,7 @@ AddLocalDestination(){
     RemoveLocalDestination(event: any){
       var target = event.target || event.srcElement || event.currentTarget;
       var inputDestiDiv = <HTMLDivElement>document.getElementById("inputDestiDiv");
-      this.renderer.removeChild(inputDestiDiv,target.parent.node);
+      this.renderer.removeChild(inputDestiDiv,target.parentNode);
     }
   
 
