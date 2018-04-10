@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+
 import { ServerConnectionService } from '../../../../server-connection/server-connection.service';
 import { AddAdmin } from '../../../../server-connection/models/communication-models/add-admin.model';
 import { Router } from '@angular/router';
@@ -50,7 +51,8 @@ export class AddAdminComponent implements OnInit {
     {
       if(res)
         this.router.navigate(['backup', 'app', 'admin-accounts']);
-      alert('Something went wrong');
+      else
+        alert('Something went wrong');
     })
   }
   constructor(private serverConnection : ServerConnectionService, private router : Router) { }

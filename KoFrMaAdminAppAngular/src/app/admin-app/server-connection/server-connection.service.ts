@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Jsonp } from '@angular/http';
 import { Data } from './data.model';
 import { AdminLogin } from './models/communication-models/admin-login.model'
-import { PostAdmin } from './models/communication-models/post-admin.model';
+import { PostAdmin } from './models/communication-models/post-admin/post-admin.model';
 import { AdminInfo } from './models/communication-models/admin-info.model';
 import { SqlData } from './models/sql-data/sql-data.model';
 import { tbAdminAccounts } from './models/sql-data/data/tb-admin-accounts.model';
@@ -11,6 +11,9 @@ import { tbTasks } from './models/sql-data/data/tb-tasks.model';
 import { MainTask } from './models/communication-models/task/main-task.model';
 import { SetTask } from './models/communication-models/task/set-task.model';
 import { AddAdmin } from './models/communication-models/add-admin.model';
+import { GetDataRequest } from './models/communication-models/post-admin/get-data-request.model';
+import { SetTasksRequest } from './models/communication-models/post-admin/set-tasks-request.model';
+import { AddAdminRequest } from './models/communication-models/post-admin/add-admin-request.model';
 
 @Injectable()
 
@@ -29,7 +32,7 @@ export class ServerConnectionService{
    }
    GettbAdminAccounts() : Promise<tbAdminAccounts[]>
    {
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, [], [1],null);
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new GetDataRequest("GetDataRequest",[1]));
         let url = this.data.ServerRootURL + "api/AdminApp/GettbAdminAccounts";
         return this.http.post(url,postAdmin).toPromise()
                         .then(res => res.json())
@@ -40,7 +43,7 @@ export class ServerConnectionService{
     }
     GettbDaemons() : Promise<tbDaemons[]>
    {
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, [], [2],null);
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, new GetDataRequest("GetDataRequest",[2]));
         let url = this.data.ServerRootURL + "api/AdminApp/GettbDaemons";
         return this.http.post(url,postAdmin).toPromise()
                         .then(res => res.json())
@@ -51,7 +54,7 @@ export class ServerConnectionService{
     }
     GettbTasks() : Promise<tbTasks[]>
    {
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, [], [3],null);
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, new GetDataRequest("GetDataRequest",[3]));
         let url = this.data.ServerRootURL + "api/AdminApp/GettbTasks";
         return this.http.post(url,postAdmin).toPromise()
                         .then(res => res.json())
@@ -77,7 +80,7 @@ export class ServerConnectionService{
     }
     SetTask(setTask:SetTask[]) 
     {
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,setTask, null,null);
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new SetTasksRequest("SetTasksRequest",setTask));
         let url = this.data.ServerRootURL + "api/AdminApp/SetTask";
         this.http.post(url,postAdmin).toPromise()
                         .then(res => this.data.Loading = false)
@@ -116,7 +119,7 @@ export class ServerConnectionService{
     }
     AddAdmin(addAdmin:AddAdmin) : Promise<boolean>
     {
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,null, null,addAdmin);
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new AddAdminRequest("AddAdminRequest",addAdmin));
         let url = this.data.ServerRootURL + "api/AdminApp/AddAdmin";
         return this.http.post(url,postAdmin).toPromise()
                         .then(res => 
