@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using KoFrMaRestApi.Models;
 using MySql.Data.MySqlClient;
 
 namespace KoFrMaRestApi
@@ -28,6 +29,8 @@ namespace KoFrMaRestApi
         {
             //překládání xml na json
             config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
+            config.Formatters.JsonFormatter.SerializerSettings.SerializationBinder = JsonSerializationUtility.jsonSettings.SerializationBinder;
+            config.Formatters.JsonFormatter.SerializerSettings.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto;
             //Služby a konfigurace rozhraní Web API
             //config.Formatters.JsonFormatter
             //Trasy rozhraní Web API
