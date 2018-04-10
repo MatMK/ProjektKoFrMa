@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, Renderer2, OnInit  } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatRadioModule, MatRadioButton } from '@angular/material/radio';
 import { SetTask } from '../../../../server-connection/models/communication-models/task/set-task.model';
@@ -11,7 +11,7 @@ import { ServerConnectionService } from '../../../../server-connection/server-co
   templateUrl: './add-task.component.html',
   styleUrls: ['./add-task.component.css']
 })
-export class AddTaskComponent implements OnInit {
+export class AddTaskComponent  {
   private daemonId : number;
   private sourcepath : string;
   private destinationpath : string;
@@ -55,23 +55,9 @@ export class AddTaskComponent implements OnInit {
   {
     this.date = value;
   }
-  addLocalDestination() {
-
-    var backups = <HTMLInputElement>document.getElementById("AddDestLocal");
-
-    var newLocalDestDiv = this.renderer.createElement('div');
-    newLocalDestDiv.className = 'newDestDiv';
-     
-
-    var input = this.renderer.createElement('input');
-    input.type = 'text';
-    input.className = 'pathtextselect';
-
-    var button = this.renderer.createElement('button');
-    button.className = 'btnRemove';
-    button.innerHTML = '-';
+  
    
-}
+
 BUcheck() {
   var radioOptD = <HTMLInputElement>document.getElementById("distant")
   var radioDiv = <HTMLDivElement>document.getElementById("ifServer")
@@ -84,11 +70,14 @@ BUcheck() {
 ShowCompress(){
 var checkbox = <HTMLInputElement>document.getElementById("checkboxCompression")
 var compressDiv = <HTMLDivElement>document.getElementById("divCompress")
+var dropMenuDiv = <HTMLDivElement>document.getElementById("dropMenuDiv")
 if(checkbox.checked){
  compressDiv.style.display = 'block';
+ dropMenuDiv.style.display = 'block';
 }
 else
 compressDiv.style.display = 'none';
+
 }
 ShowCompressOption(){
   var selectBox = <HTMLSelectElement>document.getElementById("dropdownCompress")
@@ -131,9 +120,33 @@ ShowCompressOption(){
   }
  
 }
+AddLocalDestination(){
+      var AddDesti = <HTMLInputElement>document.getElementById("distant")   
+      var inputDestination = <HTMLDivElement>document.getElementById("inputDestiDiv");
+      var input = this.renderer.createElement('input');
+      input.type = 'text';
+      input.name = 'trying';
+      input.Ngmodel ='kokotko';
+      input.class = 'autoDestiLocal'
+      input.placeholder ='Aditional destination'
+      var button = this.renderer.createElement('button'); 
+      button.innerHTML = 'Remove';
 
-  ngOnInit() {
-    this.date = new Date(2018,1,1,0,0)
+      this.renderer.listen(button, 'click', (event) => this.RemoveLocalDestination(event));
+    
+      var br = this.renderer.createElement("br");
+      this.renderer.appendChild(inputDestination, input);
+      this.renderer.appendChild(inputDestination,button);
+      this.renderer.appendChild(inputDestination, br);
+      /*inputDestination.appendChild(input);*/
+      /*inputDestination.appendChild(br);*/
+      
+    }
+    RemoveLocalDestination(event: any){
+      var target = event.target || event.srcElement || event.currentTarget;
+      var inputDestiDiv = <HTMLDivElement>document.getElementById("inputDestiDiv");
+      this.renderer.removeChild(inputDestiDiv,target.parent.node);
+    }
+  
+
   }
-
-}

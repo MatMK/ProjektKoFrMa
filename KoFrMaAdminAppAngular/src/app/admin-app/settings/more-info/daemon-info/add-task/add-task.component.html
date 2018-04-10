@@ -8,6 +8,7 @@
           Daemon Id: <input type="text" id="daemonId" [(ngModel)]="daemonId" placeholder="Daemon Id" (change)="checkIfNumberValid()">
               <div id="backupType">
               Full <input type="radio" name="buChoice">  Incremental <input type="radio" name="buChoice">  Differencial <input type="radio" name="buChoice"><br>
+              
               </div>
              
               <div id="destinationSelect">
@@ -26,7 +27,7 @@
                 <option value="Zip" id="optionZip" >Zip</option> 
                 </select>                
              </div>
-             <div id="dropMenuDiv">
+             <div id="dropMenuDiv" >
              <select id="dropdownRar"  style="display:none"> 
               <option value="0" id="optionRar0">No Compression</option> 
               <option value="1" id="optionRar1">Fastest</option> 
@@ -52,7 +53,9 @@
              <br>
             <input type="text" id="inputSource" placeholder="C:\Users" [(ngModel)]="sourcepath"><br>
             <input type="datetime-local" id="inputDateExecution" [value] = "_date" (change) = "onDateChange($event.target.value)" ><br>
-            <input type="text" placeholder="C:\KoFrMaBackup\Backup" id="inputDestination" [(ngModel)]="destinationpath"> <input type="submit" id="AddDestLocal" value="Add Destination" onclick="AddDestination()"><br>
+            <div id="inputDestiDiv">
+            <input type="text" placeholder="C:\KoFrMaBackup\Backup" id="inputDestination" [(ngModel)]="destinationpath"> <input type="submit" id="AddDestLocal" value="Add Destination" (click)="AddLocalDestination()"><br>
+            </div>
             <input type="submit" value="Save" id="inputSaveTask" (click)="AddTask()">
        </div>
       </body>
