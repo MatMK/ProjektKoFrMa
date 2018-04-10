@@ -40,8 +40,6 @@ export class AddTaskComponent  {
    }
   AddTask()
   {
-    alert(this.compression);
-    /*
     if(this.checkIfNumberValid(true))
     {
       let t : SetTask = new SetTask()
@@ -51,9 +49,28 @@ export class AddTaskComponent  {
       t.ExecutionTimes = new TaskRepeating();
       t.ExecutionTimes.ExecutionTimes = [this.date];
       t.TimeToBackup = this.date;
+      var select = (<HTMLSelectElement> document.getElementById('dropdownCompress'));
+      t.CompressionType = select.options[select.selectedIndex].value;
+      if(t.CompressionType == "Rar")
+      {
+        var select = (<HTMLSelectElement> document.getElementById('dropdownRar'));
+        t.CompressionLevel = +select.options[select.selectedIndex].value;
+      }
+      if(t.CompressionType == "7zip")
+      {
+        var select = (<HTMLSelectElement> document.getElementById('dropdownZip'));
+        t.CompressionLevel = +select.options[select.selectedIndex].value;
+      }
+      if(t.CompressionType == "Zip")
+      {
+        var select = (<HTMLSelectElement> document.getElementById('dropdown7zip'));
+        t.CompressionLevel = +select.options[select.selectedIndex].value;
+      }
+      alert(t.CompressionLevel);
+      /*
       this.service.SetTask([t]);
-      this.router.navigate(['backup', 'app','tasks']);
-    }*/
+      this.router.navigate(['backup', 'app','tasks']);*/
+    }
   }
   private onDateChange(value : Date)
   {

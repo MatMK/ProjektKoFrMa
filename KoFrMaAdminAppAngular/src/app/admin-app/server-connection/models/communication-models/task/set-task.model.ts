@@ -17,4 +17,6 @@ export class SetTask
     public ScriptBefore : ScriptInfo;
     public ScriptAfter : ScriptInfo;
     public TemporaryFolderMaxBuffer : number; 
+
+    public CompressionType : string;
 }

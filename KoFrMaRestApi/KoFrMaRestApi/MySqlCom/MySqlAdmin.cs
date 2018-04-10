@@ -160,6 +160,7 @@ namespace KoFrMaRestApi.MySqlCom
                 foreach (var item in addAdmin.Permissions)
                 {
                     command.CommandText = $"INSERT INTO `tbPermissions`() VALUES (null,{item},{AdminId})";
+                    command.ExecuteNonQuery();
                 }
             }
         }

@@ -14,7 +14,6 @@ namespace KoFrMaDaemon.ConnectionToServer
         {
             return JsonConvert.SerializeObject(obj, jsonSettings);
         }
-
         public static T Deserialize<T>(string json)
         {
             return JsonConvert.DeserializeObject<T>(json, jsonSettings);
