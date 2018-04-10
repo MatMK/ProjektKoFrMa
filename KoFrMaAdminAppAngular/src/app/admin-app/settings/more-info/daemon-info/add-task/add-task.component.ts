@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, Renderer2, OnInit  } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatRadioModule, MatRadioButton } from '@angular/material/radio';
 import { SetTask } from '../../../../server-connection/models/communication-models/task/set-task.model';
@@ -11,13 +11,15 @@ import { ServerConnectionService } from '../../../../server-connection/server-co
   templateUrl: './add-task.component.html',
   styleUrls: ['./add-task.component.css']
 })
-export class AddTaskComponent implements OnInit {
+export class AddTaskComponent  {
   private daemonId : number;
   private sourcepath : string;
   private destinationpath : string;
   private backuptype : string;
   private date : Date;
-
+  private ncUsername : string;
+  private ncPassword : string;
+  private compression : string;
 
   constructor(private activeRoute:ActivatedRoute, private service : ServerConnectionService, private renderer: Renderer2, private router : Router) {
       this.activeRoute.params.subscribe(params => {
@@ -38,6 +40,8 @@ export class AddTaskComponent implements OnInit {
    }
   AddTask()
   {
+    alert(this.compression);
+    /*
     if(this.checkIfNumberValid(true))
     {
       let t : SetTask = new SetTask()
@@ -49,29 +53,15 @@ export class AddTaskComponent implements OnInit {
       t.TimeToBackup = this.date;
       this.service.SetTask([t]);
       this.router.navigate(['backup', 'app','tasks']);
-    }
+    }*/
   }
   private onDateChange(value : Date)
   {
     this.date = value;
   }
-  addLocalDestination() {
-
-    var backups = <HTMLInputElement>document.getElementById("AddDestLocal");
-
-    var newLocalDestDiv = this.renderer.createElement('div');
-    newLocalDestDiv.className = 'newDestDiv';
-     
-
-    var input = this.renderer.createElement('input');
-    input.type = 'text';
-    input.className = 'pathtextselect';
-
-    var button = this.renderer.createElement('button');
-    button.className = 'btnRemove';
-    button.innerHTML = '-';
+  
    
-}
+
 BUcheck() {
   var radioOptD = <HTMLInputElement>document.getElementById("distant")
   var radioDiv = <HTMLDivElement>document.getElementById("ifServer")
@@ -84,11 +74,14 @@ BUcheck() {
 ShowCompress(){
 var checkbox = <HTMLInputElement>document.getElementById("checkboxCompression")
 var compressDiv = <HTMLDivElement>document.getElementById("divCompress")
+var dropMenuDiv = <HTMLDivElement>document.getElementById("dropMenuDiv")
 if(checkbox.checked){
  compressDiv.style.display = 'block';
+ dropMenuDiv.style.display = 'block';
 }
 else
 compressDiv.style.display = 'none';
+
 }
 ShowCompressOption(){
   var selectBox = <HTMLSelectElement>document.getElementById("dropdownCompress")
@@ -131,9 +124,35 @@ ShowCompressOption(){
   }
  
 }
+AddLocalDestination(){
+      var newDiv = this.renderer.createElement('div'); 
+      newDiv.Id='idNewDiv'
+      newDiv.className='aditionalDivClass'
+      var inputDestination = <HTMLDivElement>document.getElementById("inputDestiDiv");
+      var input = this.renderer.createElement('input');
+      input.type = 'text';
+      input.Ngmodel ='kokong';
+      input.className = 'autoDestiLocal'
+      input.placeholder ='Aditional destination'
+      var button = this.renderer.createElement('button'); 
+      button.innerHTML = 'Remove';
 
-  ngOnInit() {
-    this.date = new Date(2018,1,1,0,0)
+      this.renderer.listen(button, 'click', (event) => this.RemoveLocalDestination(event));
+    
+      var br = this.renderer.createElement("br");
+      this.renderer.appendChild(newDiv, input);
+      this.renderer.appendChild(inputDestination,newDiv);
+      this.renderer.appendChild(newDiv,button);
+      this.renderer.appendChild(newDiv, br);
+      /*inputDestination.appendChild(input);*/
+      /*inputDestination.appendChild(br);*/
+      
+    }
+    RemoveLocalDestination(event: any){
+      var target = event.target || event.srcElement || event.currentTarget;
+      var inputDestiDiv = <HTMLDivElement>document.getElementById("inputDestiDiv");
+      this.renderer.removeChild(inputDestiDiv,target.parentNode);
+    }
+  
+
   }
-
-}

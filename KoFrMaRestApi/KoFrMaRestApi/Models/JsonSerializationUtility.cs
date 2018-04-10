@@ -8,7 +8,7 @@ namespace KoFrMaRestApi.Models
 {
     public class JsonSerializationUtility
     {
-        private static JsonSerializerSettings jsonSettings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, SerializationBinder = new SettingsSerializationBinder() };
+        public static JsonSerializerSettings jsonSettings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, SerializationBinder = new SettingsSerializationBinder() };
         public static string Serialize(object obj)
         {
             return JsonConvert.SerializeObject(obj, jsonSettings);

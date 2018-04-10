@@ -5,7 +5,7 @@ using System.Web;
 
 namespace KoFrMaRestApi.Models.AdminApp.PostAdmin
 {
-    public class AddAdminRequest
+    public class AddAdminRequest : IRequest
     {
         public AddAdmin addAdmin { get; set; }
     }

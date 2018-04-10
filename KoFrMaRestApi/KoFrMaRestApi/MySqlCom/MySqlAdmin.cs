@@ -148,9 +148,13 @@ namespace KoFrMaRestApi.MySqlCom
         public void AddAdmin(AddAdmin addAdmin)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
-            using (MySqlCommand command = new MySqlCommand($"INSERT INTO `tbAdminAccounts`() VALUES (null, {addAdmin.Username}, {addAdmin.Email}, {Convert.ToInt16(addAdmin.Enabled)}, {addAdmin.Password}, null)", connection))
+            using (MySqlCommand command = new MySqlCommand($"INSERT INTO `tbAdminAccounts`() VALUES (null, @Username, @Email, @Enable, @Password, null)", connection))
             {
                 connection.Open();
+                command.Parameters.AddWithValue("@Email", addAdmin.Email);
+                command.Parameters.AddWithValue("@Username", addAdmin.Username);
+                command.Parameters.AddWithValue("@Enable", addAdmin.Enabled);
+                command.Parameters.AddWithValue("@Password", addAdmin.Password);
                 command.ExecuteNonQuery();
                 int AdminId = NextAutoIncrement("tbAdminAccounts") - 1;
                 foreach (var item in addAdmin.Permissions)

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using Newtonsoft.Json;
 
 namespace KoFrMaRestApi.Controllers
 {
@@ -46,7 +47,7 @@ namespace KoFrMaRestApi.Controllers
             {
                 try
                 {
-                    mySqlCom.SetTasks(postAdmin.setTasks);
+                    mySqlCom.SetTasks(((SetTasksRequest)postAdmin.request).setTasks);
                 }
                 catch
                 {
@@ -103,7 +104,8 @@ namespace KoFrMaRestApi.Controllers
         [HttpPost, Route(@"api/AdminApp/AddAdmin")]
         public void AddAdmin(PostAdmin postAdmin)
         {
-            mySqlCom.AddAdmin(postAdmin.addAdmin);
+            if(postAdmin.request is AddAdminRequest)
+                mySqlCom.AddAdmin(((AddAdminRequest)postAdmin.request).addAdmin);
         }
         [HttpGet, Route(@"api /AdminApp/test")]
         public int test()

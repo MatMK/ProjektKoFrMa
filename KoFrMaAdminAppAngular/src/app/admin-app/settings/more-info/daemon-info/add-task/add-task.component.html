@@ -3,59 +3,61 @@
        <script type="text/javascript" src=Check.js></script>
       <script type="text/javascript" src=AddDestinationcheck.js></script>
   </head>
-<body>
-        <div id="celek">
-          Daemon Id: <input type="text" id="daemonId" [(ngModel)]="daemonId" placeholder="Daemon Id" (change)="checkIfNumberValid()">
-              <div id="backupType">
-              Full <input type="radio" name="buChoice">  Incremental <input type="radio" name="buChoice">  Differencial <input type="radio" name="buChoice"><br>
-              </div>
-             
-              <div id="destinationSelect">
-            FTP/SFTP <input type="radio" (click)="BUcheck()" name="type" id="distant"> Local <input type="radio" (click)="BUcheck()" name="type" id="local">
-              </div>
-              
-              <div id="ifServer" style="display:none">
-              <input type='text' placeholder="Username:" id='distUser' name='dUser'[(ngModel)]="ncUsername" ><br>
-              <input type='text'placeholder="Password:" id='distPass' name='dPass'[(ngModel)]="ncPassword">
-             </div>
-             Compress? <input type="checkbox" id="checkboxCompression" (change)="ShowCompress()" >
-             <div id="divCompress" style="display:none">
-              <select id="dropdownCompress" (change)="ShowCompressOption()" > 
-                <option value="Rar" id="optionRar">Rar</option> 
-                <option value="7zip" id="option7zip" >7zip</option> 
-                <option value="Zip" id="optionZip" >Zip</option> 
-                </select>                
-             </div>
-             <div id="dropMenuDiv">
-             <select id="dropdownRar"  style="display:none"> 
-              <option value="0" id="optionRar0">No Compression</option> 
-              <option value="1" id="optionRar1">Fastest</option> 
-              <option value="2" id="optionRar2">Fast</option> 
-              <option value="3" id="optionRar3">Normal</option> 
-              <option value="4" id="optionRar4">Good</option> 
-              <option value="4" id="optionRar5">Best</option> 
-              </select>   
-              <select id="dropdownZip" style="display:none"> 
-                <option value="0" id="optionZip0">Optimal</option> 
-                <option value="1" id="optionZip1">Fastest</option> 
-                <option value="2" id="optionZip2">No Compression</option> 
-                </select>  
-                <select id="dropdown7zip"  style="display:none"> 
-                  <option value="0" id="option7zip0">No Compression</option> 
-                  <option value="1" id="option7zip1">Fastest</option> 
-                  <option value="3" id="option7Zip2">Fast</option> 
-                  <option value="5" id="option7Zip3">Normal</option> 
-                  <option value="7" id="option7Zip4">Maximum</option> 
-                  <option value="9" id="option7Zip5">Ultra</option> 
-                  </select>
-                </div>  
-             <br>
-            <input type="text" id="inputSource" placeholder="C:\Users" [(ngModel)]="sourcepath"><br>
-            <input type="datetime-local" id="inputDateExecution" [value] = "_date" (change) = "onDateChange($event.target.value)" ><br>
-            <input type="text" placeholder="C:\KoFrMaBackup\Backup" id="inputDestination" [(ngModel)]="destinationpath"> <input type="submit" id="AddDestLocal" value="Add Destination" onclick="AddDestination()"><br>
-            <input type="submit" value="Save" id="inputSaveTask" (click)="AddTask()">
-       </div>
-      </body>
-   
-      </html>
+</html>
+  <div id="celek">
+    Daemon Id: <input type="text" id="daemonId" [(ngModel)]="daemonId" placeholder="Daemon Id" (change)="checkIfNumberValid()">
+  <div id="backupType">
+    Full <input type="radio" name="buChoice" value="Full" [(ngModel)]="backuptype">  Incremental <input type="radio" name="buChoice" value="Incremental" [(ngModel)]="backuptype">  Differencial <input type="radio" name="buChoice" value="Differencial" [(ngModel)]="backuptype"><br>
+  </div>
+  <div id="destinationSelect">
+    FTP/SFTP <input type="radio" (click)="BUcheck()" name="type" id="distant"> Local <input type="radio" (click)="BUcheck()" name="type" id="local">
+  </div>
+  <div id="ifServer" style="display:none">
+    <input type='text' placeholder="Username:" id='distUser' name='dUser'[(ngModel)]="ncUsername" ><br>
+    <input type='text'placeholder="Password:" id='distPass' name='dPass'[(ngModel)]="ncPassword">
+  </div>
+  Compress? <input type="checkbox" id="checkboxCompression" (change)="ShowCompress()" >
+  <div id="divCompress" style="display:none">
+    <select id="dropdownCompress" (change)="ShowCompressOption()" > 
+      <option value="Rar" id="optionRar">Rar</option> 
+      <option value="7zip" id="option7zip" >7zip</option> 
+      <option value="Zip" id="optionZip" >Zip</option> 
+    </select>                
+  </div>
+  <div id="dropMenuDiv" >
+    <select id="dropdownRar"  style="display:none"> 
+      <option value="0" id="optionRar0">No Compression</option> 
+      <option value="1" id="optionRar1">Fastest</option> 
+      <option value="2" id="optionRar2">Fast</option> 
+      <option value="3" id="optionRar3">Normal</option> 
+      <option value="4" id="optionRar4">Good</option> 
+      <option value="4" id="optionRar5">Best</option> 
+    </select>   
+    <select id="dropdownZip" style="display:none"> 
+      <option value="0" id="optionZip0">Optimal</option> 
+      <option value="1" id="optionZip1">Fastest</option> 
+      <option value="2" id="optionZip2">No Compression</option> 
+    </select>  
+    <select id="dropdown7zip"  style="display:none"> 
+      <option value="0" id="option7zip0">No Compression</option> 
+      <option value="1" id="option7zip1">Fastest</option> 
+      <option value="3" id="option7Zip2">Fast</option> 
+      <option value="5" id="option7Zip3">Normal</option> 
+      <option value="7" id="option7Zip4">Maximum</option> 
+      <option value="9" id="option7Zip5">Ultra</option> 
+    </select>
+  </div>  
+    <br>
+    <input type="text" id="inputSource" placeholder="C:\Users" [(ngModel)]="sourcepath"><br>
+    <input type="datetime-local" id="inputDateExecution" [value] = "_date" (change) = "onDateChange($event.target.value)" ><br>
+      <div id="inputDestiDiv">
+        <div class="aditionalDivClass">
+          <input type="text" placeholder="C:\KoFrMaBackup\Backup" id="inputDestination" [(ngModel)]="destinationpath"> <input type="submit" id="AddDestLocal" value="Add Destination" (click)="AddLocalDestination()"><br>
+        </div>
+      </div>
+    <input type="submit" value="Save" id="inputSaveTask" (click)="AddTask()">
+  </div>
+</body>
+
+</html>
         
