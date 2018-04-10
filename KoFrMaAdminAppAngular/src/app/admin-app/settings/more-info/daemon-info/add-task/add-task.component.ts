@@ -17,7 +17,9 @@ export class AddTaskComponent  {
   private destinationpath : string;
   private backuptype : string;
   private date : Date;
-
+  private ncUsername : string;
+  private ncPassword : string;
+  private compression : string;
 
   constructor(private activeRoute:ActivatedRoute, private service : ServerConnectionService, private renderer: Renderer2, private router : Router) {
       this.activeRoute.params.subscribe(params => {
@@ -38,6 +40,8 @@ export class AddTaskComponent  {
    }
   AddTask()
   {
+    alert(this.compression);
+    /*
     if(this.checkIfNumberValid(true))
     {
       let t : SetTask = new SetTask()
@@ -49,7 +53,7 @@ export class AddTaskComponent  {
       t.TimeToBackup = this.date;
       this.service.SetTask([t]);
       this.router.navigate(['backup', 'app','tasks']);
-    }
+    }*/
   }
   private onDateChange(value : Date)
   {
