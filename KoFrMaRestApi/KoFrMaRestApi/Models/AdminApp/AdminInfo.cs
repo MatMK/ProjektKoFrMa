@@ -9,6 +9,9 @@ namespace KoFrMaRestApi.Models.AdminApp
     {
         public string Token { get; set; }
         public string UserName { get; set; }
+        /// <summary>
+        /// Permissions that admin is requiered to have
+        /// </summary>
         public int[] Permission { get; set; }
     }
 }

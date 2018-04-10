@@ -10,6 +10,7 @@ import { tbDaemons } from './models/sql-data/data/tb-daemons.model';
 import { tbTasks } from './models/sql-data/data/tb-tasks.model';
 import { MainTask } from './models/communication-models/task/main-task.model';
 import { SetTask } from './models/communication-models/task/set-task.model';
+import { AddAdmin } from './models/communication-models/add-admin.model';
 
 @Injectable()
 
@@ -28,7 +29,7 @@ export class ServerConnectionService{
    }
    GettbAdminAccounts() : Promise<tbAdminAccounts[]>
    {
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, [], [1]);
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, [], [1],null);
         let url = this.data.ServerRootURL + "api/AdminApp/GettbAdminAccounts";
         return this.http.post(url,postAdmin).toPromise()
                         .then(res => res.json())
@@ -39,7 +40,7 @@ export class ServerConnectionService{
     }
     GettbDaemons() : Promise<tbDaemons[]>
    {
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, [], [2]);
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, [], [2],null);
         let url = this.data.ServerRootURL + "api/AdminApp/GettbDaemons";
         return this.http.post(url,postAdmin).toPromise()
                         .then(res => res.json())
@@ -50,7 +51,7 @@ export class ServerConnectionService{
     }
     GettbTasks() : Promise<tbTasks[]>
    {
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, [], [3]);
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, [], [3],null);
         let url = this.data.ServerRootURL + "api/AdminApp/GettbTasks";
         return this.http.post(url,postAdmin).toPromise()
                         .then(res => res.json())
@@ -76,7 +77,7 @@ export class ServerConnectionService{
     }
     SetTask(setTask:SetTask[]) 
     {
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,setTask, null);
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,setTask, null,null);
         let url = this.data.ServerRootURL + "api/AdminApp/SetTask";
         this.http.post(url,postAdmin).toPromise()
                         .then(res => this.data.Loading = false)
@@ -86,9 +87,10 @@ export class ServerConnectionService{
                                 console.log('Error: ' + msg.status + ' ' + msg.statusText);
                             })
     }
-    HashString(toHash : string)
+    HashString(toHash : string) : string
     {
         //unfinished
+        return toHash;
     }
     IsAuthorized() : Promise<boolean>
     {
@@ -111,5 +113,22 @@ export class ServerConnectionService{
                 {
                     console.log('Error: ' + msg.status + ' ' + msg.statusText);
                 })
+    }
+    AddAdmin(addAdmin:AddAdmin) : Promise<boolean>
+    {
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,null, null,addAdmin);
+        let url = this.data.ServerRootURL + "api/AdminApp/AddAdmin";
+        return this.http.post(url,postAdmin).toPromise()
+                        .then(res => 
+                            {
+                                this.data.Loading = false
+                                return true;
+                            })
+                        .catch(msg => 
+                            {
+                                this.data.Loading = false;
+                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                                return false;
+                            })
     }
 }

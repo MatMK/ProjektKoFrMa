@@ -118,27 +118,19 @@ namespace KoFrMaRestApi.MySqlCom
                 {
                     using (MySqlCommand command = new MySqlCommand("INSERT INTO `tbTasks` VALUES (null, @DaemonId, @Task, @DateOfCompletion, @Repeating,0)", connection))
                     {
-                        Task task = null;
-                        using (MySqlCommand TaskId = new MySqlCommand("SELECT `auto_increment` FROM INFORMATION_SCHEMA.TABLES WHERE table_name = 'tbTasks'", connection))
-                        using (MySqlDataReader reader = TaskId.ExecuteReader())
+                        Task task = new Task()
                         {
-                            while (reader.Read())
-                            {
-                                task = new Task()
-                                {
-                                    IDTask = Convert.ToInt32(reader["auto_increment"]),
-                                    TimeToBackup = item.TimeToBackup,
-                                    SourceOfBackup = item.SourceOfBackup,
-                                    Destinations = item.Destinations,
-                                    LogLevel = item.LogLevel,
-                                    ScriptBefore = item.ScriptBefore,
-                                    ScriptAfter = item.ScriptAfter,
-                                    TemporaryFolderMaxBuffer = item.TemporaryFolderMaxBuffer,
-                                    InProgress = false,
-                                    BackupJournalSource = null
-                                };
-                            }
-                        }
+                            IDTask = NextAutoIncrement("tbTasks"),
+                            TimeToBackup = item.TimeToBackup,
+                            SourceOfBackup = item.SourceOfBackup,
+                            Destinations = item.Destinations,
+                            LogLevel = item.LogLevel,
+                            ScriptBefore = item.ScriptBefore,
+                            ScriptAfter = item.ScriptAfter,
+                            TemporaryFolderMaxBuffer = item.TemporaryFolderMaxBuffer,
+                            InProgress = false,
+                            BackupJournalSource = null
+                        };
                         dynamic Repeating;
                         if (item.ExecutionTimes != null)
                             Repeating = JsonConvert.SerializeObject(item.ExecutionTimes);
@@ -153,6 +145,20 @@ namespace KoFrMaRestApi.MySqlCom
                 }
             }
         }
+        public void AddAdmin(AddAdmin addAdmin)
+        {
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand($"INSERT INTO `tbAdminAccounts`() VALUES (null, {addAdmin.Username}, {addAdmin.Email}, {Convert.ToInt16(addAdmin.Enabled)}, {addAdmin.Password}, null)", connection))
+            {
+                connection.Open();
+                command.ExecuteNonQuery();
+                int AdminId = NextAutoIncrement("tbAdminAccounts") - 1;
+                foreach (var item in addAdmin.Permissions)
+                {
+                    command.CommandText = $"INSERT INTO `tbPermissions`() VALUES (null,{item},{AdminId})";
+                }
+            }
+        }
         public void AlterTable(ChangeTable changeTable)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
@@ -161,6 +167,25 @@ namespace KoFrMaRestApi.MySqlCom
                 connection.Open();
                 command.Parameters.AddWithValue("@Value", changeTable.Value);
                 command.ExecuteNonQuery();
+            }
+        }
+        public int NextAutoIncrement(string table)
+        {
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand($"SELECT `auto_increment` FROM INFORMATION_SCHEMA.TABLES WHERE table_name = '{table}'", connection))
+            {
+                connection.Open();
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return Convert.ToInt32(reader["auto_increment"]);
+                    }
+                    else
+                    {
+                        throw new Exception("Table does not exist");
+                    }
+                }
             }
         }
     }
