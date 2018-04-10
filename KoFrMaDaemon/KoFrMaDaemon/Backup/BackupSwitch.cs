@@ -111,6 +111,7 @@ namespace KoFrMaDaemon.Backup
                 this.taskDebugLog.WriteToLog("At least one of destinations is plain local backup, there is no need to create temporary folder.", 6);
             }
 
+
             this.taskDebugLog.WriteToLog("Starting the backup...", 4);
             this.BackupToFolder(task, this.temporaryDestinationInfo);
             this.taskDebugLog.WriteToLog("Creating desired destination outputs...", 5);
@@ -123,11 +124,15 @@ namespace KoFrMaDaemon.Backup
             if (task.BackupJournalSource != null)
             {
                 this.taskDebugLog.WriteToLog("Starting differential/incremental backup, because journal was received from the server", 5);
+                this.taskDebugLog.WriteToLog("Checking if there is enough space available in destination(s)...", 5);
+                this.CheckIfSpaceAvailable(new DirectoryInfo(task.BackupJournalSource.RelativePath),task.Destinations);
                 this.BackupDifferentialProcess(task, destination);
             }
             else
             {
                 this.taskDebugLog.WriteToLog("Starting full backup, because the there is no info about backup journal", 5);
+                this.taskDebugLog.WriteToLog("Checking if there is enough space available in destination(s)...", 5);
+                this.CheckIfSpaceAvailable(new DirectoryInfo(task.SourceOfBackup), task.Destinations);
                 this.BackupFullProcess(task, destination);
                 //this.sourceInfo = backupFull.sourceInfo.Parent;
                 //this.destinationInfo = backupFull.destinationInfo.Parent;
@@ -729,6 +734,27 @@ namespace KoFrMaDaemon.Backup
             }
         }
 
+        private Int64 CalculateDirectorySize(DirectoryInfo directory)
+        {
+            Int64 tmp = 0;
+            this.CalculateDirectorySizeRecursively(directory, tmp);
+            return tmp;
+        }
+
+        private void CalculateDirectorySizeRecursively(DirectoryInfo directoryInfo, Int64 size)
+        {
+            foreach (FileInfo item in directoryInfo.GetFiles())
+            {
+                size+=item.Length;
+            }
+
+            foreach (DirectoryInfo item in directoryInfo.GetDirectories())
+            {
+                this.CalculateDirectorySizeRecursively(item, size);
+            }
+        }
+
+
         //private void CopyDirectoryRecursivly(DirectoryInfo from, DirectoryInfo to)
         //{
         //    if (!to.Exists)
@@ -777,7 +803,38 @@ namespace KoFrMaDaemon.Backup
             }
         }
 
+        private void CheckIfSpaceAvailable(DirectoryInfo source, List<IDestination> destinations)
+        {
+            Int64 sourceLength = this.CalculateDirectorySize(source);
+            for (int i = 0; i < destinations.Count; i++)
+            {
+                if (destinations[i].Path is DestinationPathLocal)
+                {
+                    Int64 destinationLength =  new DriveInfo(destinations[i].Path.Path.Substring(0, 1)).AvailableFreeSpace;
+                    this.taskDebugLog.WriteToLog("Space that will be taken by this backup: " + sourceLength/1048576 + "MB, space that is available: " + destinationLength/1048576+"MB.", 7);
+                    if (destinationLength>=sourceLength)
+                    {
+                        this.taskDebugLog.WriteToLog("Space check succeeded, there is enough space for the backup.",5);
+                    }
+                    else
+                    {
+                        this.taskDebugLog.WriteToLog("Space check failed, there is not enough space for the backup on drive "+ destinations[i].Path.Path.Substring(0,1)+". Trying to backup anyway, but the odds are not exactly in favor of success (99% fail).",3);
+                    }
+                }
+                else if (destinations[i].Path is DestinationPathFTP)
+                {
 
+                }
+                else if (destinations[i].Path is DestinationPathSFTP)
+                {
+
+                }
+                else if (destinations[i].Path is DestinationPathNetworkShare)
+                {
+
+                }
+            }
+        }
 
     }
 }

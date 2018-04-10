@@ -17,7 +17,7 @@ namespace KoFrMaDaemon.Backup
 
             if (!(compressionLevel == null))
             {
-                if (splitAfter != null && splitAfter != 0)
+                if (splitAfter == null && splitAfter == 0)
                 {
                     ServiceKoFrMa.debugLog.WriteToLog("Backup will be stored in one file.", 7);
                     if (!File.Exists(destination))
@@ -63,7 +63,7 @@ namespace KoFrMaDaemon.Backup
                     
                     Process p = new Process();
                     p.StartInfo.FileName = Path.Combine(PathTo7zFolder, "7z.exe");
-                    if (splitAfter!=null&&splitAfter!=0)
+                    if (splitAfter==null&&splitAfter==0)
                     {
                         ServiceKoFrMa.debugLog.WriteToLog("Running 7-zip as follows: " + Path.Combine(PathTo7zFolder, "7z.exe") + " a -t7z " + destination + ' ' + source + "* -mmt -mx" + compressionLevel, 8);
                         p.StartInfo.Arguments = "a -t7z " + destination + ' ' + source + "* -mmt -mx" + compressionLevel;
@@ -100,7 +100,7 @@ namespace KoFrMaDaemon.Backup
                     Process p = new Process();
                     p.StartInfo.FileName = Path.Combine(PathToRarFolder, "Rar.exe");
                     p.StartInfo.CreateNoWindow = true;
-                    if (splitAfter != null && splitAfter != 0)
+                    if (splitAfter == null && splitAfter == 0)
                     {
                         if (!File.Exists(destination))
                         {

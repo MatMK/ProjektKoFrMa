@@ -133,7 +133,8 @@ namespace KoFrMaDaemon
             BackupJournalOperations cheatBackupJournalOperations = new BackupJournalOperations();
             DateTime timeToBackup = DateTime.Now;
             List<IDestination> tmpList = new List<IDestination>();
-            tmpList.Add(new DestinationPlain() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" } });
+            //tmpList.Add(new DestinationPlain() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" } });
+            tmpList.Add(new DestinationZip() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" },CompressionLevel=0,SplitAfter=1 });
             Task taskTest = new Task
             {
                 SourceOfBackup = @"D:\KoFrMa\BackupThisFolder\",
