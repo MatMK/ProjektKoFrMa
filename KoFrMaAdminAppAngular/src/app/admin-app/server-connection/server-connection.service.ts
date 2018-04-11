@@ -136,17 +136,19 @@ export class ServerConnectionService{
     }
     NumberToPermission(permissions : number[]) : string[]
     {  
-        /*
-        let result : string[];
+        let result : string[] = [];
+        if(permissions.length == 0)
+        {
+            return ["No permissions"];
+        }
         permissions.forEach(element => {
             this.data.Permissions.forEach(number => {
                 if(number.number == element)
                 {
-                    result.push(number.name);
+                    result.push(" " + number.name);
                 }
             });
         });
-        return result;*/
-        return ["Fix the serverconnection.numbertopermission"]
+        return result;
     }
 }
