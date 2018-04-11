@@ -43,7 +43,7 @@ export class AddAdminComponent implements OnInit {
     }
     let admin : AddAdmin = new AddAdmin()
     admin.Username = this.username;
-    admin.Password = this.password;
+    admin.Password = btoa(this.password);
     admin.Email = this.email;
     admin.Enabled = this.enabled;
     admin.Permissions = this.selectedPermission;
