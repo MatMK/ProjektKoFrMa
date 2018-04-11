@@ -193,5 +193,14 @@ namespace KoFrMaRestApi.MySqlCom
                 }
             }
         }
+        public void LogOut(int AdminId)
+        {
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand($"UPDATE `tbAdminAccounts` SET  `Token` = null WHERE `Id` = {AdminId}", connection))
+            {
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+        }
     }
 }

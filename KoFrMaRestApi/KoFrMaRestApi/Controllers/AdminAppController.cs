@@ -107,6 +107,19 @@ namespace KoFrMaRestApi.Controllers
             if(postAdmin.request is AddAdminRequest)
                 mySqlCom.AddAdmin(((AddAdminRequest)postAdmin.request).addAdmin);
         }
+        [HttpPost, Route(@"api/AdminApp/LogOut")]
+        public void LogOut(AdminInfo admin)
+        {
+            int? id = mySqlCom.GetAdminId(admin.UserName);
+            if (id!=null)
+            {
+                mySqlCom.LogOut((int)id);
+            }
+            else
+            {
+                throw new Exception("No admin with such name");
+            }
+        }
         [HttpGet, Route(@"api /AdminApp/test")]
         public int test()
         {

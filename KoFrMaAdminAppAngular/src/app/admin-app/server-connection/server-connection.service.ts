@@ -151,4 +151,18 @@ export class ServerConnectionService{
         });
         return result;
     }
+    LogOut()
+    {
+        let url = this.data.ServerRootURL + "api/AdminApp/LogOut";
+        return this.http.post(url,this.data.adminInfo).toPromise()
+                        .then(res => 
+                            {
+                                this.data.Loading = false
+                            })
+                        .catch(msg => 
+                            {
+                                this.data.Loading = false;
+                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                            })
+    }
 }
