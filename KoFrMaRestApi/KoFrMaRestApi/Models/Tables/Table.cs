@@ -12,35 +12,48 @@ namespace KoFrMaRestApi.Models.Tables
         public List<tbAdminAccounts> GetAdminAccounts()
         {
             List<tbAdminAccounts> tb = new List<tbAdminAccounts>();
-            try
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand(@"select * from tbAdminAccounts", connection))
             {
-                using (MySqlConnection connection = WebApiConfig.Connection())
-                using (MySqlCommand command = new MySqlCommand(@"select * from tbAdminAccounts", connection))
-                {
-                    connection.Open();
+                connection.Open();
 
-                    using (MySqlDataReader reader = command.ExecuteReader())
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
                     {
-                        while (reader.Read())
+                        List<int> permissionsList = GetPermissions((int)reader["Id"]);
+                        tb.Add(new tbAdminAccounts()
                         {
-                            tb.Add(new tbAdminAccounts()
-                            {
-                                Id = (int)reader["Id"],
-                                UserName = (string)reader["UserName"],
-                                Email = (string)reader["Email"],
-                                Enabled = Convert.ToBoolean(reader["Enabled"]),/*
-                                Password = (string)reader["Password"],
-                                Token = (string)reader["Token"]*/
-                            });
-                        }
+                            Id = (int)reader["Id"],
+                            UserName = (string)reader["UserName"],
+                            Email = (string)reader["Email"],
+                            Enabled = Convert.ToBoolean(reader["Enabled"]),
+                            Permission = permissionsList
+                            /*
+                            Password = (string)reader["Password"],
+                            Token = (string)reader["Token"]*/
+                        });
                     }
                 }
             }
-            catch (MySqlException)
-            {
-
-            }
             return tb;
+        }
+        private List<int> GetPermissions(int AdminId)
+        {
+            List<int> permissionsList = new List<int>();
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            {
+                connection.Open();
+                using (MySqlCommand getPermissions = new MySqlCommand($"SELECT Permission FROM `tbPermissions` WHERE `IdAdmin` = {AdminId}", connection))
+                using (MySqlDataReader permissionsReader = getPermissions.ExecuteReader())
+                {
+                    while (permissionsReader.Read())
+                    {
+                        permissionsList.Add((int)permissionsReader["Permission"]);
+                    }
+                }
+            }
+            return permissionsList;
         }
         public List<tbDaemons> GetDaemons()
         {

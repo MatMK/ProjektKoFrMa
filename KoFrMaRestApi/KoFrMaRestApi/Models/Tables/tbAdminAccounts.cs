@@ -11,7 +11,7 @@ namespace KoFrMaRestApi.Models.Tables
         public string UserName { get; set; }
         public string Email { get; set; }
         public bool Enabled { get; set; }
-        public int? Permission { get; set; }
+        public List<int> Permission { get; set; }
         //public Int64 Password { get; set; }
         //public string Token { get; set; }
     }

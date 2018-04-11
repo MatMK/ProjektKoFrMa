@@ -20,7 +20,10 @@ export class AdminAccountsComponent implements OnInit {
   displayedColumns = ['Id', 'Username', 'Email', 'Enabled', 'Permission'];
   refresh()
   {
-    this.service.GettbAdminAccounts().then(res =>this.data.AdminAccounts = new MatTableDataSource<tbAdminAccounts>(res));
+    this.service.GettbAdminAccounts().then(res =>
+      {
+        this.data.AdminAccounts = new MatTableDataSource<tbAdminAccounts>(res)
+      });
   }
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim(); // Remove whitespace

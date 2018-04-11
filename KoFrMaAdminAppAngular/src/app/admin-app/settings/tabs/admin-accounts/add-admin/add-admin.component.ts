@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ServerConnectionService } from '../../../../server-connection/server-connection.service';
 import { AddAdmin } from '../../../../server-connection/models/communication-models/add-admin.model';
 import { Router } from '@angular/router';
+import { Data } from '../../../../server-connection/data.model';
 
 @Component({
   selector: 'app-add-admin',
@@ -15,7 +16,7 @@ export class AddAdminComponent implements OnInit {
   private email : string;
   private enabled : boolean = true;
   private selectedPermission : number[] = [];
-  private Permissions : PermInterface[] = [{name:'Add Admins', number:1}, {name: 'Add Tasks', number:2}]
+  private Permissions = this.data.Permissions;
 
   onAreaListControlChanged(list){
     try{
@@ -55,14 +56,8 @@ export class AddAdminComponent implements OnInit {
         alert('Something went wrong');
     })
   }
-  constructor(private serverConnection : ServerConnectionService, private router : Router) { }
+  constructor(private serverConnection : ServerConnectionService, private router : Router, private data : Data) { }
   ngOnInit() {
   }
 
-}
-
-interface PermInterface
-{
-  name : string;
-  number : number;
 }

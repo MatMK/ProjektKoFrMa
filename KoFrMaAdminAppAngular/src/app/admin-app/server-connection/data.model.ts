@@ -13,4 +13,5 @@ export class Data
     public Daemons : MatTableDataSource<tbDaemons> = new MatTableDataSource<tbDaemons>();
     public Tasks : MatTableDataSource<MainTask> = new MatTableDataSource<MainTask>();
     public ErrorMessage : string;
+    public Permissions : PermInterface[] = [{name:'Add Admins', number:1}, {name: 'Add Tasks', number:2}];
 }

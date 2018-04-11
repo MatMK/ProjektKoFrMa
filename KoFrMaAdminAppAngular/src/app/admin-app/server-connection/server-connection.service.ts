@@ -134,4 +134,19 @@ export class ServerConnectionService{
                                 return false;
                             })
     }
+    NumberToPermission(permissions : number[]) : string[]
+    {  
+        /*
+        let result : string[];
+        permissions.forEach(element => {
+            this.data.Permissions.forEach(number => {
+                if(number.number == element)
+                {
+                    result.push(number.name);
+                }
+            });
+        });
+        return result;*/
+        return ["Fix the serverconnection.numbertopermission"]
+    }
 }

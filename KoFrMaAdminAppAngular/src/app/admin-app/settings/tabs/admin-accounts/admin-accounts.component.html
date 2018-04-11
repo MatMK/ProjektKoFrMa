@@ -30,9 +30,10 @@
       </ng-container>
 
       <!-- Permission Column -->
+      <!-- service.NumberToPermission(element.Permission) -->
       <ng-container matColumnDef="Permission">
         <mat-header-cell *matHeaderCellDef> Permission </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.Permission}} </mat-cell>
+        <mat-cell *matCellDef="let element"> {{service.NumberToPermission(element.Permission)}} </mat-cell>
       </ng-container>
   
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

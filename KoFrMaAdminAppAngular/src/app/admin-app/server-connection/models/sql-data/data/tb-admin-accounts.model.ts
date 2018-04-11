@@ -4,5 +4,5 @@ export class tbAdminAccounts
     public UserName : string;
     public Email : string;
     public Enabled : boolean;
-    public Permission : number;
+    public Permission : number[];
 }
