@@ -5,6 +5,7 @@ import { SetTask } from '../../../../server-connection/models/communication-mode
 import { EventEmitter } from 'events';
 import { TaskRepeating } from '../../../../server-connection/models/communication-models/task/task-repeating.model';
 import { ServerConnectionService } from '../../../../server-connection/server-connection.service';
+import { Data } from '../../../../server-connection/data.model';
 
 @Component({
   selector: 'app-add-task',
@@ -21,7 +22,7 @@ export class AddTaskComponent  {
   private ncPassword : string;
   private compression : string;
 
-  constructor(private activeRoute:ActivatedRoute, private service : ServerConnectionService, private renderer: Renderer2, private router : Router) {
+  constructor(private activeRoute:ActivatedRoute, private service : ServerConnectionService, private renderer: Renderer2, private router : Router, private data : Data) {
       this.activeRoute.params.subscribe(params => {
       this.daemonId = params.daemonid;
       this.checkIfNumberValid(false);
@@ -67,6 +68,7 @@ export class AddTaskComponent  {
         t.CompressionLevel = +select.options[select.selectedIndex].value;
       }
       alert(t.CompressionLevel);
+      this.data.Loading = true;
       /*
       this.service.SetTask([t]);
       this.router.navigate(['backup', 'app','tasks']);*/

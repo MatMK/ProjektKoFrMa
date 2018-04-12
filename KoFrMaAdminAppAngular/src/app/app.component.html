@@ -1,2 +1,8 @@
-<router-outlet></router-outlet>
-<p *ngIf="data.Loading">Loading...</p>
+<div id="app">
+    <div id="outlet">
+        <router-outlet></router-outlet>
+    </div>
+    <div id="loading" *ngIf="data.Loading">
+        <h2>Loading...</h2>
+    </div>
+</div>

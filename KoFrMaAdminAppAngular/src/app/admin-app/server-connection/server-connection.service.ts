@@ -22,44 +22,66 @@ export class ServerConnectionService{
 
     Login(Password : string, Username : string): Promise<string> 
     {
+        this.data.Loading = true;
         let adminLogin : AdminLogin = new AdminLogin();
         adminLogin.Password = Password;
         adminLogin.UserName = Username;
         let url = this.data.ServerRootURL + "api/AdminApp/RegisterToken";
         return this.http.post(url,adminLogin).toPromise()
-                        .then(res => res.json())
-                        .catch(msg => console.log('Error: ' + msg.status + ' ' + msg.statusText))
+                        .then(res => {
+                            this.data.Loading = false;
+                            return res.json()
+                        })
+                        .catch(msg => {
+                            this.data.Loading = false;
+                            console.log('Error: ' + msg.status + ' ' + msg.statusText)
+                        })
    }
    GettbAdminAccounts() : Promise<tbAdminAccounts[]>
    {
+        this.data.Loading = true;
         let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new GetDataRequest("GetDataRequest",[1]));
         let url = this.data.ServerRootURL + "api/AdminApp/GettbAdminAccounts";
         return this.http.post(url,postAdmin).toPromise()
-                        .then(res => res.json())
+                        .then(res => {
+                            this.data.Loading = false;
+                            return res.json()
+                        })
                         .catch(msg => 
                             {
+                                this.data.Loading = false;
                                 console.log('Error: ' + msg.status + ' ' + msg.statusText);
                             })
     }
     GettbDaemons() : Promise<tbDaemons[]>
    {
+        this.data.Loading = true;
         let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, new GetDataRequest("GetDataRequest",[2]));
         let url = this.data.ServerRootURL + "api/AdminApp/GettbDaemons";
         return this.http.post(url,postAdmin).toPromise()
-                        .then(res => res.json())
+                        .then(res =>{
+                            this.data.Loading = false;
+                            return res.json();
+                        })
                         .catch(msg => 
                             {
+                                this.data.Loading = false;
                                 console.log('Error: ' + msg.status + ' ' + msg.statusText);
                             })
     }
     GettbTasks() : Promise<tbTasks[]>
    {
+        this.data.Loading = true;
         let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, new GetDataRequest("GetDataRequest",[3]));
         let url = this.data.ServerRootURL + "api/AdminApp/GettbTasks";
         return this.http.post(url,postAdmin).toPromise()
-                        .then(res => res.json())
+                        .then(res => {
+                            this.data.Loading = false;
+                            return res.json()
+                        })
                         .catch(msg => 
                             {
+                                this.data.Loading = false;
                                 console.log('Error: ' + msg.status + ' ' + msg.statusText);
                             })
     }
@@ -80,6 +102,7 @@ export class ServerConnectionService{
     }
     SetTask(setTask:SetTask[]) 
     {
+        this.data.Loading = true;
         let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new SetTasksRequest("SetTasksRequest",setTask));
         let url = this.data.ServerRootURL + "api/AdminApp/SetTask";
         this.http.post(url,postAdmin).toPromise()
@@ -97,28 +120,39 @@ export class ServerConnectionService{
     }
     IsAuthorized() : Promise<boolean>
     {
+        this.data.Loading = true;
         let url = this.data.ServerRootURL + "api/AdminApp/Authorized";
         return this.http.post(url,this.data.adminInfo).toPromise()
-            .then(res => res.json())
+            .then(res => {
+                this.data.Loading = false;
+                return res.json()
+            })
             .catch(msg => 
                 {
+                    this.data.Loading = false;
                     console.log('Error: ' + msg.status + ' ' + msg.statusText);
                 })
     }
     HasPermission(perm : number[]) : Promise<boolean>
     {
+        this.data.Loading = true;
         let url = this.data.ServerRootURL + "api/AdminApp/Permitted";
         let temp : AdminInfo = this.data.adminInfo;
         temp.Permission = perm;
         return this.http.post(url,temp).toPromise()
-            .then(res => res.json())
+            .then(res => {
+                this.data.Loading = false;
+                return res.json();
+            })
             .catch(msg => 
                 {
+                    this.data.Loading = false;
                     console.log('Error: ' + msg.status + ' ' + msg.statusText);
                 })
     }
     AddAdmin(addAdmin:AddAdmin) : Promise<boolean>
     {
+        this.data.Loading = true;
         let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new AddAdminRequest("AddAdminRequest",addAdmin));
         let url = this.data.ServerRootURL + "api/AdminApp/AddAdmin";
         return this.http.post(url,postAdmin).toPromise()
@@ -153,6 +187,7 @@ export class ServerConnectionService{
     }
     LogOut()
     {
+        this.data.Loading = true;
         let url = this.data.ServerRootURL + "api/AdminApp/LogOut";
         return this.http.post(url,this.data.adminInfo).toPromise()
                         .then(res => 
