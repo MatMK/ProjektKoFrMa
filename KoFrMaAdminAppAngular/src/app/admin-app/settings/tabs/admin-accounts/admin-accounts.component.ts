@@ -5,6 +5,8 @@ import { Data } from '../../../server-connection/data.model';
 import { DataSource } from '@angular/cdk/table';
 import { MatTableModule, MatTableDataSource, MatSelectModule} from '@angular/material';
 import { VIEWPORT_RULER_PROVIDER } from '@angular/cdk/overlay';
+import { ChangeTable } from '../../../server-connection/models/sql-data/change-table.model';
+import { InputCheck } from '../../../server-connection/input-check.service';
 
 @Component({
   selector: 'app-admin-accounts',
@@ -12,7 +14,9 @@ import { VIEWPORT_RULER_PROVIDER } from '@angular/cdk/overlay';
   styleUrls: ['./admin-accounts.component.css']
 })
 
-export class AdminAccountsComponent implements OnInit {
+export class AdminAccountsComponent {
+
+  private check : InputCheck = new InputCheck();
 
   constructor(private service : ServerConnectionService, private data : Data) { 
     this.refresh();
@@ -37,6 +41,29 @@ export class AdminAccountsComponent implements OnInit {
       return true;
     return false;
   }
-  ngOnInit() {
+  alterData(value, id, columnName:string, elem : HTMLInputElement)
+  {
+    if(columnName.toLowerCase() == 'email' && !this.check.email(value))
+    {
+      return;
+    }
+    if(columnName.toLowerCase() == 'username' && !this.check.username(value))
+    {
+      return;
+    }
+    if(columnName.toLowerCase()== 'password' && !this.check.password(value))
+    {
+      return;
+    }
+    if(columnName.toLowerCase()== 'enabled' && !(typeof(value)==="boolean"))
+    {
+      return;
+    }
+    let table : ChangeTable = new ChangeTable('tbAdminAccounts',id,columnName, value)
+    this.service.AlterTable(table);
+  }
+  saveVal(elem : HTMLInputElement, value)
+  {
+    elem.setAttribute('prevVal',value);
   }
 }

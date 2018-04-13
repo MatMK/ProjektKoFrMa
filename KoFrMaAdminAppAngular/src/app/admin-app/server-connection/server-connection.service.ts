@@ -14,6 +14,7 @@ import { AddAdmin } from './models/communication-models/add-admin.model';
 import { GetDataRequest } from './models/communication-models/post-admin/get-data-request.model';
 import { SetTasksRequest } from './models/communication-models/post-admin/set-tasks-request.model';
 import { AddAdminRequest } from './models/communication-models/post-admin/add-admin-request.model';
+import { ChangeTable } from './models/sql-data/change-table.model';
 
 @Injectable()
 
@@ -198,6 +199,23 @@ export class ServerConnectionService{
                             {
                                 this.data.Loading = false;
                                 console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                            })
+    }
+    AlterTable(table : ChangeTable)
+    {
+        this.data.Loading = true;
+        let url = this.data.ServerRootURL + "api/AdminApp/AlterData";
+        return this.http.post(url,table).toPromise()
+                        .then(res => 
+                            {
+                                this.data.Loading = false
+                                return true;
+                            })
+                        .catch(msg => 
+                            {
+                                this.data.Loading = false;
+                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                                return false;
                             })
     }
 }

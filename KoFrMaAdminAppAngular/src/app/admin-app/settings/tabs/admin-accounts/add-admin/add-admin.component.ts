@@ -4,6 +4,7 @@ import { ServerConnectionService } from '../../../../server-connection/server-co
 import { AddAdmin } from '../../../../server-connection/models/communication-models/add-admin.model';
 import { Router } from '@angular/router';
 import { Data } from '../../../../server-connection/data.model';
+import { InputCheck } from '../../../../server-connection/input-check.service';
 
 @Component({
   selector: 'app-add-admin',
@@ -17,6 +18,7 @@ export class AddAdminComponent implements OnInit {
   private enabled : boolean = true;
   private selectedPermission : number[] = [];
   private Permissions = this.data.Permissions;
+  private check : InputCheck = new InputCheck();
 
   onAreaListControlChanged(list){
     try{
@@ -26,22 +28,9 @@ export class AddAdminComponent implements OnInit {
   }
   addAdmin()
   {
-    if(this.username == null || this.username == undefined)
-    {
-      alert("Invalid Username");
-      return
-    }
-    if(this.password == undefined || this.password.length < 6)
-    {
-      alert("Password has to be at least 6 characters long");
-      return
-    }
-    let regex = new RegExp(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/)
-    if(!regex.test(this.email))
-    {
-      alert("Invalid Email");
-      return
-    }
+    this.check.username(this.username);
+    this.check.password(this.password);
+    this.check.email(this.email);
     let admin : AddAdmin = new AddAdmin()
     admin.Username = this.username;
     admin.Password = btoa(this.password);

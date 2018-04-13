@@ -3,22 +3,22 @@
 <head>
     <title>Login</title>
 </head>
-<body>
-    <main>
-        <div id="loginDiv">
-            <form id="loginForm">
-                <input type="text" placeholder="Server Url" name="ServerURL" id="serverUrl" [(ngModel)]="rootURL"/>
-                <br />
-                <input type="text" placeholder="Username" name="Username" id="loginUsername" [(ngModel)]="name"/>
-                <br />
-                <input type="password" placeholder="Password" name="Password" id="loginPassword" [(ngModel)]="password"/>
-                <br />
-            </form>
-            <a>
-                <input type="submit" value="Login" id="loginSubmit" class="button" (click)="LogIn()"/>
-            </a>
-            <br />
-        </div>
-    </main>
-</body>
+    <body>
+        <main>
+            <div id="loginDiv">
+                <form id="loginForm">
+                    <input type="text" placeholder="Server Url" name="ServerURL" id="serverUrl" [(ngModel)]="rootURL"/>
+                    <br/>
+                    <input type="text" placeholder="Username" name="Username" id="loginUsername" [(ngModel)]="name"/>
+                    <br/>
+                    <input type="password" placeholder="Password" name="Password" id="loginPassword" [(ngModel)]="password"/>
+                    <br/>
+                </form>
+                <a>
+                    <input type="submit" value="Login" id="loginSubmit" class="button" (click)="LogIn()"/>
+                </a>
+                <br/>
+            </div>
+        </main>
+    </body>
 </html>
