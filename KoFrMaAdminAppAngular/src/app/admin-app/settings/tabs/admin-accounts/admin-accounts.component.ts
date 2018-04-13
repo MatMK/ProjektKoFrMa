@@ -45,25 +45,38 @@ export class AdminAccountsComponent {
   {
     if(columnName.toLowerCase() == 'email' && !this.check.email(value))
     {
+      let val = elem.getAttribute('prevVal');
+      elem.value = val;
       return;
     }
     if(columnName.toLowerCase() == 'username' && !this.check.username(value))
     {
+      let val = elem.getAttribute('prevVal');
+      elem.value = val;
       return;
     }
     if(columnName.toLowerCase()== 'password' && !this.check.password(value))
     {
+      let val = elem.getAttribute('prevVal');
+      elem.value = val;
       return;
     }
-    if(columnName.toLowerCase()== 'enabled' && !(typeof(value)==="boolean"))
+    if(columnName.toLowerCase()== 'enabled' && !this.check.isboolean(value))
     {
+      let val = elem.getAttribute('prevVal');
+      elem.value = val;
       return;
+    }
+    else if(columnName.toLowerCase()== 'enabled')
+    {
+      let res : boolean = value == "true"?true:false
+      value = res;
     }
     let table : ChangeTable = new ChangeTable('tbAdminAccounts',id,columnName, value)
     this.service.AlterTable(table);
   }
-  saveVal(elem : HTMLInputElement, value)
+  saveVal(elem : HTMLInputElement)
   {
-    elem.setAttribute('prevVal',value);
+    elem.setAttribute('prevVal',elem.value);
   }
 }

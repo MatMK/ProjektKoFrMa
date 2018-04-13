@@ -14,20 +14,25 @@
       <!-- Username Column -->
       <ng-container matColumnDef="Username">
         <mat-header-cell *matHeaderCellDef> Username </mat-header-cell>
-        <mat-cell *matCellDef="let element"><input type="text" [(ngModel)] = "element.UserName" (change)="alterData($event.target.value, element.Id,'Username')">
-        </mat-cell>
+        <mat-cell *matCellDef="let element"><input type="text" [(ngModel)] = "element.UserName" 
+          (change)="alterData($event.target.value, element.Id,'Username', $event.target)"
+          (click)="saveVal($event.target)"> </mat-cell>
       </ng-container>
   
       <!-- Email Column -->
       <ng-container matColumnDef="Email">
         <mat-header-cell *matHeaderCellDef> Email </mat-header-cell>
-        <mat-cell *matCellDef="let element"> <input type="text" [(ngModel)] = "element.Email" (change)="alterData($event.target.value, element.Id,'Email', $event.target)"(click)="saveVal($event.target, element.Email)"> </mat-cell>
+        <mat-cell *matCellDef="let element"> <input type="text" [(ngModel)] = "element.Email" 
+            (change)="alterData($event.target.value, element.Id,'Email', $event.target)"
+            (click)="saveVal($event.target)"> </mat-cell>
       </ng-container>
   
       <!-- Enabled Column -->
       <ng-container matColumnDef="Enabled">
         <mat-header-cell *matHeaderCellDef> Enabled </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.Enabled}} </mat-cell>
+        <mat-cell *matCellDef="let element"> <input type="text" [(ngModel)] = "element.Enabled" 
+          (change)="alterData($event.target.value, element.Id,'Enabled', $event.target)"
+          (click)="saveVal($event.target)"> </mat-cell>
       </ng-container>
 
       <!-- Permission Column -->

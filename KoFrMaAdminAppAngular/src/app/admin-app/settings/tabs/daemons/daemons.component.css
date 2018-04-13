@@ -1,16 +1,18 @@
 body{
   height: 850px;
 }
-
 .table-daemon {
   display: flex;
   flex-direction: column;
   max-height: 500px;
   min-width: 300px;
 }
-
-
 .mat-table {
   overflow: auto;
   max-height: 500px;
+}
+input[type="text"]
+{
+    background: transparent;
+    border: none;
 }
