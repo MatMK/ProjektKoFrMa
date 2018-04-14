@@ -16,7 +16,7 @@ namespace KoFrMaRestApi.MySqlCom
         {
             string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
             using (MySqlConnection connection = WebApiConfig.Connection())
-            using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbAdminAccounts` SET `Token`= @Token WHERE `Username` = @Username and `Password` = @Password", connection))
+            using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbAdminAccounts` SET `Token`= @Token WHERE `Username` = @Username and `Password` = @Password and `Enabled` = 1", connection))
             {
                 connection.Open();
                 command.Parameters.AddWithValue("@Token", token);

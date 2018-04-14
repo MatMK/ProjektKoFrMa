@@ -26,6 +26,10 @@ namespace KoFrMaRestApi.Models
                     return typeof(GetDataRequest);
                 case "SetTasksRequest":
                     return typeof(SetTasksRequest);
+                case "ChangeTableRequest":
+                    return typeof(ChangeTableRequest);
+                case "ChangePermissionRequest":
+                    return typeof(ChangePermissionRequest);
             }
             return null;
         }

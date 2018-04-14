@@ -7,6 +7,8 @@ import { MatTableModule, MatTableDataSource, MatSelectModule} from '@angular/mat
 import { VIEWPORT_RULER_PROVIDER } from '@angular/cdk/overlay';
 import { ChangeTable } from '../../../server-connection/models/sql-data/change-table.model';
 import { InputCheck } from '../../../server-connection/input-check.service';
+import { FormControl } from '@angular/forms';
+import { ChangePermission } from '../../../server-connection/models/sql-data/change-permission.model';
 
 @Component({
   selector: 'app-admin-accounts',
@@ -17,7 +19,7 @@ import { InputCheck } from '../../../server-connection/input-check.service';
 export class AdminAccountsComponent {
 
   private check : InputCheck = new InputCheck();
-
+  private selectedPerm : PermInterface[][];
   constructor(private service : ServerConnectionService, private data : Data) { 
     this.refresh();
   }
@@ -78,5 +80,17 @@ export class AdminAccountsComponent {
   saveVal(elem : HTMLInputElement)
   {
     elem.setAttribute('prevVal',elem.value);
+  }
+  test(Id)
+  {
+    let newPerm : number[];
+    this.data.AdminAccounts.data.forEach(element => {
+      if(element.Id == Id)
+      {
+        newPerm = element.Permission;
+      }
+    });
+    let changePermissions : ChangePermission = new ChangePermission(Id,newPerm);
+    this.service.AlterPermission(changePermissions);
   }
 }

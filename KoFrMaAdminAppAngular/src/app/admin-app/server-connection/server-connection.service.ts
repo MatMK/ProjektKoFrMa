@@ -15,6 +15,9 @@ import { GetDataRequest } from './models/communication-models/post-admin/get-dat
 import { SetTasksRequest } from './models/communication-models/post-admin/set-tasks-request.model';
 import { AddAdminRequest } from './models/communication-models/post-admin/add-admin-request.model';
 import { ChangeTable } from './models/sql-data/change-table.model';
+import { ChangePermission } from './models/sql-data/change-permission.model';
+import { ChangeTableRequest } from './models/communication-models/post-admin/change-table-request.model';
+import { ChangePermissionRequest } from './models/communication-models/post-admin/change-permission-request.model';
 
 @Injectable()
 
@@ -203,17 +206,36 @@ export class ServerConnectionService{
     }
     AlterTable(table : ChangeTable)
     {
-        this.data.Loading = true;
+        //this.data.Loading = true;
         let url = this.data.ServerRootURL + "api/AdminApp/AlterData";
-        return this.http.post(url,table).toPromise()
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangeTableRequest("ChangeTableRequest",table));
+        return this.http.post(url,postAdmin).toPromise()
                         .then(res => 
                             {
-                                this.data.Loading = false
+                                //this.data.Loading = false
                                 return true;
                             })
                         .catch(msg => 
                             {
-                                this.data.Loading = false;
+                                //this.data.Loading = false;
+                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                                return false;
+                            })
+    }
+    AlterPermission(permission : ChangePermission)
+    {
+        //this.data.Loading = true;
+        let url = this.data.ServerRootURL + "api/AdminApp/AlterPermission";
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangePermissionRequest("ChangePermissionRequest",permission));
+        return this.http.post(url,postAdmin).toPromise()
+                        .then(res => 
+                            {
+                                //this.data.Loading = false
+                                return true;
+                            })
+                        .catch(msg => 
+                            {
+                                //this.data.Loading = false;
                                 console.log('Error: ' + msg.status + ' ' + msg.statusText);
                                 return false;
                             })

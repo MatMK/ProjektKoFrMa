@@ -36,10 +36,16 @@
       </ng-container>
 
       <!-- Permission Column -->
-      <!-- service.NumberToPermission(element.Permission) -->
       <ng-container matColumnDef="Permission">
         <mat-header-cell *matHeaderCellDef> Permission </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{service.NumberToPermission(element.Permission)}} </mat-cell>
+        <mat-cell *matCellDef="let element"> 
+           <mat-form-field>
+             <mat-select placeholder="Permission" multiple [(ngModel)]="element.Permission">
+               <mat-option *ngFor="let perm of data.Permissions" [value]="perm.number" (click)="test(element.Id)">{{perm.name}}</mat-option>
+             </mat-select>
+           </mat-form-field>
+          <!--{{service.NumberToPermission(element.Permission)}}-->
+         </mat-cell>
       </ng-container>
   
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

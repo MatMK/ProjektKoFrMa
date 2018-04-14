@@ -97,15 +97,29 @@ namespace KoFrMaRestApi.Controllers
             }
         }
         [HttpPost, Route(@"api/AdminApp/AlterData")]
-        public void AlterData(ChangeTable changeTable)
+        public void AlterData(PostAdmin postAdmin)
         {
-            mySqlCom.AlterTable(changeTable);
+            if(this.Authorized(postAdmin.adminInfo))
+            {
+                //mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable);
+            }
+        }
+        [HttpPost, Route("api/AdminApp/AlterPermission")]
+        public void AlterPermission(PostAdmin postAdmin)
+        {
+            if(this.Authorized(postAdmin.adminInfo))
+            {
+                //unfinished
+            }
         }
         [HttpPost, Route(@"api/AdminApp/AddAdmin")]
         public void AddAdmin(PostAdmin postAdmin)
         {
-            if(postAdmin.request is AddAdminRequest)
-                mySqlCom.AddAdmin(((AddAdminRequest)postAdmin.request).addAdmin);
+            if (this.Authorized(postAdmin.adminInfo))
+            {
+                if (postAdmin.request is AddAdminRequest)
+                    mySqlCom.AddAdmin(((AddAdminRequest)postAdmin.request).addAdmin);
+            }
         }
         [HttpPost, Route(@"api/AdminApp/LogOut")]
         public void LogOut(AdminInfo admin)
