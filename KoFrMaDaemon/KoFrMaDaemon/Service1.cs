@@ -132,17 +132,19 @@ namespace KoFrMaDaemon
         {
             BackupJournalOperations cheatBackupJournalOperations = new BackupJournalOperations();
             DateTime timeToBackup = DateTime.Now;
-            List<IDestination> tmpList = new List<IDestination>();
+            List<IDestination> tmpDestinations = new List<IDestination>();
+            SourceFolders tmpSourceFolders = new SourceFolders();
             //tmpList.Add(new DestinationPlain() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" } });
-            tmpList.Add(new DestinationZip() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" },CompressionLevel=0,SplitAfter=1 });
+            tmpDestinations.Add(new DestinationZip() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" },CompressionLevel=0,SplitAfter=1 });
+            tmpSourceFolders.Paths.Add(@"D:\KoFrMa\BackupThisFolder\");
             Task taskTest = new Task
             {
-                SourceOfBackup = @"D:\KoFrMa\BackupThisFolder\",
+                Sources = tmpSourceFolders,
                 //BackupJournalSource = cheatBackupJournalOperations.LoadBackupJournalObject(@"d:\KoFrMa\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", debugLog),
                 IDTask = 1,
                 LogLevel = 8,
                 TemporaryFolderMaxBuffer = null,
-                Destinations = tmpList,
+                Destinations = tmpDestinations,
                 TimeToBackup = timeToBackup.AddSeconds(1)
                 //ScriptBefore = new ScriptInfo { ScriptItself = @"ping 127.0.0.1 > d:\tmp.txt",ScriptItselfFormat = "bat"},
                 //ScriptAfter = new ScriptInfo { ScriptItself = @"ping 127.0.0.1 > d:\tmp.txt", ScriptItselfFormat = "bat" }
