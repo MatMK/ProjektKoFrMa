@@ -83,8 +83,9 @@ export class AddTaskComponent  {
 
 BUcheck() {
   var radioOptD = <HTMLInputElement>document.getElementById("distant")
+  var radioSftp = <HTMLInputElement>document.getElementById("sftp")
   var radioDiv = <HTMLDivElement>document.getElementById("ifServer")
-  if (radioOptD.checked) {
+  if (radioOptD.checked || radioSftp.checked) {
    radioDiv.style.display = 'block';
   }
   else radioDiv.style.display = 'none';
@@ -151,8 +152,8 @@ AddLocalDestination(){
       var input = this.renderer.createElement('input');
       input.type = 'text';
       input.Ngmodel ='kokong';
-      input.className = 'autoDestiLocal'
-      input.placeholder ='Aditional destination'
+      input.className = 'BasicInputNew';
+      input.placeholder ='Aditional destination';
       var button = this.renderer.createElement('button'); 
       button.innerHTML = 'Remove';
 
@@ -172,6 +173,45 @@ AddLocalDestination(){
       var inputDestiDiv = <HTMLDivElement>document.getElementById("inputDestiDiv");
       this.renderer.removeChild(inputDestiDiv,target.parentNode);
     }
-  
+
+    AddSource(){
+      var newDiv = this.renderer.createElement('div'); 
+      newDiv.className='aditionalDivClass'
+
+      var input = this.renderer.createElement('input');
+      input.type = 'text';
+      input.Ngmodel ='dong';
+      input.className = 'autoDestiLocal'
+      input.placeholder ='Aditional source'
+
+      var button = this.renderer.createElement('button'); 
+      button.innerHTML = 'X';
+
+      this.renderer.listen(button, 'click', (event) => this.RemoveSource(event) )
+    }
+
+    RemoveSource(event: any){
+      var target = event.target || event.srcElement || event.currentTarget;
+    }
+
+  AddDestinationNew(){
+    var destinationDiv = this.renderer.createElement('div'); 
+    destinationDiv.className='DestinationNewDiv'
+
+    var destinationTypeRadioLocal = this.renderer.createElement('radio'); 
+    destinationTypeRadioLocal.Name = 'destTypeRadio';
+    destinationTypeRadioLocal.className = 'destTypeRad';
+    destinationTypeRadioLocal.innerHTML = 'Local';
+
+    var destinationTypeRadioFTP = this.renderer.createElement('radio'); 
+    destinationTypeRadioFTP.Name = 'destTypeRadio';
+    destinationTypeRadioFTP.className = 'destTypeRad';
+    destinationTypeRadioFTP.innerHTML = 'FTP';
+
+    var destinationTypeRadioSFTP = this.renderer.createElement('radio'); 
+    destinationTypeRadioSFTP.Name = 'destTypeRadio';
+    destinationTypeRadioSFTP.className = 'destTypeRad';
+    destinationTypeRadioSFTP.innerHTML = 'SFTP';
+  }
 
   }

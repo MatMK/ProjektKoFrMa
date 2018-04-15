@@ -1,31 +1,33 @@
+
 body{
     background-image: url("./bg.png");
     background-repeat: repeat;
     background-color: lightgreen;
-    height: 1000px;
-    width: device-width;
+    width: 1250px;
+    height: 700px;
+  
 }
 #radioBackup
 {
     display: inline-flex;
     flex-direction: row;
 }
+.BasicInput{
+width: 475px;
+margin-bottom: 3px;
 
-#inputSource{
-background-color: aliceblue;
+background-color: white;
+font-size: 20px;
+border: none;
+    border-bottom: 1px solid #d3d3d3;
+    border-radius: 0px;
 }
 
-#inputDestination{
-    background-color: aliceblue;
-}
-
-#inputDatetimeExe{
-    background-color: aliceblue; 
-}
-#celek{
-    
-    height: 260px;
-    width: 302px;
+#menuTask{
+    font-size: 20px;
+    float: right;
+    height: 500px;
+    width: 38%;
     background-color: white;
     padding: 40px;
     border: 1px solid #d3d3d3;
@@ -34,21 +36,76 @@ background-color: aliceblue;
     margin-bottom:10px;
    box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
 }
+#mensiDiv{
+    float: right;
+    height: 500px;
+    width: 55%;
+    background-color: aqua;
+}
 #backupType{
     background-color: white;
 }
-#inputDateExecution{
-    background-color: aliceblue;
-}
-#destinationSelect{
+
+.autoDestiLocal{
     background-color: white;
 }
-#newDestDiv{
-background-color: aliceblue;
+.basicSelect{
+    border: none;
+    border-bottom: 1px solid #d3d3d3;
+    border-top: 1px solid #d3d3d3;;
+    border-radius: 0px;
+font-size: 20PX;
+margin-bottom: 2px;
+width: 171.33px;
 }
-#daemonId{
-    background-color: aliceblue;
+
+
+#menuTask button{
+    margin-left: 2px;
+    height: 28px;
 }
-.autoDestiLocal{
-    background-color: aliceblue;
+#menuTask submit{
+margin-left: 2px;
+margin-bottom: 5px;
+height: 28px;
+}
+
+.basicSubmit, .basicCheckbox, button {
+    background-color: rgb(220, 220, 220);
+    transition-duration: 0.4s;
+    -webkit-transition-duration: 0,4s;
+    border: 1px solid #d3d3d3;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 20PX;
+    padding: 0px 16px;
+    height: 28px;
+    color: black;
+    margin-left: 2px;
+    margin-bottom: 2px;
+}
+.basicSubmit:hover {
+    background-color: white;
+    color: black;
+    text-decoration:none;
+    cursor:pointer;
+    }
+    .newTaskDiv{
+        float: left;
+        height: 240px;
+        width: 321px;
+        background-color: springgreen;
+        margin: 10px;
+        border: 1px solid #d3d3d3;
+    border-radius: 5px;
+    }
+.BasicInputNew{
+    width: 362px !important;
+    margin-bottom: 3px;
+    background-color: white;
+    font-size: 20px;
+    border: none;
+    border-bottom: 1px solid #d3d3d3;
+    border-radius: 0px;
 }
