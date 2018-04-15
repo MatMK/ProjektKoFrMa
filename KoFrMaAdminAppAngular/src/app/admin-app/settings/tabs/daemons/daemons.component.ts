@@ -58,6 +58,11 @@ export class DaemonsComponent implements OnInit {
   {
     elem.setAttribute('prevVal',elem.value);
   }
+  changeEnabled(id, value)
+  {
+    let table : ChangeTable = new ChangeTable('tbDaemons',id,'Allowed', value)
+    this.service.AlterTable(table);
+  }
   ngOnInit() {
   }
 }

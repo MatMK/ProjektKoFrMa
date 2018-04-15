@@ -81,7 +81,7 @@ export class AdminAccountsComponent {
   {
     elem.setAttribute('prevVal',elem.value);
   }
-  test(Id)
+  changePerm(Id)
   {
     let newPerm : number[];
     this.data.AdminAccounts.data.forEach(element => {
@@ -92,5 +92,10 @@ export class AdminAccountsComponent {
     });
     let changePermissions : ChangePermission = new ChangePermission(Id,newPerm);
     this.service.AlterPermission(changePermissions);
+  }
+  changeEnabled(id, value)
+  {
+    let table : ChangeTable = new ChangeTable('tbAdminAccounts',id,'Enabled', value)
+    this.service.AlterTable(table);
   }
 }

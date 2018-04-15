@@ -101,7 +101,7 @@ namespace KoFrMaRestApi.Controllers
         {
             if(this.Authorized(postAdmin.adminInfo))
             {
-                //mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable);
+                mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable);
             }
         }
         [HttpPost, Route("api/AdminApp/AlterPermission")]

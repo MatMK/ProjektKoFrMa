@@ -33,9 +33,14 @@
       <!-- Allowed Column -->
       <ng-container matColumnDef="Allowed">
         <mat-header-cell *matHeaderCellDef> Allowed </mat-header-cell>
-        <mat-cell *matCellDef="let element"> <input type="text" [(ngModel)] = "element.Allowed" 
-          (change)="alterData($event.target.value, element.Id,'Allowed', $event.target)"
-          (click)="saveVal($event.target)"> </mat-cell>
+        <mat-cell *matCellDef="let element"> 
+          <mat-form-field>
+              <mat-select placeholder="Enabled" [(ngModel)]="element.Allowed">
+                <mat-option [value]="true" (click)="changeEnabled(element.Id, true)">True</mat-option>
+                <mat-option [value]="false" (click)="changeEnabled(element.Id, false)">False</mat-option>
+              </mat-select>
+            </mat-form-field>
+        </mat-cell>
       </ng-container>
 
       <!-- Last seen -->

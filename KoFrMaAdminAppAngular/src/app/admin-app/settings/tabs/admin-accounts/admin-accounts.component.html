@@ -30,9 +30,14 @@
       <!-- Enabled Column -->
       <ng-container matColumnDef="Enabled">
         <mat-header-cell *matHeaderCellDef> Enabled </mat-header-cell>
-        <mat-cell *matCellDef="let element"> <input type="text" [(ngModel)] = "element.Enabled" 
-          (change)="alterData($event.target.value, element.Id,'Enabled', $event.target)"
-          (click)="saveVal($event.target)"> </mat-cell>
+        <mat-cell *matCellDef="let element"> 
+          <mat-form-field>
+            <mat-select placeholder="Enabled" [(ngModel)]="element.Enabled">
+              <mat-option [value]="true" (click)="changeEnabled(element.Id, true)">True</mat-option>
+              <mat-option [value]="false" (click)="changeEnabled(element.Id, false)">False</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-cell>
       </ng-container>
 
       <!-- Permission Column -->
@@ -41,7 +46,7 @@
         <mat-cell *matCellDef="let element"> 
            <mat-form-field>
              <mat-select placeholder="Permission" multiple [(ngModel)]="element.Permission">
-               <mat-option *ngFor="let perm of data.Permissions" [value]="perm.number" (click)="test(element.Id)">{{perm.name}}</mat-option>
+               <mat-option *ngFor="let perm of data.Permissions" [value]="perm.number" (click)="changePerm(element.Id)">{{perm.name}}</mat-option>
              </mat-select>
            </mat-form-field>
           <!--{{service.NumberToPermission(element.Permission)}}-->
