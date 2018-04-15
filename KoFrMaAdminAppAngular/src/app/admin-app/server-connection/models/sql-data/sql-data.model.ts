@@ -4,7 +4,7 @@ import { tbDaemons } from './data/tb-daemons.model';
 
 export class SqlData
 {
-    public AdminAccounts : tbAdminAccounts[];
-    public Tasks : tbTasks[];
-    public Daemons : tbDaemons[];
+    public tbAdminAccounts : tbAdminAccounts[];
+    public tbTasks : tbTasks[];
+    public tbDaemons : tbDaemons[];
 }

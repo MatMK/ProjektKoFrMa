@@ -3,7 +3,7 @@
       <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
   </div>
   <div class="table-daemon">
-    <mat-table #table [dataSource]="data.Daemons">
+    <mat-table #table [dataSource]="data.Data.tbDaemons">
 
 
       <!-- Id Column -->

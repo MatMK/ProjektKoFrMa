@@ -60,36 +60,12 @@ namespace KoFrMaRestApi.Controllers
                 return false;
             }
         }
-        [HttpPost, Route(@"api/AdminApp/GettbAdminAccounts")]
-        public List<tbAdminAccounts> GettbAdminAccounts(PostAdmin postAdmin)
+        [HttpPost, Route(@"api/AdminApp/GetSqlData")]
+        public Data GetSqlData(PostAdmin postAdmin)
         {
             if (token.Authorized(postAdmin))
             {
-                return new Data(1).tbAdminAccounts;
-            }
-            else
-            {
-                return null;
-            }
-        }
-        [HttpPost, Route(@"api/AdminApp/GettbDaemons")]
-        public List<tbDaemons> GettbDaemons(PostAdmin postAdmin)
-        {
-            if (token.Authorized(postAdmin))
-            {  
-                return new Data(2).tbDaemons;
-            }
-            else
-            {
-                return null;
-            }
-        }
-        [HttpPost, Route(@"api/AdminApp/GettbTasks")]
-        public List<tbTasks> GettbTasks(PostAdmin postAdmin)
-        {
-            if (token.Authorized(postAdmin))
-            {
-                return new Data(3).tbTasks;
+                return new Data(((GetDataRequest)postAdmin.request).getData);
             }
             else
             {

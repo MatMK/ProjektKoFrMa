@@ -18,18 +18,13 @@ export class DaemonsComponent implements OnInit {
 
   private check : InputCheck
   constructor(private service: ServerConnectionService, private data: Data) {
-    this.refresh();
   }
   displayedColumns = ['Id', 'Version', 'OS', 'PC_Unique', 'Allowed', 'LastSeen', 'MoreInfo'];
-  
-  refresh() {
-    this.service.GettbDaemons().then(res => this.data.Daemons = new MatTableDataSource<tbDaemons>(res));
-  }
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim(); // Remove whitespace
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
-    this.data.Daemons.filterPredicate = (data: tbDaemons, filter: string) => this.customFilter(data,filter);
-    this.data.Daemons.filter = filterValue;
+    this.data.Data.tbDaemons.filterPredicate = (data: tbDaemons, filter: string) => this.customFilter(data,filter);
+    this.data.Data.tbDaemons.filter = filterValue;
   }
   private customFilter(Data : tbDaemons, filter : string) : boolean
   {
