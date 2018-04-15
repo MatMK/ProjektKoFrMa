@@ -69,9 +69,8 @@ export class AddTaskComponent  {
       }
       alert(t.CompressionLevel);
       this.data.Loading = true;
-      /*
-      this.service.SetTask([t]);
-      this.router.navigate(['backup', 'app','tasks']);*/
+      this.service.SetTask([t]).then(res => this.service.RefreshData([3]))
+      this.router.navigate(['backup', 'app','tasks']);
     }
   }
   private onDateChange(value : Date)

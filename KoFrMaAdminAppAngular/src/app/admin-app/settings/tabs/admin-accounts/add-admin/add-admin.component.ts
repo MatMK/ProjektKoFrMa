@@ -28,9 +28,18 @@ export class AddAdminComponent implements OnInit {
   }
   addAdmin()
   {
-    this.check.username(this.username);
-    this.check.password(this.password);
-    this.check.email(this.email);
+    if(!this.check.username(this.username))
+    {
+      return;
+    }
+    if(!this.check.password(this.password))
+    {
+      return;
+    }
+    if(!this.check.email(this.email))
+    {
+      return;
+    }
     let admin : AddAdmin = new AddAdmin()
     admin.Username = this.username;
     admin.Password = btoa(this.password);
@@ -40,7 +49,10 @@ export class AddAdminComponent implements OnInit {
     this.serverConnection.AddAdmin(admin).then(res =>
     {
       if(res)
+      {
+        this.serverConnection.RefreshData([1]);
         this.router.navigate(['backup', 'app', 'admin-accounts']);
+      }
       else
         alert('Something went wrong');
     })

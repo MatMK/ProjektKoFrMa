@@ -33,6 +33,7 @@ export class LoginComponent implements OnInit {
         localStorage.clear();
         localStorage.setItem('adminInfo', JSON.stringify(this.data.adminInfo));
         localStorage.setItem('url', this.data.ServerRootURL);
+        this.serverConnectionService.RefreshData([1,2,3]);
         this.router.navigate(['backup', 'app']);
       }
     })

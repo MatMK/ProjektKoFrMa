@@ -121,14 +121,14 @@ namespace KoFrMaDaemon.Backup
         private void BackupToFolder(Task task, DirectoryInfo destination)
         {
             this.taskDebugLog.WriteToLog("Deciding what type of backup it is...", 7);
-            if (task.BackupJournalSource != null)
+            if (task.Sources is SourceFolders)
             {
                 this.taskDebugLog.WriteToLog("Starting differential/incremental backup, because journal was received from the server", 5);
                 this.taskDebugLog.WriteToLog("Checking if there is enough space available in destination(s)...", 5);
                 this.CheckIfSpaceAvailable(new DirectoryInfo(task.BackupJournalSource.RelativePath),task.Destinations);
                 this.BackupDifferentialProcess(task, destination);
             }
-            else
+            else if (task.Sources is BackupJournalObject)
             {
                 this.taskDebugLog.WriteToLog("Starting full backup, because the there is no info about backup journal", 5);
                 this.taskDebugLog.WriteToLog("Checking if there is enough space available in destination(s)...", 5);

@@ -16,18 +16,13 @@ export class TasksComponent implements OnInit {
 
 
   constructor(private service: ServerConnectionService, private data: Data) {
-    this.refresh();
   }
   displayedColumns = ['Id', 'IdDaemon', 'TimeOfExecution', 'Completed'];
-  
-  refresh() {
-    this.service.GettbTasks().then(res => this.data.Tasks = new MatTableDataSource<MainTask>(this.service.ConvertToMainTask(res)));
-  }
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim(); // Remove whitespace
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
-    this.data.Tasks.filterPredicate = (data: MainTask, filter: string) => this.customFilter(data,filter);
-    this.data.Tasks.filter = filterValue;
+    this.data.Data.tbTasks.filterPredicate = (data: MainTask, filter: string) => this.customFilter(data,filter);
+    this.data.Data.tbTasks.filter = filterValue;
   }
   private customFilter(Data : MainTask, filter : string) : boolean
   {

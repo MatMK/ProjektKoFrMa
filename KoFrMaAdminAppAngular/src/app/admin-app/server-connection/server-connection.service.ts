@@ -18,6 +18,7 @@ import { ChangeTable } from './models/sql-data/change-table.model';
 import { ChangePermission } from './models/sql-data/change-permission.model';
 import { ChangeTableRequest } from './models/communication-models/post-admin/change-table-request.model';
 import { ChangePermissionRequest } from './models/communication-models/post-admin/change-permission-request.model';
+import { MatTableDataSource } from '@angular/material';
 
 @Injectable()
 
@@ -41,11 +42,11 @@ export class ServerConnectionService{
                             console.log('Error: ' + msg.status + ' ' + msg.statusText)
                         })
    }
-   GettbAdminAccounts() : Promise<tbAdminAccounts[]>
-   {
+    GetSqlData(tables : number[]) : Promise<SqlData>
+    {
         this.data.Loading = true;
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new GetDataRequest("GetDataRequest",[1]));
-        let url = this.data.ServerRootURL + "api/AdminApp/GettbAdminAccounts";
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, new GetDataRequest("GetDataRequest",tables));
+        let url = this.data.ServerRootURL + "api/AdminApp/GetSqlData";
         return this.http.post(url,postAdmin).toPromise()
                         .then(res => {
                             this.data.Loading = false;
@@ -57,37 +58,28 @@ export class ServerConnectionService{
                                 console.log('Error: ' + msg.status + ' ' + msg.statusText);
                             })
     }
-    GettbDaemons() : Promise<tbDaemons[]>
-   {
+    RefreshData(tables : number[])
+    {
         this.data.Loading = true;
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, new GetDataRequest("GetDataRequest",[2]));
-        let url = this.data.ServerRootURL + "api/AdminApp/GettbDaemons";
-        return this.http.post(url,postAdmin).toPromise()
-                        .then(res =>{
-                            this.data.Loading = false;
-                            return res.json();
-                        })
-                        .catch(msg => 
-                            {
-                                this.data.Loading = false;
-                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
-                            })
-    }
-    GettbTasks() : Promise<tbTasks[]>
-   {
-        this.data.Loading = true;
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, new GetDataRequest("GetDataRequest",[3]));
-        let url = this.data.ServerRootURL + "api/AdminApp/GettbTasks";
-        return this.http.post(url,postAdmin).toPromise()
-                        .then(res => {
-                            this.data.Loading = false;
-                            return res.json()
-                        })
-                        .catch(msg => 
-                            {
-                                this.data.Loading = false;
-                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
-                            })
+        this.GetSqlData(tables).then(res=>
+            {
+                tables.forEach(element => {
+                    if(element == 1)
+                    {
+                        this.data.Data.tbAdminAccounts = new MatTableDataSource<tbAdminAccounts>(res.tbAdminAccounts);
+                    }
+                    if(element == 2)
+                    {
+                        this.data.Data.tbDaemons = new MatTableDataSource<tbDaemons>(res.tbDaemons);
+                    }
+                    if(element == 3)
+                    {
+                        this.data.Data.tbTasks = new MatTableDataSource<MainTask>(this.ConvertToMainTask(res.tbTasks));
+                    }
+                });
+                this.data.Loading = false;
+            }
+        ).catch(res=>this.data.Loading = false)
     }
     ConvertToMainTask(tbTask : tbTasks[]) : MainTask[]
     {
@@ -109,7 +101,7 @@ export class ServerConnectionService{
         this.data.Loading = true;
         let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new SetTasksRequest("SetTasksRequest",setTask));
         let url = this.data.ServerRootURL + "api/AdminApp/SetTask";
-        this.http.post(url,postAdmin).toPromise()
+        return this.http.post(url,postAdmin).toPromise()
                         .then(res => this.data.Loading = false)
                         .catch(msg => 
                             {

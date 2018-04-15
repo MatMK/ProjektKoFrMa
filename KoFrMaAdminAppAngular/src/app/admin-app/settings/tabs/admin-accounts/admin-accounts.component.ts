@@ -20,22 +20,14 @@ export class AdminAccountsComponent {
 
   private check : InputCheck = new InputCheck();
   private selectedPerm : PermInterface[][];
-  constructor(private service : ServerConnectionService, private data : Data) { 
-    this.refresh();
+  constructor(private service : ServerConnectionService, private data : Data) {
   }
   displayedColumns = ['Id', 'Username', 'Email', 'Enabled', 'Permission'];
-  refresh()
-  {
-    this.service.GettbAdminAccounts().then(res =>
-      {
-        this.data.AdminAccounts = new MatTableDataSource<tbAdminAccounts>(res)
-      });
-  }
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim(); // Remove whitespace
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
-    this.data.AdminAccounts.filterPredicate = (data: tbAdminAccounts, filter: string) => this.customFilter(data,filter);
-    this.data.AdminAccounts.filter = filterValue;
+    this.data.Data.tbAdminAccounts.filterPredicate = (data: tbAdminAccounts, filter: string) => this.customFilter(data,filter);
+    this.data.Data.tbAdminAccounts.filter = filterValue;
   }
   private customFilter(Data : tbAdminAccounts, filter : string) : boolean
   {
@@ -63,12 +55,6 @@ export class AdminAccountsComponent {
       elem.value = val;
       return;
     }
-    if(columnName.toLowerCase()== 'enabled' && !this.check.isboolean(value))
-    {
-      let val = elem.getAttribute('prevVal');
-      elem.value = val;
-      return;
-    }
     else if(columnName.toLowerCase()== 'enabled')
     {
       let res : boolean = value == "true"?true:false
@@ -84,7 +70,7 @@ export class AdminAccountsComponent {
   changePerm(Id)
   {
     let newPerm : number[];
-    this.data.AdminAccounts.data.forEach(element => {
+    this.data.Data.tbAdminAccounts.data.forEach(element => {
       if(element.Id == Id)
       {
         newPerm = element.Permission;

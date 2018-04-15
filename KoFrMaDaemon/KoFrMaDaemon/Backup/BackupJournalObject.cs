@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace KoFrMaDaemon.Backup
 {
-    public class BackupJournalObject
+    public class BackupJournalObject:ISource
     {
         public string RelativePath { get; set; }
         public List<FileInfoObject> BackupJournalFiles { get; set; }
