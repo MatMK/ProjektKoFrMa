@@ -1,10 +1,17 @@
 
+html{ width: 100vw;
+     height: 100vh;
+    margin: 0;
+    padding: 0;}
+
 body{
     background-image: url("./bg.png");
     background-repeat: repeat;
-    background-color: lightgreen;
-    width: 1250px;
-    height: 700px;
+    margin: 0;
+    padding: 0;
+    min-width: 100%;
+  min-height: 100%;
+  font-size: 20px;
   
 }
 #radioBackup
@@ -15,12 +22,11 @@ body{
 .BasicInput{
 width: 475px;
 margin-bottom: 3px;
-
 background-color: white;
 font-size: 20px;
 border: none;
-    border-bottom: 1px solid #d3d3d3;
-    border-radius: 0px;
+border-bottom: 1px solid #d3d3d3;
+border-radius: 0px;
 }
 
 #menuTask{
@@ -108,4 +114,8 @@ height: 28px;
     border: none;
     border-bottom: 1px solid #d3d3d3;
     border-radius: 0px;
+}
+::placeholder{
+    color: gray;
+    opacity: 1;
 }
