@@ -1,4 +1,4 @@
-.content{
+::ng-deep .content{
     background-image: url("./bg.png");
     background-repeat: repeat;
     background-color: lightgreen;
