@@ -1,16 +1,16 @@
 <body>
   <div id="setting">
     <p>
-      Username: 
-      <input type="text" id="new-admin-name" placeholder="Username" [(ngModel)]="username" autocomplete="off">
+      
+      <input type="text" class="basicInput" id="new-admin-name" placeholder="Username" [(ngModel)]="username" autocomplete="off">
     </p>
     <p>
-      Password: 
-      <input type="password" id="new-admin-password" placeholder="Password" [(ngModel)]="password" autocomplete="off">
+      
+      <input type="password" class="basicInput" id="new-admin-password" placeholder="Password" [(ngModel)]="password" autocomplete="off">
     </p>
     <p>
-      Email: 
-      <input type="text" id="new-admin-email" placeholder="Email" [(ngModel)]="email" autocomplete="off">
+      
+      <input type="text" class="basicInput" id="new-admin-email" placeholder="Email" [(ngModel)]="email" autocomplete="off">
     </p>
     <p>
         Enabled: 
@@ -19,7 +19,7 @@
     <p>
       Permissions: 
       <mat-selection-list #permissions [(ngModel)]="selectedPermission">
-          <mat-list-option *ngFor="let perm of Permissions"
+          <mat-list-option class="basicOption" *ngFor="let perm of Permissions"
           (click)="onAreaListControlChanged(list)" [value]="perm.number">
             {{perm.name}}
           </mat-list-option>

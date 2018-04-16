@@ -7,10 +7,13 @@ body{
     background-color: lightgreen;
     height: 1000px;
     width: device-width;
+    font-size: 20px;
+    margin: 0px;
+    padding: 0px;
 }
 #setting{
     top : 200px;
-    height: 350px;
+    height: 390px;
     width: 302px;
     background-color: white;
     padding: 40px;
@@ -18,5 +21,46 @@ body{
     border-radius: 5px;
     margin: 0 auto;
     margin-bottom:10px;
+    
     box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
 }
+.basicInput{
+    width: 305px;
+    margin-bottom: 3px;
+    background-color: white;
+    font-size: 20px;
+    border: none;
+    border-bottom: 1px solid #d3d3d3;
+    border-radius: 0px;
+    }
+    button {
+        background-color: rgb(220, 220, 220);
+        transition-duration: 0.4s;
+        -webkit-transition-duration: 0,4s;
+        border: 1px solid #d3d3d3;
+        border-radius: 5px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 20PX;
+        padding: 0px 16px;
+        height: 28px;
+        color: black;
+        margin-left: 2px;
+        margin-bottom: 2px;
+    }
+    button:hover {
+        background-color: white;
+        color: black;
+        text-decoration:none;
+        cursor:pointer;
+        }
+        text{
+            font-size: 20px;
+        }
+        ::placeholder{
+            color: gray;
+            opacity: 1;
+        }
+        .basicOption{
+            font-size: 16px;
+        }
