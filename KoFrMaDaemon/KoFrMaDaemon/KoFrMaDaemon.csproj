@@ -96,6 +96,7 @@
     <Compile Include="Backup\IDestinationPath.cs" />
     <Compile Include="Backup\ISource.cs" />
     <Compile Include="Backup\SourceFolders.cs" />
+    <Compile Include="Backup\SourceJournalLoadFromCache.cs" />
     <Compile Include="Backup\SourceMSSQL.cs" />
     <Compile Include="Backup\SourceMySQL.cs" />
     <Compile Include="Backup\SSHConnection.cs" />
@@ -119,11 +120,11 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ScriptInfo.cs" />
-    <Compile Include="Service1.cs">
+    <Compile Include="ServiceKoFrMa.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Service1.Designer.cs">
-      <DependentUpon>Service1.cs</DependentUpon>
+    <Compile Include="ServiceKoFrMa.Designer.cs">
+      <DependentUpon>ServiceKoFrMa.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

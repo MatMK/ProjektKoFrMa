@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace KoFrMaDaemon.Backup
 {
-    class SourceJournalLoadFromCache
+    public class SourceJournalLoadFromCache : ISource
     {
+        /// <summary>
+        /// ID Tasku na který se bude navazovat, pokud je soubor na 100% v cachi daemona
+        /// </summary>
+        public int JournalID { get; set; }
     }
 }

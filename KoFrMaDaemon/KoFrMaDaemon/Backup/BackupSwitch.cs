@@ -12,11 +12,11 @@ namespace KoFrMaDaemon.Backup
 {
     public class BackupSwitch
     {
-        protected DirectoryInfo sourceInfo;
-        protected DirectoryInfo destinationInfo;
         public BackupJournalObject BackupJournalNew;
         public DebugLog taskDebugLog;
         private DirectoryInfo temporaryDestinationInfo;
+
+        private DirectoryInfo destinationInfo;
 
         private Task task = null;
 
@@ -52,54 +52,6 @@ namespace KoFrMaDaemon.Backup
                 }
             }
 
-
-
-            //this.networkCredential = networkCredential;
-            //this.compressionLevel = compressionLevel;
-            //this.destinations = task.Destinations;
-            //for (int i = 0; i < destinations.Count; i++)
-            //{
-
-
-            //    //if (destinations[i].EndsWith(".zip")|| destinations[i].EndsWith(".7z")|| destinations[i].EndsWith(".rar"))
-            //    //{
-
-            //    //    //debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip (" + destinations[i] + ')', 5);
-            //    //    //Compression compression = new Compression(debugLog);
-            //    //    //compression.CompressToZip(destinationInfo.FullName, destinationInfo.Parent.FullName + @"\" + this.destinationInfo.Name + ".zip", compressionLevel);
-            //    //    //debugLog.WriteToLog("Compression done, deleting temporary files that were needed for compression", 6);
-            //    //    //Directory.Delete(destinationInfo.FullName, true);
-            //    //    //debugLog.WriteToLog("Files successfully deleted, compression is now completed.", 6);
-            //    //}
-            //    //else if (destinations[i].StartsWith("\\"))
-            //    //{
-
-            //    //}
-            //    //else if (destinations[i].StartsWith("ftp://"))
-            //    //{
-
-            //    //}
-            //    //else if (destinations[i].StartsWith("sftp://"))
-            //    //{
-
-            //    //}
-            //    //else
-            //    //{
-            //    //    if (!atLeastOneDestinationIsLocalFolder)
-            //    //    {
-            //    //        this.temporaryDestinationInfo = new DirectoryInfo(destinations[i]);
-            //    //        atLeastOneDestinationIsLocalFolder = true;
-            //    //    }
-            //    //}
-            //    ////else
-            //    ////{
-            //    ////    debugLog.WriteToLog("Keeping the plain backup because the task doesn't want to archive", 5);
-            //    ////}
-            //    ////debugLog.WriteToLog("Backup done, ending the backup instance", 7);
-
-
-            //}
-
             if (!atLeastOneDestinationIsLocalFolder)
             {
                 ServiceKoFrMa.debugLog.WriteToLog("No destination points to local path, creating temporary folder at "+ Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp"), 5);
@@ -121,18 +73,20 @@ namespace KoFrMaDaemon.Backup
         private void BackupToFolder(Task task, DirectoryInfo destination)
         {
             this.taskDebugLog.WriteToLog("Deciding what type of backup it is...", 7);
-            if (task.Sources is SourceFolders)
+            if (task.Sources is BackupJournalObject)
             {
+                BackupJournalObject backupJournalObject = (BackupJournalObject)task.Sources;
                 this.taskDebugLog.WriteToLog("Starting differential/incremental backup, because journal was received from the server", 5);
                 this.taskDebugLog.WriteToLog("Checking if there is enough space available in destination(s)...", 5);
-                this.CheckIfSpaceAvailable(new DirectoryInfo(task.BackupJournalSource.RelativePath),task.Destinations);
+                this.CheckIfSpaceAvailable(backupJournalObject.RelativePaths,task.Destinations);
                 this.BackupDifferentialProcess(task, destination);
             }
-            else if (task.Sources is BackupJournalObject)
+            else if (task.Sources is SourceFolders)
             {
+                SourceFolders sourceFolders = (SourceFolders)task.Sources;
                 this.taskDebugLog.WriteToLog("Starting full backup, because the there is no info about backup journal", 5);
                 this.taskDebugLog.WriteToLog("Checking if there is enough space available in destination(s)...", 5);
-                this.CheckIfSpaceAvailable(new DirectoryInfo(task.SourceOfBackup), task.Destinations);
+                this.CheckIfSpaceAvailable(sourceFolders.Paths, task.Destinations);
                 this.BackupFullProcess(task, destination);
                 //this.sourceInfo = backupFull.sourceInfo.Parent;
                 //this.destinationInfo = backupFull.destinationInfo.Parent;
@@ -153,7 +107,7 @@ namespace KoFrMaDaemon.Backup
             if (ServiceKoFrMa.debugLog._logLevel >= 4)
                 temporaryDebugInfo = "Full backup started at  " + timeOfBackup.ToString();
             Directory.CreateDirectory(destination.FullName + @"\KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup) + @"_Full\KoFrMaBackup");
-            destinationInfo = new DirectoryInfo(destination + @"\KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup) + @"_Full\KoFrMaBackup");
+            DirectoryInfo destinationInfo = new DirectoryInfo(destination + @"\KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup) + @"_Full\KoFrMaBackup");
 
             ServiceKoFrMa.debugLog.WriteToLog("Log of including operations is located in " + destinationInfo.Parent.FullName + @"\KoFrMaDebug.log", 4);
 
@@ -164,11 +118,20 @@ namespace KoFrMaDaemon.Backup
             this.taskDebugLog.WriteToLog(temporaryDebugInfo, 4);
             temporaryDebugInfo = null;
 
-            sourceInfo = new DirectoryInfo(task.SourceOfBackup);
+            SourceFolders sourceFoldersClass = (SourceFolders)task.Sources;
+            List<DirectoryInfo> sourceInfos = new List<DirectoryInfo>(sourceFoldersClass.Paths.Count) ;
 
-            if (!sourceInfo.Exists)
+
+            for (int i = 0; i < sourceFoldersClass.Paths.Count; i++)
             {
-                this.taskDebugLog.WriteToLog("Fatal Error: Cannot backup because source folder doesn't exists!", 2);
+                sourceInfos.Add(new DirectoryInfo(sourceFoldersClass.Paths[i]));
+            }
+            for (int i = 0; i < sourceInfos.Count; i++)
+            {
+                if (!sourceInfos[i].Exists)
+                {
+                    this.taskDebugLog.WriteToLog("One of source folders doesn't exist!", 3);
+                }
             }
 
 
@@ -178,18 +141,21 @@ namespace KoFrMaDaemon.Backup
                 this.taskDebugLog.WriteToLog("Backuping now...", 4);
                 List<FileInfoObject> FileList = new List<FileInfoObject>() ;
                 List<FolderObject> FolderList= new List<FolderObject>();
-                this.ExploreDirectoryRecursively(sourceInfo,FileList,FolderList);
+                for (int i = 0; i < sourceInfos.Count; i++)
+                {
+                    this.ExploreDirectoryRecursively(sourceInfos[i], FileList, FolderList);
+                }
                 List<string> FileListString = new List<string>(FileList.Count);
                 List<string> FolderListString = new List<string>(FolderList.Count);
                 for (int i = 0; i < FileList.Count; i++)
                 {
-                    FileListString.Add(FileList[i].RelativePath);
+                    FileListString.Add(FileList[i].FullPath);
                 }
                 for (int i = 0; i < FolderList.Count; i++)
                 {
-                    FolderListString.Add(FolderList[i].RelativePath);
+                    FolderListString.Add(FolderList[i].FullPath);
                 }
-                this.BackupFileCopy(sourceInfo.FullName, FileListString, FolderListString, task.TemporaryFolderMaxBuffer);
+                this.BackupFileCopy(FileListString, FolderListString, task.TemporaryFolderMaxBuffer);
                 this.taskDebugLog.WriteToLog("Backup done, " + FilesCorrect.Count.ToString() + " files and " + FoldersCorrect.Count.ToString() + " folders successfully backuped, it was unable to backup " + FilesErrorCopy.Count + " files and " + FoldersErrorCopy.Count + " folders", 5);
             }
             catch (Exception x)
@@ -199,7 +165,7 @@ namespace KoFrMaDaemon.Backup
 
             this.taskDebugLog.WriteToLog("Creating transaction jounal of successfully backuped files and folders...", 5);
             BackupJournalOperations BackupJournal = new BackupJournalOperations();
-            BackupJournalNew = new BackupJournalObject() { RelativePath = task.SourceOfBackup, BackupJournalFiles = FilesCorrect, BackupJournalFolders = FoldersCorrect };
+            BackupJournalNew = new BackupJournalObject() { RelativePaths = sourceFoldersClass.Paths, BackupJournalFiles = FilesCorrect, BackupJournalFolders = FoldersCorrect };
             BackupJournal.CreateBackupJournal(BackupJournalNew, destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", task.IDTask, this.taskDebugLog);
             this.taskDebugLog.WriteToLog("Journal successfully created", 5);
             TimeSpan backupTook = DateTime.Now - timeOfBackup;
@@ -209,10 +175,11 @@ namespace KoFrMaDaemon.Backup
 
         public void BackupDifferentialProcess(Task task,DirectoryInfo destination)
         {
-            FilesCorrect = task.BackupJournalSource.BackupJournalFiles;
-            FoldersCorrect = task.BackupJournalSource.BackupJournalFolders;
-            List<string> FilesToDelete = task.BackupJournalSource.BackupJournalFilesDelete;
-            List<string> FoldersToDelete = task.BackupJournalSource.BackupJournalFoldersDelete;
+            BackupJournalObject backupJournalSource = (BackupJournalObject)task.Sources;
+            FilesCorrect = backupJournalSource.BackupJournalFiles;
+            FoldersCorrect = backupJournalSource.BackupJournalFolders;
+            List<string> FilesToDelete = backupJournalSource.BackupJournalFilesDelete;
+            List<string> FoldersToDelete = backupJournalSource.BackupJournalFoldersDelete;
             FilesErrorLoad = new List<CopyErrorObject>(100);
             FilesErrorCopy = new List<CopyErrorObject>(100);
             FoldersErrorLoad = new List<CopyErrorObject>(100);
@@ -239,16 +206,19 @@ namespace KoFrMaDaemon.Backup
             this.taskDebugLog.WriteToLog("Loading journal of original backup from backup journal received from server...", 5);
             BackupJournalOperations BackupJournal = new BackupJournalOperations();
             //BackupJournalObject backupJournalObject = BackupJournal.LoadBackupJournalObject(OriginalBackupDatFilePath, DebugLog);
-            BackupJournalObject backupJournalObject = task.BackupJournalSource;
-            string source = backupJournalObject.RelativePath;
-            List<FileInfoObject> OriginalFiles = backupJournalObject.BackupJournalFiles;
-            List<FolderObject> OriginalFolders = backupJournalObject.BackupJournalFolders;
+            List<string> sources = backupJournalSource.RelativePaths;
+            List<FileInfoObject> OriginalFiles = backupJournalSource.BackupJournalFiles;
+            List<FolderObject> OriginalFolders = backupJournalSource.BackupJournalFolders;
             this.taskDebugLog.WriteToLog("List of original files and folders loaded, containing " + OriginalFiles.Count + " files and " + OriginalFolders.Count + " folders.", 5);
 
 
             this.taskDebugLog.WriteToLog("Creating list of current files and folders...", 5);
-            sourceInfo = new DirectoryInfo(source);
-            BackupJournalObject currentJournalObject = this.JournalCurrent(sourceInfo);
+            List<DirectoryInfo> sourceInfos = new List<DirectoryInfo>(backupJournalSource.RelativePaths.Count);
+            for (int i = 0; i < backupJournalSource.RelativePaths.Count; i++)
+            {
+                sourceInfos.Add(new DirectoryInfo(backupJournalSource.RelativePaths[i]));
+            }
+            BackupJournalObject currentJournalObject = this.JournalCurrent(sourceInfos);
             this.taskDebugLog.WriteToLog("List of current files and folders loaded, containing " + currentJournalObject.BackupJournalFiles.Count + " files and " + currentJournalObject.BackupJournalFolders.Count + " folders.", 5);
 
             this.taskDebugLog.WriteToLog("Adding hash column to lists of current files and folders...", 7);
@@ -286,7 +256,7 @@ namespace KoFrMaDaemon.Backup
 
                     if (itemCurrent.HashRow == itemOriginal.HashRow)
                     {
-                        if (itemCurrent.RelativePath == itemOriginal.RelativePath
+                        if (itemCurrent.FullPath == itemOriginal.FullPath
                             && itemCurrent.Length == itemOriginal.Length
                             && itemCurrent.CreationTimeUtc == itemOriginal.CreationTimeUtc
                             && itemCurrent.LastWriteTimeUtc == itemOriginal.LastWriteTimeUtc
@@ -304,9 +274,9 @@ namespace KoFrMaDaemon.Backup
 
                         else if (this.taskDebugLog._logLevel >= 8)
                         {
-                            if (itemCurrent.RelativePath != itemOriginal.RelativePath)
+                            if (itemCurrent.FullPath != itemOriginal.FullPath)
                             {
-                                this.taskDebugLog.WriteToLog("RelativePathName Error: " + itemCurrent.RelativePath + " is not " + itemOriginal.RelativePath, 8);
+                                this.taskDebugLog.WriteToLog("RelativePathName Error: " + itemCurrent.FullPath + " is not " + itemOriginal.FullPath, 8);
                             }
                             if (itemCurrent.Length != itemOriginal.Length)
                             {
@@ -336,7 +306,7 @@ namespace KoFrMaDaemon.Backup
                 }
                 if (!sameObject)
                 {
-                    FilesToCopy.Add(itemCurrent.RelativePath);
+                    FilesToCopy.Add(itemCurrent.FullPath);
                 }
             }
             this.taskDebugLog.WriteToLog("Comparison of files successfully done, " + FilesToCopy.Count + " files were created or modified since original backup.", 5);
@@ -346,10 +316,10 @@ namespace KoFrMaDaemon.Backup
             {
                 if (!itemOriginal.Paired)
                 {
-                    FilesToDelete.Add(itemOriginal.RelativePath);
+                    FilesToDelete.Add(itemOriginal.FullPath);
                 }
             }
-            this.taskDebugLog.WriteToLog("There is " + (FilesToDelete.Count-task.BackupJournalSource.BackupJournalFilesDelete.Count) + " files that needs to be deleted since the original backup.", 5);
+            this.taskDebugLog.WriteToLog("There is " + (FilesToDelete.Count-backupJournalSource.BackupJournalFilesDelete.Count) + " files that needs to be deleted since the original backup.", 5);
 
 
 
@@ -364,7 +334,7 @@ namespace KoFrMaDaemon.Backup
 
                     if (itemCurrent.HashRow == itemOriginal.HashRow)
                     {
-                        if (itemCurrent.RelativePath == itemOriginal.RelativePath
+                        if (itemCurrent.FullPath == itemOriginal.FullPath
                             && itemCurrent.CreationTimeUtc == itemOriginal.CreationTimeUtc
                             && itemCurrent.LastWriteTimeUtc == itemOriginal.LastWriteTimeUtc
                             && itemCurrent.Attributes == itemOriginal.Attributes)
@@ -380,9 +350,9 @@ namespace KoFrMaDaemon.Backup
 
                         else if (this.taskDebugLog._logLevel >= 8)
                         {
-                            if (itemCurrent.RelativePath != itemOriginal.RelativePath)
+                            if (itemCurrent.FullPath != itemOriginal.FullPath)
                             {
-                                this.taskDebugLog.WriteToLog("FolderPath Error: " + itemCurrent.RelativePath + " is not " + itemOriginal.RelativePath, 8);
+                                this.taskDebugLog.WriteToLog("FolderPath Error: " + itemCurrent.FullPath + " is not " + itemOriginal.FullPath, 8);
                             }
                             if (itemCurrent.CreationTimeUtc != itemOriginal.CreationTimeUtc)
                             {
@@ -404,7 +374,7 @@ namespace KoFrMaDaemon.Backup
                 }
                 if (!sameObject)
                 {
-                    FoldersToCreate.Add(itemCurrent.RelativePath);
+                    FoldersToCreate.Add(itemCurrent.FullPath.Substring(destinationInfo.FullName.Length));
                 }
             }
             this.taskDebugLog.WriteToLog("Comparison of folders successfully done, " + FoldersToCreate.Count + " folders were created or changed since the original backup.", 5);
@@ -416,11 +386,11 @@ namespace KoFrMaDaemon.Backup
             {
                 if (!itemOriginal.Paired)
                 {
-                    FoldersToDelete.Add(itemOriginal.RelativePath);
+                    FoldersToDelete.Add(itemOriginal.FullPath);
                     //in FoldersToDelete při obnově mazat POUZE prázdné!!
                 }
             }
-            this.taskDebugLog.WriteToLog("There is " + (FoldersToDelete.Count - task.BackupJournalSource.BackupJournalFoldersDelete.Count) + " folders that needs to be deleted since the original backup.", 5);
+            this.taskDebugLog.WriteToLog("There is " + (FoldersToDelete.Count - backupJournalSource.BackupJournalFoldersDelete.Count) + " folders that needs to be deleted since the original backup.", 5);
 
 
 
@@ -429,13 +399,13 @@ namespace KoFrMaDaemon.Backup
 
             this.taskDebugLog.WriteToLog("Starting to backup files and folders to " + destinationInfo.FullName + @"\", 4);
 
-            this.BackupFileCopy(source, FilesToCopy, FoldersToCreate, task.TemporaryFolderMaxBuffer);
+            this.BackupFileCopy(FilesToCopy, FoldersToCreate, task.TemporaryFolderMaxBuffer);
 
 
             this.taskDebugLog.WriteToLog("Creating transaction log of successfully copied files and folders...", 5);
             BackupJournalNew = new BackupJournalObject()
             {
-                RelativePath = source,
+                RelativePaths = sources,
                 BackupJournalFiles = FilesCorrect,
                 BackupJournalFolders = FoldersCorrect,
                 BackupJournalFilesDelete = FilesToDelete,
@@ -451,7 +421,7 @@ namespace KoFrMaDaemon.Backup
 
         }
 
-        private BackupJournalObject JournalCurrent(DirectoryInfo path)
+        private BackupJournalObject JournalCurrent(List<DirectoryInfo> paths)
         {
             BackupJournalObject journalObject = new BackupJournalObject();
 
@@ -459,7 +429,10 @@ namespace KoFrMaDaemon.Backup
 
             List<FolderObject> FolderList = new List<FolderObject>();
 
-            ExploreDirectoryRecursively(path, FileList, FolderList);
+            for (int i = 0; i < paths.Count; i++)
+            {
+                ExploreDirectoryRecursively(paths[i], FileList, FolderList);
+            }
 
             journalObject.BackupJournalFiles = FileList;
             journalObject.BackupJournalFolders = FolderList;
@@ -472,7 +445,7 @@ namespace KoFrMaDaemon.Backup
             {
                 try
                 {
-                    FileList.Add(new FileInfoObject { RelativePath = item.FullName.Remove(0, sourceInfo.FullName.Length), Length = item.Length, CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString(), MD5 = this.CalculateMD5(item.FullName) });
+                    FileList.Add(new FileInfoObject { FullPath = item.FullName, Length = item.Length, CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString(), MD5 = this.CalculateMD5(item.FullName) });
                 }
                 catch (Exception ex)
                 {
@@ -486,7 +459,7 @@ namespace KoFrMaDaemon.Backup
                 try
                 {
                     this.ExploreDirectoryRecursively(item, FileList, FolderList);
-                    FolderList.Add(new FolderObject() { RelativePath = item.FullName.Remove(0, sourceInfo.FullName.Length), CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString() });
+                    FolderList.Add(new FolderObject() { FullPath = item.FullName, CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString() });
                 }
                 catch (Exception ex)
                 {
@@ -496,7 +469,7 @@ namespace KoFrMaDaemon.Backup
             }
         }
 
-        private void BackupFileCopy(string source, List<string> filesToCopy,List<string> foldersToCreate,int? bufferSize)
+        private void BackupFileCopy(List<string> filesToCopy,List<string> foldersToCreate,int? bufferSize)
         {
 
             this.taskDebugLog.WriteToLog("Backuping modified folder structure...", 5);
@@ -510,7 +483,7 @@ namespace KoFrMaDaemon.Backup
                 {
 
                     tmpDirectoryInfo.Create();
-                    this.FoldersCorrect.Add(new FolderObject() { RelativePath = tmpDirectoryInfo.FullName.Remove(0, sourceInfo.FullName.Length), CreationTimeUtc = tmpDirectoryInfo.CreationTimeUtc, LastWriteTimeUtc = tmpDirectoryInfo.LastWriteTimeUtc, Attributes = tmpDirectoryInfo.Attributes.ToString() });
+                    this.FoldersCorrect.Add(new FolderObject() { FullPath = tmpDirectoryInfo.FullName, CreationTimeUtc = tmpDirectoryInfo.CreationTimeUtc, LastWriteTimeUtc = tmpDirectoryInfo.LastWriteTimeUtc, Attributes = tmpDirectoryInfo.Attributes.ToString() });
                 }
                 catch (Exception ex)
                 {
@@ -531,7 +504,7 @@ namespace KoFrMaDaemon.Backup
 
             for (int i = 0; i < filesToCopy.Count; i++)
             {
-                tmpFileInfo = new FileInfo(source + filesToCopy[i]);
+                tmpFileInfo = new FileInfo(filesToCopy[i]);
                 try
                 {
                     if (bufferSize != null)
@@ -551,7 +524,7 @@ namespace KoFrMaDaemon.Backup
                     }
                     Directory.CreateDirectory(Path.GetDirectoryName(destinationInfo.FullName + @"\" + filesToCopy[i]));
                     tmpFileInfo.CopyTo(destinationInfo.FullName + @"\" + filesToCopy[i]);
-                    FilesCorrect.Add(new FileInfoObject { RelativePath = tmpFileInfo.FullName.Remove(0, sourceInfo.FullName.Length), Length = tmpFileInfo.Length, CreationTimeUtc = tmpFileInfo.CreationTimeUtc, LastWriteTimeUtc = tmpFileInfo.LastWriteTimeUtc, Attributes = tmpFileInfo.Attributes.ToString(), MD5 = this.CalculateMD5(tmpFileInfo.FullName) });
+                    FilesCorrect.Add(new FileInfoObject { FullPath = tmpFileInfo.FullName, Length = tmpFileInfo.Length, CreationTimeUtc = tmpFileInfo.CreationTimeUtc, LastWriteTimeUtc = tmpFileInfo.LastWriteTimeUtc, Attributes = tmpFileInfo.Attributes.ToString(), MD5 = this.CalculateMD5(tmpFileInfo.FullName) });
 
                 }
                 catch (Exception ex)
@@ -596,11 +569,29 @@ namespace KoFrMaDaemon.Backup
                     this.ExploreDirectoryRecursively(new DirectoryInfo(Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp")), FileList, FolderList);
                     for (int i = 0; i < FileList.Count; i++)
                     {
-                        File.Delete(Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp") + @"\" + FileList[i].RelativePath);
+                        try
+                        {
+                            //File.Delete(Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp") + @"\" + FileList[i].RelativePath);
+                            File.Delete(FileList[i].FullPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            ServiceKoFrMa.debugLog.WriteToLog("Cannot delete files in temporary directory because of " + ex.Message, 3);
+                        }
+
                     }
                     for (int i = 0; i < FolderList.Count; i++)
                     {
-                        Directory.Delete(Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp") + @"\" + FolderList[i].RelativePath, true);
+                        try
+                        {
+                            //Directory.Delete(Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp") + @"\" + FolderList[i].RelativePath, true);
+                            Directory.Delete(FolderList[i].FullPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            ServiceKoFrMa.debugLog.WriteToLog("Cannot delete files in temporary directory because of " + ex.Message, 3);
+                        }
+
                     }
                 }
                 catch (Exception ex)
@@ -803,9 +794,13 @@ namespace KoFrMaDaemon.Backup
             }
         }
 
-        private void CheckIfSpaceAvailable(DirectoryInfo source, List<IDestination> destinations)
+        private void CheckIfSpaceAvailable(List<string>sources, List<IDestination> destinations)
         {
-            Int64 sourceLength = this.CalculateDirectorySize(source);
+            Int64 sourceLength = 0;
+            for (int i = 0; i < sources.Count; i++)
+            {
+                sourceLength+=this.CalculateDirectorySize(new DirectoryInfo(sources[i]));
+            }
             for (int i = 0; i < destinations.Count; i++)
             {
                 if (destinations[i].Path is DestinationPathLocal)

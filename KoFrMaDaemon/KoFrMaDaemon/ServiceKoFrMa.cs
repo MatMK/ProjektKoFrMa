@@ -38,7 +38,7 @@ namespace KoFrMaDaemon
         /// Dokončené úlohy se přidávají do tohoto listu, při připojení se odešlou na server
         /// </summary>
         private List<TaskComplete> CompletedTasksYetToSend;
-        List<int> JournalCacheList;
+        //List<int> JournalCacheList;
         public ServiceKoFrMa()
         {
             InitializeComponent();
@@ -81,7 +81,7 @@ namespace KoFrMaDaemon
             ConnectionInfo.ServerURL = daemonSettings.ServerIP;
             password.daemon = daemon;
 
-            JournalCacheList = new List<int>();
+            //JournalCacheList = new List<int>();
         }
 
         protected override void OnStart(string[] args)
@@ -199,40 +199,9 @@ namespace KoFrMaDaemon
                                 }
                                 //debugLog.WriteToLog("Destination of the backup is " + item.WhereToBackup[0], 8);
 
-                                BackupJournalObject backupJournalSource = null;
-                                if (item.BackupJournalSource != null)
-                                {
-                                    backupJournalSource = item.BackupJournalSource;
-                                    debugLog.WriteToLog("Task from the server contains backup journal, using it as journal for incremental/differencial backup.", 7);
-                                }
-                                else
-                                {
-                                    try
-                                    {
-                                        int sourceJournalId;
-                                        sourceJournalId = Convert.ToInt32(item.SourceOfBackup);
-                                        for (int i = 0; i < JournalCacheList.Count; i++)
-                                        {
-                                            if (sourceJournalId == JournalCacheList[i])
-                                            {
-                                                BackupJournalOperations o = new BackupJournalOperations();
-                                                backupJournalSource = o.LoadBackupJournalObject(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\" + item.SourceOfBackup, debugLog);
-                                                debugLog.WriteToLog("Task journal was loaded from local cache and will be used for incremental/differencial backup.", 7);
-                                            }
-                                            else
-                                            {
-                                                debugLog.WriteToLog("Task journal should be differencial/incremental but is not in cache, server needs to send one. Process fail is inevitable.", 2);
-                                            }
-                                        }
-                                        
-                                    }
-                                    catch (Exception)
-                                    {
-                                        debugLog.WriteToLog("Task from the server doesn't contain backup journal, using the path entered for full backup.", 7);
-                                    }
-                                }
+                                
 
-                                backupInstance.Backup(item);
+                                backupInstance.Backup(this.LoadJournalFromCacheIfNeeded(item));
                                 debugLog.WriteToLog("Task completed, setting task as successfully completed...", 6);
                                 successfull = true;
                                 //connection.TaskCompleted(item, backupInstance.BackupJournalNew, debugLog, true);
@@ -384,45 +353,11 @@ namespace KoFrMaDaemon
 
             debugLog.WriteToLog("Searching for cached journals in folder "+ Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\", 6);
 
-            if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\"))
-            {
-                try
-                {
-                    FileInfo[] JournalCacheListDir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\").GetFiles();
-                    for (int i = 0; i < JournalCacheListDir.Length; i++)
-                    {
-                        if (JournalCacheListDir[i].Name.EndsWith(".dat"))
-                        {
-                            try
-                            {
-                                JournalCacheList.Add(Convert.ToInt32(Path.GetFileNameWithoutExtension(JournalCacheListDir[i].Name)));
-                            }
-                            catch (Exception)
-                            {
-                                debugLog.WriteToLog("File isn't named as ID of a task: " + JournalCacheListDir[i].Name, 3);
-                            }
-                        }
-                        else
-                        {
-                            debugLog.WriteToLog("Couldn't identify file from the cache folder. File name is: " + JournalCacheListDir[i].Name, 3);
-                        }
-
-                    }
-                }
-                catch (Exception)
-                {
-                    debugLog.WriteToLog("Error occured when trying to load cached files. List may be incomplete or, most likely, empty.", 3);
-                }
-                debugLog.WriteToLog("Found " + JournalCacheList.Count + " cache files. Returning their names to the server.", 5);
-            }
-            else
-            {
-                debugLog.WriteToLog("The cache jounal folder doesn't exist, returning empty list of cached journals", 3);
-            }
+            this.SearchJournalCacheFolder();
 
             try
             {
-                List<Task> taskListReceived = connection.PostRequest(currentTasks, JournalCacheList, CompletedTasksYetToSend);
+                List<Task> taskListReceived = connection.PostRequest(currentTasks, this.SearchJournalCacheFolder(), CompletedTasksYetToSend);
                 //přidat ověření než se smažou
                 CompletedTasksYetToSend.Clear();
                 List<Task> taskListToDelete = new List<Task>();
@@ -582,5 +517,108 @@ namespace KoFrMaDaemon
             
         }
 
+        private Task LoadJournalFromCacheIfNeeded(Task task)
+        {
+            Task taskWithLoadedJournal;
+            if (task.Sources is SourceJournalLoadFromCache)
+            {
+                taskWithLoadedJournal = task;
+                BackupJournalOperations o = new BackupJournalOperations();
+
+                List<int> currentCacheFiles = this.SearchJournalCacheFolder();
+
+                if (currentCacheFiles.Contains(((SourceJournalLoadFromCache)task.Sources).JournalID))
+                {
+                    taskWithLoadedJournal.Sources = o.LoadBackupJournalObject(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\" + ((SourceJournalLoadFromCache)task.Sources).JournalID.ToString(), debugLog);
+                    debugLog.WriteToLog("Task journal was loaded from local cache and will be used for incremental/differencial backup.", 7);
+
+                }
+                
+                else
+                {
+                    debugLog.WriteToLog("Task journal should be differencial/incremental but is not in cache, server needs to send one. Process fail is inevitable.", 2);
+                }
+                return taskWithLoadedJournal;
+
+            }
+            else
+            {
+                return task;
+            }
+
+
+            //BackupJournalObject backupJournalSource = null;
+            //if (item.BackupJournalSource != null)
+            //{
+            //    backupJournalSource = item.BackupJournalSource;
+            //    debugLog.WriteToLog("Task from the server contains backup journal, using it as journal for incremental/differencial backup.", 7);
+            //}
+            //else
+            //{
+            //    try
+            //    {
+            //        int sourceJournalId;
+            //        sourceJournalId = Convert.ToInt32(item.SourceOfBackup);
+            //        for (int i = 0; i < JournalCacheList.Count; i++)
+            //        {
+            //            if (sourceJournalId == JournalCacheList[i])
+            //            {
+            //                BackupJournalOperations o = new BackupJournalOperations();
+            //                backupJournalSource = o.LoadBackupJournalObject(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\" + item.SourceOfBackup, debugLog);
+            //                debugLog.WriteToLog("Task journal was loaded from local cache and will be used for incremental/differencial backup.", 7);
+            //            }
+            //            else
+            //            {
+            //                debugLog.WriteToLog("Task journal should be differencial/incremental but is not in cache, server needs to send one. Process fail is inevitable.", 2);
+            //            }
+            //        }
+
+            //    }
+            //    catch (Exception)
+            //    {
+            //        debugLog.WriteToLog("Task from the server doesn't contain backup journal, using the path entered for full backup.", 7);
+            //    }
+            //}
+        }
+        private List<int> SearchJournalCacheFolder()
+        {
+            List<int> tmpList = new List<int>();
+            if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\"))
+            {
+                try
+                {
+                    FileInfo[] JournalCacheListDir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\").GetFiles();
+                    for (int i = 0; i < JournalCacheListDir.Length; i++)
+                    {
+                        if (JournalCacheListDir[i].Name.EndsWith(".dat"))
+                        {
+                            try
+                            {
+                                tmpList.Add(Convert.ToInt32(Path.GetFileNameWithoutExtension(JournalCacheListDir[i].Name)));
+                            }
+                            catch (Exception)
+                            {
+                                debugLog.WriteToLog("File isn't named as ID of a task: " + JournalCacheListDir[i].Name, 3);
+                            }
+                        }
+                        else
+                        {
+                            debugLog.WriteToLog("Couldn't identify file from the cache folder. File name is: " + JournalCacheListDir[i].Name, 3);
+                        }
+
+                    }
+                }
+                catch (Exception)
+                {
+                    debugLog.WriteToLog("Error occured when trying to load cached files. List may be incomplete or, most likely, empty.", 3);
+                }
+                debugLog.WriteToLog("Found " + tmpList.Count + " cache files. Returning their names to the server.", 5);
+            }
+            else
+            {
+                debugLog.WriteToLog("The cache jounal folder doesn't exist, returning empty list of cached journals", 3);
+            }
+            return tmpList;
+        }
     }
 }
