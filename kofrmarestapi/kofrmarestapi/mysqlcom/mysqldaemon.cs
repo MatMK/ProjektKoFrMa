@@ -29,17 +29,7 @@ namespace KoFrMaRestApi.MySqlCom
                     return reader.GetString(0);
                 }
                 else
-                {/*
-                    reader.Close();
-                    string SqlInsert = "insert into tbDaemons values(null, @version, @os, @pc_unique, 1, now())";
-                    using (MySqlCommand command = new MySqlCommand(SqlInsert, connection))
-                    {
-                        command.Parameters.AddWithValue("@version", daemon.Version);
-                        command.Parameters.AddWithValue("@os", daemon.OS);
-                        command.Parameters.AddWithValue("@pc_unique", daemon.PC_Unique);
-                        command.ExecuteNonQuery();
-                        return GetDaemonId(daemon,connection);
-                    }*/
+                {
                     return null;
                 }
             }
@@ -147,7 +137,6 @@ namespace KoFrMaRestApi.MySqlCom
         /// <param name="connection"></param>
         private void TaskExtend(TaskComplete taskComplete,string JsonTime, MySqlConnection connection)
         {
-
             TaskRepeating repeat = JsonConvert.DeserializeObject<TaskRepeating>(JsonTime);
             DateTime nextDate = repeat.ExecutionTimes.Last();
             bool DateChanged = false;
@@ -246,7 +235,7 @@ namespace KoFrMaRestApi.MySqlCom
                         taskComplete.IDTask = (int)reader["AUTO_INCREMENT"];
                     }
                     TaskClass.IDTask = taskComplete.IDTask;
-                    TaskClass.BackupJournalSource = taskComplete.DatFile;
+                    TaskClass.Sources = taskComplete.DatFile;
                     Task = JsonConvert.SerializeObject(TaskClass);
                     command.CommandText = "INSERT INTO `tbTasks` VALUES (null, @IdDaemon, @Task, @TimeOfExecution, @RepeatInJSON, @Completed)";
                     command.Parameters.AddWithValue("@IdDaemon", IdDaemon);
@@ -258,6 +247,7 @@ namespace KoFrMaRestApi.MySqlCom
                 }
             }
         }
+        /*
         private void UpdateBackupJournal(int IdTask, BackupJournalObject backupJournal, MySqlConnection connection)
         {
             using (MySqlCommand command = new MySqlCommand("SELECT `Task` FROM `tbTasks` WHERE `Id` = @IdTask", connection))
@@ -275,7 +265,7 @@ namespace KoFrMaRestApi.MySqlCom
                 command.Parameters.AddWithValue("@NewTask", task);
                 command.ExecuteNonQuery();
             }
-        }
+        }*/
         private bool HasDateException(DateTime item, List<ExceptionDate> ExceptionDates)
         {
             bool result = true;

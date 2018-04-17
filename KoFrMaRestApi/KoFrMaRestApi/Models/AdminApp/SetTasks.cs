@@ -27,12 +27,7 @@ namespace KoFrMaRestApi.Models.AdminApp
         /// <summary>
         /// Co zálohovat, pokud se jedná o full zálohu je zde path ke složce, pokud je záloha diferenciální/inkrementální je toto pole prázdné
         /// </summary>
-        public string SourceOfBackup { get; set; }
-
-        /// <summary>
-        /// Pokud se jedná o diferenciální/inkrementální zálohu, je zde kompletní log zálohy na kterou je potřeba navázat
-        /// </summary>
-        public BackupJournalObject BackupJournalSource { get; set; }
+        public ISource Sources { get; set; }
 
         public List<IDestination> Destinations { get; set; }
 
@@ -51,16 +46,6 @@ namespace KoFrMaRestApi.Models.AdminApp
         /// 10 = Program will be more like a log writer than actually doing the process
         /// </summary>
         public byte LogLevel { get; set; }
-
-        /// <summary>
-        /// Obsahuje přihlašovací jméno a heslo, pokud je potřeba pro provedení tasku (SQL)
-        /// </summary>
-        public NetworkCredential NetworkCredentials { get; set; }
-
-        /// <summary>
-        /// Určuje, jestli úloha právě probíhá aby timer nespustil stejnou úlohu několikrát
-        /// </summary>
-        public bool InProgress { get; set; }
 
         public ScriptInfo ScriptBefore { get; set; }
 
