@@ -2,14 +2,33 @@ body {
     background-image: url('./bg.png');
     background-repeat: repeat;
     background-color: lightgreen;
-    height: 850px;
+    height: 625px;
+    margin: 0;
+    padding: 0;
 }
 
 div {
     margin: 0 auto;
 }
+h1{
+    font-weight:normal;
+    text-align: center;
+}
+h2{
+    font-weight:normal;
+    text-align: center;
+    color: gray;
+}
+
+#UserIconDiv{
+    margin: 0 auto;
+    background-image: url('./u2.png');
+    width: 100px;
+    height: 100px;
+}
+
 #loginDiv {
-    height: 220px;
+    height: 440px;
     width: 302px;
     background-color: white;
     padding: 40px;
@@ -18,12 +37,15 @@ div {
     margin: 0 auto;
     margin-bottom:10px;
     box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
+    margin-top: 5px;
 }
 main {
+    
     padding: 50px;
     background-color: rgba(255, 255, 255, 0.3);
     margin: 0 auto;
-    width: 1000px;
+    width: 800px;
+    
 }
 input{
     margin-bottom: 20px;
@@ -33,20 +55,24 @@ input{
 }
 input {
     
+    background-color:rgba(185, 228, 41,0.4);
     border: none;
     border-bottom: 1px solid #d3d3d3;
     border-radius: 0px;
+    font-size: 20px;
+    width: 285px;
 }
 
 .button {
-    background-color: rgb(220, 220, 220);
+    
+    background-color: rgba(185, 228, 41,0.7);
     transition-duration: 0.4s;
     -webkit-transition-duration: 0,4s;
     border: 1px solid #d3d3d3;
     border-radius: 5px;
     text-align: center;
     text-decoration: none;
-    font-size: 16PX;
+    font-size: 20PX;
     padding: 8px 16px;
     color: black;
 }
