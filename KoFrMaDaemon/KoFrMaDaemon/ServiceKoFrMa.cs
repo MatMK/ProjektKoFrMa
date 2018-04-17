@@ -97,11 +97,11 @@ namespace KoFrMaDaemon
                 }
                 else
                 {
-                    //timerConnection.Start();
+                    timerConnection.Start();
                 }
 
 
-                this.CheatTasks();
+                //this.CheatTasks();
 
                 //try
                 //{

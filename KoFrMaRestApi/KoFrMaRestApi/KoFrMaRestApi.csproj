@@ -223,7 +223,12 @@
     <Compile Include="Models\Daemon\Task\DestinationZip.cs" />
     <Compile Include="Models\Daemon\Task\IDestination.cs" />
     <Compile Include="Models\Daemon\Task\IDestinationPath.cs" />
+    <Compile Include="Models\Daemon\Task\ISource.cs" />
     <Compile Include="Models\Daemon\Task\ScriptInfo.cs" />
+    <Compile Include="Models\Daemon\Task\SourceFolders.cs" />
+    <Compile Include="Models\Daemon\Task\SourceJournalLoadFromCache.cs" />
+    <Compile Include="Models\Daemon\Task\SourceMSSQL.cs" />
+    <Compile Include="Models\Daemon\Task\SourceMySQL.cs" />
     <Compile Include="Models\Daemon\Task\Task.cs" />
     <Compile Include="Models\JsonSerializationUtility.cs" />
     <Compile Include="Models\SettingsSerializationBinder.cs" />
