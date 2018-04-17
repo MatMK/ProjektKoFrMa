@@ -6,6 +6,7 @@ import { DataSource } from '@angular/cdk/table';
 import { MatTableModule } from '@angular/material/table';
 import { MatTableDataSource } from '@angular/material';
 import { MainTask } from '../../../server-connection/models/communication-models/task/main-task.model';
+import { DeleteRowRequest } from '../../../server-connection/models/communication-models/post-admin/delete-row-request.model';
 
 @Component({
   selector: 'app-tasks',
@@ -17,7 +18,7 @@ export class TasksComponent implements OnInit {
 
   constructor(private service: ServerConnectionService, private data: Data) {
   }
-  displayedColumns = ['Id', 'IdDaemon', 'TimeOfExecution', 'Completed'];
+  displayedColumns = ['Id', 'IdDaemon', 'TimeOfExecution', 'Completed', 'Delete'];
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim(); // Remove whitespace
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
@@ -29,6 +30,10 @@ export class TasksComponent implements OnInit {
     if(Data.Id.toString() == filter)
       return true;
     return false;
+  }
+  deleteRow(rowId)
+  {
+    this.service.DeleteRow(new DeleteRowRequest("DeleteRowRequest","tbTasks", rowId)).then(r => this.service.RefreshData([3]))
   }
   ngOnInit() {
   }

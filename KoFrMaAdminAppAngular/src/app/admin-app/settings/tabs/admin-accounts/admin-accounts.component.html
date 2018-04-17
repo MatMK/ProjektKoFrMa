@@ -52,7 +52,15 @@
           <!--{{service.NumberToPermission(element.Permission)}}-->
          </mat-cell>
       </ng-container>
-  
+
+      <!-- Delete Column -->
+      <ng-container matColumnDef="Delete">
+        <mat-header-cell *matHeaderCellDef> Delete </mat-header-cell>
+        <mat-cell *matCellDef="let element"> 
+          <button (click)="deleteRow(element.Id)">Delete</button>
+        </mat-cell>
+      </ng-container>
+      
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>

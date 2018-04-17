@@ -100,14 +100,26 @@ namespace KoFrMaRestApi.Controllers
         [HttpPost, Route(@"api/AdminApp/LogOut")]
         public void LogOut(AdminInfo admin)
         {
-            int? id = mySqlCom.GetAdminId(admin.UserName);
-            if (id!=null)
+            if (this.Authorized(admin))
             {
-                mySqlCom.LogOut((int)id);
+                int? id = mySqlCom.GetAdminId(admin.UserName);
+                if (id != null)
+                {
+                    mySqlCom.LogOut((int)id);
+                }
+                else
+                {
+                    throw new Exception("No admin with such name");
+                }
             }
-            else
+        }
+
+        [HttpPost, Route(@"api/AdminApp/DeleteRow")]
+        public void DeleteRow(PostAdmin postAdmin)
+        {
+            if(this.Authorized(postAdmin.adminInfo))
             {
-                throw new Exception("No admin with such name");
+                this.mySqlCom.DeleteRow((DeleteRowRequest)postAdmin.request);
             }
         }
         [HttpGet, Route(@"api /AdminApp/test")]

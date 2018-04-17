@@ -1,4 +1,5 @@
 ﻿using KoFrMaRestApi.Models.AdminApp;
+using KoFrMaRestApi.Models.AdminApp.PostAdmin;
 using KoFrMaRestApi.Models.Daemon.Task;
 using KoFrMaRestApi.Models.Tables;
 using MySql.Data.MySqlClient;
@@ -122,14 +123,14 @@ namespace KoFrMaRestApi.MySqlCom
                         {
                             IDTask = NextAutoIncrement("tbTasks"),
                             TimeToBackup = item.TimeToBackup,
-                            SourceOfBackup = item.SourceOfBackup,
+                            //SourceOfBackup = item.SourceOfBackup,
                             Destinations = item.Destinations,
                             LogLevel = item.LogLevel,
                             ScriptBefore = item.ScriptBefore,
                             ScriptAfter = item.ScriptAfter,
                             TemporaryFolderMaxBuffer = item.TemporaryFolderMaxBuffer,
                             InProgress = false,
-                            BackupJournalSource = null
+                            //BackupJournalSource = null
                         };
                         dynamic Repeating;
                         if (item.ExecutionTimes != null)
@@ -197,6 +198,15 @@ namespace KoFrMaRestApi.MySqlCom
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
             using (MySqlCommand command = new MySqlCommand($"UPDATE `tbAdminAccounts` SET  `Token` = null WHERE `Id` = {AdminId}", connection))
+            {
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+        }
+        public void DeleteRow(DeleteRowRequest deleteRow)
+        {
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand($"DELETE FROM `{deleteRow.TableName}` WHERE Id = {deleteRow.Id}", connection))
             {
                 connection.Open();
                 command.ExecuteNonQuery();

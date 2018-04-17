@@ -246,7 +246,7 @@ namespace KoFrMaRestApi.MySqlCom
                         taskComplete.IDTask = (int)reader["AUTO_INCREMENT"];
                     }
                     TaskClass.IDTask = taskComplete.IDTask;
-                    TaskClass.BackupJournalSource = taskComplete.DatFile;
+                    //TaskClass.BackupJournalSource = taskComplete.DatFile;
                     Task = JsonConvert.SerializeObject(TaskClass);
                     command.CommandText = "INSERT INTO `tbTasks` VALUES (null, @IdDaemon, @Task, @TimeOfExecution, @RepeatInJSON, @Completed)";
                     command.Parameters.AddWithValue("@IdDaemon", IdDaemon);
@@ -270,7 +270,7 @@ namespace KoFrMaRestApi.MySqlCom
                         task = JsonConvert.DeserializeObject<Task>((string)reader["Task"]);
                     reader.Close();
                 }
-                task.BackupJournalSource = backupJournal;
+                //task.BackupJournalSource = backupJournal;
                 command.CommandText = "UPDATE `tbTasks` SET `Task`= @NewTask where Id = @IdTask";
                 command.Parameters.AddWithValue("@NewTask", task);
                 command.ExecuteNonQuery();

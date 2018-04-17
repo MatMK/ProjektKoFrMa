@@ -30,6 +30,8 @@ namespace KoFrMaRestApi.Models
                     return typeof(ChangeTableRequest);
                 case "ChangePermissionRequest":
                     return typeof(ChangePermissionRequest);
+                case "DeleteRowRequest":
+                    return typeof(DeleteRowRequest);
             }
             return null;
         }

@@ -19,6 +19,7 @@ import { ChangePermission } from './models/sql-data/change-permission.model';
 import { ChangeTableRequest } from './models/communication-models/post-admin/change-table-request.model';
 import { ChangePermissionRequest } from './models/communication-models/post-admin/change-permission-request.model';
 import { MatTableDataSource } from '@angular/material';
+import { DeleteRowRequest } from './models/communication-models/post-admin/delete-row-request.model';
 
 @Injectable()
 
@@ -219,6 +220,25 @@ export class ServerConnectionService{
         //this.data.Loading = true;
         let url = this.data.ServerRootURL + "api/AdminApp/AlterPermission";
         let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangePermissionRequest("ChangePermissionRequest",permission));
+        
+        return this.http.post(url,postAdmin).toPromise()
+                        .then(res => 
+                            {
+                                //this.data.Loading = false
+                                return true;
+                            })
+                        .catch(msg => 
+                            {
+                                //this.data.Loading = false;
+                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                                return false;
+                            })
+    }
+    DeleteRow(deleteRow : DeleteRowRequest)
+    {
+        //this.data.Loading = true
+        let url = this.data.ServerRootURL + "api/AdminApp/DeleteRow";
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,deleteRow);
         return this.http.post(url,postAdmin).toPromise()
                         .then(res => 
                             {

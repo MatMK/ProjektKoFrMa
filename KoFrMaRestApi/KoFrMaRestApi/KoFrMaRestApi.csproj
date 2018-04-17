@@ -197,6 +197,7 @@
     <Compile Include="Models\AdminApp\PostAdmin\AddAdminRequest.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\ChangePermissionRequest.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\ChangeTableRequest.cs" />
+    <Compile Include="Models\AdminApp\PostAdmin\DeleteRowRequest.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\GetDataRequest.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\IRequest.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\PostAdmin.cs" />

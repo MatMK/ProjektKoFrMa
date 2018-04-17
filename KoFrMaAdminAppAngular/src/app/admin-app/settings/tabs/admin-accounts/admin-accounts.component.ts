@@ -9,6 +9,7 @@ import { ChangeTable } from '../../../server-connection/models/sql-data/change-t
 import { InputCheck } from '../../../server-connection/input-check.service';
 import { FormControl } from '@angular/forms';
 import { ChangePermission } from '../../../server-connection/models/sql-data/change-permission.model';
+import { DeleteRowRequest } from '../../../server-connection/models/communication-models/post-admin/delete-row-request.model';
 
 @Component({
   selector: 'app-admin-accounts',
@@ -22,7 +23,7 @@ export class AdminAccountsComponent {
   private selectedPerm : PermInterface[][];
   constructor(private service : ServerConnectionService, private data : Data) {
   }
-  displayedColumns = ['Id', 'Username', 'Email', 'Enabled', 'Permission'];
+  displayedColumns = ['Id', 'Username', 'Email', 'Enabled', 'Permission', 'Delete'];
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim(); // Remove whitespace
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
@@ -83,5 +84,9 @@ export class AdminAccountsComponent {
   {
     let table : ChangeTable = new ChangeTable('tbAdminAccounts',id,'Enabled', value)
     this.service.AlterTable(table);
+  }
+  deleteRow(rowId)
+  {
+    this.service.DeleteRow(new DeleteRowRequest("DeleteRowRequest","tbAdminAccounts", rowId)).then(r => this.service.RefreshData([1]))
   }
 }
