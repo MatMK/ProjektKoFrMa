@@ -10,7 +10,7 @@ body{
     margin: 0;
     padding: 0;
     min-width: 100%;
-  min-height: 100%;
+  min-height:  800px;
   font-size: 20px;
   
 }
@@ -32,21 +32,29 @@ border-radius: 0px;
 #menuTask{
     font-size: 20px;
     float: right;
-    height: 500px;
+    height: 716px;
     width: 38%;
     background-color: white;
     padding: 40px;
-    border: 1px solid #d3d3d3;
+    border: none;
+    border-left: 2px solid #d3d3d3;
     border-radius: 5px;
     margin: 0 auto;
     margin-bottom:10px;
+    margin-top: 50px;
    box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
 }
 #mensiDiv{
-    float: right;
-    height: 500px;
+    float: left;
+    height: 800px;
     width: 55%;
-    background-color: aqua;
+    margin-top: 50px;
+    
+    border: none;
+    
+    
+    margin-bottom:10px;
+   box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
 }
 #backupType{
     background-color: white;
@@ -101,13 +109,14 @@ height: 28px;
         float: left;
         height: 240px;
         width: 321px;
-        background-color: springgreen;
+        background-color: white;
         margin: 10px;
-        border: 1px solid #d3d3d3;
+        border: 1.5px solid #d3d3d3;
     border-radius: 5px;
     }
 .BasicInputNew{
-    width: 362px !important;
+    width: 262px !important;
+    margin-left: 25px;
     margin-bottom: 3px;
     background-color: white;
     font-size: 20px;
@@ -118,4 +127,8 @@ height: 28px;
 ::placeholder{
     color: gray;
     opacity: 1;
+}
+
+.basicRadio{
+    width: 40px;
 }

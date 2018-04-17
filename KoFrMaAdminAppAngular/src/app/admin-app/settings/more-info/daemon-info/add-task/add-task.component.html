@@ -3,12 +3,21 @@
 <body>
   <div id="celek">
     <div id="menuTask">
-       <input type="text" id="daemonId" [(ngModel)]="daemonId" placeholder="Daemon Id" class="BasicInput" (change)="checkIfNumberValid()">
-    <div id="backupType">
-      Full <input type="radio" name="buChoice" value="Full" [(ngModel)]="backuptype">  Incremental <input type="radio" name="buChoice" value="Incremental" [(ngModel)]="backuptype">  Differencial <input type="radio" name="buChoice" value="Differencial" [(ngModel)]="backuptype"><br>
+       <input type="text" id="daemonId" [(ngModel)]="daemonId" placeholder="Daemon Id" class="BasicInput" (change)="checkIfNumberValid()">         
+       <div id="backupType">
+      Full<input type="radio" class="basicRadio" name="buChoice" value="Full" [(ngModel)]="backuptype">  
+      Incremental <input type="radio" class="basicRadio" name="buChoice" value="Incremental" [(ngModel)]="backuptype">  
+      Differencial <input type="radio" class="basicRadio" name="buChoice" value="Differencial" [(ngModel)]="backuptype"><br>
+    </div>
+    <div id="sourceType">
+      Local <input type="radio" (click)="ShowAddSource()" class="basicRadio" id="sourceLocal" name="sourceType" value="Local" [(ngModel)]="sourceType">
+      DbMySQL <input type="radio" (click)="ShowAddSource()" class="basicRadio" name="sourceType" value="DbMySQL" [(ngModel)]="sourceType"> 
+      DbMSSQL <input type="radio" (click)="ShowAddSource()" class="basicRadio" name="sourceType" value="DbMSSQL" [(ngModel)]="sourceType">
     </div>
     <div id="destinationSelect">
-      FTP <input type="radio" (click)="BUcheck()" name="type" id="distant">SFTP<input type="radio" (click)="BUcheck()" name="type" id="sftp">  Local <input type="radio" (click)="BUcheck()" name="type" id="local">
+      FTP <input type="radio" (click)="BUcheck()" name="type" id="distant">
+      SFTP<input type="radio" (click)="BUcheck()" name="type" id="sftp">  
+      Local <input type="radio" (click)="BUcheck()" name="type" id="local">
     </div>
     <div id="ifServer" style="display:none">
       <input type='text' placeholder="Username" class="BasicInput" id='distUser' name='dUser'[(ngModel)]="ncUsername" ><br>
@@ -29,7 +38,7 @@
         <option value="2" id="optionRar2">Fast</option> 
         <option value="3" id="optionRar3">Normal</option> 
         <option value="4" id="optionRar4">Good</option> 
-        <option value="4" id="optionRar5">Best</option> 
+        <option value="5" id="optionRar5">Best</option> 
       </select>   
       <select id="dropdownZip" class="basicSelect" style="display:none"> 
         <option value="0" id="optionZip0">Optimal</option> 
@@ -49,20 +58,19 @@
       <input type="text" id="inputSource" placeholder="Source of backup" [(ngModel)]="sourcepath" class="BasicInput"><br>
       <input type="datetime-local" id="inputDateExecution" [value] = "_date" class="BasicInput" (change) = "onDateChange($event.target.value)" ><br>
         <div id="inputDestiDiv">
-          <div class="aditionalDivClass">
-            <input type="text" placeholder="Backup destination - C:\Users " class="BasicInput" id="inputDestination" [(ngModel)]="destinationpath"><input type="submit" class="basicSubmit" id="AddDestLocal" value="Add Destination" (click)="AddLocalDestination()"><br>
-          </div>
+          
+            <input type="text" placeholder="Backup destination - C:\Users " class="BasicInput" id="inputDestination" [(ngModel)]="destinationpath">
+            <input type="submit" class="basicSubmit" id="AddDestLocal" value="AddDest" (click)="AddLocalDestination()">
+            <input type="submit" class="basicSubmit" id="AddDestNew" value="AddDestNew" (click)="AddDestinationNew()">
+            <div id="sourceButtonDiv" style="display:none">
+              <input type="submit" class="basicSubmit" id="AddSource" value="AddSource" (click)="AddSource()">
+            </div>
+            <br>
         </div><hr>
-      <input type="submit" value="Save" id="inputSaveTask" class="basicSubmit" (click)="AddTask()">
+      <input type="submit" value="Save" id="inputSaveTask" class="basicSubmit"  (click)="AddTask()">
       </div>
       <div id="mensiDiv">
-        <div class="newTaskDiv">
-
-        </div>
-        <div class="newTaskDiv"></div>
-        <div class="newTaskDiv"></div>
-        <div class="newTaskDiv"></div>
-        <div class="newTaskDiv"></div>
+        
 
       </div>
   </div>
