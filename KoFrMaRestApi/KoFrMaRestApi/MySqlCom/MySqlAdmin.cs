@@ -123,14 +123,13 @@ namespace KoFrMaRestApi.MySqlCom
                         {
                             IDTask = NextAutoIncrement("tbTasks"),
                             TimeToBackup = item.TimeToBackup,
-                            //SourceOfBackup = item.SourceOfBackup,
+                            Sources = item.Sources,
                             Destinations = item.Destinations,
                             LogLevel = item.LogLevel,
                             ScriptBefore = item.ScriptBefore,
                             ScriptAfter = item.ScriptAfter,
                             TemporaryFolderMaxBuffer = item.TemporaryFolderMaxBuffer,
                             InProgress = false,
-                            //BackupJournalSource = null
                         };
                         dynamic Repeating;
                         if (item.ExecutionTimes != null)
