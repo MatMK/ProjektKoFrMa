@@ -48,17 +48,17 @@ namespace KoFrMaDaemon
         public byte LogLevel { get; set; }
 
         /// <summary>
-        /// Obsahuje přihlašovací jméno a heslo, pokud je potřeba pro provedení tasku (SQL)
-        /// </summary>
-        public NetworkCredential NetworkCredentials { get; set; }
-
-        /// <summary>
         /// Určuje, jestli úloha právě probíhá aby timer nespustil stejnou úlohu několikrát
         /// </summary>
         public bool InProgress { get; set; }
 
+        /// <summary>
+        /// Script, který se spustí před začátkem zálohy
+        /// </summary>
         public ScriptInfo ScriptBefore { get; set; }
-
+        /// <summary>
+        /// Script, který se spustí po záloze
+        /// </summary>
         public ScriptInfo ScriptAfter { get; set; }
 
         /// <summary>

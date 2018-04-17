@@ -5,7 +5,7 @@ using System.Web;
 
 namespace KoFrMaRestApi.Models.Daemon.Task.BackupJournal
 {
-    public class BackupJournalObject
+    public class BackupJournalObject:ISource
     {
         public string RelativePath { get; set; }
         public List<FileInfoObject> BackupJournalFiles { get; set; }

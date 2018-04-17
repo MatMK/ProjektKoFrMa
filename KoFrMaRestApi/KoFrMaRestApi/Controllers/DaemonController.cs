@@ -61,7 +61,7 @@ namespace KoFrMaRestApi.Controllers
                     }
                     for (int i = BackupJournalNotNeeded.Count - 1; i >= 0; i--)
                     {
-                        tasks[BackupJournalNotNeeded[i]].BackupJournalSource = null;
+                        tasks[BackupJournalNotNeeded[i]].Sources = new SourceJournalLoadFromCache() { JournalID = };
                     }
                     for (int i = ToRemove.Count - 1; i >= 0; i--)
                     {
