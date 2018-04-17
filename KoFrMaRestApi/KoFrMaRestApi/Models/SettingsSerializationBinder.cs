@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using KoFrMaRestApi.Models.AdminApp.PostAdmin;
+using KoFrMaRestApi.Models.Daemon.Task;
+using KoFrMaRestApi.Models.Daemon.Task.BackupJournal;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -20,6 +22,7 @@ namespace KoFrMaRestApi.Models
         {
             switch (typeName)
             {
+                //Admin
                 case "AddAdminRequest":
                     return typeof(AddAdminRequest);
                 case "GetDataRequest":
@@ -32,6 +35,34 @@ namespace KoFrMaRestApi.Models
                     return typeof(ChangePermissionRequest);
                 case "DeleteRowRequest":
                     return typeof(DeleteRowRequest);
+
+                //Task
+                case "Destination7z":
+                    return typeof(Destination7z);
+                case "DestinationPlain":
+                    return typeof(DestinationPlain);
+                case "DestinationRar":
+                    return typeof(DestinationRar);
+                case "DestinationZip":
+                    return typeof(DestinationZip);
+                case "DestinationPathFTP":
+                    return typeof(DestinationPathFTP);
+                case "DestinationPathLocal":
+                    return typeof(DestinationPathLocal);
+                case "DestinationPathNetworkShare":
+                    return typeof(DestinationPathNetworkShare);
+                case "DestinationPathSFTP":
+                    return typeof(DestinationPathSFTP);
+                case "SourceFolders":
+                    return typeof(SourceFolders);
+                case "SourceJournalLoadFromCache":
+                    return typeof(SourceJournalLoadFromCache);
+                case "BackupJournalObject":
+                    return typeof(BackupJournalObject);
+                case "SourceMSSQL":
+                    return typeof(SourceMSSQL);
+                case "SourceMySQL":
+                    return typeof(SourceMySQL);
             }
             return null;
         }

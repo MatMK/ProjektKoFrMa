@@ -35,6 +35,16 @@ namespace KoFrMaDaemon.ConnectionToServer
                     return typeof(DestinationPathNetworkShare);
                 case "DestinationPathSFTP":
                     return typeof(DestinationPathSFTP);
+                case "SourceFolders":
+                    return typeof(SourceFolders);
+                case "SourceJournalLoadFromCache":
+                    return typeof(SourceJournalLoadFromCache);
+                case "BackupJournalObject":
+                    return typeof(BackupJournalObject);
+                case "SourceMSSQL":
+                    return typeof(SourceMSSQL);
+                case "SourceMySQL":
+                    return typeof(SourceMySQL);
             }
 
             return null;
