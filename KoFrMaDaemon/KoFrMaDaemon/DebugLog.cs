@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using KoFrMaDaemon.ConnectionToServer;
 
 namespace KoFrMaDaemon
 {
@@ -107,7 +108,7 @@ namespace KoFrMaDaemon
         {
             w = new StreamWriter(_logPath, true);
             w.WriteLine();
-            w.WriteLine(JsonConvert.SerializeObject(task));
+            w.WriteLine(JsonSerializationUtility.Serialize(task));
             w.WriteLine();
             w.Close();
             w.Dispose();
