@@ -24,12 +24,12 @@ namespace KoFrMaRestApi.Models.Daemon.Task
         /// <summary>
         /// Co zálohovat, pokud se jedná o full zálohu je zde path ke složce, pokud je záloha diferenciální/inkrementální je toto pole prázdné
         /// </summary>
-        public string SourceOfBackup { get; set; }
+        public ISource Sources { get; set; }
 
         /// <summary>
         /// Pokud se jedná o diferenciální/inkrementální zálohu, je zde kompletní log zálohy na kterou je potřeba navázat
         /// </summary>
-        public BackupJournalObject BackupJournalSource { get; set; }
+        //public BackupJournalObject BackupJournalSource { get; set; }
 
         public List<IDestination> Destinations { get; set; }
 
@@ -50,17 +50,17 @@ namespace KoFrMaRestApi.Models.Daemon.Task
         public byte LogLevel { get; set; }
 
         /// <summary>
-        /// Obsahuje přihlašovací jméno a heslo, pokud je potřeba pro provedení tasku (SQL)
-        /// </summary>
-        public NetworkCredential NetworkCredentials { get; set; }
-
-        /// <summary>
         /// Určuje, jestli úloha právě probíhá aby timer nespustil stejnou úlohu několikrát
         /// </summary>
         public bool InProgress { get; set; }
 
+        /// <summary>
+        /// Script, který se spustí před začátkem zálohy
+        /// </summary>
         public ScriptInfo ScriptBefore { get; set; }
-
+        /// <summary>
+        /// Script, který se spustí po záloze
+        /// </summary>
         public ScriptInfo ScriptAfter { get; set; }
 
         /// <summary>
