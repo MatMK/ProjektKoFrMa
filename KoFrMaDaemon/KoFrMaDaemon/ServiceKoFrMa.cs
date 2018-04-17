@@ -45,7 +45,6 @@ namespace KoFrMaDaemon
 
 
             ScheduledTasks = new List<Task>();
-            CompletedTasksYetToSend = new List<TaskComplete>();
 
             inProgress = false;
 
@@ -68,7 +67,7 @@ namespace KoFrMaDaemon
             daemonSettings = new SettingsLoad();
 
 
-            debugLog = new DebugLog(daemonSettings.LocalLogPath,daemonSettings.WindowsLog, 9);
+            debugLog = new DebugLog(daemonSettings.LocalLogPath, daemonSettings.WindowsLog, 9);
 
             /// Předávání informací o daemonovi a systému
             daemon = DaemonInfo.Instance;
@@ -89,19 +88,20 @@ namespace KoFrMaDaemon
             try
             {
                 debugLog.WriteToLog("Service started", 4);
-                debugLog.WriteToLog("Daemon version is "+daemon.Version.ToString()+" daemon OS is "+daemon.OS+" and daemon unique motherboard ID is " +daemon.PC_Unique, 7);
+                debugLog.WriteToLog("Daemon version is " + daemon.Version.ToString() + " daemon OS is " + daemon.OS + " and daemon unique motherboard ID is " + daemon.PC_Unique, 7);
 
-                if (daemonSettings.ServerIP==""||daemonSettings.ServerIP==null)
+                if (daemonSettings.ServerIP == "" || daemonSettings.ServerIP == null)
                 {
                     debugLog.WriteToLog("Server IP not entered in config file. Run local configurator to set it to your server, than restart this service or computer.", 1);
                 }
                 else
                 {
-                    timerConnection.Start();
+                    //timerConnection.Start();
                 }
 
+                this.CompletedTasksYetToSend = this.LoadCompletedTasksFromDisk();
 
-                //this.CheatTasks();
+                this.CheatTasks();
 
                 //try
                 //{
@@ -116,7 +116,7 @@ namespace KoFrMaDaemon
             }
             catch (Exception ex)
             {
-                debugLog.WriteToLog("Cannot start service because of error: "+ex.Message + ex, 1);
+                debugLog.WriteToLog("Cannot start service because of error: " + ex.Message + ex, 1);
                 throw;
             }
 
@@ -124,8 +124,10 @@ namespace KoFrMaDaemon
 
         protected override void OnStop()
         {
+            debugLog.WriteToLog("Stopping service...", 6);
             this.inProgress = true;
-            debugLog.WriteToLog("Service stopped", 4);
+            this.SaveCompletedTasksToDisk(CompletedTasksYetToSend);
+            debugLog.WriteToLog("Service stopped.", 4);
         }
 
         private void CheatTasks()
@@ -134,9 +136,11 @@ namespace KoFrMaDaemon
             DateTime timeToBackup = DateTime.Now;
             List<IDestination> tmpDestinations = new List<IDestination>();
             SourceFolders tmpSourceFolders = new SourceFolders();
+            List<string> tmpSourceFoldersPaths = new List<string>();
             //tmpList.Add(new DestinationPlain() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" } });
-            tmpDestinations.Add(new DestinationZip() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" },CompressionLevel=0,SplitAfter=1 });
-            tmpSourceFolders.Paths.Add(@"D:\KoFrMa\BackupThisFolder\");
+            tmpDestinations.Add(new DestinationZip() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" }, CompressionLevel = 0, SplitAfter = 1 });
+            tmpSourceFoldersPaths.Add(@"D:\KoFrMa\BackupThisFolder\");
+            tmpSourceFolders.Paths = tmpSourceFoldersPaths;
             Task taskTest = new Task
             {
                 Sources = tmpSourceFolders,
@@ -169,7 +173,7 @@ namespace KoFrMaDaemon
             if (this.ScheduledTasks.Count > 0)
             {
                 debugLog.WriteToLog("Tasks found, starting to check if the time has come for each of the tasks", 5);
-                bool successfull=false;
+                bool successfull = false;
                 foreach (Task item in ScheduledTasks)
                 {
                     if (!item.InProgress)
@@ -184,22 +188,22 @@ namespace KoFrMaDaemon
                             try
                             {
                                 debugLog.WriteToLog("Task locked, starting the backup...", 6);
-                                if (item.ScriptBefore!=null)
+                                if (item.ScriptBefore != null)
                                 {
-                                    if (item.ScriptBefore.PathToLocalScript!=null|| item.ScriptBefore.PathToLocalScript != "")
+                                    if (item.ScriptBefore.PathToLocalScript != null || item.ScriptBefore.PathToLocalScript != "")
                                     {
                                         debugLog.WriteToLog("Runnig script from disk...", 6);
                                         this.RunScriptFromDisk(item.ScriptBefore.PathToLocalScript);
                                     }
-                                    else if (item.ScriptBefore.ScriptItself!=null|| item.ScriptBefore.ScriptItself != "")
+                                    else if (item.ScriptBefore.ScriptItself != null || item.ScriptBefore.ScriptItself != "")
                                     {
                                         debugLog.WriteToLog("Runnig script included with the task...", 6);
-                                        this.RunScriptFromString(item.ScriptBefore.ScriptItself,item.ScriptBefore.ScriptItselfFormat);
+                                        this.RunScriptFromString(item.ScriptBefore.ScriptItself, item.ScriptBefore.ScriptItselfFormat);
                                     }
                                 }
                                 //debugLog.WriteToLog("Destination of the backup is " + item.WhereToBackup[0], 8);
 
-                                
+
 
                                 backupInstance.Backup(this.LoadJournalFromCacheIfNeeded(item));
                                 debugLog.WriteToLog("Task completed, setting task as successfully completed...", 6);
@@ -226,9 +230,9 @@ namespace KoFrMaDaemon
                                         this.RunScriptFromString(item.ScriptAfter.ScriptItself, item.ScriptAfter.ScriptItselfFormat);
                                     }
                                 }
-                                if (daemonSettings.LocalLogPath!=null&&daemonSettings.LocalLogPath!="")
+                                if (daemonSettings.LocalLogPath != null && daemonSettings.LocalLogPath != "")
                                 {
-                                    StreamWriter w = new StreamWriter(daemonSettings.LocalLogPath,true);
+                                    StreamWriter w = new StreamWriter(daemonSettings.LocalLogPath, true);
                                     for (int i = 0; i < backupInstance.taskDebugLog.logReport.Count; i++)
                                     {
                                         w.WriteLine(backupInstance.taskDebugLog.logReport[i]);
@@ -247,7 +251,7 @@ namespace KoFrMaDaemon
                         else
                         {
                             TimeSpan tmp = item.TimeToBackup - DateTime.Now;
-                            if (tmp.TotalMilliseconds< 2147483647)
+                            if (tmp.TotalMilliseconds < 2147483647)
                             {
                                 if (timerTasks.Interval > tmp.TotalMilliseconds)
                                 {
@@ -272,7 +276,7 @@ namespace KoFrMaDaemon
                         //ScheduledTasks.Remove(item);
                     }
                 }
-                if (timerTasks.Interval== 2147483647)
+                if (timerTasks.Interval == 2147483647)
                 {
                     debugLog.WriteToLog("No other tasks planned", 5);
                 }
@@ -304,7 +308,7 @@ namespace KoFrMaDaemon
                     }
                     catch (Exception ex)
                     {
-                        debugLog.WriteToLog("Token couldn't be obtained from the server. Waiting for next timer event to try to obtaine one. "+ex.Message, 3);
+                        debugLog.WriteToLog("Token couldn't be obtained from the server. Waiting for next timer event to try to obtaine one. " + ex.Message, 3);
                         this.timerConnection.AutoReset = true;
                     }
                 }
@@ -317,7 +321,7 @@ namespace KoFrMaDaemon
                         timerConnection.Interval = timerValues.ConnectionSuccess;
                         debugLog.WriteToLog("List of scheduled tasks now contains " + this.ScheduledTasks.Count + " tasks", 6);
 
-                        if (this.ScheduledTasks.Count>0)
+                        if (this.ScheduledTasks.Count > 0)
                         {
                             debugLog.WriteToLog("Starting scheduled tasks check", 6);
                             this.OnTimerTasksTick(null, null);
@@ -348,10 +352,10 @@ namespace KoFrMaDaemon
             List<TaskVersion> currentTasks = new List<TaskVersion>(ScheduledTasks.Count);
             foreach (Task item in ScheduledTasks)
             {
-                currentTasks.Add(new TaskVersion{ TaskID = item.IDTask, TaskDataHash = item.GetHashCode()});
+                currentTasks.Add(new TaskVersion { TaskID = item.IDTask, TaskDataHash = item.GetHashCode() });
             }
 
-            debugLog.WriteToLog("Searching for cached journals in folder "+ Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\", 6);
+            debugLog.WriteToLog("Searching for cached journals in folder " + Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\", 6);
 
             this.SearchJournalCacheFolder();
 
@@ -383,7 +387,7 @@ namespace KoFrMaDaemon
 
                 throw;
             }
-            
+
         }
 
         private string GetSerNumBIOS()
@@ -418,7 +422,7 @@ namespace KoFrMaDaemon
 
         private void RunScriptFromDisk(string path)
         {
-            if (path.EndsWith(".bat")|| path.EndsWith(".cmd"))
+            if (path.EndsWith(".bat") || path.EndsWith(".cmd"))
             {
                 debugLog.WriteToLog("Starting command line script located in " + path, 7);
                 ProcessStartInfo processInfo;
@@ -460,7 +464,7 @@ namespace KoFrMaDaemon
             }
             else
             {
-                debugLog.WriteToLog("Unknown file should be run as script, not my problem, trying to start it anyway."+path, 6);
+                debugLog.WriteToLog("Unknown file should be run as script, not my problem, trying to start it anyway." + path, 6);
                 ProcessStartInfo processInfo;
                 Process process;
 
@@ -476,7 +480,7 @@ namespace KoFrMaDaemon
 
         private void RunScriptFromString(string script, string scriptFormat)
         {
-            if (scriptFormat==null)
+            if (scriptFormat == null)
             {
                 if (scriptFormat == "bat" || scriptFormat == "cmd")
                 {
@@ -507,14 +511,14 @@ namespace KoFrMaDaemon
                 }
                 else
                 {
-                    debugLog.WriteToLog("Unsupported script format: "+scriptFormat, 3);
+                    debugLog.WriteToLog("Unsupported script format: " + scriptFormat, 3);
                 }
             }
             else
             {
                 debugLog.WriteToLog("Script format not set, script must be skipped.", 3);
             }
-            
+
         }
 
         private Task LoadJournalFromCacheIfNeeded(Task task)
@@ -533,7 +537,7 @@ namespace KoFrMaDaemon
                     debugLog.WriteToLog("Task journal was loaded from local cache and will be used for incremental/differencial backup.", 7);
 
                 }
-                
+
                 else
                 {
                     debugLog.WriteToLog("Task journal should be differencial/incremental but is not in cache, server needs to send one. Process fail is inevitable.", 2);
@@ -619,6 +623,45 @@ namespace KoFrMaDaemon
                 debugLog.WriteToLog("The cache jounal folder doesn't exist, returning empty list of cached journals", 3);
             }
             return tmpList;
+        }
+
+        private void SaveCompletedTasksToDisk(List<TaskComplete> tasks)
+        {
+            if (tasks.Count>0)
+            {
+                StreamWriter w = new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\CompletedTasksBuffer.dat", true);
+                for (int i = 0; i < tasks.Count; i++)
+                {
+                    w.WriteLine(JsonSerializationUtility.Serialize(tasks[i]));
+                }
+                w.Close();
+                w.Dispose();
+            }
+
+        }
+        private List<TaskComplete> LoadCompletedTasksFromDisk()
+        {
+            List<TaskComplete> tmp = new List<TaskComplete>();
+            StreamReader r;
+            try
+            {
+                FileInfo file = new FileInfo(Environment.SpecialFolder.CommonApplicationData + @"\KoFrMa\CompletedTasksBuffer.dat");
+                if (file.Exists)
+                {
+                    r = new StreamReader(file.FullName);
+                    while (!r.EndOfStream)
+                    {
+                        tmp.Add(JsonSerializationUtility.Deserialize<TaskComplete>(r.ReadLine()));
+                    }
+                    file.Delete();
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+
+            return tmp;
         }
     }
 }

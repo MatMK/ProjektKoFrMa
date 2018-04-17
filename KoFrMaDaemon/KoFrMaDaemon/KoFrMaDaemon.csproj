@@ -95,6 +95,7 @@
     <Compile Include="Backup\IDestination.cs" />
     <Compile Include="Backup\IDestinationPath.cs" />
     <Compile Include="Backup\ISource.cs" />
+    <Compile Include="Backup\ObjectRelativeFullPath.cs" />
     <Compile Include="Backup\SourceFolders.cs" />
     <Compile Include="Backup\SourceJournalLoadFromCache.cs" />
     <Compile Include="Backup\SourceMSSQL.cs" />

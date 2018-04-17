@@ -8,7 +8,7 @@ namespace KoFrMaDaemon.Backup
 {
     public class ObjectRelativeFullPath
     {
-        public string Prefix { get; set; }
+        public string FullPath { get; set; }
 
         public string RelativePath { get; set; }
     }

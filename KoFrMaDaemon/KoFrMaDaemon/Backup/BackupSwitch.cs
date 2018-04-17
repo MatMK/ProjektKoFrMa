@@ -143,19 +143,19 @@ namespace KoFrMaDaemon.Backup
                 List<FolderObject> FolderList= new List<FolderObject>();
                 for (int i = 0; i < sourceInfos.Count; i++)
                 {
-                    this.ExploreDirectoryRecursively(sourceInfos[i], FileList, FolderList);
+                    this.ExploreDirectoryRecursively(sourceInfos[i], FileList, FolderList,sourceInfos[i].FullName.Length);
                 }
-                List<string> FileListString = new List<string>(FileList.Count);
-                List<string> FolderListString = new List<string>(FolderList.Count);
+                List<ObjectRelativeFullPath> FileListStrings = new List<ObjectRelativeFullPath>(FileList.Count);
+                List<ObjectRelativeFullPath> FolderListStrings = new List<ObjectRelativeFullPath>(FolderList.Count);
                 for (int i = 0; i < FileList.Count; i++)
                 {
-                    FileListString.Add(FileList[i].FullPath);
+                    FileListStrings.Add(new ObjectRelativeFullPath { FullPath = FileList[i].FullPath, RelativePath = FileList[i].RelativePath });
                 }
                 for (int i = 0; i < FolderList.Count; i++)
                 {
-                    FolderListString.Add(FolderList[i].FullPath);
+                    FolderListStrings.Add(new ObjectRelativeFullPath { FullPath = FolderList[i].FullPath, RelativePath = FolderList[i].RelativePath });
                 }
-                this.BackupFileCopy(FileListString, FolderListString, task.TemporaryFolderMaxBuffer);
+                this.BackupFileCopy(FileListStrings, FolderListStrings, task.TemporaryFolderMaxBuffer);
                 this.taskDebugLog.WriteToLog("Backup done, " + FilesCorrect.Count.ToString() + " files and " + FoldersCorrect.Count.ToString() + " folders successfully backuped, it was unable to backup " + FilesErrorCopy.Count + " files and " + FoldersErrorCopy.Count + " folders", 5);
             }
             catch (Exception x)
@@ -242,8 +242,8 @@ namespace KoFrMaDaemon.Backup
 
             this.taskDebugLog.WriteToLog("Comparing list of current files to original source of the backup...", 5);
 
-            List<string> FilesToCopy = new List<string>(CurrentFiles.Count / 4);
-            List<string> FoldersToCreate = new List<string>(CurrentFolders.Count / 8);
+            List<ObjectRelativeFullPath> FilesToCopy = new List<ObjectRelativeFullPath>(CurrentFiles.Count / 4);
+            List<ObjectRelativeFullPath> FoldersToCreate = new List<ObjectRelativeFullPath>(CurrentFolders.Count / 8);
 
 
             bool sameObject;
@@ -306,7 +306,7 @@ namespace KoFrMaDaemon.Backup
                 }
                 if (!sameObject)
                 {
-                    FilesToCopy.Add(itemCurrent.FullPath);
+                    FilesToCopy.Add(new ObjectRelativeFullPath { FullPath = itemCurrent.FullPath, RelativePath = itemCurrent.RelativePath });
                 }
             }
             this.taskDebugLog.WriteToLog("Comparison of files successfully done, " + FilesToCopy.Count + " files were created or modified since original backup.", 5);
@@ -374,7 +374,7 @@ namespace KoFrMaDaemon.Backup
                 }
                 if (!sameObject)
                 {
-                    FoldersToCreate.Add(itemCurrent.FullPath.Substring(destinationInfo.FullName.Length));
+                    FoldersToCreate.Add(new ObjectRelativeFullPath { FullPath = itemCurrent.FullPath, RelativePath = itemCurrent.RelativePath });
                 }
             }
             this.taskDebugLog.WriteToLog("Comparison of folders successfully done, " + FoldersToCreate.Count + " folders were created or changed since the original backup.", 5);
@@ -431,7 +431,7 @@ namespace KoFrMaDaemon.Backup
 
             for (int i = 0; i < paths.Count; i++)
             {
-                ExploreDirectoryRecursively(paths[i], FileList, FolderList);
+                ExploreDirectoryRecursively(paths[i], FileList, FolderList,paths[i].FullName.Length);
             }
 
             journalObject.BackupJournalFiles = FileList;
@@ -439,13 +439,13 @@ namespace KoFrMaDaemon.Backup
             return journalObject;
         }
 
-        private void ExploreDirectoryRecursively(DirectoryInfo path, List<FileInfoObject> FileList, List<FolderObject> FolderList)
+        private void ExploreDirectoryRecursively(DirectoryInfo path, List<FileInfoObject> FileList, List<FolderObject> FolderList,int prefixCount)
         {
             foreach (FileInfo item in path.GetFiles())
             {
                 try
                 {
-                    FileList.Add(new FileInfoObject { FullPath = item.FullName, Length = item.Length, CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString(), MD5 = this.CalculateMD5(item.FullName) });
+                    FileList.Add(new FileInfoObject { FullPath = item.FullName,RelativePath=item.FullName.Substring(prefixCount), Length = item.Length, CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString(), MD5 = this.CalculateMD5(item.FullName) });
                 }
                 catch (Exception ex)
                 {
@@ -458,8 +458,8 @@ namespace KoFrMaDaemon.Backup
             {
                 try
                 {
-                    this.ExploreDirectoryRecursively(item, FileList, FolderList);
-                    FolderList.Add(new FolderObject() { FullPath = item.FullName, CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString() });
+                    this.ExploreDirectoryRecursively(item, FileList, FolderList,prefixCount);
+                    FolderList.Add(new FolderObject() { FullPath = item.FullName, RelativePath = item.FullName.Substring(prefixCount), CreationTimeUtc = item.CreationTimeUtc, LastWriteTimeUtc = item.LastWriteTimeUtc, Attributes = item.Attributes.ToString() });
                 }
                 catch (Exception ex)
                 {
@@ -469,7 +469,7 @@ namespace KoFrMaDaemon.Backup
             }
         }
 
-        private void BackupFileCopy(List<string> filesToCopy,List<string> foldersToCreate,int? bufferSize)
+        private void BackupFileCopy(List<ObjectRelativeFullPath> filesToCopy,List<ObjectRelativeFullPath> foldersToCreate,int? bufferSize)
         {
 
             this.taskDebugLog.WriteToLog("Backuping modified folder structure...", 5);
@@ -478,12 +478,12 @@ namespace KoFrMaDaemon.Backup
             DirectoryInfo tmpDirectoryInfo;
             for (int i = 0; i < foldersToCreate.Count; i++)
             {
-                tmpDirectoryInfo = new DirectoryInfo(destinationInfo.FullName + @"\" + foldersToCreate[i]);
+                tmpDirectoryInfo = new DirectoryInfo(destinationInfo.FullName + @"\" + foldersToCreate[i].RelativePath);
                 try
                 {
 
                     tmpDirectoryInfo.Create();
-                    this.FoldersCorrect.Add(new FolderObject() { FullPath = tmpDirectoryInfo.FullName, CreationTimeUtc = tmpDirectoryInfo.CreationTimeUtc, LastWriteTimeUtc = tmpDirectoryInfo.LastWriteTimeUtc, Attributes = tmpDirectoryInfo.Attributes.ToString() });
+                    this.FoldersCorrect.Add(new FolderObject() { FullPath = foldersToCreate[i].FullPath, CreationTimeUtc = tmpDirectoryInfo.CreationTimeUtc, LastWriteTimeUtc = tmpDirectoryInfo.LastWriteTimeUtc, Attributes = tmpDirectoryInfo.Attributes.ToString() });
                 }
                 catch (Exception ex)
                 {
@@ -493,18 +493,13 @@ namespace KoFrMaDaemon.Backup
             this.taskDebugLog.WriteToLog("Backup of folder structure is done, " + this.FoldersCorrect.Count + " folders were successfully created, it was unable to create " + this.FoldersErrorCopy.Count + " folders", 5);
 
 
-
-
-
-
-
             this.taskDebugLog.WriteToLog("Backuping new or modified files...", 5);
             FileInfo tmpFileInfo;
             Int64 currentSizeSum = 0;
 
             for (int i = 0; i < filesToCopy.Count; i++)
             {
-                tmpFileInfo = new FileInfo(filesToCopy[i]);
+                tmpFileInfo = new FileInfo(filesToCopy[i].FullPath);
                 try
                 {
                     if (bufferSize != null)
@@ -522,15 +517,15 @@ namespace KoFrMaDaemon.Backup
                         }
                         currentSizeSum += tmpFileInfo.Length;
                     }
-                    Directory.CreateDirectory(Path.GetDirectoryName(destinationInfo.FullName + @"\" + filesToCopy[i]));
-                    tmpFileInfo.CopyTo(destinationInfo.FullName + @"\" + filesToCopy[i]);
+                    Directory.CreateDirectory(Path.GetDirectoryName(destinationInfo.FullName + @"\" + filesToCopy[i].RelativePath));
+                    tmpFileInfo.CopyTo(destinationInfo.FullName + @"\" + filesToCopy[i].RelativePath);
                     FilesCorrect.Add(new FileInfoObject { FullPath = tmpFileInfo.FullName, Length = tmpFileInfo.Length, CreationTimeUtc = tmpFileInfo.CreationTimeUtc, LastWriteTimeUtc = tmpFileInfo.LastWriteTimeUtc, Attributes = tmpFileInfo.Attributes.ToString(), MD5 = this.CalculateMD5(tmpFileInfo.FullName) });
 
                 }
                 catch (Exception ex)
                 {
                     this.FilesErrorCopy.Add(new CopyErrorObject() { FullPath = tmpFileInfo.FullName, ExceptionMessage = ex.Message });
-                    this.taskDebugLog.WriteToLog("Unable to copy " + tmpFileInfo.FullName + " to " + destinationInfo.FullName + @"\" + filesToCopy[i] + " because of exception " + ex.Message + ". Path to destination folder: " + tmpFileInfo.Directory.FullName, 8);
+                    this.taskDebugLog.WriteToLog("Unable to copy " + tmpFileInfo.FullName + " to " + destinationInfo.FullName + @"\" + filesToCopy[i].RelativePath + " because of exception " + ex.Message + ". Path to destination folder: " + tmpFileInfo.Directory.FullName, 8);
                 }
 
             }
@@ -566,7 +561,7 @@ namespace KoFrMaDaemon.Backup
                 {
                     List<FileInfoObject> FileList = new List<FileInfoObject>();
                     List<FolderObject> FolderList = new List<FolderObject>();
-                    this.ExploreDirectoryRecursively(new DirectoryInfo(Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp")), FileList, FolderList);
+                    this.ExploreDirectoryRecursively(new DirectoryInfo(Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp")), FileList, FolderList,0);
                     for (int i = 0; i < FileList.Count; i++)
                     {
                         try
