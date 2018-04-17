@@ -122,6 +122,15 @@ namespace KoFrMaRestApi.Controllers
                 this.mySqlCom.DeleteRow((DeleteRowRequest)postAdmin.request);
             }
         }
+        [HttpPost, Route(@"api/AdminApp/Exists")]
+        public bool? Exists(PostAdmin postAdmin)
+        {
+            if (this.Authorized(postAdmin.adminInfo))
+            {
+                return this.mySqlCom.Exists((ExistsRequest)postAdmin.request);
+            }
+            return null;
+        }
         [HttpGet, Route(@"api /AdminApp/test")]
         public int test()
         {

@@ -6,7 +6,7 @@ export class InputCheck
         if(username == null || username == undefined || username == '')
         {
             alert("Invalid Username");
-            return false
+            return false;
         }
         return true;
     }

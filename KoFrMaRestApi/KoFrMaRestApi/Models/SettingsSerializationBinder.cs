@@ -35,6 +35,8 @@ namespace KoFrMaRestApi.Models
                     return typeof(ChangePermissionRequest);
                 case "DeleteRowRequest":
                     return typeof(DeleteRowRequest);
+                case "ExistsRequest":
+                    return typeof(ExistsRequest);
 
                 //Task
                 case "Destination7z":

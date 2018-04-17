@@ -211,5 +211,21 @@ namespace KoFrMaRestApi.MySqlCom
                 command.ExecuteNonQuery();
             }
         }
+        public bool Exists(ExistsRequest exists)
+        {
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand($"SELECT * FROM `{exists.TableName}` WHERE {exists.Column} = \"{exists.Value}\"", connection))
+            {
+                connection.Open();
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+        }
     }
 }

@@ -20,6 +20,7 @@ import { ChangeTableRequest } from './models/communication-models/post-admin/cha
 import { ChangePermissionRequest } from './models/communication-models/post-admin/change-permission-request.model';
 import { MatTableDataSource } from '@angular/material';
 import { DeleteRowRequest } from './models/communication-models/post-admin/delete-row-request.model';
+import { ExistsRequest } from './models/communication-models/post-admin/exists-request.model';
 
 @Injectable()
 
@@ -115,20 +116,23 @@ export class ServerConnectionService{
         //unfinished
         return toHash;
     }
-    IsAuthorized() : Promise<boolean>
+    IsAuthorized(ChangeLoading : boolean) : Promise<boolean>
     {
-        this.data.Loading = true;
+        if(ChangeLoading)
+            this.data.Loading = true;
         let url = this.data.ServerRootURL + "api/AdminApp/Authorized";
         return this.http.post(url,this.data.adminInfo).toPromise()
             .then(res => {
-                this.data.Loading = false;
+                if(ChangeLoading)
+                    this.data.Loading = false;
                 return res.json()
             })
             .catch(msg => 
-                {
+            {
+                if(ChangeLoading)
                     this.data.Loading = false;
-                    console.log('Error: ' + msg.status + ' ' + msg.statusText);
-                })
+                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+            })
     }
     HasPermission(perm : number[]) : Promise<boolean>
     {
@@ -250,6 +254,24 @@ export class ServerConnectionService{
                                 //this.data.Loading = false;
                                 console.log('Error: ' + msg.status + ' ' + msg.statusText);
                                 return false;
+                            })
+    }
+    Exists(exists : ExistsRequest) : Promise<boolean>
+    {
+        //this.data.Loading = true
+        let url = this.data.ServerRootURL + "api/AdminApp/Exists";
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,exists);
+        return this.http.post(url,postAdmin).toPromise()
+                        .then(res => 
+                            {
+                                //this.data.Loading = false
+                                return res.json();
+                            })
+                        .catch(msg => 
+                            {
+                                //this.data.Loading = false;
+                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                                return null;
                             })
     }
 }
