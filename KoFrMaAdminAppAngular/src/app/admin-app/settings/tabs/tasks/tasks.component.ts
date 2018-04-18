@@ -7,6 +7,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTableDataSource } from '@angular/material';
 import { MainTask } from '../../../server-connection/models/communication-models/task/main-task.model';
 import { DeleteRowRequest } from '../../../server-connection/models/communication-models/post-admin/delete-row-request.model';
+import { ChangeTable } from '../../../server-connection/models/sql-data/change-table.model';
 
 @Component({
   selector: 'app-tasks',
@@ -34,6 +35,11 @@ export class TasksComponent implements OnInit {
   deleteRow(rowId)
   {
     this.service.DeleteRow(new DeleteRowRequest("DeleteRowRequest","tbTasks", rowId)).then(r => this.service.RefreshData([3]))
+  }
+  test(rowId)
+  {
+    //let table : ChangeTable = new ChangeTable('tbAdminAccounts',id,"", value)
+    //this.service.AlterTable(table);
   }
   ngOnInit() {
   }

@@ -1,11 +1,4 @@
-body {
-    background-image: url('./bg.png');
-    background-repeat: repeat;
-    background-color: lightgreen;
-    height: 625px;
-    margin: 0;
-    padding: 0;
-}
+
 
 div {
     margin: 0 auto;

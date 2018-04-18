@@ -14,7 +14,13 @@
       <!-- IdDaemon Column -->
       <ng-container matColumnDef="IdDaemon">
         <mat-header-cell *matHeaderCellDef> IdDaemon </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.IdDaemon}} </mat-cell>
+        <mat-cell *matCellDef="let element"> 
+            <mat-form-field>
+                <mat-select placeholder="Id" [(ngModel)]="element.IdDaemon">
+                  <mat-option *ngFor="let daemon of data.Data.tbDaemons.data" [value]= daemon.Id (click)="test(daemon.Id)">{{daemon.Id}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+        </mat-cell>
       </ng-container>
 
 
