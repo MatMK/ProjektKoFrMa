@@ -36,10 +36,10 @@ export class TasksComponent implements OnInit {
   {
     this.service.DeleteRow(new DeleteRowRequest("DeleteRowRequest","tbTasks", rowId)).then(r => this.service.RefreshData([3]))
   }
-  test(rowId)
+  changeDaemonId(value, id)
   {
-    //let table : ChangeTable = new ChangeTable('tbAdminAccounts',id,"", value)
-    //this.service.AlterTable(table);
+    let table : ChangeTable = new ChangeTable('tbTasks',id,'', value)
+    this.service.AlterTable(table);
   }
   ngOnInit() {
   }

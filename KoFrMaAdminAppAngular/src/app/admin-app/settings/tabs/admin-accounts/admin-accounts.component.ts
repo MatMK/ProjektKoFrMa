@@ -82,7 +82,7 @@ export class AdminAccountsComponent {
   }
   changeEnabled(id, value)
   {
-    let table : ChangeTable = new ChangeTable('tbAdminAccounts',id,'Enabled', value)
+    let table : ChangeTable = new ChangeTable('tbAdminAccounts',id,'IdDaemon', value)
     this.service.AlterTable(table);
   }
   deleteRow(rowId)
