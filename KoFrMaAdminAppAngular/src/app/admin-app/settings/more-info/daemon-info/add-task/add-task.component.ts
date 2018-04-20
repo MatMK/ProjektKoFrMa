@@ -42,7 +42,7 @@ export class AddTaskComponent  {
   AddTask()
   {
     if(this.checkIfNumberValid(true))
-    {
+    {/*
       let t : SetTask = new SetTask()
       t.DaemonId = this.daemonId;
       t.SourceOfBackup = this.sourcepath;
@@ -70,7 +70,7 @@ export class AddTaskComponent  {
       alert(t.CompressionLevel);
       this.data.Loading = true;
       this.service.SetTask([t]).then(res => this.service.RefreshData([3]))
-      this.router.navigate(['backup', 'app','tasks']);
+      this.router.navigate(['backup', 'app','tasks']);*/
     }
   }
   private onDateChange(value : Date)

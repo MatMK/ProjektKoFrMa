@@ -12,6 +12,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using Newtonsoft.Json;
+using KoFrMaRestApi.Models.Daemon.Task;
 
 namespace KoFrMaRestApi.Controllers
 {
@@ -131,10 +132,41 @@ namespace KoFrMaRestApi.Controllers
             }
             return null;
         }
-        [HttpGet, Route(@"api /AdminApp/test")]
-        public int test()
+        public class fest
         {
-            return mySqlCom.NextAutoIncrement("tbTjjjjasks");
+            public int Karel { get; set; }
+            public string Pepa { get; set; }
+        }
+        [HttpGet, Route(@"api/AdminApp/test")]
+        public Task test()
+        {
+            return new Task()
+            {
+                IDTask = 2,
+                TimeToBackup = DateTime.Now,
+                Sources = new SourceFolders()
+                {
+                    Paths = new List<string>()
+                    {
+                        "C:\\Data",
+                        "C:\\Data2"
+                    }
+                },
+                Destinations = new List<IDestination>() {
+                    new DestinationPlain()
+                    {
+                        Path = new DestinationPathLocal()
+                        {
+                            Path = "C:\\Data_backup"
+                        }
+                    }
+                },
+                LogLevel = 7,
+                InProgress = false,
+                ScriptBefore = null,
+                ScriptAfter = null,
+                TemporaryFolderMaxBuffer = null
+            };
             /*
             mySqlCom.AlterTable(new ChangeTable()
             {
