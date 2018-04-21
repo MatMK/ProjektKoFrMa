@@ -102,7 +102,7 @@ namespace KoFrMaRestApi.Controllers
         {
             if (this.Authorized(postAdmin.adminInfo))
             {
-                //unfinished
+                mySqlCom.AlterPermissions(((ChangePermissionRequest)postAdmin.request).changePermission);
             }
         }
         [HttpPost, Route(@"api/AdminApp/AlterDataIdDaemon")]

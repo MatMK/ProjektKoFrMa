@@ -227,5 +227,19 @@ namespace KoFrMaRestApi.MySqlCom
                 }
             }
         }
+        public void AlterPermissions(ChangePermission changePermission)
+        {
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand($"DELETE FROM `tbPermissions` WHERE `IdAdmin` = {changePermission.AdminId}", connection))
+            {
+                connection.Open();
+                command.ExecuteNonQuery();
+                foreach (int item in changePermission.Permissions)
+                {
+                    command.CommandText = $"INSERT INTO `tbPermissions`(`Id`, `Permission`, `IdAdmin`) VALUES (null,{item},{changePermission.AdminId})";
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }
