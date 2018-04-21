@@ -7,9 +7,9 @@ namespace KoFrMaRestApi.Models.Tables
 {
     public class ChangeTable
     {
-        public string TableName { get; set; }
+        //public string TableName { get; set; }
         public int Id { get; set; }
-        public string ColumnName{ get; set; }
+        //public string ColumnName{ get; set; }
         public dynamic Value { get; set; }
     }
 }

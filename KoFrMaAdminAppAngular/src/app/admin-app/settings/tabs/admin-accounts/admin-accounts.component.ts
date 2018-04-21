@@ -44,11 +44,19 @@ export class AdminAccountsComponent {
       elem.value = val;
       return;
     }
+    else if(columnName.toLowerCase() == 'email')
+    {
+      this.service.AlterDataEmail(new ChangeTable(id, value))
+    }
     if(columnName.toLowerCase() == 'username' && !this.check.username(value))
     {
       let val = elem.getAttribute('prevVal');
       elem.value = val;
       return;
+    }
+    else if(columnName.toLowerCase() == 'username')
+    {
+      this.service.AlterDataUsername(new ChangeTable(id, value))
     }
     if(columnName.toLowerCase()== 'password' && !this.check.password(value))
     {
@@ -56,13 +64,12 @@ export class AdminAccountsComponent {
       elem.value = val;
       return;
     }
-    else if(columnName.toLowerCase()== 'enabled')
+    else if(columnName.toLowerCase() == 'password')
     {
-      let res : boolean = value == "true"?true:false
-      value = res;
+      //this.service.AlterDataUsername(new ChangeTable(id, value))
+      alert("unifinished");
     }
-    let table : ChangeTable = new ChangeTable('tbAdminAccounts',id,columnName, value)
-    this.service.AlterTable(table);
+    
   }
   saveVal(elem : HTMLInputElement)
   {
@@ -77,13 +84,11 @@ export class AdminAccountsComponent {
         newPerm = element.Permission;
       }
     });
-    let changePermissions : ChangePermission = new ChangePermission(Id,newPerm);
-    this.service.AlterPermission(changePermissions);
+    this.service.AlterDataPermissions(new ChangePermission(Id,newPerm));
   }
   changeEnabled(id, value)
   {
-    let table : ChangeTable = new ChangeTable('tbAdminAccounts',id,'IdDaemon', value)
-    this.service.AlterTable(table);
+    this.service.AlterDataEnabled(new ChangeTable(id, value));
   }
   deleteRow(rowId)
   {

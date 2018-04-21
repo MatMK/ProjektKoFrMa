@@ -31,10 +31,10 @@ export class DaemonsComponent implements OnInit {
     if(Data.Id.toString() == filter)
       return true;
     return false;
-  }
+  }/*
   alterData(value, id, columnName:string, elem : HTMLInputElement)
   {
-    
+    alert("asdfasdf")
     if(columnName.toLowerCase()== 'allowed' && !this.check.isboolean(value))
     {
       let val = elem.getAttribute('prevVal');
@@ -43,20 +43,16 @@ export class DaemonsComponent implements OnInit {
     }
     else if(columnName.toLowerCase()== 'allowed')
     {
-      let res : boolean = value == "true"?true:false
-      value = res;
+      this.service.AlterDataAllowed(new ChangeTable(id, value == "true"?true:false))
     }
-    let table : ChangeTable = new ChangeTable('tbDaemons',id,columnName, value)
-    this.service.AlterTable(table);
-  }
+  }*/
   saveVal(elem : HTMLInputElement)
   {
     elem.setAttribute('prevVal',elem.value);
   }
   changeEnabled(id, value)
   {
-    let table : ChangeTable = new ChangeTable('tbDaemons',id,'Allowed', value)
-    this.service.AlterTable(table);
+    this.service.AlterDataAllowed(new ChangeTable(id,value));
   }
   ngOnInit() {
   }

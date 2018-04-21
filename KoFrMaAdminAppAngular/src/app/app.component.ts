@@ -17,10 +17,6 @@ export class AppComponent implements OnInit {
       this.data.adminInfo = JSON.parse(localStorage.getItem("adminInfo"));
       this.data.ServerRootURL = localStorage.getItem("url");
     }
-    if(this.data.adminInfo.Token != null)
-    {
-      this.service.RefreshData([1,2,3]);
-    }
   }
   private title = 'app';
   public Token : string;

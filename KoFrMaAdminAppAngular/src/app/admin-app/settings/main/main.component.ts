@@ -11,9 +11,13 @@ import { Data } from '../../server-connection/data.model';
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
-export class MainComponent implements OnInit {
+export class MainComponent {
 
-  constructor(private service : ServerConnectionService, private router: Router) { }
-  ngOnInit() {
+  constructor(private service : ServerConnectionService, private router: Router, private data : Data) { 
+
+    if(this.data.adminInfo.Token != null)
+    {
+      this.service.RefreshData([1,2,3]);
+    }
   }
 }

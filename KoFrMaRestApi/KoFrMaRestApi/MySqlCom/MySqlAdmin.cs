@@ -164,10 +164,10 @@ namespace KoFrMaRestApi.MySqlCom
                 }
             }
         }
-        public void AlterTable(ChangeTable changeTable)
+        public void AlterTable(ChangeTable changeTable, string TableName, string ColumnName)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
-            using (MySqlCommand command = new MySqlCommand($"UPDATE `{changeTable.TableName}` SET `{changeTable.ColumnName}` = @Value WHERE `Id` = {changeTable.Id};", connection))
+            using (MySqlCommand command = new MySqlCommand($"UPDATE `{TableName}` SET `{ColumnName}` = @Value WHERE `Id` = {changeTable.Id};", connection))
             {
                 connection.Open();
                 command.Parameters.AddWithValue("@Value", changeTable.Value);

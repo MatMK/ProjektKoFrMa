@@ -73,20 +73,52 @@ namespace KoFrMaRestApi.Controllers
                 return null;
             }
         }
-        [HttpPost, Route(@"api/AdminApp/AlterData")]
-        public void AlterData(PostAdmin postAdmin)
+        [HttpPost, Route(@"api/AdminApp/AlterDataUsername")]
+        public void AlterDataUsername(PostAdmin postAdmin)
         {
-            if(this.Authorized(postAdmin.adminInfo))
+            if (this.Authorized(postAdmin.adminInfo))
             {
-                mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable);
+                mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbAdminAccounts", "Username");
             }
         }
-        [HttpPost, Route("api/AdminApp/AlterPermission")]
-        public void AlterPermission(PostAdmin postAdmin)
+        [HttpPost, Route(@"api/AdminApp/AlterDataEmail")]
+        public void AlterDataEmail(PostAdmin postAdmin)
         {
-            if(this.Authorized(postAdmin.adminInfo))
+            if (this.Authorized(postAdmin.adminInfo))
+            {
+                mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbAdminAccounts", "Email");
+            }
+        }
+        [HttpPost, Route(@"api/AdminApp/AlterDataEnabled")]
+        public void AlterDataEnabled(PostAdmin postAdmin)
+        {
+            if (this.Authorized(postAdmin.adminInfo))
+            {
+                mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbAdminAccounts", "Enabled");
+            }
+        }
+        [HttpPost, Route(@"api/AdminApp/AlterDataPermissions")]
+        public void AlterDataPermissions(PostAdmin postAdmin)
+        {
+            if (this.Authorized(postAdmin.adminInfo))
             {
                 //unfinished
+            }
+        }
+        [HttpPost, Route(@"api/AdminApp/AlterDataIdDaemon")]
+        public void AlterDataIdDaemon(PostAdmin postAdmin)
+        {
+            if (this.Authorized(postAdmin.adminInfo))
+            {
+                mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbTasks", "IdDaemon");
+            }
+        }
+        [HttpPost, Route(@"api/AdminApp/AlterDataAllowed")]
+        public void AlterDataAllowed(PostAdmin postAdmin)
+        {
+            if (this.Authorized(postAdmin.adminInfo))
+            {
+                mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbDaemons", "Allowed");
             }
         }
         [HttpPost, Route(@"api/AdminApp/AddAdmin")]

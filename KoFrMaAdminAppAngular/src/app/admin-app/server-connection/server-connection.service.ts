@@ -201,43 +201,6 @@ export class ServerConnectionService{
                                 console.log('Error: ' + msg.status + ' ' + msg.statusText);
                             })
     }
-    AlterTable(table : ChangeTable)
-    {
-        //this.data.Loading = true;
-        let url = this.data.ServerRootURL + "api/AdminApp/AlterData";
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangeTableRequest("ChangeTableRequest",table));
-        return this.http.post(url,postAdmin).toPromise()
-                        .then(res => 
-                            {
-                                //this.data.Loading = false
-                                return true;
-                            })
-                        .catch(msg => 
-                            {
-                                //this.data.Loading = false;
-                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
-                                return false;
-                            })
-    }
-    AlterPermission(permission : ChangePermission)
-    {
-        //this.data.Loading = true;
-        let url = this.data.ServerRootURL + "api/AdminApp/AlterPermission";
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangePermissionRequest("ChangePermissionRequest",permission));
-        
-        return this.http.post(url,postAdmin).toPromise()
-                        .then(res => 
-                            {
-                                //this.data.Loading = false
-                                return true;
-                            })
-                        .catch(msg => 
-                            {
-                                //this.data.Loading = false;
-                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
-                                return false;
-                            })
-    }
     DeleteRow(deleteRow : DeleteRowRequest)
     {
         //this.data.Loading = true
@@ -272,6 +235,114 @@ export class ServerConnectionService{
                                 //this.data.Loading = false;
                                 console.log('Error: ' + msg.status + ' ' + msg.statusText);
                                 return null;
+                            })
+    }AlterDataUsername(table : ChangeTable)
+    {
+        //this.data.Loading = true;
+        let url = this.data.ServerRootURL + "api/AdminApp/AlterDataUsername";
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangeTableRequest("ChangeTableRequest",table));
+        return this.http.post(url,postAdmin).toPromise()
+                        .then(res => 
+                            {
+                                //this.data.Loading = false
+                                return true;
+                            })
+                        .catch(msg => 
+                            {
+                                //this.data.Loading = false;
+                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                                return false;
+                            })
+    }
+    AlterDataEmail(table : ChangeTable)
+    {
+        //this.data.Loading = true;
+        let url = this.data.ServerRootURL + "api/AdminApp/AlterDataEmail";
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangeTableRequest("ChangeTableRequest",table));
+        return this.http.post(url,postAdmin).toPromise()
+                        .then(res => 
+                            {
+                                //this.data.Loading = false
+                                return true;
+                            })
+                        .catch(msg => 
+                            {
+                                //this.data.Loading = false;
+                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                                return false;
+                            })
+    }
+    AlterDataEnabled(table : ChangeTable)
+    {
+        //this.data.Loading = true;
+        let url = this.data.ServerRootURL + "api/AdminApp/AlterDataEnabled";
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangeTableRequest("ChangeTableRequest",table));
+        return this.http.post(url,postAdmin).toPromise()
+                        .then(res => 
+                            {
+                                //this.data.Loading = false
+                                return true;
+                            })
+                        .catch(msg => 
+                            {
+                                //this.data.Loading = false;
+                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                                return false;
+                            })
+    }
+    AlterDataPermissions(permission : ChangePermission)
+    {
+        //this.data.Loading = true;
+        let url = this.data.ServerRootURL + "api/AdminApp/AlterDataPermissions";
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangePermissionRequest("ChangePermissionRequest",permission));
+        
+        return this.http.post(url,postAdmin).toPromise()
+                        .then(res => 
+                            {
+                                //this.data.Loading = false
+                                return true;
+                            })
+                        .catch(msg => 
+                            {
+                                //this.data.Loading = false;
+                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                                return false;
+                            })
+    }
+    AlterDataIdDaemon(table : ChangeTable)
+    {
+        //this.data.Loading = true;
+        let url = this.data.ServerRootURL + "api/AdminApp/AlterDataIdDaemon";
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangeTableRequest("ChangeTableRequest",table));
+        return this.http.post(url,postAdmin).toPromise()
+                        .then(res => 
+                            {
+                                //this.data.Loading = false
+                                return true;
+                            })
+                        .catch(msg => 
+                            {
+                                //this.data.Loading = false;
+                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                                return false;
+                            })
+    }
+    AlterDataAllowed(table : ChangeTable)
+    {
+        //this.data.Loading = true;
+        let url = this.data.ServerRootURL + "api/AdminApp/AlterDataAllowed";
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangeTableRequest("ChangeTableRequest",table));
+        return this.http.post(url,postAdmin).toPromise()
+                        .then(res => 
+                            {
+                                //this.data.Loading = false
+                                return true;
+                            })
+                        .catch(msg => 
+                            {
+                                //this.data.Loading = false;
+                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                                return false;
                             })
     }
 }
