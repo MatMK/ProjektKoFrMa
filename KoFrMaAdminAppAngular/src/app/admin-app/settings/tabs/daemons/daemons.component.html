@@ -2,61 +2,64 @@
   <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
 </div>
 <div class="table-daemon">
-<mat-table #table [dataSource]="data.Data.tbDaemons">
+  <mat-table #table [dataSource]="data.Data.tbDaemons">
 
 
-  <!-- Id Column -->
-  <ng-container matColumnDef="Id">
-    <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
-  </ng-container>
+    <!-- Id Column -->
+    <ng-container matColumnDef="Id">
+      <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
+    </ng-container>
 
-  <!-- Version Column -->
-  <ng-container matColumnDef="Version">
-    <mat-header-cell *matHeaderCellDef> Version </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.Version}} </mat-cell>
-  </ng-container>
+    <!-- Version Column -->
+    <ng-container matColumnDef="Version">
+      <mat-header-cell *matHeaderCellDef> Version </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.Version}} </mat-cell>
+    </ng-container>
 
-  <!-- OS Column -->
-  <ng-container matColumnDef="OS">
-    <mat-header-cell *matHeaderCellDef> OS </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.OS}} </mat-cell>
-  </ng-container>
+    <!-- OS Column -->
+    <ng-container matColumnDef="OS">
+      <mat-header-cell *matHeaderCellDef> OS </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.OS}} </mat-cell>
+    </ng-container>
 
-  <!-- PC_Unique Column -->
-  <ng-container matColumnDef="PC_Unique">
-    <mat-header-cell *matHeaderCellDef> PC_Unique </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.PC_Unique}} </mat-cell>
-  </ng-container>
+    <!-- PC_Unique Column -->
+    <ng-container matColumnDef="PC_Unique">
+      <mat-header-cell *matHeaderCellDef> PC_Unique </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.PC_Unique}} </mat-cell>
+    </ng-container>
 
-  <!-- Allowed Column -->
-  <ng-container matColumnDef="Allowed">
-    <mat-header-cell *matHeaderCellDef> Allowed </mat-header-cell>
-    <mat-cell *matCellDef="let element"> 
-      <mat-form-field>
-          <mat-select placeholder="Enabled" [(ngModel)]="element.Allowed">
-            <mat-option [value]="true" (click)="changeEnabled(element.Id, true)">True</mat-option>
-            <mat-option [value]="false" (click)="changeEnabled(element.Id, false)">False</mat-option>
-          </mat-select>
-        </mat-form-field>
-    </mat-cell>
-  </ng-container>
+    <!-- Allowed Column -->
+    <ng-container matColumnDef="Allowed">
+      <mat-header-cell *matHeaderCellDef> Allowed </mat-header-cell>
+      <mat-cell *matCellDef="let element"> 
+        <mat-form-field>
+            <mat-select placeholder="Enabled" [(ngModel)]="element.Allowed">
+              <mat-option [value]="true" (click)="changeEnabled(element.Id, true)">True</mat-option>
+              <mat-option [value]="false" (click)="changeEnabled(element.Id, false)">False</mat-option>
+            </mat-select>
+          </mat-form-field>
+      </mat-cell>
+    </ng-container>
 
-  <!-- Last seen -->
-  <ng-container matColumnDef="LastSeen">
-      <mat-header-cell *matHeaderCellDef> LastSeen </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.LastSeen}} </mat-cell>
+    <!-- Last seen -->
+    <ng-container matColumnDef="LastSeen">
+        <mat-header-cell *matHeaderCellDef> LastSeen </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.LastSeen}} </mat-cell>
+      </ng-container>
+
+
+    <!-- More Info Column -->
+    <ng-container matColumnDef="MoreInfo">
+      <mat-header-cell *matHeaderCellDef> More Info </mat-header-cell>
+      <mat-cell *matCellDef="let element"> <button routerLink="/backup/daemoninfo/{{element.Id}}">More Info</button> </mat-cell>
     </ng-container>
 
 
-  <!-- More Info Column -->
-  <ng-container matColumnDef="MoreInfo">
-    <mat-header-cell *matHeaderCellDef> More Info </mat-header-cell>
-    <mat-cell *matCellDef="let element"> <button routerLink="/backup/daemoninfo/{{element.Id}}">More Info</button> </mat-cell>
-  </ng-container>
-
-
-  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-</mat-table>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+</div>
+<div>
+  <button (click)=service.RefreshData([2])>Refresh</button>
 </div>

@@ -5,6 +5,7 @@ import { AddAdmin } from '../../../../server-connection/models/communication-mod
 import { Router } from '@angular/router';
 import { Data } from '../../../../server-connection/data.model';
 import { InputCheck } from '../../../../server-connection/input-check.service';
+import { ExistsRequest } from '../../../../server-connection/models/communication-models/post-admin/exists-request.model';
 
 @Component({
   selector: 'app-add-admin',
@@ -40,21 +41,29 @@ export class AddAdminComponent implements OnInit {
     {
       return;
     }
-    let admin : AddAdmin = new AddAdmin()
-    admin.Username = this.username;
-    admin.Password = btoa(this.password);
-    admin.Email = this.email;
-    admin.Enabled = this.enabled;
-    admin.Permissions = this.selectedPermission;
-    this.serverConnection.AddAdmin(admin).then(res =>
+    this.serverConnection.Exists(new ExistsRequest("ExistsRequest", "tbAdminAccounts",this.username, "Username")).then(res=>
     {
-      if(res)
+      if(!res)
       {
-        this.serverConnection.RefreshData([1]);
-        this.router.navigate(['backup', 'app', 'admin-accounts']);
+        let admin : AddAdmin = new AddAdmin()
+        admin.Username = this.username;
+        admin.Password = btoa(this.password);
+        admin.Email = this.email;
+        admin.Enabled = this.enabled;
+        admin.Permissions = this.selectedPermission;
+        this.serverConnection.AddAdmin(admin).then(res =>
+        {
+          if(res)
+          {
+            this.serverConnection.RefreshData([1]);
+            this.router.navigate(['backup', 'app', 'admin-accounts']);
+          }
+          else
+            alert('Something went wrong');
+        })
       }
       else
-        alert('Something went wrong');
+        alert("This username already exists");
     })
   }
   constructor(private serverConnection : ServerConnectionService, private router : Router, private data : Data) { }

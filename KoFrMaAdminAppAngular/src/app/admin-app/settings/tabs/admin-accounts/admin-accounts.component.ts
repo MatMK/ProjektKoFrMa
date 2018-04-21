@@ -10,6 +10,7 @@ import { InputCheck } from '../../../server-connection/input-check.service';
 import { FormControl } from '@angular/forms';
 import { ChangePermission } from '../../../server-connection/models/sql-data/change-permission.model';
 import { DeleteRowRequest } from '../../../server-connection/models/communication-models/post-admin/delete-row-request.model';
+import { ExistsRequest } from '../../../server-connection/models/communication-models/post-admin/exists-request.model';
 
 @Component({
   selector: 'app-admin-accounts',
@@ -36,40 +37,64 @@ export class AdminAccountsComponent {
       return true;
     return false;
   }
-  alterData(value, id, columnName:string, elem : HTMLInputElement)
+  alterEmail(value, id, elem : HTMLInputElement)
   {
-    if(columnName.toLowerCase() == 'email' && !this.check.email(value))
+    if(!this.check.email(value))
     {
       let val = elem.getAttribute('prevVal');
       elem.value = val;
       return;
     }
-    else if(columnName.toLowerCase() == 'email')
-    {
-      this.service.AlterDataEmail(new ChangeTable(id, value))
-    }
-    if(columnName.toLowerCase() == 'username' && !this.check.username(value))
-    {
-      let val = elem.getAttribute('prevVal');
-      elem.value = val;
-      return;
-    }
-    else if(columnName.toLowerCase() == 'username')
-    {
-      this.service.AlterDataUsername(new ChangeTable(id, value))
-    }
-    if(columnName.toLowerCase()== 'password' && !this.check.password(value))
+    this.service.AlterDataEmail(new ChangeTable(id, value)).then(res => 
+      {
+        if(res != null)
+        {
+          alert(res)
+          let val = elem.getAttribute('prevVal');
+          elem.value = val;
+        }
+      });
+  }
+  alterUsername(value, id, elem : HTMLInputElement)
+  {
+    if(!this.check.username(value))
     {
       let val = elem.getAttribute('prevVal');
       elem.value = val;
       return;
     }
-    else if(columnName.toLowerCase() == 'password')
+    this.service.Exists(new ExistsRequest("ExistsRequest", "tbAdminAccounts",value, "Username")).then(res=>
     {
-      //this.service.AlterDataUsername(new ChangeTable(id, value))
-      alert("unifinished");
+      if(!res)
+      {
+      this.service.AlterDataUsername(new ChangeTable(id, value)).then(res => 
+        {
+          if(res != null)
+          {
+            alert(res)
+            let val = elem.getAttribute('prevVal');
+            elem.value = val;
+          }
+        });
+      }
+      else
+      {
+        alert("Username already exists");
+        let val = elem.getAttribute('prevVal');
+        elem.value = val;
+      }
+    });
+  }
+  alterPassword(value, id, elem : HTMLInputElement)
+  {
+    if(!this.check.password(value))
+    {
+      let val = elem.getAttribute('prevVal');
+      elem.value = val;
+      return;
     }
-    
+    //this.service.AlterDataUsername(new ChangeTable(id, value))
+    alert("unifinished");
   }
   saveVal(elem : HTMLInputElement)
   {
@@ -84,11 +109,25 @@ export class AdminAccountsComponent {
         newPerm = element.Permission;
       }
     });
-    this.service.AlterDataPermissions(new ChangePermission(Id,newPerm));
+    this.service.AlterDataPermissions(new ChangePermission(Id,newPerm)).then(res => 
+      {
+        if(res != null)
+        {
+          alert(res);
+          this.service.RefreshData([1])
+        }
+      });
   }
   changeEnabled(id, value)
   {
-    this.service.AlterDataEnabled(new ChangeTable(id, value));
+    this.service.AlterDataEnabled(new ChangeTable(id, value)).then(res => 
+      {
+        if(res != null)
+        {
+          alert(res)
+          this.service.RefreshData([1])
+        }
+      });
   }
   deleteRow(rowId)
   {

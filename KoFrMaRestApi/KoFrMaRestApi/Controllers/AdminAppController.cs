@@ -36,6 +36,15 @@ namespace KoFrMaRestApi.Controllers
             }
             return mySqlCom.HasPermission((int)AdminId,adminInfo.Permission);
         }
+        private bool Permitted(string Username, int[] Permission)
+        {
+            int? AdminId = mySqlCom.GetAdminId(Username);
+            if (AdminId == null)
+            {
+                return false;
+            }
+            return mySqlCom.HasPermission((int)AdminId, Permission);
+        }
         [HttpPost, Route(@"api/AdminApp/Authorized")]
         public bool Authorized(AdminInfo adminInfo)
         {
@@ -74,60 +83,103 @@ namespace KoFrMaRestApi.Controllers
             }
         }
         [HttpPost, Route(@"api/AdminApp/AlterDataUsername")]
-        public void AlterDataUsername(PostAdmin postAdmin)
+        public string AlterDataUsername(PostAdmin postAdmin)
         {
             if (this.Authorized(postAdmin.adminInfo))
             {
-                mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbAdminAccounts", "Username");
+                if (Permitted(postAdmin.adminInfo.UserName, new int[] { 3 }))
+                {
+                    mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbAdminAccounts", "Username");
+                    return null;
+                }
+                else
+                    return "Insuficient permissions";
             }
+            return "Unauthorized";
         }
         [HttpPost, Route(@"api/AdminApp/AlterDataEmail")]
-        public void AlterDataEmail(PostAdmin postAdmin)
+        public string AlterDataEmail(PostAdmin postAdmin)
         {
             if (this.Authorized(postAdmin.adminInfo))
             {
-                mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbAdminAccounts", "Email");
+                if (Permitted(postAdmin.adminInfo.UserName, new int[] { 3 }))
+                {
+                    mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbAdminAccounts", "Email");
+                    return null;
+                }
+                else
+                    return "Insuficient permissions";
             }
+            return "Unauthorized";
         }
         [HttpPost, Route(@"api/AdminApp/AlterDataEnabled")]
-        public void AlterDataEnabled(PostAdmin postAdmin)
+        public string AlterDataEnabled(PostAdmin postAdmin)
         {
             if (this.Authorized(postAdmin.adminInfo))
             {
-                mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbAdminAccounts", "Enabled");
+                if (Permitted(postAdmin.adminInfo.UserName, new int[] { 3 }))
+                {
+                    mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbAdminAccounts", "Enabled");
+                    return null;
+                }
+                else
+                    return "Insuficient permissions";
             }
+            return "Unauthorized";
         }
         [HttpPost, Route(@"api/AdminApp/AlterDataPermissions")]
-        public void AlterDataPermissions(PostAdmin postAdmin)
+        public string AlterDataPermissions(PostAdmin postAdmin)
         {
             if (this.Authorized(postAdmin.adminInfo))
             {
-                mySqlCom.AlterPermissions(((ChangePermissionRequest)postAdmin.request).changePermission);
+                if (Permitted(postAdmin.adminInfo.UserName, new int[] { 3, 4 }))
+                {
+                    mySqlCom.AlterPermissions(((ChangePermissionRequest)postAdmin.request).changePermission);
+                    return null;
+                }
+                else
+                    return "Insuficient permissions";
             }
+            return "Unauthorized";
         }
         [HttpPost, Route(@"api/AdminApp/AlterDataIdDaemon")]
-        public void AlterDataIdDaemon(PostAdmin postAdmin)
+        public string AlterDataIdDaemon(PostAdmin postAdmin)
         {
             if (this.Authorized(postAdmin.adminInfo))
             {
-                mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbTasks", "IdDaemon");
+                if (Permitted(postAdmin.adminInfo.UserName, new int[] { 3 }))
+                {
+                    mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbTasks", "IdDaemon");
+                    return null;
+                }
+                else
+                    return "Insuficient permissions";
             }
+            return "Unauthorized";
         }
         [HttpPost, Route(@"api/AdminApp/AlterDataAllowed")]
-        public void AlterDataAllowed(PostAdmin postAdmin)
+        public string AlterDataAllowed(PostAdmin postAdmin)
         {
             if (this.Authorized(postAdmin.adminInfo))
             {
-                mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbDaemons", "Allowed");
+                if (Permitted(postAdmin.adminInfo.UserName, new int[] { 3 }))
+                {
+                    mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbDaemons", "Allowed");
+                    return null;
+                }
+                else
+                    return "Insuficient permissions";
             }
+            return "Unauthorized";
         }
         [HttpPost, Route(@"api/AdminApp/AddAdmin")]
         public void AddAdmin(PostAdmin postAdmin)
         {
             if (this.Authorized(postAdmin.adminInfo))
             {
-                if (postAdmin.request is AddAdminRequest)
-                    mySqlCom.AddAdmin(((AddAdminRequest)postAdmin.request).addAdmin);
+                if(Permitted(postAdmin.adminInfo.UserName,new int[] {1}))
+                    if (postAdmin.request is AddAdminRequest)
+                        mySqlCom.AddAdmin(((AddAdminRequest)postAdmin.request).addAdmin);
             }
         }
         [HttpPost, Route(@"api/AdminApp/LogOut")]
@@ -150,7 +202,7 @@ namespace KoFrMaRestApi.Controllers
         [HttpPost, Route(@"api/AdminApp/DeleteRow")]
         public void DeleteRow(PostAdmin postAdmin)
         {
-            if(this.Authorized(postAdmin.adminInfo))
+            if(this.Authorized(postAdmin.adminInfo) && (((DeleteRowRequest)postAdmin.request).TableName == "tbAdminAccounts"|| ((DeleteRowRequest)postAdmin.request).TableName == "tbDaemons" || ((DeleteRowRequest)postAdmin.request).TableName == "tbTasks"))
             {
                 this.mySqlCom.DeleteRow((DeleteRowRequest)postAdmin.request);
             }
@@ -163,11 +215,6 @@ namespace KoFrMaRestApi.Controllers
                 return this.mySqlCom.Exists((ExistsRequest)postAdmin.request);
             }
             return null;
-        }
-        public class fest
-        {
-            public int Karel { get; set; }
-            public string Pepa { get; set; }
         }
         [HttpGet, Route(@"api/AdminApp/test")]
         public Task test()
@@ -199,33 +246,6 @@ namespace KoFrMaRestApi.Controllers
                 ScriptAfter = null,
                 TemporaryFolderMaxBuffer = null
             };
-            /*
-            mySqlCom.AlterTable(new ChangeTable()
-            {
-                ColumnName = "IdDaemon",
-                Id = 2,
-                TableName = "tbTasks",
-                Value = 6
-            });*/
-
-
-            /*
-            List<SetTasks> list = new List<SetTasks>();
-            list.Add(new SetTasks()
-            {
-                ExecutionTimes = null,
-                DaemonId = 1,
-                TimeToBackup = new DateTime(2018, 3, 18, 18, 0, 0),
-                SourceOfBackup = "this is a source of backup",
-                WhereToBackup = "this is where to backup",
-                TimerValue = 10,
-                LogLevel = 0,
-                CompressionLevel = 2,
-                NetworkCredentials = null,
-                InProgress = false
-            }
-            );
-            mySqlCom.SetTasks(list);*/
         }
     }
 }

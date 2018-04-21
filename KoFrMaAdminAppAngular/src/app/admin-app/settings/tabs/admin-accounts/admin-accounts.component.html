@@ -14,7 +14,7 @@
     <ng-container matColumnDef="Username">
       <mat-header-cell *matHeaderCellDef> Username </mat-header-cell>
       <mat-cell *matCellDef="let element"><input type="text" [(ngModel)] = "element.UserName" 
-        (change)="alterData($event.target.value, element.Id,'Username', $event.target)"
+        (change)="alterUsername($event.target.value, element.Id, $event.target)"
         (click)="saveVal($event.target)"> </mat-cell>
     </ng-container>
 
@@ -22,7 +22,7 @@
     <ng-container matColumnDef="Email">
       <mat-header-cell *matHeaderCellDef> Email </mat-header-cell>
       <mat-cell *matCellDef="let element"> <input type="text" [(ngModel)] = "element.Email" 
-          (change)="alterData($event.target.value, element.Id,'Email', $event.target)"
+          (change)="alterEmail($event.target.value, element.Id, $event.target)"
           (click)="saveVal($event.target)"> </mat-cell>
     </ng-container>
 
@@ -66,4 +66,5 @@
 </div>
 <div>
   <button routerLink="/backup/add-admin">Add Administrator</button>
+  <button (click)=service.RefreshData([1])>Refresh</button>
 </div>

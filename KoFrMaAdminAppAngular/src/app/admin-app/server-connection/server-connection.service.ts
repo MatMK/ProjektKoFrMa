@@ -236,7 +236,8 @@ export class ServerConnectionService{
                                 console.log('Error: ' + msg.status + ' ' + msg.statusText);
                                 return null;
                             })
-    }AlterDataUsername(table : ChangeTable)
+    }
+    AlterDataUsername(table : ChangeTable) : Promise<string>
     {
         //this.data.Loading = true;
         let url = this.data.ServerRootURL + "api/AdminApp/AlterDataUsername";
@@ -245,13 +246,13 @@ export class ServerConnectionService{
                         .then(res => 
                             {
                                 //this.data.Loading = false
-                                return true;
+                                return res.json();
                             })
                         .catch(msg => 
                             {
                                 //this.data.Loading = false;
                                 console.log('Error: ' + msg.status + ' ' + msg.statusText);
-                                return false;
+                                return msg.statusText;
                             })
     }
     AlterDataEmail(table : ChangeTable)
@@ -260,17 +261,17 @@ export class ServerConnectionService{
         let url = this.data.ServerRootURL + "api/AdminApp/AlterDataEmail";
         let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangeTableRequest("ChangeTableRequest",table));
         return this.http.post(url,postAdmin).toPromise()
-                        .then(res => 
-                            {
-                                //this.data.Loading = false
-                                return true;
-                            })
-                        .catch(msg => 
-                            {
-                                //this.data.Loading = false;
-                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
-                                return false;
-                            })
+                .then(res => 
+                    {
+                        //this.data.Loading = false
+                        return res.json();
+                    })
+                .catch(msg => 
+                    {
+                        //this.data.Loading = false;
+                        console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                        return msg.statusText;
+                    })
     }
     AlterDataEnabled(table : ChangeTable)
     {
@@ -278,17 +279,17 @@ export class ServerConnectionService{
         let url = this.data.ServerRootURL + "api/AdminApp/AlterDataEnabled";
         let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangeTableRequest("ChangeTableRequest",table));
         return this.http.post(url,postAdmin).toPromise()
-                        .then(res => 
-                            {
-                                //this.data.Loading = false
-                                return true;
-                            })
-                        .catch(msg => 
-                            {
-                                //this.data.Loading = false;
-                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
-                                return false;
-                            })
+                .then(res => 
+                    {
+                        //this.data.Loading = false
+                        return res.json();
+                    })
+                .catch(msg => 
+                    {
+                        //this.data.Loading = false;
+                        console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                        return msg.statusText;
+                    })
     }
     AlterDataPermissions(permission : ChangePermission)
     {
@@ -297,17 +298,17 @@ export class ServerConnectionService{
         let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangePermissionRequest("ChangePermissionRequest",permission));
         
         return this.http.post(url,postAdmin).toPromise()
-                        .then(res => 
-                            {
-                                //this.data.Loading = false
-                                return true;
-                            })
-                        .catch(msg => 
-                            {
-                                //this.data.Loading = false;
-                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
-                                return false;
-                            })
+                    .then(res => 
+                        {
+                            //this.data.Loading = false
+                            return res.json();
+                        })
+                    .catch(msg => 
+                        {
+                            //this.data.Loading = false;
+                            console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                            return msg.statusText;
+                        })
     }
     AlterDataIdDaemon(table : ChangeTable)
     {
@@ -315,17 +316,17 @@ export class ServerConnectionService{
         let url = this.data.ServerRootURL + "api/AdminApp/AlterDataIdDaemon";
         let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangeTableRequest("ChangeTableRequest",table));
         return this.http.post(url,postAdmin).toPromise()
-                        .then(res => 
-                            {
-                                //this.data.Loading = false
-                                return true;
-                            })
-                        .catch(msg => 
-                            {
-                                //this.data.Loading = false;
-                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
-                                return false;
-                            })
+        .then(res => 
+            {
+                //this.data.Loading = false
+                return res.json();
+            })
+        .catch(msg => 
+            {
+                //this.data.Loading = false;
+                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                return msg.statusText;
+            })
     }
     AlterDataAllowed(table : ChangeTable)
     {
@@ -333,16 +334,16 @@ export class ServerConnectionService{
         let url = this.data.ServerRootURL + "api/AdminApp/AlterDataAllowed";
         let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangeTableRequest("ChangeTableRequest",table));
         return this.http.post(url,postAdmin).toPromise()
-                        .then(res => 
-                            {
-                                //this.data.Loading = false
-                                return true;
-                            })
-                        .catch(msg => 
-                            {
-                                //this.data.Loading = false;
-                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
-                                return false;
-                            })
+        .then(res => 
+            {
+                //this.data.Loading = false
+                return res.json();
+            })
+        .catch(msg => 
+            {
+                //this.data.Loading = false;
+                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                return msg.statusText;
+            })
     }
 }
