@@ -1,6 +1,4 @@
-body{
-  height: 850px;
-}
+
 .table-daemon {
   display: flex;
   flex-direction: column;
@@ -15,4 +13,7 @@ input[type="text"]
 {
     background: transparent;
     border: none;
+}
+.mat-column-Id {
+  flex: 0 0 5%;
 }

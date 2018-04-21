@@ -1,54 +1,52 @@
-<body>
-  <div>
-      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-  </div>
-  <div class="table-task">
-    <mat-table #table [dataSource]="data.Data.tbTasks">
+<div>
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+</div>
+<div class="table-task">
+  <mat-table #table [dataSource]="data.Data.tbTasks">
 
-      <!-- Id Column -->
-      <ng-container matColumnDef="Id">
-        <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
+    <!-- Id Column -->
+    <ng-container matColumnDef="Id">
+      <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
+    </ng-container>
+
+    <!-- IdDaemon Column -->
+    <ng-container matColumnDef="IdDaemon">
+      <mat-header-cell *matHeaderCellDef> IdDaemon </mat-header-cell>
+      <mat-cell *matCellDef="let element"> 
+          <mat-form-field>
+              <mat-select placeholder="Id" [(ngModel)]="element.IdDaemon">
+                <mat-option *ngFor="let daemon of data.Data.tbDaemons.data" [value]= daemon.Id (click)="changeDaemonId(daemon.Id, element.Id)">{{daemon.Id}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+      </mat-cell>
+    </ng-container>
+
+
+    <!-- TimeOfExecution Column -->
+    <ng-container matColumnDef="TimeOfExecution">
+      <mat-header-cell *matHeaderCellDef> TimeOfExecution </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.TimeOfExecution}} </mat-cell>
+    </ng-container>
+    
+
+      <!-- Completed Column -->
+      <ng-container matColumnDef="Completed">
+        <mat-header-cell *matHeaderCellDef> Completed </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.Completed}} </mat-cell>
       </ng-container>
-
-      <!-- IdDaemon Column -->
-      <ng-container matColumnDef="IdDaemon">
-        <mat-header-cell *matHeaderCellDef> IdDaemon </mat-header-cell>
-        <mat-cell *matCellDef="let element"> 
-            <mat-form-field>
-                <mat-select placeholder="Id" [(ngModel)]="element.IdDaemon">
-                  <mat-option *ngFor="let daemon of data.Data.tbDaemons.data" [value]= daemon.Id (click)="changeDaemonId(daemon.Id, element.Id)">{{daemon.Id}}</mat-option>
-                </mat-select>
-              </mat-form-field>
-        </mat-cell>
-      </ng-container>
-
-
-      <!-- TimeOfExecution Column -->
-      <ng-container matColumnDef="TimeOfExecution">
-        <mat-header-cell *matHeaderCellDef> TimeOfExecution </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.TimeOfExecution}} </mat-cell>
-      </ng-container>
-      
 
         <!-- Completed Column -->
-        <ng-container matColumnDef="Completed">
-          <mat-header-cell *matHeaderCellDef> Completed </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.Completed}} </mat-cell>
+        <ng-container matColumnDef="Delete">
+          <mat-header-cell *matHeaderCellDef> Delete </mat-header-cell>
+          <mat-cell *matCellDef="let element"> <button (click)="deleteRow(element.Id)">Delete</button> </mat-cell>
         </ng-container>
 
-         <!-- Completed Column -->
-         <ng-container matColumnDef="Delete">
-            <mat-header-cell *matHeaderCellDef> Delete </mat-header-cell>
-            <mat-cell *matCellDef="let element"> <button (click)="deleteRow(element.Id)">Delete</button> </mat-cell>
-          </ng-container>
-
-        
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-    </mat-table>
-  </div>
-  <div>
-    <button routerLink="/backup/add-task/null">Add Task</button>
-  </div>
-</body>
+      
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+</div>
+<div>
+  <button routerLink="/backup/add-task/null">Add Task</button>
+</div>
