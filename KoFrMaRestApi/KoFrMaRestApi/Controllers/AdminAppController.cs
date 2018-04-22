@@ -223,8 +223,31 @@ namespace KoFrMaRestApi.Controllers
             return null;
         }
         [HttpGet, Route(@"api/AdminApp/test")]
-        public Task test()
+        public void test()
         {
+            MySqlDaemon d = new MySqlDaemon();
+            MySqlConnection connection = WebApiConfig.Connection();
+            connection.Open();
+            d.TaskCompletionRecieved(new Models.Daemon.TaskComplete() {
+                DaemonInfo = new Models.Daemon.DaemonInfo()
+                {
+                    OS = "",
+                    Version = 0,
+                    PC_Unique = "160984079301212",
+                    Token = ""
+                },
+                IDTask = 2,
+                TimeOfCompletition = DateTime.Now,
+                DatFile = new Models.Daemon.Task.BackupJournal.BackupJournalObject()
+                {
+                    BackupJournalFiles = null,
+                    BackupJournalFolders = null,
+                    RelativePath = ""
+                },
+                DebugLog = new List<string>(),
+                IsSuccessfull = true
+            }, connection);
+            /*
             return new Task()
             {
                 IDTask = 2,
@@ -250,8 +273,7 @@ namespace KoFrMaRestApi.Controllers
                 InProgress = false,
                 ScriptBefore = null,
                 ScriptAfter = null,
-                TemporaryFolderMaxBuffer = null
-            };
+                TemporaryFolderMaxBuffer = null*/
         }
     }
 }

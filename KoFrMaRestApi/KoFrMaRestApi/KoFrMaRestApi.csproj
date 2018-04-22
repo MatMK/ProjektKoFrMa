@@ -232,6 +232,7 @@
     <Compile Include="Models\Daemon\Task\SourceMSSQL.cs" />
     <Compile Include="Models\Daemon\Task\SourceMySQL.cs" />
     <Compile Include="Models\Daemon\Task\Task.cs" />
+    <Compile Include="Models\ErrorObserver.cs" />
     <Compile Include="Models\JsonSerializationUtility.cs" />
     <Compile Include="Models\SettingsSerializationBinder.cs" />
     <Compile Include="Models\Tables\ChangePermission.cs" />
@@ -287,14 +288,10 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="Views\Web.config" />
-    <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\View.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\AdminApp\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
