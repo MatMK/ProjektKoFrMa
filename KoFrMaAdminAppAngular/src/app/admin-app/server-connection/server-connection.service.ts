@@ -201,7 +201,7 @@ export class ServerConnectionService{
                                 console.log('Error: ' + msg.status + ' ' + msg.statusText);
                             })
     }
-    DeleteRow(deleteRow : DeleteRowRequest)
+    DeleteRow(deleteRow : DeleteRowRequest) : Promise<string>
     {
         //this.data.Loading = true
         let url = this.data.ServerRootURL + "api/AdminApp/DeleteRow";
@@ -210,13 +210,13 @@ export class ServerConnectionService{
                         .then(res => 
                             {
                                 //this.data.Loading = false
-                                return true;
+                                return res.json();
                             })
                         .catch(msg => 
                             {
                                 //this.data.Loading = false;
                                 console.log('Error: ' + msg.status + ' ' + msg.statusText);
-                                return false;
+                                return msg.statusText;
                             })
     }
     Exists(exists : ExistsRequest) : Promise<boolean>
@@ -255,7 +255,7 @@ export class ServerConnectionService{
                                 return msg.statusText;
                             })
     }
-    AlterDataEmail(table : ChangeTable)
+    AlterDataEmail(table : ChangeTable) : Promise<string>
     {
         //this.data.Loading = true;
         let url = this.data.ServerRootURL + "api/AdminApp/AlterDataEmail";
@@ -273,7 +273,7 @@ export class ServerConnectionService{
                         return msg.statusText;
                     })
     }
-    AlterDataEnabled(table : ChangeTable)
+    AlterDataEnabled(table : ChangeTable) : Promise<string>
     {
         //this.data.Loading = true;
         let url = this.data.ServerRootURL + "api/AdminApp/AlterDataEnabled";
@@ -291,7 +291,7 @@ export class ServerConnectionService{
                         return msg.statusText;
                     })
     }
-    AlterDataPermissions(permission : ChangePermission)
+    AlterDataPermissions(permission : ChangePermission) : Promise<string>
     {
         //this.data.Loading = true;
         let url = this.data.ServerRootURL + "api/AdminApp/AlterDataPermissions";
@@ -310,7 +310,7 @@ export class ServerConnectionService{
                             return msg.statusText;
                         })
     }
-    AlterDataIdDaemon(table : ChangeTable)
+    AlterDataIdDaemon(table : ChangeTable) : Promise<string>
     {
         //this.data.Loading = true;
         let url = this.data.ServerRootURL + "api/AdminApp/AlterDataIdDaemon";
@@ -328,7 +328,7 @@ export class ServerConnectionService{
                 return msg.statusText;
             })
     }
-    AlterDataAllowed(table : ChangeTable)
+    AlterDataAllowed(table : ChangeTable) : Promise<string>
     {
         //this.data.Loading = true;
         let url = this.data.ServerRootURL + "api/AdminApp/AlterDataAllowed";

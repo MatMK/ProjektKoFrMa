@@ -34,7 +34,16 @@ export class TasksComponent implements OnInit {
   }
   deleteRow(rowId)
   {
-    this.service.DeleteRow(new DeleteRowRequest("DeleteRowRequest","tbTasks", rowId)).then(r => this.service.RefreshData([3]))
+    this.service.DeleteRow(new DeleteRowRequest("DeleteRowRequest","tbTasks", rowId)).then(r => {
+      if(r != null)
+      {
+        alert(r);
+      }
+      else
+      {
+        this.service.RefreshData([3])
+      }
+    })
   }
   changeDaemonId(value, id)
   {

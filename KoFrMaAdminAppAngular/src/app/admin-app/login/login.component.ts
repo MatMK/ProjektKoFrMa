@@ -14,7 +14,6 @@ import { Router } from "@angular/router";
 export class LoginComponent implements OnInit {
 
   constructor(private serverConnectionService : ServerConnectionService, private data : Data, private router : Router) { }
-  
   name : string;
   password : string;
   rootURL : string = 'http://localhost:49849/';

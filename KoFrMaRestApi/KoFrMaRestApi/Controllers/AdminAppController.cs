@@ -200,12 +200,18 @@ namespace KoFrMaRestApi.Controllers
         }
 
         [HttpPost, Route(@"api/AdminApp/DeleteRow")]
-        public void DeleteRow(PostAdmin postAdmin)
+        public string DeleteRow(PostAdmin postAdmin)
         {
             if(this.Authorized(postAdmin.adminInfo) && (((DeleteRowRequest)postAdmin.request).TableName == "tbAdminAccounts"|| ((DeleteRowRequest)postAdmin.request).TableName == "tbDaemons" || ((DeleteRowRequest)postAdmin.request).TableName == "tbTasks"))
             {
-                this.mySqlCom.DeleteRow((DeleteRowRequest)postAdmin.request);
+                if (Permitted(postAdmin.adminInfo.UserName, new int[] { 3 }))
+                {
+                    this.mySqlCom.DeleteRow((DeleteRowRequest)postAdmin.request);
+                    return null;
+                }
+                return "Insuficient permissions";
             }
+            return "Unauthorized";
         }
         [HttpPost, Route(@"api/AdminApp/Exists")]
         public bool? Exists(PostAdmin postAdmin)

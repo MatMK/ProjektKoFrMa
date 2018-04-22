@@ -19,7 +19,8 @@ import { ExistsRequest } from '../../../server-connection/models/communication-m
 })
 
 export class AdminAccountsComponent {
-
+  
+  disableSelect = new FormControl(false);
   private check : InputCheck = new InputCheck();
   private selectedPerm : PermInterface[][];
   constructor(private service : ServerConnectionService, private data : Data) {
@@ -131,6 +132,15 @@ export class AdminAccountsComponent {
   }
   deleteRow(rowId)
   {
-    this.service.DeleteRow(new DeleteRowRequest("DeleteRowRequest","tbAdminAccounts", rowId)).then(r => this.service.RefreshData([1]))
+    this.service.DeleteRow(new DeleteRowRequest("DeleteRowRequest","tbAdminAccounts", rowId)).then(r => {
+      if(r != null)
+      {
+        alert(r);
+      }
+      else
+      {
+        this.service.RefreshData([1])
+      }
+    })
   }
 }
