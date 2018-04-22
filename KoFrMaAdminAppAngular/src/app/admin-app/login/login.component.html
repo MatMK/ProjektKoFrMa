@@ -6,7 +6,10 @@
             <h2>Your credentials</h2><br><br>
             <input type="text" placeholder="Server Url" name="ServerURL" id="serverUrl" [(ngModel)]="rootURL"/>
             <br/>
-            <input type="text" placeholder="Username" name="Username" id="loginUsername" [(ngModel)]="name"/>
+            <div class="textfield">
+                    <img src="https://material.io/guidelines/style/icons.html" width=25 />
+                <input type="text" placeholder="Username" name="Username" id="loginUsername" [(ngModel)]="name"/>
+            </div>
             <br/>
             <input type="password" placeholder="Password" name="Password" id="loginPassword" [(ngModel)]="password"/>
             <br/>
