@@ -241,6 +241,7 @@
     <Compile Include="Models\Tables\tbAdminAccounts.cs" />
     <Compile Include="Models\Tables\tbDaemons.cs" />
     <Compile Include="Models\Tables\tbTasks.cs" />
+    <Compile Include="Models\TimerClass.cs" />
     <Compile Include="Models\Token.cs" />
     <Compile Include="MySqlCom\MySqlAdmin.cs" />
     <Compile Include="MySqlCom\MySqlDaemon.cs" />

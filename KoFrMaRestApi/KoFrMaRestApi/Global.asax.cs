@@ -18,6 +18,8 @@ namespace KoFrMaRestApi
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            KoFrMaRestApi.Models.TimerClass timer = KoFrMaRestApi.Models.TimerClass.GetInstance();
+            timer.StartTimer();
         }
     }
 }
