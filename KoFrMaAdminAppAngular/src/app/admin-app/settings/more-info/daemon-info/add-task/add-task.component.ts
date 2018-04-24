@@ -92,11 +92,22 @@ BUcheck() {
 
 ShowAddSource(){
   var radioOptL = <HTMLInputElement>document.getElementById("sourceLocal")
+  var radioOptF = <HTMLInputElement>document.getElementById("IdtypeFull")
   var sourceDiv = <HTMLDivElement>document.getElementById("sourceButtonDiv")
-  if(radioOptL.checked){
+  if(radioOptL.checked && radioOptF.checked){
     sourceDiv.style.display = 'block';
   }
   else sourceDiv.style.display = 'none';
+  }
+
+  DbCheck(){
+    var dbMYSQL = <HTMLInputElement>document.getElementById("sourceDbMY")
+    var dbMSSQL = <HTMLInputElement>document.getElementById("sourceDbMS")
+    var dbName = <HTMLInputElement>document.getElementById("inputDbName")
+    if(dbMSSQL.checked || dbMYSQL.checked ){
+      dbName.style.display = 'block';
+    }
+    else dbName.style.display = 'none';
   }
 
 ShowCompress(){
@@ -238,6 +249,7 @@ AddLocalDestination(){
     destinationTypeRadioLocal.className = 'destTypeRad';
     destinationTypeRadioLocal.innerHTML = 'Local';
     destinationTypeRadioLocal.click = 'BUcheck';
+    this.renderer.setAttribute(destinationTypeRadioLocal, 'name', 'destTypeRadio');
 
     var textFTP = this.renderer.createText('FTP');
     var destinationTypeRadioFTP = this.renderer.createElement('input'); 
@@ -246,6 +258,7 @@ AddLocalDestination(){
     destinationTypeRadioFTP.className = 'destTypeRad';
     destinationTypeRadioFTP.innerHTML = 'FTP';
     destinationTypeRadioFTP.click = 'BUcheck';
+    this.renderer.setAttribute(destinationTypeRadioFTP, 'name', 'destTypeRadio');
 
     var textSFTP = this.renderer.createText('SFTP');
     var destinationTypeRadioSFTP = this.renderer.createElement('input'); 
@@ -254,6 +267,7 @@ AddLocalDestination(){
     destinationTypeRadioSFTP.className = 'destTypeRad';
     destinationTypeRadioSFTP.innerHTML = 'SFTP';
     destinationTypeRadioSFTP.click = 'BUcheck';
+    this.renderer.setAttribute(destinationTypeRadioSFTP, 'name', 'destTypeRadio');
 
     var inputUsername = this.renderer.createElement('input'); 
     inputUsername.type = 'text';
@@ -268,6 +282,7 @@ AddLocalDestination(){
     var inputDestinationText = this.renderer.createElement('input'); 
     inputDestinationText.type = 'text';
     inputDestinationText.placeholder ='Path to destination';
+    inputDestinationText.className = 'BasicInputNew';
 
     var inputCheckbox = this.renderer.createElement('input'); 
     inputCheckbox.type = 'checkbox';
@@ -276,6 +291,9 @@ AddLocalDestination(){
 
     var compressSelect = this.renderer.createElement('select');
     compressSelect.Id = 'compressSelect';
+    compressSelect.className = 'BasicSelect';
+    compressSelect.change = "ShowCompressNew()";
+    
 
     var compressOptionRar = this.renderer.createElement('option');
     compressOptionRar.value = 'Rar';
@@ -287,14 +305,14 @@ AddLocalDestination(){
     compressOption7zip.Id = 'compressOption7zip';
     compressOption7zip.innerHTML = '7zip';
 
-    var compressOptionzip = this.renderer.createElement('option');
-    compressOptionzip.value = 'zip';
-    compressOptionzip.Id = 'compressOption7zip';
-    compressOptionzip.innerHTML = 'zip';
+    var compressOptionZip = this.renderer.createElement('option');
+    compressOptionZip.value = 'Zip';
+    compressOptionZip.Id = 'compressOptionZip';
+    compressOptionZip.innerHTML = 'Zip';
 
     var compressSelectRar = this.renderer.createElement('select');
     compressSelectRar.Id = 'compressSelectRar';
-    compressSelectRar.className = 'basicSelect';
+    compressSelectRar.className = 'BasicSelect';
 
     var cOptionRar0 = this.renderer.createElement('option');
     cOptionRar0.value = '0';
@@ -328,7 +346,7 @@ AddLocalDestination(){
 
     var compressSelect7zip = this.renderer.createElement('select');
     compressSelect7zip.Id = 'compressSelect7zip';
-    compressSelect7zip.className = 'basicSelect';
+    compressSelect7zip.className = 'BasicSelect';
 
     var cOption7zip0 = this.renderer.createElement('option');
     cOption7zip0.value = '0';
@@ -347,7 +365,7 @@ AddLocalDestination(){
 
     var compressSelectZip = this.renderer.createElement('select');
     compressSelectZip.Id = 'compressSelectZip';
-    compressSelectZip.className = 'basicSelect';
+    compressSelectZip.className = 'BasicSelect';
 
     var cOptionZip0 = this.renderer.createElement('option');
     cOptionZip0.value = '0';
@@ -379,24 +397,113 @@ AddLocalDestination(){
     cOptionZip5.Id = 'cOptionZip5';
     cOptionZip5.innerHTML = 'Ultra';
 
-    var button = this.renderer.createElement('button'); 
-    button.innerHTML = 'X';
+    var button1 = this.renderer.createElement('button'); 
+    button1.innerHTML = 'X';
+    button1.Id = 'newButton';
 
-    this.renderer.listen(button, 'click', (event) => this.RemoveDestinationNew(event) )
+    this.renderer.listen(button1, 'click', (event) => this.RemoveDestinationNew(event) )
+
+    var divLocalD = this.renderer.createElement('div');
+    divLocalD.className = 'RadioDiv'
+
+    var divFTPD = this.renderer.createElement('div');
+    divFTPD.className = 'RadioDiv'
+
+    var divSFTPD = this.renderer.createElement('div');
+    divSFTPD.className = 'RadioDiv'
+
+    compressSelectRar.style.display = 'none';
+    compressSelectZip.style.display = 'none';
+    compressSelect7zip.style.display = 'none';
 
     var br = this.renderer.createElement("br");
+    var hr = this.renderer.createElement("hr");
+    var hr1 = this.renderer.createElement("hr");
 
+    
     this.renderer.appendChild(mensiDiv,destinationDiv);
-    /*
-    this.renderer.appendChild(mensiDiv,destinationTypeRadioLocal);
-    this.renderer.appendChild(destinationTypeRadioLocal,textLocal);
-    this.renderer.appendChild(mensiDiv,destinationTypeRadioFTP);
-    this.renderer.appendChild(mensiDiv,destinationTypeRadioSFTP);
-*/
+    
+    this.renderer.appendChild(destinationDiv,divLocalD);
+    this.renderer.appendChild(divLocalD,textLocal);
+    this.renderer.appendChild(divLocalD,destinationTypeRadioLocal);
+
+    this.renderer.appendChild(destinationDiv,divFTPD);
+    this.renderer.appendChild(divFTPD,textFTP);
+    this.renderer.appendChild(divFTPD,destinationTypeRadioFTP);
+
+    this.renderer.appendChild(destinationDiv,divSFTPD);
+    this.renderer.appendChild(divSFTPD,textSFTP);
+    this.renderer.appendChild(divSFTPD,destinationTypeRadioSFTP);
+    
+    this.renderer.appendChild(destinationDiv,inputUsername);
+    this.renderer.appendChild(destinationDiv,inputPassword);
+    this.renderer.appendChild(destinationDiv,inputDestinationText);
+    
+    this.renderer.appendChild(destinationDiv,hr);
+
+    this.renderer.appendChild(destinationDiv, compressSelect)
+    this.renderer.appendChild(compressSelect, compressOptionRar)
+    this.renderer.appendChild(compressSelect, compressOption7zip)
+    this.renderer.appendChild(compressSelect, compressOptionZip)
+
+    this.renderer.appendChild(destinationDiv, compressSelectRar)
+    this.renderer.appendChild(compressSelectRar, cOptionRar0)
+    this.renderer.appendChild(compressSelectRar, cOptionRar1)
+    this.renderer.appendChild(compressSelectRar, cOptionRar2)
+    this.renderer.appendChild(compressSelectRar, cOptionRar3)
+    this.renderer.appendChild(compressSelectRar, cOptionRar4)
+    this.renderer.appendChild(compressSelectRar, cOptionRar5)
+
+    this.renderer.appendChild(destinationDiv, compressSelect7zip)
+    this.renderer.appendChild(compressSelect7zip, cOption7zip0)
+    this.renderer.appendChild(compressSelect7zip, cOption7zip1)
+    this.renderer.appendChild(compressSelect7zip, cOption7zip2)
+
+    this.renderer.appendChild(destinationDiv, compressSelectZip)
+    this.renderer.appendChild(compressSelectZip, cOptionZip0)
+    this.renderer.appendChild(compressSelectZip, cOptionZip1)
+    this.renderer.appendChild(compressSelectZip, cOptionZip2)
+    this.renderer.appendChild(compressSelectZip, cOptionZip3)
+    this.renderer.appendChild(compressSelectZip, cOptionZip4)
+    this.renderer.appendChild(compressSelectZip, cOptionZip5)
+
+    this.renderer.appendChild(destinationDiv,hr1);
+    this.renderer.appendChild(destinationDiv,button1)
+
+    
+  /* this.renderer.insertBefore(mensiDiv,destinationTypeRadioLocal,);
+  
+  mensiDiv.appendChild(destinationTypeRadioLocal)*/
   }
 RemoveDestinationNew(event: any){
     var target = event.target || event.srcElement || event.currentTarget;
     var inputDestiDiv = <HTMLDivElement>document.getElementById("mensiDiv");
     this.renderer.removeChild(inputDestiDiv,target.parentNode);
+}
+
+ShowCompressNew(){
+  var selectBox = <HTMLSelectElement>document.getElementById("compressSelect")
+  var optionRar = <HTMLOptionElement>document.getElementById("compressOptionRar")
+  var option7zip = <HTMLOptionElement>document.getElementById("compressOption7zip")
+  var optionZip = <HTMLOptionElement>document.getElementById("compressOptionZip")
+  var dropRar = <HTMLSelectElement>document.getElementById("compressSelectRar")
+  var dropZip = <HTMLSelectElement>document.getElementById("compressSelectZip")
+  var drop7Zip = <HTMLSelectElement>document.getElementById("compressSelect7zip")
+
+  if(selectBox.selectedIndex == 0){
+    dropRar.style.display = 'block';
+    drop7Zip.style.display = 'none'; 
+    dropZip.style.display = 'none'; 
+  }
+  else if(selectBox.selectedIndex == 1){
+    drop7Zip.style.display = 'block';
+    dropZip.style.display = 'none'; 
+    dropRar.style.display = 'none'; 
+  }
+  else if(selectBox.selectedIndex == 2){
+    dropZip.style.display = 'block';
+    drop7Zip.style.display = 'none'; 
+    dropRar.style.display = 'none'; 
+  }
 }
   }

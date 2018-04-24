@@ -1,19 +1,4 @@
 
-html{ width: 100vw;
-     height: 100vh;
-    margin: 0;
-    padding: 0;}
-
-body{
-    background-image: url("./bg.png");
-    background-repeat: repeat;
-    margin: 0;
-    padding: 0;
-    min-width: 100%;
-  min-height:  800px;
-  font-size: 20px;
-  
-}
 #radioBackup
 {
     display: inline-flex;
@@ -54,7 +39,7 @@ border-radius: 0px;
     
     
     margin-bottom:10px;
-   box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
+   
 }
 #backupType{
     background-color: white;
@@ -70,6 +55,17 @@ border-radius: 0px;
     border-radius: 0px;
 font-size: 20PX;
 margin-bottom: 2px;
+width: 171.33px;
+}
+
+.BasicSelect{
+    border: none;
+    border-bottom: 1px solid #d3d3d3;
+    border-top: 1px solid #d3d3d3;;
+    border-radius: 0px;
+font-size: 20PX;
+margin-bottom: 2px;
+margin-left: 24px;
 width: 171.33px;
 }
 
@@ -99,21 +95,25 @@ height: 28px;
     margin-left: 2px;
     margin-bottom: 2px;
 }
+
 .basicSubmit:hover {
     background-color: white;
     color: black;
     text-decoration:none;
     cursor:pointer;
     }
-    .newTaskDiv{
-        float: left;
-        height: 240px;
-        width: 321px;
-        background-color: white;
-        margin: 10px;
-        border: 1.5px solid #d3d3d3;
+
+.newTaskDiv{
+     float: left;
+     height: 33%;
+     width: 46%;
+     background-color: white;
+     margin: 10px;
+     margin-top: 0px;
+     border: 1.5px solid #d3d3d3;
     border-radius: 5px;
     }
+
 .BasicInputNew{
     width: 262px !important;
     margin-left: 25px;
@@ -131,4 +131,22 @@ height: 28px;
 
 .basicRadio{
     width: 40px;
+    margin-right: 30px;
+}
+
+.destTypeRad{
+   
+    float: left;
+}
+.RadioDiv{
+    float: left;
+    margin-left: 20px;
+    margin-top: 10px;
+    font-size: 20px;
+  
+}
+#newButton{
+   float: right;
+   margin-left: 25px;
+   background-color: white;
 }

@@ -1,23 +1,21 @@
-<!doctype html>
-<html>
-<body>
+
   <div id="celek">
     <div id="menuTask">
        <input type="text" id="daemonId" [(ngModel)]="daemonId" placeholder="Daemon Id" class="BasicInput" (change)="checkIfNumberValid()">         
        <div id="backupType">
-      Full<input type="radio" class="basicRadio" name="buChoice" value="Full" [(ngModel)]="backuptype">  
+      Full<input type="radio" id="IdtypeFull" (click)="ShowAddSource()" class="basicRadio" name="buChoice" value="Full" [(ngModel)]="backuptype">  
       Incremental <input type="radio" class="basicRadio" name="buChoice" value="Incremental" [(ngModel)]="backuptype">  
       Differencial <input type="radio" class="basicRadio" name="buChoice" value="Differencial" [(ngModel)]="backuptype"><br>
     </div>
     <div id="sourceType">
-      Local <input type="radio" (click)="ShowAddSource()" class="basicRadio" id="sourceLocal" name="sourceType" value="Local" [(ngModel)]="sourceType">
-      DbMySQL <input type="radio" (click)="ShowAddSource()" class="basicRadio" name="sourceType" value="DbMySQL" [(ngModel)]="sourceType"> 
-      DbMSSQL <input type="radio" (click)="ShowAddSource()" class="basicRadio" name="sourceType" value="DbMSSQL" [(ngModel)]="sourceType">
+      Local <input type="radio" (click)="ShowAddSource();DbCheck()" class="basicRadio" id="sourceLocal" name="sourceType" value="Local" [(ngModel)]="sourceType">
+      DbMySQL <input type="radio" (click)="ShowAddSource();DbCheck()" class="basicRadio" id="sourceDbMY" name="sourceType" value="DbMySQL" [(ngModel)]="sourceType"> 
+      DbMSSQL <input type="radio" (click)="ShowAddSource();DbCheck()" class="basicRadio" id="sourceDbMS" name="sourceType" value="DbMSSQL" [(ngModel)]="sourceType">
     </div>
     <div id="destinationSelect">
-      FTP <input type="radio" (click)="BUcheck()" name="type" id="distant">
-      SFTP<input type="radio" (click)="BUcheck()" name="type" id="sftp">  
-      Local <input type="radio" (click)="BUcheck()" name="type" id="local">
+      FTP <input type="radio" class="basicRadio" (click)="BUcheck()" name="type" id="distant">
+      SFTP<input type="radio" class="basicRadio" (click)="BUcheck()" name="type" id="sftp">  
+      Local <input type="radio" class="basicRadio" (click)="BUcheck()" name="type" id="local">
     </div>
     <div id="ifServer" style="display:none">
       <input type='text' placeholder="Username" class="BasicInput" id='distUser' name='dUser'[(ngModel)]="ncUsername" ><br>
@@ -55,6 +53,7 @@
       </select>
     </div>  
       <hr>
+      <input type="text" id="inputDbName" placeholder="Database name" [(ngModel)]="dbname" class="BasicInput" style="display:none">
       <input type="text" id="inputSource" placeholder="Source of backup" [(ngModel)]="sourcepath" class="BasicInput"><br>
       <input type="datetime-local" id="inputDateExecution" [value] = "_date" class="BasicInput" (change) = "onDateChange($event.target.value)" ><br>
         <div id="inputDestiDiv">
@@ -74,8 +73,7 @@
 
       </div>
   </div>
-</body>
-</html>
+
 
 
         
