@@ -92,6 +92,18 @@ namespace KoFrMaDaemon.Backup
                 //this.destinationInfo = backupFull.destinationInfo.Parent;
                 //BackupJournalNew = backupFull.BackupJournalNew;
             }
+            else if (task.Sources is SourceMSSQL)
+            {
+                this.taskDebugLog.WriteToLog("Starting backup of Microsft SQL database", 5);
+                SQLBackup mSSQLBackup= new SQLBackup();
+                mSSQLBackup.BackupMSSQL((SourceMSSQL)task.Sources,destination);
+            }
+            else if (task.Sources is SourceMySQL)
+            {
+                this.taskDebugLog.WriteToLog("Starting backup of MySQL database", 5);
+                SQLBackup mySSQLBackup = new SQLBackup();
+                mySSQLBackup.BackupMySQL((SourceMySQL)task.Sources, destination);
+            }
 
         }
         public void BackupFullProcess(Task task,DirectoryInfo destination)

@@ -126,7 +126,7 @@ namespace KoFrMaDaemon
         {
             debugLog.WriteToLog("Stopping service...", 6);
             this.inProgress = true;
-            this.SaveCompletedTasksToDisk(CompletedTasksYetToSend);
+            //this.SaveCompletedTasksToDisk(CompletedTasksYetToSend);
             debugLog.WriteToLog("Service stopped.", 4);
         }
 
@@ -244,7 +244,10 @@ namespace KoFrMaDaemon
 
 
                                 debugLog.WriteToLog("Task " + item.IDTask + " ended. Information about the completed task will be send with the rest to the server on next occasion.", 6);
-                                CompletedTasksYetToSend.Add(new TaskComplete { TimeOfCompletition = DateTime.Now, IDTask = item.IDTask, DatFile = backupInstance.BackupJournalNew, IsSuccessfull = successfull });
+                                TaskComplete completedTask = new TaskComplete { TimeOfCompletition = DateTime.Now, IDTask = item.IDTask, DatFile = backupInstance.BackupJournalNew, IsSuccessfull = successfull };
+                                CompletedTasksYetToSend.Add(completedTask);
+                                this.SaveCompletedTaskToDisk(completedTask);
+
                                 //, DebugLog = backupInstance.taskDebugLog.logReport
                             }
                         }
@@ -358,11 +361,26 @@ namespace KoFrMaDaemon
             debugLog.WriteToLog("Searching for cached journals in folder " + Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\", 6);
 
             this.SearchJournalCacheFolder();
-
+            List<Task> taskListReceived = new List<Task>() ;
             try
             {
-                List<Task> taskListReceived = connection.PostRequest(currentTasks, this.SearchJournalCacheFolder(), CompletedTasksYetToSend);
-                //přidat ověření než se smažou
+                List<int> currentCompletedTasksIDs = new List<int>(CompletedTasksYetToSend.Count) ;
+                for (int i = 0; i < CompletedTasksYetToSend.Count; i++)
+                {
+                    currentCompletedTasksIDs.Add(CompletedTasksYetToSend[i].IDTask);
+                }
+                try
+                {
+                    taskListReceived = connection.PostRequest(currentTasks, this.SearchJournalCacheFolder(), CompletedTasksYetToSend);
+                    for (int i = 0; i < currentCompletedTasksIDs.Count; i++)
+                    {
+                        this.DeleteCompletedTaskDromDisk(currentCompletedTasksIDs[i]);
+                    }
+                }
+                catch (Exception)
+                {
+
+                }
                 CompletedTasksYetToSend.Clear();
                 List<Task> taskListToDelete = new List<Task>();
                 foreach (Task taskReceived in taskListReceived)
@@ -625,7 +643,7 @@ namespace KoFrMaDaemon
             return tmpList;
         }
 
-        private void SaveCompletedTasksToDisk(List<TaskComplete> tasks)
+        private void SaveCompletedTasksToDiskList(List<TaskComplete> tasks)
         {
             if (tasks.Count>0)
             {
@@ -639,7 +657,56 @@ namespace KoFrMaDaemon
             }
 
         }
-        private List<TaskComplete> LoadCompletedTasksFromDisk()
+        private void SaveCompletedTaskToDisk(TaskComplete task)
+        {
+            Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\CompletedTasksBuffer\");
+            StreamWriter w = new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\CompletedTasksBuffer\"+task.IDTask+".dat", true);
+            w.WriteLine(JsonSerializationUtility.Serialize(task));
+            w.Close();
+            w.Dispose();
+
+        }
+        private List<int> SearchCompletedTasksCacheFolder()
+        {
+            List<int> tmpList = new List<int>();
+            if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\CompletedTasksBuffer\"))
+            {
+                try
+                {
+                    FileInfo[] taskIDs = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\CompletedTasksBuffer\").GetFiles();
+                    for (int i = 0; i < taskIDs.Length; i++)
+                    {
+                        if (taskIDs[i].Name.EndsWith(".dat"))
+                        {
+                            try
+                            {
+                                tmpList.Add(Convert.ToInt32(Path.GetFileNameWithoutExtension(taskIDs[i].Name)));
+                            }
+                            catch (Exception)
+                            {
+                                debugLog.WriteToLog("File isn't named as ID of a task: " + taskIDs[i].Name, 3);
+                            }
+                        }
+                        else
+                        {
+                            debugLog.WriteToLog("Couldn't identify file from the folder. File name is: " + taskIDs[i].Name, 3);
+                        }
+
+                    }
+                }
+                catch (Exception)
+                {
+                    debugLog.WriteToLog("Error occured when trying to load cached files. List may be incomplete or, most likely, empty.", 3);
+                }
+                debugLog.WriteToLog("Found " + tmpList.Count + " cache files. Returning their names to the server.", 5);
+            }
+            else
+            {
+                debugLog.WriteToLog("The cache jounal folder doesn't exist, returning empty list of cached journals", 3);
+            }
+            return tmpList;
+        }
+        private List<TaskComplete> LoadCompletedTasksFromDiskList()
         {
             List<TaskComplete> tmp = new List<TaskComplete>();
             StreamReader r;
@@ -662,6 +729,52 @@ namespace KoFrMaDaemon
             }
 
             return tmp;
+        }
+
+        private List<TaskComplete> LoadCompletedTasksFromDisk()
+        {
+            List<TaskComplete> tmp = new List<TaskComplete>();
+            StreamReader r;
+            try
+            {
+                List<int> listIDs = this.SearchCompletedTasksCacheFolder();
+                FileInfo file;
+                for (int i = 0; i < listIDs.Count; i++)
+                {
+                    file = new FileInfo(Environment.SpecialFolder.CommonApplicationData + @"\KoFrMa\CompletedTasksBuffer\" + listIDs[i] + ".dat");
+                    if (file.Exists)
+                    {
+                        r = new StreamReader(file.FullName);
+                        while (!r.EndOfStream)
+                        {
+                            tmp.Add(JsonSerializationUtility.Deserialize<TaskComplete>(r.ReadLine()));
+                        }
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+
+            }
+
+            return tmp;
+        }
+
+        private void DeleteCompletedTaskDromDisk(int id)
+        {
+            try
+            {
+                FileInfo file = new FileInfo(Environment.SpecialFolder.CommonApplicationData + @"\KoFrMa\CompletedTasksBuffer.dat" + id + ".dat");
+                if (file.Exists)
+                {
+                    file.Delete();
+                }
+            }
+            catch (Exception)
+            {
+
+            }
         }
     }
 }
