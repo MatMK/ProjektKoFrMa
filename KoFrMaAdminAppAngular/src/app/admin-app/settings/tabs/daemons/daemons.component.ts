@@ -31,28 +31,19 @@ export class DaemonsComponent implements OnInit {
     if(Data.Id.toString() == filter)
       return true;
     return false;
-  }/*
-  alterData(value, id, columnName:string, elem : HTMLInputElement)
-  {
-    alert("asdfasdf")
-    if(columnName.toLowerCase()== 'allowed' && !this.check.isboolean(value))
-    {
-      let val = elem.getAttribute('prevVal');
-      elem.value = val;
-      return;
-    }
-    else if(columnName.toLowerCase()== 'allowed')
-    {
-      this.service.AlterDataAllowed(new ChangeTable(id, value == "true"?true:false))
-    }
-  }*/
+  }
   saveVal(elem : HTMLInputElement)
   {
     elem.setAttribute('prevVal',elem.value);
   }
   changeEnabled(id, value)
   {
-    this.service.AlterDataAllowed(new ChangeTable(id,value));
+    this.service.AlterDataAllowed(new ChangeTable(id,value)).catch(msg=>{
+      this.data.Data.tbDaemons.data.forEach(element => {
+        if(element.Id == id)
+          element.Allowed = !element.Allowed;
+      });
+    })
   }
   ngOnInit() {
   }

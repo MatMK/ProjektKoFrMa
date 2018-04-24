@@ -1,4 +1,5 @@
-﻿using KoFrMaRestApi.Models.AdminApp;
+﻿using KoFrMaRestApi.Models;
+using KoFrMaRestApi.Models.AdminApp;
 using KoFrMaRestApi.Models.AdminApp.PostAdmin;
 using KoFrMaRestApi.Models.Daemon.Task;
 using KoFrMaRestApi.Models.Tables;
@@ -13,22 +14,48 @@ namespace KoFrMaRestApi.MySqlCom
 {
     public class MySqlAdmin
     {
+        Bcrypter Verification = new Bcrypter();
         public string RegisterToken(AdminLogin adminLogin)
         {
+            string DatabasePassword = "";
             string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
             using (MySqlConnection connection = WebApiConfig.Connection())
-            using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbAdminAccounts` SET `Token`= @Token WHERE `Username` = @Username and `Password` = @Password and `Enabled` = 1", connection))
+            using (MySqlCommand command = new MySqlCommand(@"SELECT `Password` FROM `tbAdminAccounts` WHERE `Username` = @username", connection))
             {
                 connection.Open();
-                command.Parameters.AddWithValue("@Token", token);
                 command.Parameters.AddWithValue("@Username", adminLogin.UserName);
-                command.Parameters.AddWithValue("@Password", adminLogin.Password);
-                int i = command.ExecuteNonQuery();
-                if (i == 1)
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    int NumberOfAdmins = 0;
+                    while (reader.Read())
+                    {
+                        NumberOfAdmins++;
+                        DatabasePassword = (string)reader["Password"];
+                    }
+                    if (NumberOfAdmins == 0)
+                    {
+                        throw new Exception("No admin with this username");
+                    }
+                    if(NumberOfAdmins > 1)
+                    {
+                        throw new Exception("More than one admin with the same name");
+                    }
+                }
+            }
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand(@"SELECT `Password` FROM `tbAdminAccounts` WHERE `Username` = @username", connection))
+            {
+                connection.Open();
+                if (Verification.PasswordMatches(adminLogin.Password, DatabasePassword))
+                {
+                    command.CommandText = $"UPDATE `tbAdminAccounts` SET `Token`= @Token WHERE `Username` = @Username and `Enabled` = 1";
+                    command.Parameters.AddWithValue("@Token", token);
+                    command.Parameters.AddWithValue("@Username", adminLogin.UserName);
+                    command.ExecuteNonQuery();
                     return token;
-                else if (i == 0)
+                }
+                else
                     return null;
-                throw new Exception("Duplicate Admin account");
             }
         }
         public bool Authorized(string Username, string Token)
@@ -154,7 +181,7 @@ namespace KoFrMaRestApi.MySqlCom
                 command.Parameters.AddWithValue("@Email", addAdmin.Email);
                 command.Parameters.AddWithValue("@Username", addAdmin.Username);
                 command.Parameters.AddWithValue("@Enable", addAdmin.Enabled);
-                command.Parameters.AddWithValue("@Password", addAdmin.Password);
+                command.Parameters.AddWithValue("@Password", Verification.BcryptPasswordInBase64(addAdmin.Password));
                 command.ExecuteNonQuery();
                 int AdminId = NextAutoIncrement("tbAdminAccounts") - 1;
                 foreach (var item in addAdmin.Permissions)

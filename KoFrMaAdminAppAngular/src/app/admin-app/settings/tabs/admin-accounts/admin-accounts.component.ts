@@ -46,14 +46,9 @@ export class AdminAccountsComponent {
       elem.value = val;
       return;
     }
-    this.service.AlterDataEmail(new ChangeTable(id, value)).then(res => 
-      {
-        if(res != null)
-        {
-          alert(res)
-          let val = elem.getAttribute('prevVal');
-          elem.value = val;
-        }
+    this.service.AlterDataEmail(new ChangeTable(id, value)).catch(msg=>{
+        let val = elem.getAttribute('prevVal');
+        elem.value = val;
       });
   }
   alterUsername(value, id, elem : HTMLInputElement)
@@ -68,14 +63,11 @@ export class AdminAccountsComponent {
     {
       if(!res)
       {
-      this.service.AlterDataUsername(new ChangeTable(id, value)).then(res => 
+      this.service.AlterDataUsername(new ChangeTable(id, value)).catch(res => 
         {
-          if(res != null)
-          {
-            alert(res)
-            let val = elem.getAttribute('prevVal');
-            elem.value = val;
-          }
+          alert(res)
+          let val = elem.getAttribute('prevVal');
+          elem.value = val;
         });
       }
       else
@@ -110,37 +102,22 @@ export class AdminAccountsComponent {
         newPerm = element.Permission;
       }
     });
-    this.service.AlterDataPermissions(new ChangePermission(Id,newPerm)).then(res => 
+    this.service.AlterDataPermissions(new ChangePermission(Id,newPerm)).catch(res => 
       {
-        if(res != null)
-        {
-          alert(res);
-          this.service.RefreshData([1])
-        }
+        this.service.RefreshData([1])
       });
   }
   changeEnabled(id, value)
   {
-    this.service.AlterDataEnabled(new ChangeTable(id, value)).then(res => 
+    this.service.AlterDataEnabled(new ChangeTable(id, value)).catch(res => 
       {
-        if(res != null)
-        {
-          alert(res)
-          this.service.RefreshData([1])
-        }
+        this.service.RefreshData([1])
       });
   }
   deleteRow(rowId)
   {
     this.service.DeleteRow(new DeleteRowRequest("DeleteRowRequest","tbAdminAccounts", rowId)).then(r => {
-      if(r != null)
-      {
-        alert(r);
-      }
-      else
-      {
-        this.service.RefreshData([1])
-      }
-    })
+      this.service.RefreshData([1])
+    }).catch(r=>{});
   }
 }

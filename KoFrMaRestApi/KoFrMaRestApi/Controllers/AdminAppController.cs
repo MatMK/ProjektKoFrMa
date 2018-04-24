@@ -13,6 +13,8 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using Newtonsoft.Json;
 using KoFrMaRestApi.Models.Daemon.Task;
+using System.Net;
+using BCrypt.Net;
 
 namespace KoFrMaRestApi.Controllers
 {
@@ -55,19 +57,12 @@ namespace KoFrMaRestApi.Controllers
         {
             if (token.Authorized(postAdmin))
             {
-                try
-                {
-                    mySqlCom.SetTasks(((SetTasksRequest)postAdmin.request).setTasks);
-                }
-                catch
-                {
-                    return false;
-                }
+                mySqlCom.SetTasks(((SetTasksRequest)postAdmin.request).setTasks);
                 return true;
             }
             else
             {
-                return false;
+                throw new HttpResponseException(HttpStatusCode.Unauthorized);
             }
         }
         [HttpPost, Route(@"api/AdminApp/GetSqlData")]
@@ -79,7 +74,7 @@ namespace KoFrMaRestApi.Controllers
             }
             else
             {
-                return null;
+                throw new HttpResponseException(HttpStatusCode.Unauthorized);
             }
         }
         [HttpPost, Route(@"api/AdminApp/AlterDataUsername")]
@@ -93,9 +88,10 @@ namespace KoFrMaRestApi.Controllers
                     return null;
                 }
                 else
-                    return "Insuficient permissions";
+                    throw new HttpResponseException(HttpStatusCode.Forbidden);
             }
-            return "Unauthorized";
+            else
+                throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
         [HttpPost, Route(@"api/AdminApp/AlterDataEmail")]
         public string AlterDataEmail(PostAdmin postAdmin)
@@ -108,9 +104,10 @@ namespace KoFrMaRestApi.Controllers
                     return null;
                 }
                 else
-                    return "Insuficient permissions";
+                    throw new HttpResponseException(HttpStatusCode.Forbidden);
             }
-            return "Unauthorized";
+            else
+                throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
         [HttpPost, Route(@"api/AdminApp/AlterDataEnabled")]
         public string AlterDataEnabled(PostAdmin postAdmin)
@@ -123,9 +120,10 @@ namespace KoFrMaRestApi.Controllers
                     return null;
                 }
                 else
-                    return "Insuficient permissions";
+                    throw new HttpResponseException(HttpStatusCode.Forbidden);
             }
-            return "Unauthorized";
+            else
+                throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
         [HttpPost, Route(@"api/AdminApp/AlterDataPermissions")]
         public string AlterDataPermissions(PostAdmin postAdmin)
@@ -138,9 +136,10 @@ namespace KoFrMaRestApi.Controllers
                     return null;
                 }
                 else
-                    return "Insuficient permissions";
+                    throw new HttpResponseException(HttpStatusCode.Forbidden);
             }
-            return "Unauthorized";
+            else
+                throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
         [HttpPost, Route(@"api/AdminApp/AlterDataIdDaemon")]
         public string AlterDataIdDaemon(PostAdmin postAdmin)
@@ -153,9 +152,10 @@ namespace KoFrMaRestApi.Controllers
                     return null;
                 }
                 else
-                    return "Insuficient permissions";
+                    throw new HttpResponseException(HttpStatusCode.Forbidden);
             }
-            return "Unauthorized";
+            else
+                throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
         [HttpPost, Route(@"api/AdminApp/AlterDataAllowed")]
         public string AlterDataAllowed(PostAdmin postAdmin)
@@ -168,19 +168,26 @@ namespace KoFrMaRestApi.Controllers
                     return null;
                 }
                 else
-                    return "Insuficient permissions";
+                    throw new HttpResponseException(HttpStatusCode.Forbidden);
             }
-            return "Unauthorized";
+            else
+                throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
         [HttpPost, Route(@"api/AdminApp/AddAdmin")]
         public void AddAdmin(PostAdmin postAdmin)
         {
             if (this.Authorized(postAdmin.adminInfo))
             {
-                if(Permitted(postAdmin.adminInfo.UserName,new int[] {1}))
+                if (Permitted(postAdmin.adminInfo.UserName, new int[] { 1 }))
+                {
                     if (postAdmin.request is AddAdminRequest)
                         mySqlCom.AddAdmin(((AddAdminRequest)postAdmin.request).addAdmin);
+                }
+                else
+                    throw new HttpResponseException(HttpStatusCode.Forbidden);
             }
+            else
+                throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
         [HttpPost, Route(@"api/AdminApp/LogOut")]
         public void LogOut(AdminInfo admin)
@@ -209,22 +216,26 @@ namespace KoFrMaRestApi.Controllers
                     this.mySqlCom.DeleteRow((DeleteRowRequest)postAdmin.request);
                     return null;
                 }
-                return "Insuficient permissions";
+                throw new HttpResponseException(HttpStatusCode.Forbidden);
             }
-            return "Unauthorized";
+            else
+                throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
         [HttpPost, Route(@"api/AdminApp/Exists")]
-        public bool? Exists(PostAdmin postAdmin)
+        public bool Exists(PostAdmin postAdmin)
         {
             if (this.Authorized(postAdmin.adminInfo))
             {
                 return this.mySqlCom.Exists((ExistsRequest)postAdmin.request);
             }
-            return null;
+            else
+                throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
         [HttpGet, Route(@"api/AdminApp/test")]
         public void test()
         {
+
+            /*
             MySqlDaemon d = new MySqlDaemon();
             MySqlConnection connection = WebApiConfig.Connection();
             connection.Open();
