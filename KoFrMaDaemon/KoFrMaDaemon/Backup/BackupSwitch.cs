@@ -88,9 +88,6 @@ namespace KoFrMaDaemon.Backup
                 this.taskDebugLog.WriteToLog("Checking if there is enough space available in destination(s)...", 5);
                 this.CheckIfSpaceAvailable(sourceFolders.Paths, task.Destinations);
                 this.BackupFullProcess(task, destination);
-                //this.sourceInfo = backupFull.sourceInfo.Parent;
-                //this.destinationInfo = backupFull.destinationInfo.Parent;
-                //BackupJournalNew = backupFull.BackupJournalNew;
             }
             else if (task.Sources is SourceMSSQL)
             {

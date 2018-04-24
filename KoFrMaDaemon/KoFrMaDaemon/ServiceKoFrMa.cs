@@ -664,7 +664,6 @@ namespace KoFrMaDaemon
             w.WriteLine(JsonSerializationUtility.Serialize(task));
             w.Close();
             w.Dispose();
-
         }
         private List<int> SearchCompletedTasksCacheFolder()
         {
