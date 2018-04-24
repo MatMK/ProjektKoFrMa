@@ -21,12 +21,13 @@ import { ChangePermissionRequest } from './models/communication-models/post-admi
 import { MatTableDataSource } from '@angular/material';
 import { DeleteRowRequest } from './models/communication-models/post-admin/delete-row-request.model';
 import { ExistsRequest } from './models/communication-models/post-admin/exists-request.model';
+import { ErrorReport } from './error-report.service';
+import { ChangePasswordRequest } from './models/communication-models/post-admin/change-password-request.model';
 
 @Injectable()
 
 export class ServerConnectionService{
-    constructor( private http : Http, private data : Data) { }
-
+    constructor( private http : Http, private data : Data, private report : ErrorReport) { }
     Login(Password : string, Username : string): Promise<string> 
     {
         this.data.Loading = true;
@@ -41,7 +42,7 @@ export class ServerConnectionService{
                         })
                         .catch(msg => {
                             this.data.Loading = false;
-                            console.log('Error: ' + msg.status + ' ' + msg.statusText)
+                            this.report.handleError(msg);
                         })
    }
     GetSqlData(tables : number[]) : Promise<SqlData>
@@ -57,7 +58,7 @@ export class ServerConnectionService{
                         .catch(msg => 
                             {
                                 this.data.Loading = false;
-                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                                this.report.handleError(msg);
                             })
     }
     RefreshData(tables : number[])
@@ -81,7 +82,10 @@ export class ServerConnectionService{
                 });
                 this.data.Loading = false;
             }
-        ).catch(res=>this.data.Loading = false)
+        ).catch(msg=>{
+            this.data.Loading = false;
+            this.report.handleError(msg);
+        })
     }
     ConvertToMainTask(tbTask : tbTasks[]) : MainTask[]
     {
@@ -108,7 +112,7 @@ export class ServerConnectionService{
                         .catch(msg => 
                             {
                                 this.data.Loading = false;
-                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                                this.report.handleError(msg);
                             })
     }
     HashString(toHash : string) : string
@@ -131,7 +135,7 @@ export class ServerConnectionService{
             {
                 if(ChangeLoading)
                     this.data.Loading = false;
-                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                this.report.handleError(msg);
             })
     }
     HasPermission(perm : number[]) : Promise<boolean>
@@ -148,7 +152,7 @@ export class ServerConnectionService{
             .catch(msg => 
                 {
                     this.data.Loading = false;
-                    console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                    this.report.handleError(msg);
                 })
     }
     AddAdmin(addAdmin:AddAdmin) : Promise<boolean>
@@ -165,7 +169,7 @@ export class ServerConnectionService{
                         .catch(msg => 
                             {
                                 this.data.Loading = false;
-                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                                this.report.handleError(msg);
                                 return false;
                             })
     }
@@ -198,7 +202,7 @@ export class ServerConnectionService{
                         .catch(msg => 
                             {
                                 this.data.Loading = false;
-                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                                this.report.handleError(msg);
                             })
     }
     DeleteRow(deleteRow : DeleteRowRequest) : Promise<string>
@@ -215,8 +219,8 @@ export class ServerConnectionService{
                         .catch(msg => 
                             {
                                 //this.data.Loading = false;
-                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
-                                return msg.statusText;
+                                this.report.handleError(msg);
+                                throw new Error();
                             })
     }
     Exists(exists : ExistsRequest) : Promise<boolean>
@@ -233,7 +237,7 @@ export class ServerConnectionService{
                         .catch(msg => 
                             {
                                 //this.data.Loading = false;
-                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
+                                this.report.handleError(msg);
                                 return null;
                             })
     }
@@ -251,8 +255,8 @@ export class ServerConnectionService{
                         .catch(msg => 
                             {
                                 //this.data.Loading = false;
-                                console.log('Error: ' + msg.status + ' ' + msg.statusText);
-                                return msg.statusText;
+                                this.report.handleError(msg);
+                                throw new Error();
                             })
     }
     AlterDataEmail(table : ChangeTable) : Promise<string>
@@ -269,8 +273,8 @@ export class ServerConnectionService{
                 .catch(msg => 
                     {
                         //this.data.Loading = false;
-                        console.log('Error: ' + msg.status + ' ' + msg.statusText);
-                        return msg.statusText;
+                        this.report.handleError(msg);
+                        throw new Error();
                     })
     }
     AlterDataEnabled(table : ChangeTable) : Promise<string>
@@ -287,8 +291,8 @@ export class ServerConnectionService{
                 .catch(msg => 
                     {
                         //this.data.Loading = false;
-                        console.log('Error: ' + msg.status + ' ' + msg.statusText);
-                        return msg.statusText;
+                        this.report.handleError(msg);
+                        throw new Error();
                     })
     }
     AlterDataPermissions(permission : ChangePermission) : Promise<string>
@@ -306,8 +310,8 @@ export class ServerConnectionService{
                     .catch(msg => 
                         {
                             //this.data.Loading = false;
-                            console.log('Error: ' + msg.status + ' ' + msg.statusText);
-                            return msg.statusText;
+                            this.report.handleError(msg);
+                            throw new Error();
                         })
     }
     AlterDataIdDaemon(table : ChangeTable) : Promise<string>
@@ -324,8 +328,8 @@ export class ServerConnectionService{
         .catch(msg => 
             {
                 //this.data.Loading = false;
-                console.log('Error: ' + msg.status + ' ' + msg.statusText);
-                return msg.statusText;
+                this.report.handleError(msg);
+                throw new Error();
             })
     }
     AlterDataAllowed(table : ChangeTable) : Promise<string>
@@ -342,8 +346,25 @@ export class ServerConnectionService{
         .catch(msg => 
             {
                 //this.data.Loading = false;
-                console.log('Error: ' + msg.status + ' ' + msg.statusText);
-                return msg.statusText;
+                this.report.handleError(msg);
+                throw new Error();
+            })
+    }
+    UpdatePassword(password : string, targetUsername)
+    {
+        let url = this.data.ServerRootURL + "api/AdminApp/UpdatePassword";
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangePasswordRequest("ChangePasswordRequest",btoa(password),targetUsername));
+        return this.http.post(url,postAdmin).toPromise()
+        .then(res => 
+            {
+                //this.data.Loading = false
+                return res.json();
+            })
+        .catch(msg => 
+            {
+                //this.data.Loading = false;
+                this.report.handleError(msg);
+                throw new Error();
             })
     }
 }

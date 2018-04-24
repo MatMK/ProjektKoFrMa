@@ -5,6 +5,7 @@ import { AppComponent } from '../../app.component';
 import { Data } from '../server-connection/data.model';
 import { FormsModule } from '@angular/forms';
 import { Router } from "@angular/router";
+import { ToastsManager } from 'ng2-toastr';
 
 @Component({
   selector: 'app-login',
@@ -32,7 +33,6 @@ export class LoginComponent implements OnInit {
         localStorage.clear();
         localStorage.setItem('adminInfo', JSON.stringify(this.data.adminInfo));
         localStorage.setItem('url', this.data.ServerRootURL);
-        this.serverConnectionService.RefreshData([1,2,3]);
         this.router.navigate(['backup', 'app']);
       }
     })

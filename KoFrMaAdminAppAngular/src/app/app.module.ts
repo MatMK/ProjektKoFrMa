@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, Component,  } from '@angular/core';
+import { NgModule, Component } from '@angular/core';
 import { HttpModule} from '@angular/http';
 import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
@@ -23,6 +23,8 @@ import { NotFoundComponent } from './admin-app/not-found/not-found.component';
 import { ToolbarComponent } from './admin-app/settings/toolbar/toolbar.component';
 import { AddTaskComponent } from './admin-app/settings/more-info/daemon-info/add-task/add-task.component';
 import { AddAdminComponent } from './admin-app/settings/tabs/admin-accounts/add-admin/add-admin.component';
+import { ErrorReport } from './admin-app/server-connection/error-report.service';
+import { ToastsManager } from 'ng2-toastr';
 
 const routes : Routes = [
   {path: '', redirectTo:'login', pathMatch:'full'},
@@ -54,6 +56,7 @@ const routes : Routes = [
     ToolbarComponent,
     AddTaskComponent,
     AddAdminComponent
+
   ],
   imports: [
     BrowserModule,
@@ -72,10 +75,10 @@ const routes : Routes = [
        {useHash: false},
       ),
     RouterModule.forRoot(routes, {useHash: false}),
-    BrowserAnimationsModule
-    
+    BrowserAnimationsModule,
   ],
-  providers: [ServerConnectionService, Data, AuthGuard, PermissionGuard ],
-  bootstrap: [AppComponent]
+  providers: [ServerConnectionService, Data, AuthGuard, PermissionGuard, ErrorReport ],
+  bootstrap: [AppComponent],
+
 })
 export class AppModule { }

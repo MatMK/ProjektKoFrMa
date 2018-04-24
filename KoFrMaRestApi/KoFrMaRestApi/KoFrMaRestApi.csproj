@@ -48,6 +48,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BCrypt.Net, Version=0.1.5073.29922, Culture=neutral, PublicKeyToken=6bcd409ee6bc9292, processorArchitecture=MSIL">
+      <HintPath>..\packages\BCrypt-Official.0.1.109\lib\BCrypt.Net.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -195,6 +198,7 @@
     <Compile Include="Models\AdminApp\AdminLogin.cs" />
     <Compile Include="Models\AdminApp\GetList\Data.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\AddAdminRequest.cs" />
+    <Compile Include="Models\AdminApp\PostAdmin\ChangePasswordRequest.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\ChangePermissionRequest.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\ChangeTableRequest.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\DeleteRowRequest.cs" />
@@ -206,6 +210,7 @@
     <Compile Include="Models\AdminApp\RepeatingTasks\ExceptionDate.cs" />
     <Compile Include="Models\AdminApp\SetTasks.cs" />
     <Compile Include="Models\AdminApp\RepeatingTasks\TaskRepeating.cs" />
+    <Compile Include="Models\Bcrypter.cs" />
     <Compile Include="Models\Daemon\Request.cs" />
     <Compile Include="Models\Daemon\DaemonInfo.cs" />
     <Compile Include="Models\Daemon\Password.cs" />
@@ -265,6 +270,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="LICENSE.txt" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">

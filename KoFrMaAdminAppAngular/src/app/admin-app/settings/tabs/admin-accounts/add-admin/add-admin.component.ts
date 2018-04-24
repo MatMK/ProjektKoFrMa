@@ -41,6 +41,26 @@ export class AddAdminComponent implements OnInit {
     {
       return;
     }
+    var tmp : boolean = true;
+    if(this.selectedPermission.length != 0)
+    {
+      this.data.Data.tbAdminAccounts.data.forEach(element => {
+        if(element.UserName == this.data.adminInfo.UserName)
+        {
+          element.Permission.forEach(perm=>{
+            if(perm == 4)
+            {
+              tmp = false;
+            }
+          })
+        }
+      });
+      if(tmp)
+      { 
+        alert("You dont have permission to set other permissions")
+        return;
+      }
+    }
     this.serverConnection.Exists(new ExistsRequest("ExistsRequest", "tbAdminAccounts",this.username, "Username")).then(res=>
     {
       if(!res)
@@ -58,8 +78,6 @@ export class AddAdminComponent implements OnInit {
             this.serverConnection.RefreshData([1]);
             this.router.navigate(['backup', 'app', 'admin-accounts']);
           }
-          else
-            alert('Something went wrong');
         })
       }
       else
