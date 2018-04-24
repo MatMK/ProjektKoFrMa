@@ -34,11 +34,11 @@ namespace KoFrMaRestApi.MySqlCom
                     }
                     if (NumberOfAdmins == 0)
                     {
-                        throw new Exception("No admin with this username");
+                        //throw new Exception("No admin with this username");
                     }
                     if(NumberOfAdmins > 1)
                     {
-                        throw new Exception("More than one admin with the same name");
+                        throw new Exception("Multiple admin accounts with the same username");
                     }
                 }
             }
@@ -265,6 +265,25 @@ namespace KoFrMaRestApi.MySqlCom
                 {
                     command.CommandText = $"INSERT INTO `tbPermissions`(`Id`, `Permission`, `IdAdmin`) VALUES (null,{item},{changePermission.AdminId})";
                     command.ExecuteNonQuery();
+                }
+            }
+        }
+        public void UpdatePassword(string password, string username)
+        {
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand("UPDATE `tbAdminAccounts` SET `Password`= @password WHERE `Username` = @username", connection))
+            {
+                connection.Open();
+                command.Parameters.AddWithValue("@username", username);
+                command.Parameters.AddWithValue("@password", Verification.BcryptPasswordInBase64(password));
+                int i = command.ExecuteNonQuery();
+                if (i == 0)
+                {
+                    throw new Exception("No admin with this username");
+                }
+                if (i < 1)
+                {
+                    throw new Exception("Multiple admin accounts with the same username");
                 }
             }
         }

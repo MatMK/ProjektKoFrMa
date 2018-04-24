@@ -22,6 +22,7 @@ import { MatTableDataSource } from '@angular/material';
 import { DeleteRowRequest } from './models/communication-models/post-admin/delete-row-request.model';
 import { ExistsRequest } from './models/communication-models/post-admin/exists-request.model';
 import { ErrorReport } from './error-report.service';
+import { ChangePasswordRequest } from './models/communication-models/post-admin/change-password-request.model';
 
 @Injectable()
 
@@ -336,6 +337,23 @@ export class ServerConnectionService{
         //this.data.Loading = true;
         let url = this.data.ServerRootURL + "api/AdminApp/AlterDataAllowed";
         let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangeTableRequest("ChangeTableRequest",table));
+        return this.http.post(url,postAdmin).toPromise()
+        .then(res => 
+            {
+                //this.data.Loading = false
+                return res.json();
+            })
+        .catch(msg => 
+            {
+                //this.data.Loading = false;
+                this.report.handleError(msg);
+                throw new Error();
+            })
+    }
+    UpdatePassword(password : string, targetUsername)
+    {
+        let url = this.data.ServerRootURL + "api/AdminApp/UpdatePassword";
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangePasswordRequest("ChangePasswordRequest",btoa(password),targetUsername));
         return this.http.post(url,postAdmin).toPromise()
         .then(res => 
             {

@@ -25,7 +25,7 @@ export class AdminAccountsComponent {
   private selectedPerm : PermInterface[][];
   constructor(private service : ServerConnectionService, private data : Data) {
   }
-  displayedColumns = ['Id', 'Username', 'Email', 'Enabled', 'Permission', 'Delete'];
+  displayedColumns = ['Id', 'Username', 'Email', 'Enabled', 'Permission', 'Delete', 'ResetPassword'];
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim(); // Remove whitespace
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
@@ -119,5 +119,9 @@ export class AdminAccountsComponent {
     this.service.DeleteRow(new DeleteRowRequest("DeleteRowRequest","tbAdminAccounts", rowId)).then(r => {
       this.service.RefreshData([1])
     }).catch(r=>{});
+  }
+  resetPassword(username)
+  {
+    this.service.UpdatePassword("123456",username).catch(r=>{});
   }
 }

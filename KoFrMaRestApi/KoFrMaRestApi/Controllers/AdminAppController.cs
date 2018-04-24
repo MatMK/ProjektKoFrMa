@@ -231,6 +231,21 @@ namespace KoFrMaRestApi.Controllers
             else
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
+        [HttpPost, Route(@"api/AdminApp/UpdatePassword")]
+        public void UpdatePassword(PostAdmin postAdmin)
+        {
+            if (this.Authorized(postAdmin.adminInfo))
+            {
+                if (Permitted(postAdmin.adminInfo.UserName, new int[] { 3, 5 })||postAdmin.adminInfo.UserName == ((ChangePasswordRequest)postAdmin.request).targetUsername)
+                {
+                    mySqlCom.UpdatePassword(((ChangePasswordRequest)postAdmin.request).newPasswordInBase64, ((ChangePasswordRequest)postAdmin.request).targetUsername);
+                }
+                else
+                    throw new HttpResponseException(HttpStatusCode.Forbidden);
+            }
+            else
+                throw new HttpResponseException(HttpStatusCode.Unauthorized);
+        }
         [HttpGet, Route(@"api/AdminApp/test")]
         public void test()
         {
