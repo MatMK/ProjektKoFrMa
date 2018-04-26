@@ -197,6 +197,7 @@
     <Compile Include="Models\AdminApp\AdminInfo.cs" />
     <Compile Include="Models\AdminApp\AdminLogin.cs" />
     <Compile Include="Models\AdminApp\GetList\Data.cs" />
+    <Compile Include="Models\AdminApp\InputCheck.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\AddAdminRequest.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\ChangePasswordRequest.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\ChangePermissionRequest.cs" />

@@ -15,12 +15,19 @@ using Newtonsoft.Json;
 using KoFrMaRestApi.Models.Daemon.Task;
 using System.Net;
 using BCrypt.Net;
+using System.Net.Http;
 
 namespace KoFrMaRestApi.Controllers
 {
     [EnableCors(origins: "*", headers: "*", methods: "*", exposedHeaders: "X-My-Header")]
     public class AdminAppController : ApiController
     {
+        private string BadRequestCantDeserialize = "Server didn't recieve correct data, please try again.";
+        private string BadRequestInvalidUsername = "Invalid username";
+        private string BadRequestInvalidEmail = "Invalid email";
+        private string BadRequestCannotSetPermission = "You don't have permission to set permissions";
+        private string BadRequestUsernameExists = "This username already exists";
+        InputCheck check = new InputCheck();
         Token token = new Token();
         MySqlAdmin mySqlCom = new MySqlAdmin();
         [HttpPost, Route(@"api/AdminApp/RegisterToken")]
@@ -78,20 +85,27 @@ namespace KoFrMaRestApi.Controllers
             }
         }
         [HttpPost, Route(@"api/AdminApp/AlterDataUsername")]
-        public string AlterDataUsername(PostAdmin postAdmin)
+        public HttpResponseMessage AlterDataUsername(PostAdmin postAdmin)
         {
             if (this.Authorized(postAdmin.adminInfo))
             {
                 if (Permitted(postAdmin.adminInfo.UserName, new int[] { 3 }))
                 {
-                    mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbAdminAccounts", "Username");
-                    return null;
+                    if(!check.Username(((ChangeTableRequest)postAdmin.request).changeTable.Value))
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, BadRequestInvalidUsername);
+                    if (Exists(new PostAdmin() { adminInfo = postAdmin.adminInfo, request = new ExistsRequest() { TableName =  "tbAdminAccounts", Column = "Username", Value = (((ChangeTableRequest)postAdmin.request).changeTable.Value)} }))
+                    {
+                        mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbAdminAccounts", "Username");
+                    }
+                    else
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, BadRequestUsernameExists);
                 }
                 else
                     throw new HttpResponseException(HttpStatusCode.Forbidden);
             }
             else
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
         [HttpPost, Route(@"api/AdminApp/AlterDataEmail")]
         public string AlterDataEmail(PostAdmin postAdmin)
@@ -174,20 +188,30 @@ namespace KoFrMaRestApi.Controllers
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
         [HttpPost, Route(@"api/AdminApp/AddAdmin")]
-        public void AddAdmin(PostAdmin postAdmin)
+        public HttpResponseMessage AddAdmin(PostAdmin postAdmin)
         {
             if (this.Authorized(postAdmin.adminInfo))
             {
                 if (Permitted(postAdmin.adminInfo.UserName, new int[] { 1 }))
                 {
                     if (postAdmin.request is AddAdminRequest)
-                        mySqlCom.AddAdmin(((AddAdminRequest)postAdmin.request).addAdmin);
+                    {
+                        if ((((AddAdminRequest)postAdmin.request).addAdmin.Permissions.Length != 0 && Permitted(postAdmin.adminInfo.UserName, new int[] { 4 })) || ((AddAdminRequest)postAdmin.request).addAdmin.Permissions.Length == 0)
+                        {
+                            mySqlCom.AddAdmin(((AddAdminRequest)postAdmin.request).addAdmin);
+                        }
+                        else
+                            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, BadRequestCannotSetPermission);
+                    }
+                    else
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, BadRequestCantDeserialize);
                 }
                 else
                     throw new HttpResponseException(HttpStatusCode.Forbidden);
             }
             else
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
         [HttpPost, Route(@"api/AdminApp/LogOut")]
         public void LogOut(AdminInfo admin)
@@ -205,7 +229,6 @@ namespace KoFrMaRestApi.Controllers
                 }
             }
         }
-
         [HttpPost, Route(@"api/AdminApp/DeleteRow")]
         public string DeleteRow(PostAdmin postAdmin)
         {

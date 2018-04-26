@@ -17,7 +17,7 @@ export class ErrorReport implements ErrorHandler
                 this.showError("No connection");
                 break;
             case 400 :
-                this.showError("Bad request");
+                alert(JSON.parse(error._body).Message);
                 break;
             case 401 :
                 this.showError("Unauthorized");

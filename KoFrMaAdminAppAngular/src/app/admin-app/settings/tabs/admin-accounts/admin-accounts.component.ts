@@ -65,7 +65,6 @@ export class AdminAccountsComponent {
       {
       this.service.AlterDataUsername(new ChangeTable(id, value)).catch(res => 
         {
-          alert(res)
           let val = elem.getAttribute('prevVal');
           elem.value = val;
         });
