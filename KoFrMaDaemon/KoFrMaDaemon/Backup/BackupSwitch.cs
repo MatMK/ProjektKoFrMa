@@ -116,7 +116,7 @@ namespace KoFrMaDaemon.Backup
             if (ServiceKoFrMa.debugLog._logLevel >= 4)
                 temporaryDebugInfo = "Full backup started at  " + timeOfBackup.ToString();
             Directory.CreateDirectory(destination.FullName + @"\KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup) + @"_Full\KoFrMaBackup");
-            DirectoryInfo destinationInfo = new DirectoryInfo(destination + @"\KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup) + @"_Full\KoFrMaBackup");
+            destinationInfo = new DirectoryInfo(destination + @"\KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup) + @"_Full\KoFrMaBackup");
 
             ServiceKoFrMa.debugLog.WriteToLog("Log of including operations is located in " + destinationInfo.Parent.FullName + @"\KoFrMaDebug.log", 4);
 
@@ -547,10 +547,10 @@ namespace KoFrMaDaemon.Backup
 
         private void FinishBackup()
         {
-
+            ServiceKoFrMa.debugLog.WriteToLog("Making desired destinations...", 7);
             for (int i = 0; i < task.Destinations.Count; i++)
             {
-                this.CreateDestinationFormat(this.destinationInfo.Parent.FullName, task.Destinations[i]);
+                this.CreateDestinationFormat(this.temporaryDestinationInfo.Parent.FullName, task.Destinations[i]);
                 //ServiceKoFrMa.debugLog.WriteToLog("Compression done, deleting temporary files that were needed for compression", 6);
                 //ServiceKoFrMa.debugLog.WriteToLog("Files successfully deleted, compression is now completed.", 6);
             }

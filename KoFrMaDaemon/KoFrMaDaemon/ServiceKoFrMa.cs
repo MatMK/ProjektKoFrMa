@@ -206,13 +206,14 @@ namespace KoFrMaDaemon
 
 
                                 backupInstance.Backup(this.LoadJournalFromCacheIfNeeded(item));
+
                                 debugLog.WriteToLog("Task completed, setting task as successfully completed...", 6);
                                 successfull = true;
                                 //connection.TaskCompleted(item, backupInstance.BackupJournalNew, debugLog, true);
                             }
                             catch (Exception ex)
                             {
-                                debugLog.WriteToLog("Task failed with fatal error " + ex.Message, 2);
+                                debugLog.WriteToLog("Task failed with fatal error " + ex, 2);
                                 //connection.TaskCompleted(item, backupInstance.BackupJournalNew, debugLog, false);
                             }
                             finally
