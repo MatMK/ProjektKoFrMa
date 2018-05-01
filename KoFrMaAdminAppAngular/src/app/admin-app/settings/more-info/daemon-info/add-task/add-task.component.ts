@@ -287,7 +287,7 @@ AddLocalDestination(){
     var inputCheckbox = this.renderer.createElement('input'); 
     inputCheckbox.type = 'checkbox';
     inputCheckbox.Id  = 'compressCheckbox';
-    inputCheckbox.change ='showCompress()';
+    inputCheckbox.change ='ShowCompressNew()';
 
     var compressSelect = this.renderer.createElement('select');
     compressSelect.Id = 'compressSelect';
@@ -317,32 +317,32 @@ AddLocalDestination(){
     var cOptionRar0 = this.renderer.createElement('option');
     cOptionRar0.value = '0';
     cOptionRar0.Id = 'cOptionRar0';
-    cOptionRar0.innerHTML = 'No Compression';
+    cOptionRar0.innerHTML = 'Rar- No Compression';
 
     var cOptionRar1 = this.renderer.createElement('option');
     cOptionRar1.value = '1';
     cOptionRar1.Id = 'cOptionRar1';
-    cOptionRar1.innerHTML = 'Fastest';
+    cOptionRar1.innerHTML = 'Rar- Fastest';
 
     var cOptionRar2 = this.renderer.createElement('option');
     cOptionRar2.value = '2';
     cOptionRar2.Id = 'cOptionRar2';
-    cOptionRar2.innerHTML = 'Fast';
+    cOptionRar2.innerHTML = 'Rar- Fast';
 
     var cOptionRar3 = this.renderer.createElement('option');
     cOptionRar3.value = '3';
     cOptionRar3.Id = 'cOptionRar3';
-    cOptionRar3.innerHTML = 'Normal';
+    cOptionRar3.innerHTML = 'Rar- Normal';
 
     var cOptionRar4 = this.renderer.createElement('option');
     cOptionRar4.value = '4';
     cOptionRar4.Id = 'cOptionRar4';
-    cOptionRar4.innerHTML = 'Good';
+    cOptionRar4.innerHTML = 'Rar- Good';
 
     var cOptionRar5 = this.renderer.createElement('option');
     cOptionRar5.value = '5';
     cOptionRar5.Id = 'cOptionRar5';
-    cOptionRar5.innerHTML = 'Best';
+    cOptionRar5.innerHTML = 'Rar- Best';
 
     var compressSelect7zip = this.renderer.createElement('select');
     compressSelect7zip.Id = 'compressSelect7zip';
@@ -351,17 +351,17 @@ AddLocalDestination(){
     var cOption7zip0 = this.renderer.createElement('option');
     cOption7zip0.value = '0';
     cOption7zip0.Id = 'cOption7zip0';
-    cOption7zip0.innerHTML = 'Optimal';
+    cOption7zip0.innerHTML = '7zip- Optimal';
 
     var cOption7zip1 = this.renderer.createElement('option');
     cOption7zip1.value = '1';
     cOption7zip1.Id = 'cOption7zip';
-    cOption7zip1.innerHTML = 'Fastest';
+    cOption7zip1.innerHTML = '7zip- Fastest';
 
     var cOption7zip2 = this.renderer.createElement('option');
     cOption7zip2.value = '2';
     cOption7zip2.Id = 'cOption7zip';
-    cOption7zip2.innerHTML = 'No Compression';
+    cOption7zip2.innerHTML = '7zip- No Compression';
 
     var compressSelectZip = this.renderer.createElement('select');
     compressSelectZip.Id = 'compressSelectZip';
@@ -370,32 +370,32 @@ AddLocalDestination(){
     var cOptionZip0 = this.renderer.createElement('option');
     cOptionZip0.value = '0';
     cOptionZip0.Id = 'cOptionZip0';
-    cOptionZip0.innerHTML = 'No Compression';
+    cOptionZip0.innerHTML = 'Zip- No Compression';
 
     var cOptionZip1 = this.renderer.createElement('option');
     cOptionZip1.value = '1';
     cOptionZip1.Id = 'cOptionZip1';
-    cOptionZip1.innerHTML = 'Fastest';
+    cOptionZip1.innerHTML = 'Zip- Fastest';
 
     var cOptionZip2 = this.renderer.createElement('option');
     cOptionZip2.value = '2';
     cOptionZip2.Id = 'cOptionZip2';
-    cOptionZip2.innerHTML = 'Fast';
+    cOptionZip2.innerHTML = 'Zip- Fast';
 
     var cOptionZip3 = this.renderer.createElement('option');
     cOptionZip3.value = '3';
     cOptionZip3.Id = 'cOptionZip3';
-    cOptionZip3.innerHTML = 'Normal';
+    cOptionZip3.innerHTML = 'Zip- Normal';
 
     var cOptionZip4 = this.renderer.createElement('option');
     cOptionZip4.value = '4';
     cOptionZip4.Id = 'cOptionZip4';
-    cOptionZip4.innerHTML = 'Maximum';
+    cOptionZip4.innerHTML = 'Zip- Maximum';
 
     var cOptionZip5 = this.renderer.createElement('option');
     cOptionZip5.value = '5';
     cOptionZip5.Id = 'cOptionZip5';
-    cOptionZip5.innerHTML = 'Ultra';
+    cOptionZip5.innerHTML = 'Zip- Ultra';
 
     var button1 = this.renderer.createElement('button'); 
     button1.innerHTML = 'X';
@@ -415,6 +415,8 @@ AddLocalDestination(){
     compressSelectRar.style.display = 'none';
     compressSelectZip.style.display = 'none';
     compressSelect7zip.style.display = 'none';
+    
+    this.renderer.listen(compressSelect, 'change',()=> this.ShowCompressNew());
 
     var br = this.renderer.createElement("br");
     var hr = this.renderer.createElement("hr");
@@ -442,11 +444,24 @@ AddLocalDestination(){
     this.renderer.appendChild(destinationDiv,hr);
 
     this.renderer.appendChild(destinationDiv, compressSelect)
-    this.renderer.appendChild(compressSelect, compressOptionRar)
-    this.renderer.appendChild(compressSelect, compressOption7zip)
-    this.renderer.appendChild(compressSelect, compressOptionZip)
+    this.renderer.appendChild(compressSelect, cOptionRar0)
+    this.renderer.appendChild(compressSelect, cOptionRar1)
+    this.renderer.appendChild(compressSelect, cOptionRar2)
+    this.renderer.appendChild(compressSelect, cOptionRar3)
+    this.renderer.appendChild(compressSelect, cOptionRar4)
+    this.renderer.appendChild(compressSelect, cOptionRar5)
+    this.renderer.appendChild(compressSelect, cOption7zip0)
+    this.renderer.appendChild(compressSelect, cOption7zip1)
+    this.renderer.appendChild(compressSelect, cOption7zip2)
+    this.renderer.appendChild(compressSelect, cOptionZip0)
+    this.renderer.appendChild(compressSelect, cOptionZip1)
+    this.renderer.appendChild(compressSelect, cOptionZip2)
+    this.renderer.appendChild(compressSelect, cOptionZip3)
+    this.renderer.appendChild(compressSelect, cOptionZip4)
+    this.renderer.appendChild(compressSelect, cOptionZip5)
+   
 
-    this.renderer.appendChild(destinationDiv, compressSelectRar)
+    /*this.renderer.appendChild(destinationDiv, compressSelectRar)
     this.renderer.appendChild(compressSelectRar, cOptionRar0)
     this.renderer.appendChild(compressSelectRar, cOptionRar1)
     this.renderer.appendChild(compressSelectRar, cOptionRar2)
@@ -465,7 +480,7 @@ AddLocalDestination(){
     this.renderer.appendChild(compressSelectZip, cOptionZip2)
     this.renderer.appendChild(compressSelectZip, cOptionZip3)
     this.renderer.appendChild(compressSelectZip, cOptionZip4)
-    this.renderer.appendChild(compressSelectZip, cOptionZip5)
+    this.renderer.appendChild(compressSelectZip, cOptionZip5)*/
 
     this.renderer.appendChild(destinationDiv,hr1);
     this.renderer.appendChild(destinationDiv,button1)
@@ -490,17 +505,17 @@ ShowCompressNew(){
   var dropZip = <HTMLSelectElement>document.getElementById("compressSelectZip")
   var drop7Zip = <HTMLSelectElement>document.getElementById("compressSelect7zip")
 
-  if(selectBox.selectedIndex == 0){
+  if(selectBox.selectedIndex == 1){
     dropRar.style.display = 'block';
     drop7Zip.style.display = 'none'; 
     dropZip.style.display = 'none'; 
   }
-  else if(selectBox.selectedIndex == 1){
+  else if(selectBox.selectedIndex == 2){
     drop7Zip.style.display = 'block';
     dropZip.style.display = 'none'; 
     dropRar.style.display = 'none'; 
   }
-  else if(selectBox.selectedIndex == 2){
+  else if(selectBox.selectedIndex == 3){
     dropZip.style.display = 'block';
     drop7Zip.style.display = 'none'; 
     dropRar.style.display = 'none'; 
