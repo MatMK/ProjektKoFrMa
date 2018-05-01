@@ -24,11 +24,13 @@ div {
 h1{
     font-weight:normal;
     text-align: center;
+    font-family: 'Calibri';
 }
 h2{
     font-weight:normal;
     text-align: center;
     color: gray;
+    font-family: 'Calibri';
 }
 
 #UserIconDiv{
