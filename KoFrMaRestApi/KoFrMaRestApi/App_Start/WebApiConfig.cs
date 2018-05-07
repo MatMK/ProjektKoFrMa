@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Security.Cryptography;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Web.Http;
@@ -12,7 +12,29 @@ namespace KoFrMaRestApi
 {
     public static class WebApiConfig
     {
-       
+        private static RSAParameters _privatekey;
+        private static RSAParameters getPrivateKey()
+        {
+            RSACryptoServiceProvider RSA = new RSACryptoServiceProvider(2048);
+            var result = RSA.ExportParameters(true);
+            return result;
+        }
+        public static RSAParameters privateKey
+        {
+            get
+            {
+                if (_privatekey.Modulus == null)
+                {
+                    var tmp = getPrivateKey();
+                    _privatekey = tmp;
+                }
+                return _privatekey;
+            }
+            set
+            {
+                _privatekey = value;
+            }
+        }
 
         public static MySqlConnection Connection()
         {

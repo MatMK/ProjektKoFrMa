@@ -270,9 +270,9 @@ namespace KoFrMaRestApi.Controllers
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
         [HttpGet, Route(@"api/AdminApp/test")]
-        public void test()
+        public System.Security.Cryptography.RSAParameters test()
         {
-
+            return WebApiConfig.privateKey;
             /*
             MySqlDaemon d = new MySqlDaemon();
             MySqlConnection connection = WebApiConfig.Connection();
