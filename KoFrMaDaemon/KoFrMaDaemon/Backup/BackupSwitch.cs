@@ -238,11 +238,9 @@ namespace KoFrMaDaemon.Backup
             this.taskDebugLog.WriteToLog("List of current files and folders successfully created, containing " + CurrentFiles.Count + " files and " + CurrentFolders.Count + " folders. Unable to load " + FilesErrorLoad.Count + " files and " + FoldersErrorLoad.Count + " folders.", 5);
 
 
-            //if (serviceDebugLog._logLevel >= 7)
-            //{
-            //    DebugLog.WriteToLog("Writing journal of current files and folders (that will be compared to original journal later) into .dat file for debug purposes...", 7);
-            //    BackupJournal.CreateBackupJournal(new BackupJournalObject() { BackupJournalFiles = CurrentFiles, BackupJournalFolders = CurrentFolders, RelativePath = source }, base.destinationInfo.Parent.FullName + @"\KoFrMaBackupDebugCurrentFiles.dat", DebugLog);
-            //}
+            //    taskDebugLog.WriteToLog("Writing journal of current files and folders (that will be compared to original journal later) into .dat file for debug purposes...", 7);
+            //currentJournalObject.RelativePaths = backupJournalSource.RelativePaths;
+            //    BackupJournal.CreateBackupJournal(currentJournalObject, destinationInfo.Parent.FullName + @"\KoFrMaBackupDebugCurrentFiles.dat",0, taskDebugLog);
 
 
 
@@ -377,8 +375,8 @@ namespace KoFrMaDaemon.Backup
                             }
                         }
                     }
-                    //else if (DebugLog._logLevel >= 10)
-                    //    DebugLog.WriteToLog("HashRow Error: " + itemCurrent.HashRow.ToString() + " is not " + itemOriginal.HashRow.ToString(),10);
+                    //else if (taskDebugLog._logLevel >= 10)
+                    //    taskDebugLog.WriteToLog("HashRow Error: " + itemCurrent.HashRow.ToString() + " is not " + itemOriginal.HashRow.ToString(),10);
 
                 }
                 if (!sameObject)
@@ -390,7 +388,8 @@ namespace KoFrMaDaemon.Backup
 
 
 
-            this.taskDebugLog.WriteToLog("Creating list of folders that were modified or no longer exists...", 5);
+            this.taskDebugLog.WriteToLog("Creating list of folders that no longer exists...", 5);
+            FoldersToDelete = new List<string>();
             foreach (FolderObject itemOriginal in OriginalFolders)
             {
                 if (!itemOriginal.Paired)
@@ -550,7 +549,7 @@ namespace KoFrMaDaemon.Backup
             ServiceKoFrMa.debugLog.WriteToLog("Making desired destinations...", 7);
             for (int i = 0; i < task.Destinations.Count; i++)
             {
-                this.CreateDestinationFormat(this.temporaryDestinationInfo.Parent.FullName, task.Destinations[i]);
+                this.CreateDestinationFormat(this.destinationInfo.Parent.FullName, task.Destinations[i]);
                 //ServiceKoFrMa.debugLog.WriteToLog("Compression done, deleting temporary files that were needed for compression", 6);
                 //ServiceKoFrMa.debugLog.WriteToLog("Files successfully deleted, compression is now completed.", 6);
             }

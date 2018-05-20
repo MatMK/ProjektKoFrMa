@@ -82,7 +82,7 @@ namespace KoFrMaDaemon.Backup
             }
             catch (Exception ex)
             {
-                debugLog.WriteToLog("Fatal error when trying to create backup journal: " + ex.Message, 2);
+                debugLog.WriteToLog("Fatal error when trying to create backup journal: " + ex, 2);
                 throw;
                 //zde už nelze pokračovat, nutno shodit celý proces zálohování, nekompletní log znamená vadnou zálohu!
             }
@@ -97,6 +97,7 @@ namespace KoFrMaDaemon.Backup
             {
                 r = new StreamReader(pathToJournal);
                 debugLog.WriteToLog("Loading relative paths from backup journal...",7);
+                backupJournalObject.RelativePaths = new List<string>(1);
                 while (!r.EndOfStream && r.Peek() != '!')
                 {
                     backupJournalObject.RelativePaths.Add(r.ReadLine());
@@ -159,9 +160,9 @@ namespace KoFrMaDaemon.Backup
                 List<string> tmpListDeletedFolders = new List<string>(100);
                 while (!r.EndOfStream)
                 {
-                    tmpListDeletedFiles.Add(r.ReadLine());
+                    tmpListDeletedFolders.Add(r.ReadLine());
                 }
-                backupJournalObject.BackupJournalFilesDelete = tmpListDeletedFiles;
+                backupJournalObject.BackupJournalFoldersDelete = tmpListDeletedFolders;
             }
             catch (Exception ex)
             {

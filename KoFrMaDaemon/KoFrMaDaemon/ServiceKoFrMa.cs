@@ -135,16 +135,17 @@ namespace KoFrMaDaemon
             BackupJournalOperations cheatBackupJournalOperations = new BackupJournalOperations();
             DateTime timeToBackup = DateTime.Now;
             List<IDestination> tmpDestinations = new List<IDestination>();
-            SourceFolders tmpSourceFolders = new SourceFolders();
-            List<string> tmpSourceFoldersPaths = new List<string>();
-            //tmpList.Add(new DestinationPlain() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" } });
-            tmpDestinations.Add(new DestinationZip() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" }, CompressionLevel = 0, SplitAfter = 1 });
-            tmpSourceFoldersPaths.Add(@"D:\KoFrMa\BackupThisFolder\");
-            tmpSourceFolders.Paths = tmpSourceFoldersPaths;
+            //SourceFolders tmpSourceFolders = new SourceFolders();
+            //List<string> tmpSourceFoldersPaths = new List<string>();
+            //tmpSourceFoldersPaths.Add(@"D:\KoFrMa\BackupThisFolder\");
+            //tmpSourceFolders.Paths = tmpSourceFoldersPaths;
+
+            tmpDestinations.Add(new DestinationPlain() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" } });
+            //tmpDestinations.Add(new DestinationZip() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" }, CompressionLevel = 0, SplitAfter = 0 });
             Task taskTest = new Task
             {
-                Sources = tmpSourceFolders,
-                //BackupJournalSource = cheatBackupJournalOperations.LoadBackupJournalObject(@"d:\KoFrMa\BackupGoesHere\KoFrMaBackup_2018_02_18_20_34_42_Full\KoFrMaBackup.dat", debugLog),
+                Sources = cheatBackupJournalOperations.LoadBackupJournalObject(@"d:\KoFrMa\BackupGoesHere\KoFrMaBackup_2018_05_20_14_22_12_Full\KoFrMaBackup.dat", debugLog),
+                //Sources = tmpSourceFolders,
                 IDTask = 1,
                 LogLevel = 8,
                 TemporaryFolderMaxBuffer = null,
