@@ -51,7 +51,7 @@ namespace KoFrMaDaemon.Backup
                 tmpList.Add(":");
                 for (int i = 0; i < folderBackupJournalHash.Count; i++)
                 {
-                    tmpList.Add(folderBackupJournalHash[i].FullPath + '|' + folderBackupJournalHash[i].CreationTimeUtc.ToBinary().ToString() + '|' + folderBackupJournalHash[i].LastWriteTimeUtc.ToBinary().ToString() + '|' + folderBackupJournalHash[i].Attributes.ToString() + '|' + folderBackupJournalHash[i].HashRow.ToString());
+                    tmpList.Add(folderBackupJournalHash[i].FullPath + '|' + folderBackupJournalHash[i].CreationTimeUtc.ToBinary().ToString() + '|' + folderBackupJournalHash[i].LastWriteTimeUtc.ToBinary().ToString() + '|' + folderBackupJournalHash[i].Attributes.ToString() + '|' + folderBackupJournalHash[i ].HashRow.ToString());
                 }
                 tmpList.Add("?");
                 if (backupJournalObject.BackupJournalFoldersDelete != null)
