@@ -12,6 +12,7 @@ namespace KoFrMaRestApi
 {
     public static class WebApiConfig
     {
+        public static string WebServerURL;
         private static RSAParameters _privatekey;
         private static RSAParameters getPrivateKey()
         {

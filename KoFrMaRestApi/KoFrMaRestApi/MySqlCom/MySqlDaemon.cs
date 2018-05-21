@@ -105,7 +105,7 @@ namespace KoFrMaRestApi.MySqlCom
                         if (reader["RepeatInJSON"] == DBNull.Value)
                         {
                             reader.Close();
-                            TaskRemove(task, connection);
+                            TaskRemove(task, connection, true);
                         }
                         else
                         {
@@ -122,12 +122,15 @@ namespace KoFrMaRestApi.MySqlCom
         /// </summary>
         /// <param name="task"></param>
         /// <param name="connection"></param>
-        private void TaskRemove(TaskComplete taskComplete, MySqlConnection connection)
+        private void TaskRemove(TaskComplete taskComplete, MySqlConnection connection, bool isSuccessful)
         {
-            using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbTasks` SET `Completed`= 1 WHERE `Id` = @IdTask", connection))
+            if (isSuccessful)
             {
-                command.Parameters.AddWithValue("@IdTask", taskComplete.IDTask);
-                command.ExecuteNonQuery();
+                using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbTasks` SET `Completed`= 1 WHERE `Id` = @IdTask", connection))
+                {
+                    command.Parameters.AddWithValue("@IdTask", taskComplete.IDTask);
+                    command.ExecuteNonQuery();
+                }
             }
             string debugLog = "";
             if (taskComplete.DebugLog != null)
@@ -215,7 +218,7 @@ namespace KoFrMaRestApi.MySqlCom
             }
             if (repeat.ExecutionTimes.Count == 0)
             {
-                TaskRemove(taskComplete, connection);
+                TaskRemove(taskComplete, connection, true);
             }
             else
             {
@@ -234,7 +237,6 @@ namespace KoFrMaRestApi.MySqlCom
                             Task = (string)reader["Task"];
                             TimeOfExecution = (DateTime)reader["TimeOfExecution"];
                             RepeatInJSON = (string)reader["RepeatInJSON"];
-                            
                         }
                         else
                         {
@@ -242,7 +244,7 @@ namespace KoFrMaRestApi.MySqlCom
                         }
                     }
                     Task TaskClass = JsonSerializationUtility.Deserialize<Task>(Task);
-                    TaskRemove(taskComplete, connection);
+                    TaskRemove(taskComplete, connection, true);
                     command.CommandText = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '3b1_kocourekmatej_db2' AND TABLE_NAME = 'tbTasks'";
                     using (MySqlDataReader reader = command.ExecuteReader())
                     {
@@ -384,6 +386,14 @@ namespace KoFrMaRestApi.MySqlCom
                 if (command.ExecuteNonQuery() == 0)
                     return false;
                 return true;
+            }
+        }
+        public void TaskFailed(TaskComplete taskComplete)
+        {
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            {
+                connection.Open();
+                TaskRemove(taskComplete, connection, false);
             }
         }
     }

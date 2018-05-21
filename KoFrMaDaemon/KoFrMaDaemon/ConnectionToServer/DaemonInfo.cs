@@ -33,6 +33,7 @@ namespace KoFrMaDaemon.ConnectionToServer
         /// </summary>
         public string PC_Unique { get; set; }
         public string Token { get; set; }
+        public int? Id { get; set; }
 
     }
 }

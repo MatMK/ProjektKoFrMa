@@ -7,6 +7,9 @@ using System.Text;
 using System.Net;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
+using KoFrMaRestApi.Models.Daemon;
+using KoFrMaRestApi.Models;
+using KoFrMaRestApi.Models.Daemon.Task.BackupJournal;
 
 namespace KoFrMaRestApi.EmailSender
 {
@@ -24,6 +27,7 @@ namespace KoFrMaRestApi.EmailSender
         public void SendEmail()
         {
             List<Exception> exceptions = new List<Exception>();
+            List<TaskComplete> completedTasks = new List<TaskComplete>() { };
             using (MySqlConnection connection = WebApiConfig.Connection())
             using (MySqlCommand command = new MySqlCommand("select * from RestApiExceptions where AdminNotified = 0", connection))
             {
@@ -33,6 +37,21 @@ namespace KoFrMaRestApi.EmailSender
                     while (reader.Read())
                     {
                         exceptions.Add(JsonConvert.DeserializeObject<Exception>((string)reader["RestApiExceptions"]));
+                    }
+                }
+                command.CommandText = "SELECT * FROM `tbTasksCompleted` WHERE `AdminNotified` = 0";
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        completedTasks.Add(new TaskComplete() {
+                            DatFile = JsonSerializationUtility.Deserialize<BackupJournalObject>((string)reader["BackupJournal"]),
+                            IDTask = (int)reader["Id"],
+                            DaemonInfo = new DaemonInfo() { Id = (int)reader["Id"] },
+                            TimeOfCompletition = (DateTime)reader["TimeOfCompletition"],
+                            DebugLog = new List<string>() { (string)reader["DebugLog"] },
+                            IsSuccessfull = (bool)reader["IsSuccessfull"]
+                        });
                     }
                 }
                 command.CommandText = "UPDATE `RestApiExceptions` SET `AdminNotified`=1 WHERE `AdminNotified`= 0";
@@ -49,11 +68,24 @@ namespace KoFrMaRestApi.EmailSender
                 Sbody += "<br />";
                 Sbody += "Dear " + SemailTo + ",";
                 Sbody += "<br />";
-                Sbody += $"Since last time, there has been {exceptions.Count} errors on KoFrMaRestApi server, here are the messages:";
-                foreach (var item in exceptions)
+                if (exceptions.Count > 0)
                 {
-                    Sbody += item.Message;
-                    Sbody += "<br/>";
+                    Sbody += $"Since last time, there has been {exceptions.Count} errors on KoFrMaRestApi server, here are the messages:";
+                    foreach (var item in exceptions)
+                    {
+                        Sbody += item.Message;
+                        Sbody += "<br/>";
+                    }
+                }
+                if (completedTasks.Count > 0)
+                {
+                    Sbody += $"Since last time, {completedTasks.Count} were completed, here is more info:";
+                    foreach (var item in completedTasks)
+                    {
+                        Sbody += item.IDTask;
+                        Sbody += $"<a href=\"{WebApiConfig.WebServerURL}\">More info</a>";
+                        Sbody += "<br/>";
+                    }
                 }
                 Sbody += "<p>";
                 Sbody += "Thank you for using our backup </p>";

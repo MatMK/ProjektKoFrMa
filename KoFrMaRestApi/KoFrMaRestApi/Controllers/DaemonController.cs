@@ -86,11 +86,10 @@ namespace KoFrMaRestApi.Controllers
                     if (taskCompleted.IsSuccessfull)
                     {
                         mySqlCom.TaskCompletionRecieved(taskCompleted, connection);
-                        //pridat k povedenym taskum a odeslat emailem
                     }
                     else
                     {
-                        //pridat k nepovedenym taskum a odeslat to emailem
+                        mySqlCom.TaskFailed(taskCompleted);
                     }
                 }
                 connection.Close();
