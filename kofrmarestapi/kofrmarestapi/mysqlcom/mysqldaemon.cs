@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using KoFrMaRestApi.Models.Daemon.Task;
 using KoFrMaRestApi.Models.AdminApp.RepeatingTasks;
 using KoFrMaRestApi.Models.Daemon.Task.BackupJournal;
+using KoFrMaRestApi.Models;
 
 namespace KoFrMaRestApi.MySqlCom
 {
@@ -79,7 +80,7 @@ namespace KoFrMaRestApi.MySqlCom
                 if (Convert.ToDateTime(reader["TimeOfExecution"]) <= DateTime.Now)
                 {
                     string json = (string)reader["Task"];
-                    result.Add(JsonConvert.DeserializeObject<Task>(json));
+                    result.Add(JsonSerializationUtility.Deserialize<Task>(json));
                     result.Last().IDTask = (int)reader["Id"];
                 }
             }
@@ -117,7 +118,7 @@ namespace KoFrMaRestApi.MySqlCom
             }
         }
         /// <summary>
-        /// Odstraní task z databáze
+        /// Odstraní task z databáze a přidá ho do task completed
         /// </summary>
         /// <param name="task"></param>
         /// <param name="connection"></param>
@@ -129,10 +130,14 @@ namespace KoFrMaRestApi.MySqlCom
                 command.ExecuteNonQuery();
             }
             string debugLog = "";
-            foreach (string item in taskComplete.DebugLog)
+            if (taskComplete.DebugLog != null)
             {
-                debugLog += item + "\n";
+                foreach (string item in taskComplete.DebugLog)
+                {
+                    debugLog += item + "\n";
+                }
             }
+
             using (MySqlCommand command = new MySqlCommand($"INSERT INTO `tbTasksCompleted`VALUES (null,{GetDaemonId(taskComplete.DaemonInfo,connection)},{taskComplete.IDTask},'{JsonConvert.SerializeObject(taskComplete.DatFile)}',@datetime,'{debugLog}',{taskComplete.IsSuccessfull})", connection))
             {
                 command.Parameters.AddWithValue("@datetime", taskComplete.TimeOfCompletition);
@@ -220,7 +225,6 @@ namespace KoFrMaRestApi.MySqlCom
                     string Task;
                     DateTime TimeOfExecution;
                     string RepeatInJSON;
-                    byte Completed;
                     command.Parameters.AddWithValue("@Id", taskComplete.IDTask);
                     using (MySqlDataReader reader = command.ExecuteReader())
                     {
@@ -230,19 +234,22 @@ namespace KoFrMaRestApi.MySqlCom
                             Task = (string)reader["Task"];
                             TimeOfExecution = (DateTime)reader["TimeOfExecution"];
                             RepeatInJSON = (string)reader["RepeatInJSON"];
-                            Completed = (byte)reader["Completed"];
+                            
                         }
                         else
                         {
                             throw new Exception();
                         }
                     }
-                    Task TaskClass = JsonConvert.DeserializeObject<Task>(Task);
+                    Task TaskClass = JsonSerializationUtility.Deserialize<Task>(Task);
                     TaskRemove(taskComplete, connection);
                     command.CommandText = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '3b1_kocourekmatej_db2' AND TABLE_NAME = 'tbTasks'";
                     using (MySqlDataReader reader = command.ExecuteReader())
                     {
-                        taskComplete.IDTask = (int)reader["AUTO_INCREMENT"];
+                        if (reader.Read())
+                            taskComplete.IDTask = Convert.ToInt32(reader["AUTO_INCREMENT"]);
+                        else
+                            throw new Exception();
                     }
                     TaskClass.IDTask = taskComplete.IDTask;
                     TaskClass.Sources = taskComplete.DatFile;
@@ -252,7 +259,7 @@ namespace KoFrMaRestApi.MySqlCom
                     command.Parameters.AddWithValue("@Task", Task);
                     command.Parameters.AddWithValue("@TimeOfExecution", TimeOfExecution);
                     command.Parameters.AddWithValue("@RepeatInJSON", RepeatInJSON);
-                    command.Parameters.AddWithValue("@Completed", Completed);
+                    command.Parameters.AddWithValue("@Completed", 0);
                     command.ExecuteNonQuery();
                 }
             }
@@ -279,13 +286,14 @@ namespace KoFrMaRestApi.MySqlCom
         private bool HasDateException(DateTime item, List<ExceptionDate> ExceptionDates)
         {
             bool result = true;
+            if (ExceptionDates != null)
             foreach (var time in ExceptionDates)
-            {
-                if (item > time.Start && item < time.End)
                 {
-                    result = false;
+                    if (item > time.Start && item < time.End)
+                    {
+                        result = false;
+                    }
                 }
-            }
             return result;
         }
         private bool DateAvailable(List<DateTime> ExecutionTimes, List<ExceptionDate> ExceptionDates)
