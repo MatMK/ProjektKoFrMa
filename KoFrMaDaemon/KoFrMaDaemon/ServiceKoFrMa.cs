@@ -96,12 +96,12 @@ namespace KoFrMaDaemon
                 }
                 else
                 {
-                    //timerConnection.Start();
+                    timerConnection.Start();
                 }
 
                 this.CompletedTasksYetToSend = this.LoadCompletedTasksFromDisk();
 
-                this.CheatTasks();
+                //this.CheatTasks();
 
                 //try
                 //{
@@ -135,17 +135,17 @@ namespace KoFrMaDaemon
             BackupJournalOperations cheatBackupJournalOperations = new BackupJournalOperations();
             DateTime timeToBackup = DateTime.Now;
             List<IDestination> tmpDestinations = new List<IDestination>();
-            //SourceFolders tmpSourceFolders = new SourceFolders();
-            //List<string> tmpSourceFoldersPaths = new List<string>();
-            //tmpSourceFoldersPaths.Add(@"D:\KoFrMa\BackupThisFolder\");
-            //tmpSourceFolders.Paths = tmpSourceFoldersPaths;
+            SourceFolders tmpSourceFolders = new SourceFolders();
+            List<string> tmpSourceFoldersPaths = new List<string>();
+            tmpSourceFoldersPaths.Add(@"D:\KoFrMa\BackupThisFolder\");
+            tmpSourceFolders.Paths = tmpSourceFoldersPaths;
 
             tmpDestinations.Add(new DestinationPlain() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" } });
             //tmpDestinations.Add(new DestinationZip() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" }, CompressionLevel = 0, SplitAfter = 0 });
             Task taskTest = new Task
             {
-                Sources = cheatBackupJournalOperations.LoadBackupJournalObject(@"d:\KoFrMa\BackupGoesHere\KoFrMaBackup_2018_05_20_14_22_12_Full\KoFrMaBackup.dat", debugLog),
-                //Sources = tmpSourceFolders,
+                //Sources = cheatBackupJournalOperations.LoadBackupJournalObject(@"d:\KoFrMa\BackupGoesHere\KoFrMaBackup_2018_05_20_14_22_12_Full\KoFrMaBackup.dat", debugLog),
+                Sources = tmpSourceFolders,
                 IDTask = 1,
                 LogLevel = 8,
                 TemporaryFolderMaxBuffer = null,
@@ -246,7 +246,7 @@ namespace KoFrMaDaemon
 
 
                                 debugLog.WriteToLog("Task " + item.IDTask + " ended. Information about the completed task will be send with the rest to the server on next occasion.", 6);
-                                TaskComplete completedTask = new TaskComplete { TimeOfCompletition = DateTime.Now, IDTask = item.IDTask, DatFile = backupInstance.BackupJournalNew, IsSuccessfull = successfull };
+                                TaskComplete completedTask = new TaskComplete { TimeOfCompletition = DateTime.Now, IDTask = item.IDTask, DatFile = backupInstance.BackupJournalNew, IsSuccessfull = successfull,DebugLog = backupInstance.taskDebugLog.logReport };
                                 CompletedTasksYetToSend.Add(completedTask);
                                 this.SaveCompletedTaskToDisk(completedTask);
 
