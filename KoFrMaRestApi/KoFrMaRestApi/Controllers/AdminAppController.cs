@@ -16,6 +16,7 @@ using KoFrMaRestApi.Models.Daemon.Task;
 using System.Net;
 using BCrypt.Net;
 using System.Net.Http;
+using KoFrMaRestApi.Models.AdminApp.RepeatingTasks;
 
 namespace KoFrMaRestApi.Controllers
 {
@@ -270,9 +271,10 @@ namespace KoFrMaRestApi.Controllers
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
         [HttpGet, Route(@"api/AdminApp/test")]
-        public System.Security.Cryptography.RSAParameters test()
+        public string test()
         {
-            return WebApiConfig.privateKey;
+            return JsonConvert.DeserializeObject<string>("Pepa");
+            //return WebApiConfig.privateKey;
             /*
             MySqlDaemon d = new MySqlDaemon();
             MySqlConnection connection = WebApiConfig.Connection();

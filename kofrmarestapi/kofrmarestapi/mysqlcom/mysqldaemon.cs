@@ -138,7 +138,7 @@ namespace KoFrMaRestApi.MySqlCom
                 }
             }
 
-            using (MySqlCommand command = new MySqlCommand($"INSERT INTO `tbTasksCompleted`VALUES (null,{GetDaemonId(taskComplete.DaemonInfo,connection)},{taskComplete.IDTask},'{JsonConvert.SerializeObject(taskComplete.DatFile)}',@datetime,'{debugLog}',{taskComplete.IsSuccessfull})", connection))
+            using (MySqlCommand command = new MySqlCommand($"INSERT INTO `tbTasksCompleted`VALUES (null,{GetDaemonId(taskComplete.DaemonInfo,connection)},{taskComplete.IDTask},'{JsonSerializationUtility.Serialize(taskComplete.DatFile)}',@datetime,'{debugLog}',{taskComplete.IsSuccessfull})", connection))
             {
                 command.Parameters.AddWithValue("@datetime", taskComplete.TimeOfCompletition);
                 command.ExecuteNonQuery();
@@ -152,7 +152,7 @@ namespace KoFrMaRestApi.MySqlCom
         /// <param name="connection"></param>
         private void TaskExtend(TaskComplete taskComplete,string JsonTime, MySqlConnection connection)
         {
-            TaskRepeating repeat = JsonConvert.DeserializeObject<TaskRepeating>(JsonTime);
+            TaskRepeating repeat = JsonSerializationUtility.Deserialize<TaskRepeating>(JsonTime);
             DateTime nextDate = repeat.ExecutionTimes.Last();
             bool DateChanged = false;
             foreach (var item in repeat.ExecutionTimes)
@@ -253,7 +253,7 @@ namespace KoFrMaRestApi.MySqlCom
                     }
                     TaskClass.IDTask = taskComplete.IDTask;
                     TaskClass.Sources = taskComplete.DatFile;
-                    Task = JsonConvert.SerializeObject(TaskClass);
+                    Task = JsonSerializationUtility.Serialize(TaskClass);
                     command.CommandText = "INSERT INTO `tbTasks` VALUES (null, @IdDaemon, @Task, @TimeOfExecution, @RepeatInJSON, @Completed)";
                     command.Parameters.AddWithValue("@IdDaemon", IdDaemon);
                     command.Parameters.AddWithValue("@Task", Task);
@@ -333,11 +333,10 @@ namespace KoFrMaRestApi.MySqlCom
         public bool Authorized(string PC_Unique, string Token, MySqlConnection connection)
         {
             bool result;
-            string _token = JsonConvert.DeserializeObject<string>(Token);
             using (MySqlCommand command = new MySqlCommand(@"SELECT * FROM `tbDaemons` WHERE `PC_Unique` = @PC_Unique and `Token` = @Token and Allowed = 1", connection))
             {
                 command.Parameters.AddWithValue("@PC_Unique", PC_Unique);
-                command.Parameters.AddWithValue("@Token", _token);
+                command.Parameters.AddWithValue("@Token", Token);
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
                     if (reader.Read())
