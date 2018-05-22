@@ -78,7 +78,8 @@ namespace KoFrMaRestApi.Controllers
         {
             if (token.Authorized(postAdmin))
             {
-                return new Data(((GetDataRequest)postAdmin.request).getData);
+                Data d = new Data(((GetDataRequest) postAdmin.request).getData);
+                return d;
             }
             else
             {

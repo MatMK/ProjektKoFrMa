@@ -13,30 +13,6 @@ namespace KoFrMaRestApi
     public static class WebApiConfig
     {
         public static string WebServerURL;
-        private static RSAParameters _privatekey;
-        private static RSAParameters getPrivateKey()
-        {
-            RSACryptoServiceProvider RSA = new RSACryptoServiceProvider(2048);
-            var result = RSA.ExportParameters(true);
-            return result;
-        }
-        public static RSAParameters privateKey
-        {
-            get
-            {
-                if (_privatekey.Modulus == null)
-                {
-                    var tmp = getPrivateKey();
-                    _privatekey = tmp;
-                }
-                return _privatekey;
-            }
-            set
-            {
-                _privatekey = value;
-            }
-        }
-
         public static MySqlConnection Connection()
         {
             string connectionS = "server=mysqlstudenti.litv.sssvt.cz;uid=kocourekmatej;pwd=KoFrMa123456;database=3b1_kocourekmatej_db2";

@@ -17,7 +17,7 @@ export class MainComponent {
 
     if(this.data.adminInfo.Token != null)
     {
-      this.service.RefreshData([1,2,3]);
+      this.service.RefreshData([1,2,3,4,5]);
     }
   }
 }

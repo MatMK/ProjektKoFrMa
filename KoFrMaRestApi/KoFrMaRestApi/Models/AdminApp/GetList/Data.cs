@@ -22,10 +22,18 @@ namespace KoFrMaRestApi.Models.AdminApp.GetList
                 //Data 3 = TbTasks
                 if (item == 3)
                     tbTasks = table.GetTasks();
+                //Data 5 = tbCompletedTasks
+                if (item == 4)
+                    tbTasksCompleted = table.GetTasksCompleted();
+                //Data 5 = tbServerExceptions
+                if (item == 5)
+                    tbServerExceptions = table.GetServerExceptions();
             }
         }
         public List<tbAdminAccounts> tbAdminAccounts { get; set; }
         public List<tbDaemons> tbDaemons { get; set; }
         public List<tbTasks> tbTasks { get; set; }
+        public List<tbServerExceptions> tbServerExceptions { get; set; }
+        public List<tbTasksCompleted> tbTasksCompleted { get; set; }
     }
 }

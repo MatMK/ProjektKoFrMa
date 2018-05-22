@@ -23,6 +23,8 @@ import { DeleteRowRequest } from './models/communication-models/post-admin/delet
 import { ExistsRequest } from './models/communication-models/post-admin/exists-request.model';
 import { ErrorReport } from './error-report.service';
 import { ChangePasswordRequest } from './models/communication-models/post-admin/change-password-request.model';
+import { tbCompletedTasks } from './models/sql-data/data/tb-completed-tasks';
+import { tbServerExceptions } from './models/sql-data/data/tb-server-exceptions.mode';
 
 @Injectable()
 
@@ -61,10 +63,10 @@ export class ServerConnectionService{
                                 this.report.handleError(msg);
                             })
     }
-    RefreshData(tables : number[])
+    RefreshData(tables : number[]) : Promise<any>
     {
         this.data.Loading = true;
-        this.GetSqlData(tables).then(res=>
+        return this.GetSqlData(tables).then(res=>
             {
                 tables.forEach(element => {
                     if(element == 1)
@@ -79,6 +81,12 @@ export class ServerConnectionService{
                     {
                         this.data.Data.tbTasks = new MatTableDataSource<MainTask>(this.ConvertToMainTask(res.tbTasks));
                     }
+                    if(element == 4)
+                    {
+                        this.data.Data.tbCompletedTasks = new  MatTableDataSource<tbCompletedTasks>(res.tbTasksCompleted);
+                    }
+                    if(element == 5)
+                        this.data.Data.tbServerExceptions = new MatTableDataSource<tbServerExceptions>(res.tbServerExceptions);
                 });
                 this.data.Loading = false;
             }
