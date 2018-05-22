@@ -1,4 +1,5 @@
 ﻿using KoFrMaRestApi.EmailSender;
+using KoFrMaRestApi.Models.AdminApp.RepeatingTasks;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace KoFrMaRestApi.Models
 {
     public class TimerClass
     {
-        public DateTime timeToSend;
+        public DateTime timeToSend { get; set; }
         private static TimerClass instance;
         private Timer timer;
         private Mail mail = new Mail();
@@ -38,10 +39,20 @@ namespace KoFrMaRestApi.Models
         }
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
-            if(DateTime.Now == timeToSend)
+            List<EmailSettings> emailSettings = new List<EmailSettings>();
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbEmailPreferences`", connection))
             {
-                this.mail.SendEmail();
+                connection.Open();
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        emailSettings.Add(new EmailSettings() { EmailAddress = (string)reader["RecievingEmail"], SendOnlyFailed = Convert.ToBoolean(reader["SendOnlyFailed"]) });
+                    }
+                }
             }
+            this.mail.SendEmail(emailSettings);
         }
     }
 }

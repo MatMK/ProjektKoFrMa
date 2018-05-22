@@ -25,6 +25,10 @@ import { AddTaskComponent } from './admin-app/settings/more-info/daemon-info/add
 import { AddAdminComponent } from './admin-app/settings/tabs/admin-accounts/add-admin/add-admin.component';
 import { ErrorReport } from './admin-app/server-connection/error-report.service';
 import { ToastsManager } from 'ng2-toastr';
+import { ServerExceptionsComponent } from './admin-app/settings/tabs/server-exceptions/server-exceptions.component';
+import { CompletedTasksComponent } from './admin-app/settings/tabs/completed-tasks/completed-tasks.component';
+import { CompletedTaskInfoComponent } from './admin-app/settings/more-info/completed-task-info/completed-task-info.component';
+import { ExceptionInfoComponent } from './admin-app/settings/more-info/exception-info/exception-info.component';
 
 const routes : Routes = [
   {path: '', redirectTo:'login', pathMatch:'full'},
@@ -35,12 +39,15 @@ const routes : Routes = [
       {path: 'admin-accounts', component: AdminAccountsComponent},
       {path: 'tasks', component: TasksComponent},
       {path: 'daemons', component: DaemonsComponent},
+      {path: 'server-exceptions', component: ServerExceptionsComponent},
+      {path: 'completed-tasks', component: CompletedTasksComponent},
       ]},
     {path: 'daemoninfo/:daemonid', component: DaemonInfoComponent},
     {path: 'add-task/:daemonid', component:AddTaskComponent},
-    {path: 'add-admin', component: AddAdminComponent, canActivate: [PermissionGuard], data: {roles: [1]}}
+    {path: 'completed-task-info/:completedTaskId', component:CompletedTaskInfoComponent},
+    {path: 'add-admin', component: AddAdminComponent, canActivate: [PermissionGuard], data: {roles: [1]}},
   ]},
-  {path: ':unknown', component: NotFoundComponent}
+  {path: '**', component: NotFoundComponent}
 ]
 
 @NgModule({
@@ -55,7 +62,11 @@ const routes : Routes = [
     NotFoundComponent,
     ToolbarComponent,
     AddTaskComponent,
-    AddAdminComponent
+    AddAdminComponent,
+    ServerExceptionsComponent,
+    CompletedTasksComponent,
+    CompletedTaskInfoComponent,
+    ExceptionInfoComponent
 
   ],
   imports: [

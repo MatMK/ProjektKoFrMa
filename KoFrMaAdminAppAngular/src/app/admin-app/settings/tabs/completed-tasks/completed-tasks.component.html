@@ -1,0 +1,41 @@
+<div class="table-completed-tasks">
+<mat-table #table [dataSource]="data.Data.tbCompletedTasks">
+
+  <ng-container matColumnDef="id">
+    <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="idDaemon">
+    <mat-header-cell *matHeaderCellDef> Id of Daemon </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.IdDaemon}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="idTask">
+    <mat-header-cell *matHeaderCellDef> Id of Task </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.IdTask}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="timeOfCompletion">
+    <mat-header-cell *matHeaderCellDef> TimeOfCompetion </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.TimeOfCompetion}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="isSuccessful">
+    <mat-header-cell *matHeaderCellDef> Successful </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.IsSuccessful}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="moreInfo">
+    <mat-header-cell *matHeaderCellDef> More Info </mat-header-cell>
+    <mat-cell *matCellDef="let element"> <button routerLink="/backup/completed-task-info/{{element.Id}}">More Info</button> </mat-cell>
+  </ng-container>
+
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+</div>
+<div>
+<button (click)=service.RefreshData([4])>Refresh</button>
+</div>

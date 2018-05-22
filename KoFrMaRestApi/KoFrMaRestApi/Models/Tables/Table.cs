@@ -75,7 +75,7 @@ namespace KoFrMaRestApi.Models.Tables
                                 OS = (string)reader["OS"],
                                 PC_Unique = (string)reader["PC_Unique"],
                                 Allowed = Convert.ToBoolean(reader["Allowed"]),
-                                LastSeen = (object)reader["LastSeen"] == (object)DBNull.Value ? null: (DateTime?)reader["LastSeen"]/*,
+                                LastSeen = (object)reader["LastSeen"] == (object)DBNull.Value ? null : (DateTime?)reader["LastSeen"]/*,
                                 Password = (Int64)reader["Password"],
                                 Token = (string)reader["Token"]*/
                             });
@@ -109,7 +109,7 @@ namespace KoFrMaRestApi.Models.Tables
                                 IdDaemon = (int)reader["IdDaemon"],
                                 Task = (string)reader["Task"],
                                 TimeOfExecution = (DateTime)reader["TimeOfExecution"],
-                                RepeatInJSON = (object)reader["RepeatInJSON"] == (object)DBNull.Value?null:(string)reader["RepeatInJSON"],
+                                RepeatInJSON = (object)reader["RepeatInJSON"] == (object)DBNull.Value ? null : (string)reader["RepeatInJSON"],
                                 Completed = Convert.ToBoolean(reader["Completed"])
                             });
                         }
@@ -122,6 +122,55 @@ namespace KoFrMaRestApi.Models.Tables
             }
             return tb;
         }
+        public List<tbTasksCompleted> GetTasksCompleted()
+        {
+            List<tbTasksCompleted> result = new List<tbTasksCompleted>();
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbTasksCompleted`", connection))
+            {
+                connection.Open();
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        result.Add(new tbTasksCompleted()
+                        {
+                            Id = (int)reader["Id"],
+                            IdDaemon = (int)reader["IdDaemon"],
+                            IdTask = (int)reader["IdTask"],
+                            BackupJournal = (string)reader["BackupJournal"],
+                            TimeOfCompetion = (DateTime)reader["TimeOfCompletition"],
+                            DebugLog = (string)reader["DebugLog"],
+                            IsSuccessful = Convert.ToBoolean(reader["IsSuccessfull"])
+                        });
+                    }
+                }
+            }
+            return result;
+        }
+        public List<tbServerExceptions> GetServerExceptions()
+        {
+            List<tbServerExceptions> result = new List<tbServerExceptions>();
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbRestApiExceptions`", connection))
+            {
+                connection.Open();
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        result.Add(new tbServerExceptions()
+                        {
+                            Id = (int)reader["Id"],
+                            ExceptionInJson = (string)reader["ExceptionInJson"],
+                            TimeOfException = Convert.ToDateTime(reader["TimeOfException"]),
+                            Severity = reader["Severity"] == DBNull.Value?null:(int?)reader["Severity"]
 
+                        });
+                    }
+                }
+            }
+            return result;
+        }
     }
 }
