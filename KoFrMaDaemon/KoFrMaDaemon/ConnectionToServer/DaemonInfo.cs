@@ -7,12 +7,15 @@ using System.Threading.Tasks;
 namespace KoFrMaDaemon.ConnectionToServer
 {
     /// <summary>
-    /// Informace o tomto Daemonu
+    /// Information about the daemon
     /// </summary>
     public class DaemonInfo
     {
         private DaemonInfo() { }
         private static readonly DaemonInfo instance = new DaemonInfo();
+        /// <summary>
+        /// Returns the information about the daemon
+        /// </summary>
         public static DaemonInfo Instance
         {
             get
@@ -21,18 +24,24 @@ namespace KoFrMaDaemon.ConnectionToServer
             }
         }
         /// <summary>
-        /// Verze daemonu
+        /// Daemon version
         /// </summary>
         public int Version { get; set; }
         /// <summary>
-        /// Operační systém na kterém daemon běží
+        /// Operating system on which the deamon is running
         /// </summary>
         public string OS { get; set; }
         /// <summary>
-        /// Unikátní číslo počítače
+        /// Computer unique key
         /// </summary>
         public string PC_Unique { get; set; }
+        /// <summary>
+        /// Token used for authorizing the daemon
+        /// </summary>
         public string Token { get; set; }
+        /// <summary>
+        /// Daemon ID
+        /// </summary>
         public int? Id { get; set; }
 
     }

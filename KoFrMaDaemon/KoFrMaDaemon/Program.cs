@@ -10,7 +10,7 @@ namespace KoFrMaDaemon
     static class Program
     {
         /// <summary>
-        /// Hlavní vstupní bod aplikace.
+        /// Main application, nothing interesting here.
         /// </summary>
         static void Main()
         {

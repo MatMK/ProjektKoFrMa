@@ -9,7 +9,7 @@ namespace KoFrMaDaemon.Backup
     public interface IDestinationPath
     {
         /// <summary>
-        /// Cesta cíli zálohy, může odkazovat na lokální disk, ftp server (ftp://...), sftp server (sftp://) nebo sdílené úložiště (//NASBackup/CilZalohy)
+        /// Path to the destination of backup, can be path to local folder, FTP server (ftp://...), SFTP server (sftp://) or shared folder (//NASBackup/BackupDestination)
         /// </summary>
         string Path { get; set; }
     }

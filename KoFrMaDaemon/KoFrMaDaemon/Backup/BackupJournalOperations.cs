@@ -18,6 +18,13 @@ namespace KoFrMaDaemon.Backup
 
         private List<string> tmpList;
 
+        /// <summary>
+        /// Fuction that writes backup journal (that can be later build on) to drive and also saves the backup journal to local cache named as ID of the task so it can automatically selected by daemon when communicating with the server
+        /// </summary>
+        /// <param name="backupJournalObject">The backup journal you want to save to disk</param>
+        /// <param name="pathToJournalFile">Path to location including the filename where the backup journal should by saved</param>
+        /// <param name="TaskID">ID of the task that you which backup journal you are saving</param>
+        /// <param name="debugLog"><c>DebugLog</c> instance for logging performed actions</param>
         public void CreateBackupJournal(BackupJournalObject backupJournalObject, string pathToJournalFile, int TaskID, DebugLog debugLog)
         {
             try
@@ -88,7 +95,12 @@ namespace KoFrMaDaemon.Backup
             }
 
         }
-
+        /// <summary>
+        /// Function that loads saved backup journal from disk based on its path <paramref name="pathToJournal"/>
+        /// </summary>
+        /// <param name="pathToJournal">Path to the backup journal you want to load including the filename</param>
+        /// <param name="debugLog"><c>DebugLog</c> instance for logging performed actions</param>
+        /// <returns><c>BackupJournalObject that will be loaded</c></returns>
         public BackupJournalObject LoadBackupJournalObject(string pathToJournal, DebugLog debugLog)
         {
             BackupJournalObject backupJournalObject = new BackupJournalObject();
@@ -172,6 +184,11 @@ namespace KoFrMaDaemon.Backup
             return backupJournalObject;
 
         }
+        /// <summary>
+        /// Function that adds hash column to every given <c>FileInfoObject</c> in a list (for quicker comparing if file was changed for differential/incremental backups)
+        /// </summary>
+        /// <param name="listWithoutHashCodes">List of <c>FileInfoObjects</c> that you want to add the hash row to</param>
+        /// <returns>Returns same list as entered only with added hash properties to each <c>FileInfoObjects</c></returns>
         public List<FileInfoObject> ReturnHashCodesFiles(List<FileInfoObject> listWithoutHashCodes)
         {
             List<FileInfoObject> tmpList;
@@ -186,7 +203,11 @@ namespace KoFrMaDaemon.Backup
 
             return tmpList;
         }
-
+        /// <summary>
+        /// Function that adds hash column to every given <c>FolderObject</c> in a list (for quicker comparing if file was changed for differential/incremental backups)
+        /// </summary>
+        /// <param name="listWithoutHashCodes">List of <c>FolderObjects</c> that you want to add the hash row to</param>
+        /// <returns>Returns same list as entered only with added hash properties to each <c>FolderObject</c></returns>
         public List<FolderObject> ReturnHashCodesFolders(List<FolderObject> listWithoutHashCodes)
         {
             List<FolderObject> tmpList;

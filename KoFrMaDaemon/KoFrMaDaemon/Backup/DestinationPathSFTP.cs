@@ -10,11 +10,11 @@ namespace KoFrMaDaemon.Backup
     public class DestinationPathSFTP:IDestinationPath
     {
         /// <summary>
-        /// Adresa SFTP serveru a podsložka pro nahrání zálohy
+        /// SFTP server address and subfolder where the files will be uploaded
         /// </summary>
         public string Path { get; set; }
         /// <summary>
-        /// Přístupové údaje k SFTP serveru
+        /// Credential to the SFTP server
         /// </summary>
         public NetworkCredential NetworkCredential { get; set; }
     }

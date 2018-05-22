@@ -8,6 +8,9 @@ namespace KoFrMaDaemon.Backup
 {
     class SourceFolders:ISource
     {
+        /// <summary>
+        /// List of paths to folders that would be backuped
+        /// </summary>
         public List<string> Paths { get; set; }
     }
 }

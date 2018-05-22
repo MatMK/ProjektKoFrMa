@@ -9,7 +9,7 @@ namespace KoFrMaDaemon.Backup
     class DestinationPathLocal:IDestinationPath
     {
         /// <summary>
-        /// Cesta k lokální složce
+        /// Path to a local folder
         /// </summary>
         public string Path { get; set; }
     }

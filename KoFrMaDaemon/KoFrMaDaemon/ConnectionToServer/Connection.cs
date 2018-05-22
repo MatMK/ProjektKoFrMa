@@ -14,6 +14,13 @@ namespace KoFrMaDaemon.ConnectionToServer
 {
     public class Connection
     {
+        /// <summary>
+        /// Connects to the RestAPI server and tries to obtain list of new backup tasks, while sending already completed tasks back
+        /// </summary>
+        /// <param name="currentTasks">List of the tasks that the daemon already received before and hash indicating if they changed to the server</param>
+        /// <param name="journalNotNeeded">List of tasks that if would be needed doesn't require the server to send the backup journal, bacause a copy of it is already cached offline</param>
+        /// <param name="completedTasks">List of completed tasks with all details</param>
+        /// <returns></returns>
         public List<Task> PostRequest(List<TaskVersion> currentTasks, List<int> journalNotNeeded,List<TaskComplete> completedTasks)
         {
             ServiceKoFrMa.debugLog.WriteToLog("Creating request to server...", 7);
@@ -76,6 +83,10 @@ namespace KoFrMaDaemon.ConnectionToServer
         //        result = streamReader.ReadToEnd();
         //    }
         //}
+        /// <summary>
+        /// Connects to the RestAPI server and tries to obtain a token that authorizes the daemon to receives tasks
+        /// </summary>
+        /// <returns></returns>
         public string GetToken()
         {
             ServiceKoFrMa.debugLog.WriteToLog("Creating token request...", 7);

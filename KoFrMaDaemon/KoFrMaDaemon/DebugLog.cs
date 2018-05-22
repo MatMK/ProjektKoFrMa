@@ -13,6 +13,7 @@ namespace KoFrMaDaemon
     public class DebugLog
     {
         /// <summary>
+        /// Defines what should be logged
         /// 0 = Don't create log
         /// 1 = Fatal errors only that shuts down whole service/program
         /// 2 = Errors that cause some process to fail
@@ -27,10 +28,19 @@ namespace KoFrMaDaemon
         /// </summary>
         public byte _logLevel;
         private string _logPath;
+        /// <summary>
+        /// All log events in list
+        /// </summary>
         public List<string> logReport;
-        public bool writeToWindowsEventLog;
+        private bool writeToWindowsEventLog;
 
         private StreamWriter w;
+        /// <summary>
+        /// Creates an instance of <c>DebugLog</c> and sets what should be logged and where
+        /// </summary>
+        /// <param name="logPath">Path to local file (.log/.txt) that the file should write the events into</param>
+        /// <param name="writeToWindowsEventLog">Defines if the log should be written to Windows Event Log</param>
+        /// <param name="logLevel">Sets the required level of log</param>
         public DebugLog(string logPath,bool writeToWindowsEventLog, byte logLevel)
         {
             logReport = new List<string>();
@@ -52,7 +62,11 @@ namespace KoFrMaDaemon
         }
 
 
-
+        /// <summary>
+        /// Writes new entry into the log
+        /// </summary>
+        /// <param name="text">Text of the entry</param>
+        /// <param name="level">Level of importance</param>
         public void WriteToLog(string text, byte level)
         {
             string row = DateTime.Now.ToString() + " " + level.ToString() + " " + text;
@@ -103,7 +117,10 @@ namespace KoFrMaDaemon
 
         }
 
-
+        /// <summary>
+        /// Writes the JSON interprentation of the task to log (for debug purposes and storing tasks offline)
+        /// </summary>
+        /// <param name="task"><c>Task that should be serialized and saved</c></param>
         public void WriteJsonTaskToLog(Task task)
         {
             w = new StreamWriter(_logPath, true);

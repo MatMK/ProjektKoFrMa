@@ -7,17 +7,41 @@ using System.IO;
 
 namespace KoFrMaDaemon
 {
+    /// <summary>
+    /// Class that loads and then keeps all settings that can be set by LocalDaemonConfig
+    /// </summary>
     public class SettingsLoad
     {
+        /// <summary>
+        /// IP of the server with a port after semicolon
+        /// </summary>
         public string ServerIP;
+        /// <summary>
+        /// Password that is used to authenticate the daemon
+        /// </summary>
         public string Password;
+        /// <summary>
+        /// Path to where the log should be saved, if set
+        /// </summary>
         public string LocalLogPath;
+        /// <summary>
+        /// Path to WinRAR installed directory
+        /// </summary>
         public string WinRARPath;
+        /// <summary>
+        /// Path to 7Zip installed directory
+        /// </summary>
         public string SevenZipPath;
+        /// <summary>
+        /// Sets if the log should be written into Windows Event Log
+        /// </summary>
         public bool WindowsLog;
 
         private StreamReader r;
 
+        /// <summary>
+        /// Loads settings from the ini file
+        /// </summary>
         public SettingsLoad()
         {
             this.WindowsLog = false;

@@ -15,24 +15,43 @@ namespace KoFrMaDaemon.Backup
         private NetworkCredential SSHCredential;
         private SftpClient client;
         private DirectoryInfo directoryInfo;
+        /// <summary>
+        /// Creates new connection to SFTP server
+        /// </summary>
+        /// <param name="SSHAddress">Address with subfolder to the SFTP server</param>
+        /// <param name="username">Username to the SFTP server</param>
+        /// <param name="password">Password to the SFTP server</param>
         public SSHConnection(string SSHAddress, string username, string password, DebugLog debugLog)
         {
             debugLog.WriteToLog("Setting up settings needed for the SSH trasfer...", 7);
             SSHCredential = new NetworkCredential(username, password);
             this.SSHAddress = SSHAddress;
         }
+        /// <summary>
+        /// Creates new connection to SFTP server
+        /// </summary>
+        /// <param name="SSHAddress">Address with subfolder to the SFTP server</param>
+        /// <param name="networkCredential"><c>NetworkCredential</c> object that contains credentials to the SFTP server</param>
         public SSHConnection(string SSHAddress, NetworkCredential networkCredential)
         {
             ServiceKoFrMa.debugLog.WriteToLog("Setting up settings needed for the SSH trasfer...", 7);
             SSHCredential = networkCredential;
             this.SSHAddress = SSHAddress;
         }
+        /// <summary>
+        /// Creates new connection to SFTP server
+        /// </summary>
+        /// <param name="destinationPathSFTP"><c>DestinationPathSFTP</c> object containing all necessary values needed to connect</param>
         public SSHConnection(DestinationPathSFTP destinationPathSFTP)
         {
             ServiceKoFrMa.debugLog.WriteToLog("Setting up settings needed for the SSH trasfer...", 7);
             SSHCredential = destinationPathSFTP.NetworkCredential;
             this.SSHAddress = destinationPathSFTP.Path;
         }
+        /// <summary>
+        /// Uploads specified folder along with its subfolders and files to the FTP server
+        /// </summary>
+        /// <param name="path">Path to folder that will be uploaded</param>
         public void UploadToSSH(string PathToFolder)
         {
             ServiceKoFrMa.debugLog.WriteToLog("Connecting to SSH server...", 5);

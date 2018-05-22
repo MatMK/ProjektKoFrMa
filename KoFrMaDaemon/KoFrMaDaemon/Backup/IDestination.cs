@@ -9,7 +9,7 @@ namespace KoFrMaDaemon.Backup
     public interface IDestination
     {
         /// <summary>
-        /// Nastavení cíle zálohy, může být archiv (ZIP/RAR/7z) nebo obyčejná složka, obsahuje také cestu k cíli
+        /// Defines the destination of the backup, it can be archive (ZIP/RAR/7Z) or plain folder
         /// </summary>
         IDestinationPath Path { get; set; }
     }

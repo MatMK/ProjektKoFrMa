@@ -10,6 +10,9 @@ namespace KoFrMaDaemon.ConnectionToServer
     {
         private Password() { }
         private static readonly Password instance = new Password();
+        /// <summary>
+        /// Returns current password
+        /// </summary>
         public static Password Instance
         {
             get
@@ -17,6 +20,10 @@ namespace KoFrMaDaemon.ConnectionToServer
                 return instance;
             }
         }
+        /// <summary>
+        /// Sets password for the daemon
+        /// </summary>
+        /// <param name="DaemonPassword">Password</param>
         public void SetPassword(string DaemonPassword)
         {
             password = GetInt64HashCode(DaemonPassword);

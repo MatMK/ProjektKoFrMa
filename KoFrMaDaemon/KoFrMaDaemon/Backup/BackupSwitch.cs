@@ -12,8 +12,15 @@ namespace KoFrMaDaemon.Backup
 {
     public class BackupSwitch
     {
+        /// <summary>
+        /// Backup journal that was created by the backup
+        /// </summary>
         public BackupJournalObject BackupJournalNew;
+        /// <summary>
+        /// <c>DebugLog</c> instance of the backup
+        /// </summary>
         public DebugLog taskDebugLog;
+
         private DirectoryInfo temporaryDestinationInfo;
 
         private DirectoryInfo destinationInfo;
@@ -26,15 +33,18 @@ namespace KoFrMaDaemon.Backup
         private bool atLeastOneDestinationIsLocalFolder = false;
 
 
+        private List<FileInfoObject> FilesCorrect;
+        private List<FolderObject> FoldersCorrect;
+        private List<CopyErrorObject> FilesErrorCopy;
+        private List<CopyErrorObject> FoldersErrorCopy;
 
-        public List<FileInfoObject> FilesCorrect;
-        public List<FolderObject> FoldersCorrect;
-        public List<CopyErrorObject> FilesErrorCopy;
-        public List<CopyErrorObject> FoldersErrorCopy;
+        private List<CopyErrorObject> FilesErrorLoad;
+        private List<CopyErrorObject> FoldersErrorLoad;
 
-        public List<CopyErrorObject> FilesErrorLoad;
-        public List<CopyErrorObject> FoldersErrorLoad;
-
+        /// <summary>
+        /// Main backuping fuction that takes the information from the <paramref name="task"/> parameter to create the backup
+        /// </summary>
+        /// <param name="task"><c>Task</c>that is providing all information for the backup</param>
         public void Backup(Task task)
         {
             this.task = task;
@@ -70,6 +80,11 @@ namespace KoFrMaDaemon.Backup
             this.FinishBackup();
             this.taskDebugLog.WriteToLog("Backup done, ending the backup instance.", 4);
         }
+        /// <summary>
+        /// Function that decides the backup type to call appropriate functions <paramref name="task"/>
+        /// </summary>
+        /// <param name="task"><c>Task</c>that is providing all information for the backup</param>
+        /// <param name="destination"><c>DirectoryInfo</c> of destination where the backup should be stored</param>
         private void BackupToFolder(Task task, DirectoryInfo destination)
         {
             this.taskDebugLog.WriteToLog("Deciding what type of backup it is...", 7);
@@ -103,7 +118,12 @@ namespace KoFrMaDaemon.Backup
             }
 
         }
-        public void BackupFullProcess(Task task,DirectoryInfo destination)
+        /// <summary>
+        /// Function that starts the full backup from the information given in the <paramref name="task"/>
+        /// </summary>
+        /// <param name="task"><c>Task</c>that is providing all information for the backup</param>
+        /// <param name="destination"><c>DirectoryInfo</c> of destination where the backup should be stored</param>
+        private void BackupFullProcess(Task task,DirectoryInfo destination)
         {
             FilesCorrect = new List<FileInfoObject>(100);
             FoldersCorrect = new List<FolderObject>(100);
@@ -181,8 +201,12 @@ namespace KoFrMaDaemon.Backup
             this.taskDebugLog.WriteToLog("Full backup was completed in " + backupTook.TotalSeconds + " s", 4);
         }
 
-
-        public void BackupDifferentialProcess(Task task,DirectoryInfo destination)
+        /// <summary>
+        /// Function that starts the differential/incremental backup from the information given in the <paramref name="task"/>
+        /// </summary>
+        /// <param name="task"><c>Task</c>that is providing all information for the backup</param>
+        /// <param name="destination"><c>DirectoryInfo</c> of destination where the backup should be stored</param>
+        private void BackupDifferentialProcess(Task task,DirectoryInfo destination)
         {
             BackupJournalObject backupJournalSource = (BackupJournalObject)task.Sources;
             FilesCorrect = backupJournalSource.BackupJournalFiles;
@@ -429,6 +453,11 @@ namespace KoFrMaDaemon.Backup
 
         }
 
+        /// <summary>
+        /// Creates <c>BackupJournalObject</c> of actual folder + file structure saved on local disk from given path(s) mainly used for comparing to older backup
+        /// </summary>
+        /// <param name="paths">List of <c>DirectoryInfos</c> that will be searched to create the backup journal</param>
+        /// <returns><c>BackupJournalObject</c> containing all necesary information to be able to compare it to older backup</returns>
         private BackupJournalObject JournalCurrent(List<DirectoryInfo> paths)
         {
             BackupJournalObject journalObject = new BackupJournalObject();
@@ -476,7 +505,12 @@ namespace KoFrMaDaemon.Backup
 
             }
         }
-
+        /// <summary>
+        /// Process that copy files from one local location to another and creates folders based on input parameters and can be set that only a specified size of data can be copied one at a time
+        /// </summary>
+        /// <param name="filesToCopy">List of <c>ObjectRelativeFullPath</c> files that will be copied to destination based on local variable <c>tmpDirectoryInfo</c></param>
+        /// <param name="foldersToCreate">List of <c>ObjectRelativeFullPath</c> folder structure that will be creted in destination based on local variable <c>tmpDirectoryInfo</c></param>
+        /// <param name="bufferSize">Size in MB after which the process will divide the copy into multiple instations</param>
         private void BackupFileCopy(List<ObjectRelativeFullPath> filesToCopy,List<ObjectRelativeFullPath> foldersToCreate,int? bufferSize)
         {
 
@@ -543,7 +577,9 @@ namespace KoFrMaDaemon.Backup
 
 
         }
-
+        /// <summary>
+        /// Process that will make the output destinations based from local variables deletes any temporary locations aftewards
+        /// </summary>
         private void FinishBackup()
         {
             ServiceKoFrMa.debugLog.WriteToLog("Making desired destinations...", 7);
@@ -604,7 +640,11 @@ namespace KoFrMaDaemon.Backup
 
             }
         }
-
+        /// <summary>
+        /// Process that will make the output destination format (plain/zip/..) depending on which type of <paramref name="destination"/> is included.
+        /// </summary>
+        /// <param name="backupPath">Path from where the files would be compressed/copied</param>
+        /// <param name="destination">One of destinations that inherit the <c>IDestination</c> interface</param>
         private void CreateDestinationFormat(string backupPath,IDestination destination)
         {
             if (destination is DestinationZip)
@@ -684,7 +724,11 @@ namespace KoFrMaDaemon.Backup
             }
 
         }
-
+        /// <summary>
+        /// Process that uploads the files from <paramref name="backupPath"/> to remote destination if necessary depending on which type of <paramref name="destinationPath"/> is included.
+        /// </summary>
+        /// <param name="backupPath">Path from where the files would be uploaded to remote location</param>
+        /// <param name="destinationPath">One of destinations media/type that inherit the <c>IDestinationPath</c> interface</param>
         private void CreateDestination(string backupPath,IDestinationPath destinationPath)
         {
             if (destinationPath is DestinationPathNetworkShare destinationPathNetworkShare)
@@ -727,7 +771,11 @@ namespace KoFrMaDaemon.Backup
             {
             }
         }
-
+        /// <summary>
+        /// Calculates the size in bytes of given directory and all its belongings
+        /// </summary>
+        /// <param name="directory"><c>DirectoryInfo</c> from where the size will be calculated</param>
+        /// <returns>Number of bytes that the directory takes</returns>
         private Int64 CalculateDirectorySize(DirectoryInfo directory)
         {
             Int64 tmp = 0;
@@ -784,8 +832,12 @@ namespace KoFrMaDaemon.Backup
 
         //    }
         //}
-
-        protected string CalculateMD5(string filename)
+        /// <summary>
+        /// Returns MD5 hash for file specified in <paramref name="filename"/>
+        /// </summary>
+        /// <param name="filename">Path to file that will be loaded to calculate the hash</param>
+        /// <returns>The MD5 hash of the file in string</returns>
+        private string CalculateMD5(string filename)
         {
             using (var md5 = MD5.Create())
             {
@@ -796,7 +848,11 @@ namespace KoFrMaDaemon.Backup
                 }
             }
         }
-
+        /// <summary>
+        /// Checks if there is space available in each of the destinations for the full backup of folder(s) in the <paramref name="sources"/> parameter
+        /// </summary>
+        /// <param name="sources">List of paths to folders that the size will be calulated for</param>
+        /// <param name="destinations">List of destination(s) of multiple types that all inherit from <c>IDestination</c> for which it will be checked for available space</param>
         private void CheckIfSpaceAvailable(List<string>sources, List<IDestination> destinations)
         {
             Int64 sourceLength = 0;

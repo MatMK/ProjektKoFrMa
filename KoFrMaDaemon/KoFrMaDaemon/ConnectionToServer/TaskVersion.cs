@@ -13,7 +13,7 @@ namespace KoFrMaDaemon.ConnectionToServer
         /// </summary>
         public int TaskID { get; set; }
         /// <summary>
-        /// Hash of task data for checking if something changed
+        /// Hash of task data for checking if the task has been changed since the server sent it
         /// </summary>
         public int TaskDataHash { get; set; }
     }

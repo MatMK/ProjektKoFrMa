@@ -16,27 +16,27 @@ namespace KoFrMaDaemon
         }
         public DaemonInfo DaemonInfo { get; set; }
         /// <summary>
-        /// Jedinečné ID úlohy, bude na serveru spojené s databází a server může podle ID vynutit přerušení nebo smazání naplánované úlohy
+        /// Unique ID of the task (that is connected to database on the RestAPI server and by which it can force the task to change or break)
         /// </summary>
         public int IDTask { get; set; }
 
         /// <summary>
-        /// Čas, kdy byla úloha dokončena
+        /// Time when the task was completed
         /// </summary>
         public DateTime TimeOfCompletition { get; set; }
 
         /// <summary>
-        /// Transakční journal který byl úlohou vytvořen
+        /// Back journal that is result of the backup
         /// </summary>
         public BackupJournalObject DatFile { get; set; }
 
         /// <summary>
-        /// List chyb které nastaly při záloze
+        /// List of events that happened during the task based on the log settings
         /// </summary>
         public List<string> DebugLog { get; set; }
 
         /// <summary>
-        /// Určuje, jestli byla úloha úspěšně dokočena nebo se vyskytla kritická chyba
+        /// Defines if the task was successfully completed or if fatal error ended the task prematurely
         /// </summary>
         public bool IsSuccessfull { get; set; }
 

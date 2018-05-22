@@ -10,11 +10,11 @@ namespace KoFrMaDaemon.Backup
     public class DestinationPathNetworkShare:IDestinationPath
     {
         /// <summary>
-        /// Cesta ke sdílenému úložišti určeného pro zálohu
+        /// Path to folder on network shared path
         /// </summary>
         public string Path { get; set; }
         /// <summary>
-        /// Přístupové údaje ke sdílenému úložišti (nepovinné)
+        /// Credential for the server (only needed when server requests them and computer doesn't have access already)
         /// </summary>
         public NetworkCredential NetworkCredential { get; set; }
     }

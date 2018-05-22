@@ -13,25 +13,43 @@ namespace KoFrMaDaemon.Backup
         private string FTPAddress;
         private NetworkCredential FTPCredential;
         private DirectoryInfo directoryInfo;
+        /// <summary>
+        /// Creates new connection to FTP server
+        /// </summary>
+        /// <param name="FTPAddress">Address with subfolder to the FTP server</param>
+        /// <param name="username">Username to the FTP server</param>
+        /// <param name="password">Password to the FTP server</param>
         public FTPConnection(string FTPAddress,string username, string password)
         {
             ServiceKoFrMa.debugLog.WriteToLog("Setting up settings needed for the FTP trasfer...", 7);
             FTPCredential = new NetworkCredential(username, password);
             this.FTPAddress = FTPAddress;
         }
+        /// <summary>
+        /// Creates new connection to FTP server
+        /// </summary>
+        /// <param name="FTPAddress">Address with subfolder to the FTP server</param>
+        /// <param name="networkCredential"><c>NetworkCredential</c> object that contains credentials to the FTP server</param>
         public FTPConnection(string FTPAddress, NetworkCredential networkCredential)
         {
             ServiceKoFrMa.debugLog.WriteToLog("Setting up settings needed for the FTP trasfer...", 7);
             this.FTPCredential = networkCredential;
             this.FTPAddress = FTPAddress;
         }
+        /// <summary>
+        /// Creates new connection to FTP server
+        /// </summary>
+        /// <param name="destinationPathFTP"><c>DestinationPathFTP</c> object containing all necessary values needed to connect</param>
         public FTPConnection(DestinationPathFTP destinationPathFTP)
         {
             ServiceKoFrMa.debugLog.WriteToLog("Setting up settings needed for the FTP trasfer...", 7);
             this.FTPCredential = destinationPathFTP.NetworkCredential;
             this.FTPAddress = destinationPathFTP.Path;
         }
-
+        /// <summary>
+        /// Uploads specified folder along with its subfolders and files to the FTP server
+        /// </summary>
+        /// <param name="path">Path to folder that will be uploaded</param>
         public void UploadToFTP(string path)
         {
             ServiceKoFrMa.debugLog.WriteToLog("Loading list of files and folders to copy...", 5);
