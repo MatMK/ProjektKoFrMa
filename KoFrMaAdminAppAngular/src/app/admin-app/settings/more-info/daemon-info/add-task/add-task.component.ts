@@ -21,6 +21,8 @@ export class AddTaskComponent  {
   private ncUsername : string;
   private ncPassword : string;
   private compression : string;
+  private sourcetype : string;
+  private destinationtype :string;
 
   constructor(private activeRoute:ActivatedRoute, private service : ServerConnectionService, private renderer: Renderer2, private router : Router, private data : Data) {
       this.activeRoute.params.subscribe(params => {
@@ -42,7 +44,23 @@ export class AddTaskComponent  {
   AddTask()
   {
     if(this.checkIfNumberValid(true))
-    {/*
+    {
+      let newTask : SetTask = new SetTask()
+      newTask.daemonId = this.daemonId;
+      newTask.timeToBackup = this.date;
+      newTask.sources = [this.sourcepath];
+      newTask.destinations = [this.destinationpath];
+      newTask.ncusername = this.ncUsername;
+      newTask.ncpassword = this.ncPassword;
+      newTask.backuptype = this.backuptype;
+      newTask.sourcetype = this.sourcetype;
+      newTask.destinationtype = this.destinationtype;
+
+      this.data.Loading = true;
+      this.service.SetTask([newTask]).then(res => this.service.RefreshData([3]))
+      this.router.navigate(['backup', 'app','tasks']);
+
+      /*
       let t : SetTask = new SetTask()
       t.DaemonId = this.daemonId;
       t.SourceOfBackup = this.sourcepath;

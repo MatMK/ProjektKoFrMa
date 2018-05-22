@@ -32,4 +32,10 @@ export class SetTask {
     public scriptAfter: ScriptInfo
     /** Velikost v MB jak velká může v jednu chvíli maximálně být dočasná složka na disku C pokud se zálohuje do archivu nebo na vzdálené úložiště. */
     public temporaryFolderMaxBuffer?: number;
+
+    public ncusername :string;
+    public ncpassword : string;
+    public backuptype : string;
+    public sourcetype : string;
+    public destinationtype : string;
 }

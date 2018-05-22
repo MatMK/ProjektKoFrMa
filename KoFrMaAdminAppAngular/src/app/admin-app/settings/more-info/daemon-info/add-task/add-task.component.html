@@ -13,9 +13,9 @@
       DbMSSQL <input type="radio" (click)="ShowAddSource();DbCheck()" class="basicRadio" id="sourceDbMS" name="sourceType" value="DbMSSQL" [(ngModel)]="sourceType">
     </div>
     <div id="destinationSelect">
-      FTP <input type="radio" class="basicRadio" (click)="BUcheck()" name="type" id="distant">
-      SFTP<input type="radio" class="basicRadio" (click)="BUcheck()" name="type" id="sftp">  
-      Local <input type="radio" class="basicRadio" (click)="BUcheck()" name="type" id="local">
+      FTP <input type="radio" class="basicRadio" (click)="BUcheck()" name="type" id="distant" [(ngModel)]="destinationType">
+      SFTP<input type="radio" class="basicRadio" (click)="BUcheck()" name="type" id="sftp"[(ngModel)]="destinationType">  
+      Local <input type="radio" class="basicRadio" (click)="BUcheck()" name="type" id="local"[(ngModel)]="destinationType">
     </div>
     <div id="ifServer" style="display:none">
       <input type='text' placeholder="Username" class="BasicInput" id='distUser' name='dUser'[(ngModel)]="ncUsername" ><br>
