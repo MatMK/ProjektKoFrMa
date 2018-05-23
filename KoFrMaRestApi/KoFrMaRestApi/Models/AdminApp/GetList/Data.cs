@@ -22,7 +22,7 @@ namespace KoFrMaRestApi.Models.AdminApp.GetList
                 //Data 3 = TbTasks
                 if (item == 3)
                     tbTasks = table.GetTasks();
-                //Data 5 = tbCompletedTasks
+                //Data 4 = tbCompletedTasks
                 if (item == 4)
                     tbTasksCompleted = table.GetTasksCompleted();
                 //Data 5 = tbServerExceptions

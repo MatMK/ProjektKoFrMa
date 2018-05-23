@@ -20,22 +20,24 @@ namespace KoFrMaRestApi.Controllers
     /// </summary>
     public class DaemonController : ApiController
     {
-        Token token = new Token();
+        //Token token = new Token();
         MySqlDaemon mySqlCom = new MySqlDaemon();
         /// <summary>
-        /// Vraci instrukce pro daemon a registruje daemony do databaze.
+        /// Submits daemons completed tasks and returns new tasks if there are any.
+        /// AUTHENTICATION:
+        /// Use valid token retrievable from <see cref="Register(Password)"/>
         /// </summary>
-        /// <param name="daemon"></param>
-        /// <returns>Obsahuje informace o deamonu zasílajicim informaci.</returns>
+        /// <param name="request">Contains </param>
+        /// <returns>Contains new Tasks to execute</returns>
         [HttpPost, Route(@"api/Daemon/GetInstructions")]
         public List<Task> GetInstructions(Request request)
         {
-            if (token.Authorized(request.daemon))
+            using (MySqlConnection connection = WebApiConfig.Connection())
             {
-                TasksCompleted(request.CompletedTasks);
-                using (MySqlConnection connection = WebApiConfig.Connection())
+                connection.Open();
+                if (mySqlCom.Authorized(request.daemon.PC_Unique, request.daemon.Token, connection))
                 {
-                    connection.Open();
+                    TasksCompleted(request.CompletedTasks);
                     //Zjistí zda je Daemon už zaregistrovaný, pokud ne, přidá ho do databáze
                     string DaemonId = mySqlCom.GetDaemonId(request.daemon, connection);
                     mySqlCom.DaemonSeen(DaemonId, connection);
@@ -47,7 +49,7 @@ namespace KoFrMaRestApi.Controllers
                     {
                         foreach (var item in request.TasksVersions)
                         {
-                            if ((tasks[i].IDTask == item.TaskID)&&(tasks[i].GetHashCode()==item.TaskDataHash))
+                            if ((tasks[i].IDTask == item.TaskID) && (tasks[i].GetHashCode() == item.TaskDataHash))
                             {
                                 ToRemove.Add(i);
                             }
@@ -62,7 +64,7 @@ namespace KoFrMaRestApi.Controllers
                     }
                     for (int i = BackupJournalNotNeeded.Count - 1; i >= 0; i--)
                     {
-                        tasks[BackupJournalNotNeeded[i]].Sources = new SourceJournalLoadFromCache() { JournalID = BackupJournalNotNeeded[i]};
+                        tasks[BackupJournalNotNeeded[i]].Sources = new SourceJournalLoadFromCache() { JournalID = BackupJournalNotNeeded[i] };
                     }
                     for (int i = ToRemove.Count - 1; i >= 0; i--)
                     {
@@ -70,14 +72,16 @@ namespace KoFrMaRestApi.Controllers
                     }
                     return tasks;
                 }
-            }
-            else
-            {
-                return null;
+                else
+                {
+                    return null;
+                }
             }
         }
         /// <summary>
         /// Registers completed tasks in SQL database. Creates new task if completed task should repeat
+        /// AUTHENTICATION:
+        /// Use valid token retrievable from <see cref="Register(Password)"/>
         /// </summary>
         /// <param name="tasksCompleted">List of completed tasks</param>
         private void TasksCompleted(List<TaskComplete> tasksCompleted)
@@ -100,23 +104,26 @@ namespace KoFrMaRestApi.Controllers
             }
         }
         /// <summary>
-        /// Registers new token to SQL database. Token 
+        /// Returns token useable only in <see cref="DaemonController"/>
         /// </summary>
         /// <param name="password">Input with daemon's <see cref="DaemonInfo"/> and password in base64</param>
         /// <returns>Returns token</returns>
         [HttpPost, Route(@"api/Daemon/RegisterToken")]
         public string Register(Password password)
         {
+            string encryptedPassword;
+            string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
             Bcrypter encrypt = new Bcrypter();
             using (MySqlConnection connection = WebApiConfig.Connection())
             {
-                //encrypt.BcryptPasswordInBase64(password.password);
+                encryptedPassword = encrypt.BcryptPasswordInBase64(encrypt.Base64Encode(password.password));
                 connection.Open();
                 mySqlCom.DaemonSeen(mySqlCom.GetDaemonId(password.daemon, connection), connection);
-                mySqlCom.RegisterDaemonAndGetId(password.daemon, password.password, connection);
+                mySqlCom.RegisterDaemonAndGetId(password.daemon, encryptedPassword, connection);
                 connection.Close();
             }
-            return token.CreateToken(password.password, password.daemon);
+            mySqlCom.RegisterToken(password.daemon.PC_Unique,encryptedPassword,token);
+            return token;
         }
     }
 }

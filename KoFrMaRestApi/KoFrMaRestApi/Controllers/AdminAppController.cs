@@ -20,22 +20,54 @@ using KoFrMaRestApi.Models.AdminApp.RepeatingTasks;
 
 namespace KoFrMaRestApi.Controllers
 {
+    /// <summary>
+    /// Used for communication between AdminApp and RestApi
+    /// AUTHENTICATION:
+    /// Use valid token in <see cref="PostAdmin.adminInfo"/> retrievable from <see cref="RegisterToken(AdminLogin)"/>
+    /// Http codes:
+    /// <list type="bullet">
+    /// <item>
+    /// <description>400 Bad Request - invalid input</description>
+    /// </item>
+    /// <item>
+    /// <description>401 Unauthorized - invalid token or username</description>
+    /// </item>
+    /// <item>
+    /// <description>403 Forbidden - insufficient permission</description>
+    /// </item>
+    /// <item>
+    /// <description>200 OK - OK</description>
+    /// </item>
+    /// <item>
+    /// <description>500 Internal Server Error - Something when wrong on the server, check ServerExceptions table in AdminApp to see more details</description>
+    /// </item>
+    /// </list>
+    /// </summary>
     [EnableCors(origins: "*", headers: "*", methods: "*", exposedHeaders: "X-My-Header")]
     public class AdminAppController : ApiController
     {
         private string BadRequestCantDeserialize = "Server didn't recieve correct data, please try again.";
         private string BadRequestInvalidUsername = "Invalid username";
-        private string BadRequestInvalidEmail = "Invalid email";
         private string BadRequestCannotSetPermission = "You don't have permission to set permissions";
         private string BadRequestUsernameExists = "This username already exists";
         InputCheck check = new InputCheck();
-        Token token = new Token();
+        //Token token = new Token();
         MySqlAdmin mySqlCom = new MySqlAdmin();
+        /// <summary>
+        /// Used for logging in
+        /// </summary>
+        /// <param name="adminLogin">Password</param>
+        /// <returns>Token usable only in <see cref="AdminAppController"/></returns>
         [HttpPost, Route(@"api/AdminApp/RegisterToken")]
         public string RegisterToken(AdminLogin adminLogin)
         {
             return mySqlCom.RegisterToken(adminLogin);
         }
+        /// <summary>
+        /// Used for determining if an admin has permission
+        /// </summary>
+        /// <param name="adminInfo">Information about administrator</param>
+        /// <returns>True if administrator has permission</returns>
         [HttpPost, Route(@"api/AdminApp/Permitted")]
         public bool Permitted(AdminInfo adminInfo)
         {
@@ -46,6 +78,8 @@ namespace KoFrMaRestApi.Controllers
             }
             return mySqlCom.HasPermission((int)AdminId,adminInfo.Permission);
         }
+        //Used for determining if an admin has permission
+        //Returns true if administrator has permission
         private bool Permitted(string Username, int[] Permission)
         {
             int? AdminId = mySqlCom.GetAdminId(Username);
@@ -55,28 +89,54 @@ namespace KoFrMaRestApi.Controllers
             }
             return mySqlCom.HasPermission((int)AdminId, Permission);
         }
+        /// <summary>
+        /// Used for checking whether administrator is authorized
+        /// </summary>
+        /// <param name="adminInfo">Information about administrator</param>
+        /// <returns></returns>
         [HttpPost, Route(@"api/AdminApp/Authorized")]
         public bool Authorized(AdminInfo adminInfo)
         {
             return mySqlCom.Authorized(adminInfo.UserName, adminInfo.Token);
         }
+        /// <summary>
+        /// Used for setting a new list of <see cref="Task"/>
+        /// INPUT:
+        /// <see cref="SetTasksRequest"/>
+        /// AUTHENTICATION:
+        /// Use valid token in <see cref="PostAdmin.adminInfo"/> retrievable from <see cref="RegisterToken(AdminLogin)"/>
+        /// </summary>
+        /// <param name="postAdmin">Information about administrator</param>
         [HttpPost, Route(@"api/AdminApp/SetTask")]
-        public bool SetTask(PostAdmin postAdmin)
+        public void SetTask(PostAdmin postAdmin)
         {
-            if (token.Authorized(postAdmin))
+            if (this.Authorized(postAdmin.adminInfo))
             {
                 mySqlCom.SetTasks(((SetTasksRequest)postAdmin.request).setTasks);
-                return true;
             }
             else
             {
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
             }
         }
+        /// <summary>
+        /// Used for getting data from database
+        /// AUTHENTICATION:
+        /// Use valid token in <see cref="PostAdmin.adminInfo"/> retrievable from <see cref="RegisterToken(AdminLogin)"/>
+        /// </summary>
+        /// <param name="postAdmin">IRequest is <see cref="GetDataRequest"/>
+        /// <para />Data you want to retrieve from SQL database are marked as nubmers in <see cref="GetDataRequest.getData"/>
+        /// <para />1 = <see cref="tbAdminAccounts"/>
+        /// <para />2 = <see cref="tbDaemons"/>
+        /// <para />3 = <see cref="tbTasks"/>
+        /// <para />4 = <see cref="tbTasksCompleted"/>
+        /// <para />5 = <see cref="tbServerExceptions"/>
+        /// </param>
+        /// <returns>Returns selected data from database</returns>
         [HttpPost, Route(@"api/AdminApp/GetSqlData")]
         public Data GetSqlData(PostAdmin postAdmin)
         {
-            if (token.Authorized(postAdmin))
+            if (this.Authorized(postAdmin.adminInfo))
             {
                 Data d = new Data(((GetDataRequest) postAdmin.request).getData);
                 return d;
@@ -189,6 +249,14 @@ namespace KoFrMaRestApi.Controllers
             else
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
+        /// <summary>
+        /// Used for adding new administrators
+        /// AUTHENTICATION:
+        /// Use valid token in <see cref="PostAdmin.adminInfo"/> retrievable from <see cref="RegisterToken(AdminLogin)"/>
+        /// Permission 4 is required
+        /// </summary>
+        /// <param name="postAdmin">IRequest is <see cref="AddAdminRequest"/></param>
+        /// <returns>Returns <see cref="HttpStatusCode"/></returns>
         [HttpPost, Route(@"api/AdminApp/AddAdmin")]
         public HttpResponseMessage AddAdmin(PostAdmin postAdmin)
         {
@@ -215,6 +283,12 @@ namespace KoFrMaRestApi.Controllers
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
             return Request.CreateResponse(HttpStatusCode.OK);
         }
+        /// <summary>
+        /// Deletes admin's token
+        /// AUTHENTICATION:
+        /// Use valid token in <see cref="PostAdmin.adminInfo"/> retrievable from <see cref="RegisterToken(AdminLogin)"/>
+        /// </summary>
+        /// <param name="admin">Information about administrator</param>
         [HttpPost, Route(@"api/AdminApp/LogOut")]
         public void LogOut(AdminInfo admin)
         {
@@ -231,6 +305,14 @@ namespace KoFrMaRestApi.Controllers
                 }
             }
         }
+        /// <summary>
+        /// Used for deleting rows in table tbAdminAccounts, tbDaemons or tbTasks
+        /// AUTHENTICATION:
+        /// Use valid token in <see cref="PostAdmin.adminInfo"/> retrievable from <see cref="RegisterToken(AdminLogin)"/>
+        /// Permission 3 is required
+        /// </summary>
+        /// <param name="postAdmin">IRequest is <see cref="DeleteRowRequest"/></param>
+        /// <returns></returns>
         [HttpPost, Route(@"api/AdminApp/DeleteRow")]
         public string DeleteRow(PostAdmin postAdmin)
         {
@@ -246,6 +328,13 @@ namespace KoFrMaRestApi.Controllers
             else
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
+        /// <summary>
+        /// Used for checking if username already exists.
+        /// </summary>
+        /// AUTHENTICATION:
+        /// Use valid token in <see cref="PostAdmin.adminInfo"/> retrievable from <see cref="RegisterToken(AdminLogin)"/>
+        /// <param name="postAdmin">IRequest is <see cref="ExistsRequest"/></param>
+        /// <returns>True if username already exists</returns>
         [HttpPost, Route(@"api/AdminApp/Exists")]
         public bool Exists(PostAdmin postAdmin)
         {
@@ -256,6 +345,13 @@ namespace KoFrMaRestApi.Controllers
             else
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
+        /// <summary>
+        /// Used for changing passwords
+        /// AUTHENTICATION:
+        /// Use valid token in <see cref="PostAdmin.adminInfo"/> retrievable from <see cref="RegisterToken(AdminLogin)"/>
+        /// Permission 3 and 5 is required if different admin's password if being changed 
+        /// </summary>
+        /// <param name="postAdmin">IRequest is <see cref="ChangePasswordRequest"/></param>
         [HttpPost, Route(@"api/AdminApp/UpdatePassword")]
         public void UpdatePassword(PostAdmin postAdmin)
         {

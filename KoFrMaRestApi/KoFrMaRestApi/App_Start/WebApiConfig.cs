@@ -10,9 +10,20 @@ using MySql.Data.MySqlClient;
 
 namespace KoFrMaRestApi
 {
+    /// <summary>
+    /// RestApi main configuration
+    /// </summary>
     public static class WebApiConfig
     {
-        public static string WebServerURL;
+        /// <summary>
+        /// Url of AdminApp
+        /// Used for Email links
+        /// </summary>
+        public static string WebServerURL = "http://localhost:4200/";
+        /// <summary>
+        /// returns MySqlConnection
+        /// </summary>
+        /// <returns>MySqlConnection</returns>
         public static MySqlConnection Connection()
         {
             string connectionS = "server=mysqlstudenti.litv.sssvt.cz;uid=kocourekmatej;pwd=KoFrMa123456;database=3b1_kocourekmatej_db2";
@@ -22,8 +33,10 @@ namespace KoFrMaRestApi
             return Connection;
 
         }
-
-
+        /// <summary>
+        /// Sets up APIs
+        /// </summary>
+        /// <param name="config"></param>
         public static void Register(HttpConfiguration config)
         {
             //překládání xml na json
@@ -39,7 +52,7 @@ namespace KoFrMaRestApi
                routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
            );
-            EnableCorsAttribute cors = new EnableCorsAttribute("http://localhost:4200/", "*", "GET,POST");
+            EnableCorsAttribute cors = new EnableCorsAttribute(WebServerURL, "*", "GET,POST");
             config.EnableCors(cors);
         }
     }

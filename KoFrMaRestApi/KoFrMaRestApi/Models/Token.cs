@@ -1,7 +1,7 @@
 ﻿using KoFrMaRestApi.Models.Daemon;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+/*using System.Linq;
 using System.Web;
 using MySql.Data.MySqlClient;
 using KoFrMaRestApi.Models.AdminApp;
@@ -25,7 +25,7 @@ namespace KoFrMaRestApi.Models
             }
             return result;
         }
-        public string CreateToken(Int64 HashPassword, DaemonInfo daemon)
+        public string CreateToken(string HashPassword, DaemonInfo daemon)
         {
             string Token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
             SqlDaemon.RegisterToken(daemon.PC_Unique, HashPassword, Token);
@@ -36,4 +36,4 @@ namespace KoFrMaRestApi.Models
             return SqlAdmin.Authorized(postAdmin.adminInfo.UserName, postAdmin.adminInfo.Token);
         }
     }
-}
+}*/

@@ -34,11 +34,9 @@ namespace KoFrMaRestApi.MySqlCom
                     return null;
                 }
             }
-
         }
-        public string RegisterDaemonAndGetId(DaemonInfo daemon, Int64 Password, MySqlConnection connection)
+        public string RegisterDaemonAndGetId(DaemonInfo daemon, string Password, MySqlConnection connection)
         {
-
             using (MySqlDataReader reader = SelectFromTableByPcId(connection, daemon))
             {
                 if (reader.Read())
@@ -118,10 +116,11 @@ namespace KoFrMaRestApi.MySqlCom
             }
         }
         /// <summary>
-        /// Odstraní task z databáze a přidá ho do task completed
+        /// Sets task's state to completed and 
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="connection"></param>
+        /// <param name="taskComplete">Completed task</param>
+        /// <param name="connection">Open MySQL connection</param>
+        /// <param name="isSuccessful">Was task successful</param>
         private void TaskRemove(TaskComplete taskComplete, MySqlConnection connection, bool isSuccessful)
         {
             if (isSuccessful)
@@ -148,11 +147,11 @@ namespace KoFrMaRestApi.MySqlCom
             }
         }
         /// <summary>
-        /// rodlouží task o dany počet minut
+        /// If next execution time exists new task is created and current is marked as completed else task is removed with <see cref="TaskRemove(TaskComplete, MySqlConnection, bool)"/>
         /// </summary>
-        /// <param name="taskComplete"></param>
-        /// <param name="JsonTime"></param>
-        /// <param name="connection"></param>
+        /// <param name="taskComplete">Completed task</param>
+        /// <param name="JsonTime">T<see cref="TaskRepeating"/> in json</param>
+        /// <param name="connection">open MySqlConnection</param>
         private void TaskExtend(TaskComplete taskComplete,string JsonTime, MySqlConnection connection)
         {
             TaskRepeating repeat = JsonSerializationUtility.Deserialize<TaskRepeating>(JsonTime);
@@ -266,25 +265,6 @@ namespace KoFrMaRestApi.MySqlCom
                 }
             }
         }
-        /*
-        private void UpdateBackupJournal(int IdTask, BackupJournalObject backupJournal, MySqlConnection connection)
-        {
-            using (MySqlCommand command = new MySqlCommand("SELECT `Task` FROM `tbTasks` WHERE `Id` = @IdTask", connection))
-            {
-                Task task = null;
-                command.Parameters.AddWithValue("@IdTask", IdTask);
-                using (MySqlDataReader reader = command.ExecuteReader())
-                {
-                    if (reader.Read())
-                        task = JsonConvert.DeserializeObject<Task>((string)reader["Task"]);
-                    reader.Close();
-                }
-                task.BackupJournalSource = backupJournal;
-                command.CommandText = "UPDATE `tbTasks` SET `Task`= @NewTask where Id = @IdTask";
-                command.Parameters.AddWithValue("@NewTask", task);
-                command.ExecuteNonQuery();
-            }
-        }*/
         private bool HasDateException(DateTime item, List<ExceptionDate> ExceptionDates)
         {
             bool result = true;
@@ -319,7 +299,7 @@ namespace KoFrMaRestApi.MySqlCom
             return query.ExecuteReader();
         }
         /// <summary>
-        /// Zapíše do databáze čas kdy byla funkce zavolána
+        /// Updates lastSeen column in database
         /// </summary>
         public void DaemonSeen(string DaemonId, MySqlConnection connection)
         {
@@ -330,8 +310,12 @@ namespace KoFrMaRestApi.MySqlCom
             }
         }
         /// <summary>
-        /// Kontroluje zda token odpovídá počítači
+        /// Checks if token is valid
         /// </summary>
+        /// <param name="PC_Unique">unique pc identifier</param>
+        /// <param name="Token">token</param>
+        /// <param name="connection">open MySqlConnection</param>
+        /// <returns></returns>
         public bool Authorized(string PC_Unique, string Token, MySqlConnection connection)
         {
             bool result;
@@ -350,19 +334,25 @@ namespace KoFrMaRestApi.MySqlCom
             }
             return result;
         }
-        public void RegisterToken(string PC_Unique, Int64 Password, string Token)
+        /// <summary>
+        /// Registers token to database 
+        /// </summary>
+        /// <param name="PC_Unique">unique pc identifier</param>
+        /// <param name="Password">password</param>
+        /// <param name="Token">token</param>
+        public void RegisterToken(string PC_Unique, string Password, string Token)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
             using (MySqlCommand command = new MySqlCommand(@"SELECT `Password` FROM `tbDaemons` WHERE `PC_Unique` = @PC_Unique", connection))
             {
-                Int64? DatabasePassword = null;
+                string DatabasePassword = null;
                 connection.Open();
                 command.Parameters.AddWithValue("@PC_Unique", PC_Unique);
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        DatabasePassword = (Int64)reader["Password"];
+                        DatabasePassword = (string)reader["Password"];
                     }
                     reader.Close();
                 }
@@ -371,21 +361,7 @@ namespace KoFrMaRestApi.MySqlCom
                     command.CommandText = @"UPDATE `tbDaemons` SET `Token`= @Token WHERE `PC_Unique` = @PC_Unique";
                     command.Parameters.AddWithValue("@Token", Token);
                     command.ExecuteNonQuery();
-
                 }
-            }
-        }
-        public bool RegisterToken(Int64 Password, string Token)
-        {
-            using (MySqlConnection connection = WebApiConfig.Connection())
-            using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbDaemons` SET `Token`= @Token WHERE `Password` = @Password", connection))
-            {
-                connection.Open();
-                command.Parameters.AddWithValue("@Token", Token);
-                command.Parameters.AddWithValue("@Password", Password);
-                if (command.ExecuteNonQuery() == 0)
-                    return false;
-                return true;
             }
         }
         public void TaskFailed(TaskComplete taskComplete)
