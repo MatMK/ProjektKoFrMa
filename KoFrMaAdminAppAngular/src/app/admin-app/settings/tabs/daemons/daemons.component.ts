@@ -38,7 +38,7 @@ export class DaemonsComponent implements OnInit {
   }
   changeEnabled(id, value)
   {
-    this.service.AlterDataAllowed(new ChangeTable(id,value)).catch(msg=>{
+    this.service.AlterTable(new ChangeTable("tbDaemons", id,"Allowed", value )).catch(msg=>{
       this.data.Data.tbDaemons.data.forEach(element => {
         if(element.Id == id)
           element.Allowed = !element.Allowed;

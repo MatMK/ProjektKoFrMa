@@ -42,6 +42,12 @@ namespace KoFrMaRestApi.Controllers
     /// <description>500 Internal Server Error - Something when wrong on the server, check ServerExceptions table in AdminApp to see more details</description>
     /// </item>
     /// </list>
+    /// Permission codes:
+    /// 1 - Add Admins
+    /// 2 - Add Tasks
+    /// 3 - Change Table Data
+    /// 4 - Change Permissions
+    /// 5 - Change Passwords
     /// </summary>
     [EnableCors(origins: "*", headers: "*", methods: "*", exposedHeaders: "X-My-Header")]
     public class AdminAppController : ApiController
@@ -56,7 +62,7 @@ namespace KoFrMaRestApi.Controllers
         /// <summary>
         /// Used for logging in
         /// </summary>
-        /// <param name="adminLogin">Password</param>
+        /// <param name="adminLogin">Admin login credentials</param>
         /// <returns>Token usable only in <see cref="AdminAppController"/></returns>
         [HttpPost, Route(@"api/AdminApp/RegisterToken")]
         public string RegisterToken(AdminLogin adminLogin)
@@ -89,7 +95,7 @@ namespace KoFrMaRestApi.Controllers
             }
             return mySqlCom.HasPermission((int)AdminId, Permission);
         }
-        /// <summary>
+         /// <summary>
         /// Used for checking whether administrator is authorized
         /// </summary>
         /// <param name="adminInfo">Information about administrator</param>
@@ -146,102 +152,24 @@ namespace KoFrMaRestApi.Controllers
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
             }
         }
-        [HttpPost, Route(@"api/AdminApp/AlterDataUsername")]
-        public HttpResponseMessage AlterDataUsername(PostAdmin postAdmin)
-        {
-            if (this.Authorized(postAdmin.adminInfo))
-            {
-                if (Permitted(postAdmin.adminInfo.UserName, new int[] { 3 }))
-                {
-                    if(!check.Username(((ChangeTableRequest)postAdmin.request).changeTable.Value))
-                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, BadRequestInvalidUsername);
-                    if (Exists(new PostAdmin() { adminInfo = postAdmin.adminInfo, request = new ExistsRequest() { TableName =  "tbAdminAccounts", Column = "Username", Value = (((ChangeTableRequest)postAdmin.request).changeTable.Value)} }))
-                    {
-                        mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbAdminAccounts", "Username");
-                    }
-                    else
-                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, BadRequestUsernameExists);
-                }
-                else
-                    throw new HttpResponseException(HttpStatusCode.Forbidden);
-            }
-            else
-                throw new HttpResponseException(HttpStatusCode.Unauthorized);
-            return Request.CreateResponse(HttpStatusCode.OK);
-        }
-        [HttpPost, Route(@"api/AdminApp/AlterDataEmail")]
-        public string AlterDataEmail(PostAdmin postAdmin)
-        {
-            if (this.Authorized(postAdmin.adminInfo))
-            {
-                if (Permitted(postAdmin.adminInfo.UserName, new int[] { 3 }))
-                {
-                    mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbAdminAccounts", "Email");
-                    return null;
-                }
-                else
-                    throw new HttpResponseException(HttpStatusCode.Forbidden);
-            }
-            else
-                throw new HttpResponseException(HttpStatusCode.Unauthorized);
-        }
-        [HttpPost, Route(@"api/AdminApp/AlterDataEnabled")]
-        public string AlterDataEnabled(PostAdmin postAdmin)
-        {
-            if (this.Authorized(postAdmin.adminInfo))
-            {
-                if (Permitted(postAdmin.adminInfo.UserName, new int[] { 3 }))
-                {
-                    mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbAdminAccounts", "Enabled");
-                    return null;
-                }
-                else
-                    throw new HttpResponseException(HttpStatusCode.Forbidden);
-            }
-            else
-                throw new HttpResponseException(HttpStatusCode.Unauthorized);
-        }
+        /// <summary>
+        /// Changes permission of a user
+        /// AUTHENTICATION:
+        /// Use valid token in <see cref="PostAdmin.adminInfo"/> retrievable from <see cref="RegisterToken(AdminLogin)"/>
+        /// Permissions 3 and 4 are required
+        /// </summary>
+        /// <param name="postAdmin">IRequest is <see cref="GetDataRequest"/></param>
         [HttpPost, Route(@"api/AdminApp/AlterDataPermissions")]
-        public string AlterDataPermissions(PostAdmin postAdmin)
+        public void AlterDataPermissions(PostAdmin postAdmin)
         {
             if (this.Authorized(postAdmin.adminInfo))
             {
                 if (Permitted(postAdmin.adminInfo.UserName, new int[] { 3, 4 }))
                 {
-                    mySqlCom.AlterPermissions(((ChangePermissionRequest)postAdmin.request).changePermission);
-                    return null;
-                }
-                else
-                    throw new HttpResponseException(HttpStatusCode.Forbidden);
-            }
-            else
-                throw new HttpResponseException(HttpStatusCode.Unauthorized);
-        }
-        [HttpPost, Route(@"api/AdminApp/AlterDataIdDaemon")]
-        public string AlterDataIdDaemon(PostAdmin postAdmin)
-        {
-            if (this.Authorized(postAdmin.adminInfo))
-            {
-                if (Permitted(postAdmin.adminInfo.UserName, new int[] { 3 }))
-                {
-                    mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbTasks", "IdDaemon");
-                    return null;
-                }
-                else
-                    throw new HttpResponseException(HttpStatusCode.Forbidden);
-            }
-            else
-                throw new HttpResponseException(HttpStatusCode.Unauthorized);
-        }
-        [HttpPost, Route(@"api/AdminApp/AlterDataAllowed")]
-        public string AlterDataAllowed(PostAdmin postAdmin)
-        {
-            if (this.Authorized(postAdmin.adminInfo))
-            {
-                if (Permitted(postAdmin.adminInfo.UserName, new int[] { 3 }))
-                {
-                    mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable, "tbDaemons", "Allowed");
-                    return null;
+                    if (postAdmin.request is ChangePermissionRequest)
+                        mySqlCom.AlterPermissions(((ChangePermissionRequest)postAdmin.request).changePermission);
+                    else
+                        throw new HttpResponseException(HttpStatusCode.BadRequest);
                 }
                 else
                     throw new HttpResponseException(HttpStatusCode.Forbidden);
@@ -253,7 +181,7 @@ namespace KoFrMaRestApi.Controllers
         /// Used for adding new administrators
         /// AUTHENTICATION:
         /// Use valid token in <see cref="PostAdmin.adminInfo"/> retrievable from <see cref="RegisterToken(AdminLogin)"/>
-        /// Permission 4 is required
+        /// Permission 4 is required if admin's permissions are being set
         /// </summary>
         /// <param name="postAdmin">IRequest is <see cref="AddAdminRequest"/></param>
         /// <returns>Returns <see cref="HttpStatusCode"/></returns>
@@ -349,7 +277,7 @@ namespace KoFrMaRestApi.Controllers
         /// Used for changing passwords
         /// AUTHENTICATION:
         /// Use valid token in <see cref="PostAdmin.adminInfo"/> retrievable from <see cref="RegisterToken(AdminLogin)"/>
-        /// Permission 3 and 5 is required if different admin's password if being changed 
+        /// Permission 3 and 5 is required unless you are changing your own account's password
         /// </summary>
         /// <param name="postAdmin">IRequest is <see cref="ChangePasswordRequest"/></param>
         [HttpPost, Route(@"api/AdminApp/UpdatePassword")]
@@ -366,6 +294,84 @@ namespace KoFrMaRestApi.Controllers
             }
             else
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
+        }
+        /// <summary>
+        /// Used for chaning data in sql table
+        /// AUTHENTICATION:
+        /// Use valid token in <see cref="PostAdmin.adminInfo"/> retrievable from <see cref="RegisterToken(AdminLogin)"/>
+        /// Permission 3 is required
+        /// Allowed columns
+        /// <list type="bullet">
+        /// <item>
+        /// <description>Allowed - boolean</description>
+        /// </item>
+        /// <item>
+        /// <description>IdDaemon - integer</description>
+        /// </item>
+        /// <item>
+        /// <description>Enabled - boolean</description>
+        /// </item>
+        /// <item>
+        /// <description>Email - string</description>
+        /// </item>
+        /// <item>
+        /// <description>Username - string, has to be unique -> to check use <see cref="Exists(PostAdmin)"/></description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="postAdmin">IRequest is <see cref="ChangeTableRequest"/></param>
+        [HttpPost, Route(@"api/AdminApp/AlterTable")]
+        public void AlterTable(PostAdmin postAdmin)
+        {
+            if (postAdmin.request is ChangeTableRequest)
+            {
+                if (this.Authorized(postAdmin.adminInfo))
+                {
+                    if (Permitted(postAdmin.adminInfo.UserName, new int[] { 3 }))
+                    {
+                        if  (((ChangeTableRequest)postAdmin.request).changeTable.ColumnName == "Allowed" &&
+                            ((ChangeTableRequest)postAdmin.request).changeTable.Value is bool)
+                        {
+                            mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable);
+                        }
+                        else if (((ChangeTableRequest)postAdmin.request).changeTable.ColumnName == "IdDaemon" &&
+                                ((ChangeTableRequest)postAdmin.request).changeTable.Value is int)
+                        {
+                            mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable);
+                        }
+                        else if (((ChangeTableRequest)postAdmin.request).changeTable.ColumnName == "Enabled" &&
+                                ((ChangeTableRequest)postAdmin.request).changeTable.Value is bool)
+                        {
+                            mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable);
+                        }
+                        else if (((ChangeTableRequest)postAdmin.request).changeTable.ColumnName == "Email" &&
+                                ((ChangeTableRequest)postAdmin.request).changeTable.Value is string)
+                        {
+                            mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable);
+                        }
+                        else if (((ChangeTableRequest)postAdmin.request).changeTable.ColumnName == "Username" &&
+                                mySqlCom.Exists(new ExistsRequest()
+                                {
+                                    Column = ((ChangeTableRequest)postAdmin.request).changeTable.ColumnName,
+                                    TableName = ((ChangeTableRequest)postAdmin.request).changeTable.TableName,
+                                    Value = ((ChangeTableRequest)postAdmin.request).changeTable.Value
+                                }))
+                        {
+                            mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable);
+                        }
+                        else
+                        {
+                            throw new HttpResponseException(HttpStatusCode.BadRequest);
+                        }
+                    }
+                    else
+                        throw new HttpResponseException(HttpStatusCode.Forbidden);
+                }
+                else
+                    throw new HttpResponseException(HttpStatusCode.Unauthorized);
+            }
+            else
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
         }
         [HttpGet, Route(@"api/AdminApp/test")]
         public string test()

@@ -12,9 +12,17 @@ using System.Web;
 
 namespace KoFrMaRestApi.MySqlCom
 {
+    /// <summary>
+    /// Used for comunnication with SQL
+    /// </summary>
     public class MySqlAdmin
     {
         Bcrypter Verification = new Bcrypter();
+        /// <summary>
+        /// Returns new token
+        /// </summary>
+        /// <param name="adminLogin">Admin login credentials</param>
+        /// <returns>new token</returns>
         public string RegisterToken(AdminLogin adminLogin)
         {
             string DatabasePassword = "";
@@ -58,6 +66,12 @@ namespace KoFrMaRestApi.MySqlCom
                     return null;
             }
         }
+        /// <summary>
+        /// Checks if admin is authorized
+        /// </summary>
+        /// <param name="Username">admin's username</param>
+        /// <param name="Token">admin's token</param>
+        /// <returns>True if admin is authorized</returns>
         public bool Authorized(string Username, string Token)
         {
             bool result;
@@ -80,13 +94,19 @@ namespace KoFrMaRestApi.MySqlCom
             return result;
 
         }
-        public bool HasPermission(int daemonId, int[] reqPermission)
+        /// <summary>
+        /// Checks if admin has valid permission
+        /// </summary>
+        /// <param name="adminid">Id of the admin in SQL database, use <see cref="GetAdminId(string)"/> to get Id</param>
+        /// <param name="reqPermission">Array of permissions</param>
+        /// <returns>True if admin has all permissions</returns>
+        public bool HasPermission(int adminid, int[] reqPermission)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
             using (MySqlCommand command = new MySqlCommand(@"SELECT `Permission` FROM `tbPermissions` WHERE `IdAdmin` = @IdAdmin", connection))
             {
                 connection.Open();
-                command.Parameters.AddWithValue("@IdAdmin", daemonId);
+                command.Parameters.AddWithValue("@IdAdmin", adminid);
                 int count = 0;
                 foreach (int item in reqPermission)
                 {
@@ -108,6 +128,11 @@ namespace KoFrMaRestApi.MySqlCom
                 return false;
             }
         }
+        /// <summary>
+        /// Gets admin id from database
+        /// </summary>
+        /// <param name="username">Admin's usernmae</param>
+        /// <returns>Integer id of admin in database or null if there is no admin</returns>
         public int? GetAdminId(string username)
         {
             int? result = null;
@@ -172,6 +197,10 @@ namespace KoFrMaRestApi.MySqlCom
                 }
             }
         }
+        /// <summary>
+        /// Adds admin to database
+        /// </summary>
+        /// <param name="addAdmin">New admin data</param>
         public void AddAdmin(AddAdmin addAdmin)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
@@ -191,16 +220,25 @@ namespace KoFrMaRestApi.MySqlCom
                 }
             }
         }
-        public void AlterTable(ChangeTable changeTable, string TableName, string ColumnName)
+        /// <summary>
+        /// Changes table value
+        /// </summary>
+        /// <param name="changeTable">Data to change value</param>
+        public void AlterTable(ChangeTable changeTable)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
-            using (MySqlCommand command = new MySqlCommand($"UPDATE `{TableName}` SET `{ColumnName}` = @Value WHERE `Id` = {changeTable.Id};", connection))
+            using (MySqlCommand command = new MySqlCommand($"UPDATE `{changeTable.TableName}` SET `{changeTable.ColumnName}` = @Value WHERE `Id` = {changeTable.Id};", connection))
             {
                 connection.Open();
                 command.Parameters.AddWithValue("@Value", changeTable.Value);
                 command.ExecuteNonQuery();
             }
         }
+        /// <summary>
+        /// returns next autoincrement of id
+        /// </summary>
+        /// <param name="table">Table name</param>
+        /// <returns></returns>
         public int NextAutoIncrement(string table)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
@@ -220,6 +258,10 @@ namespace KoFrMaRestApi.MySqlCom
                 }
             }
         }
+        /// <summary>
+        /// Deletes admin's token from database
+        /// </summary>
+        /// <param name="AdminId">Id of the admin in SQL database, use <see cref="GetAdminId(string)"/> to get Id</param>
         public void LogOut(int AdminId)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
@@ -229,6 +271,10 @@ namespace KoFrMaRestApi.MySqlCom
                 command.ExecuteNonQuery();
             }
         }
+        /// <summary>
+        /// Deletes a row in table
+        /// </summary>
+        /// <param name="deleteRow">Data for deleting table</param>
         public void DeleteRow(DeleteRowRequest deleteRow)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
@@ -238,6 +284,11 @@ namespace KoFrMaRestApi.MySqlCom
                 command.ExecuteNonQuery();
             }
         }
+        /// <summary>
+        /// Checks if username exists
+        /// </summary>
+        /// <param name="exists"><see cref="ExistsRequest"/></param>
+        /// <returns>True if username already exists</returns>
         public bool Exists(ExistsRequest exists)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
@@ -254,6 +305,10 @@ namespace KoFrMaRestApi.MySqlCom
                 }
             }
         }
+        /// <summary>
+        /// Changes permission
+        /// </summary>
+        /// <param name="changePermission"><see cref="ChangePermission"/></param>
         public void AlterPermissions(ChangePermission changePermission)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
@@ -268,6 +323,11 @@ namespace KoFrMaRestApi.MySqlCom
                 }
             }
         }
+        /// <summary>
+        /// Updates password
+        /// </summary>
+        /// <param name="password">Admin' username</param>
+        /// <param name="username">New password</param>
         public void UpdatePassword(string password, string username)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())

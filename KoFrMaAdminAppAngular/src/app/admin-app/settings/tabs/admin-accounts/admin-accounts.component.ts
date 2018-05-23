@@ -46,7 +46,7 @@ export class AdminAccountsComponent {
       elem.value = val;
       return;
     }
-    this.service.AlterDataEmail(new ChangeTable(id, value)).catch(msg=>{
+    this.service.AlterTable(new ChangeTable("tbAdminAccounts",id,"Email",value)).catch(msg=>{
         let val = elem.getAttribute('prevVal');
         elem.value = val;
       });
@@ -63,7 +63,7 @@ export class AdminAccountsComponent {
     {
       if(!res)
       {
-      this.service.AlterDataUsername(new ChangeTable(id, value)).catch(res => 
+      this.service.AlterTable(new ChangeTable("tbAdminAccounts", id,"Username",value)).catch(res => 
         {
           let val = elem.getAttribute('prevVal');
           elem.value = val;
@@ -108,7 +108,7 @@ export class AdminAccountsComponent {
   }
   changeEnabled(id, value)
   {
-    this.service.AlterDataEnabled(new ChangeTable(id, value)).catch(res => 
+    this.service.AlterTable(new ChangeTable("tbAdminAccounts",id, "Enabled", value)).catch(res => 
       {
         this.service.RefreshData([1])
       });

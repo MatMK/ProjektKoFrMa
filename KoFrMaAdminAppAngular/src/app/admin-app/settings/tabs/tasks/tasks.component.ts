@@ -40,7 +40,7 @@ export class TasksComponent implements OnInit {
   }
   changeDaemonId(value, id)
   {
-    this.service.AlterDataIdDaemon(new ChangeTable(id, value)).catch(r=>
+    this.service.AlterTable(new ChangeTable("tbTasks",id, "IdDeamon", value)).catch(r=>
       this.service.RefreshData([3]))
   }
   ngOnInit() {
