@@ -76,6 +76,10 @@ namespace KoFrMaRestApi.Controllers
                 return null;
             }
         }
+        /// <summary>
+        /// Registers completed tasks in SQL database. Creates new task if completed task should repeat
+        /// </summary>
+        /// <param name="tasksCompleted">List of completed tasks</param>
         private void TasksCompleted(List<TaskComplete> tasksCompleted)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
@@ -95,33 +99,18 @@ namespace KoFrMaRestApi.Controllers
                 connection.Close();
             }
         }
-        [HttpPost, Route(@"api/Daemon/TaskCompleted")]
-        public void TaskCompleted(TaskComplete taskCompleted)
-        {
-            if (token.Authorized(taskCompleted.DaemonInfo))
-            {
-                using (MySqlConnection connection = WebApiConfig.Connection())
-                {
-                    connection.Open();
-                    if (taskCompleted.IsSuccessfull)
-                    {
-                        mySqlCom.TaskCompletionRecieved(taskCompleted, connection);
-                        //pridat k povedenym taskum a odeslat emailem
-                    }
-                    else
-                    {
-                        //pridat k nepovedenym taskum a odeslat to emailem
-                    }
-                    mySqlCom.DaemonSeen(mySqlCom.GetDaemonId(taskCompleted.DaemonInfo, connection), connection);
-                    connection.Close();
-                }
-            }
-        }
+        /// <summary>
+        /// Registers new token to SQL database. Token 
+        /// </summary>
+        /// <param name="password">Input with daemon's <see cref="DaemonInfo"/> and password in base64</param>
+        /// <returns>Returns token</returns>
         [HttpPost, Route(@"api/Daemon/RegisterToken")]
         public string Register(Password password)
         {
+            Bcrypter encrypt = new Bcrypter();
             using (MySqlConnection connection = WebApiConfig.Connection())
             {
+                //encrypt.BcryptPasswordInBase64(password.password);
                 connection.Open();
                 mySqlCom.DaemonSeen(mySqlCom.GetDaemonId(password.daemon, connection), connection);
                 mySqlCom.RegisterDaemonAndGetId(password.daemon, password.password, connection);
