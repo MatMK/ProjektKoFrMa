@@ -16,7 +16,7 @@ using KoFrMaRestApi.Models.Daemon.Task;
 namespace KoFrMaRestApi.Controllers
 {
     /// <summary>
-    /// Slouží k komunikaci s Daemony a Serverem
+    /// Used for comunication with daemon
     /// </summary>
     public class DaemonController : ApiController
     {
@@ -38,10 +38,8 @@ namespace KoFrMaRestApi.Controllers
                 if (mySqlCom.Authorized(request.daemon.PC_Unique, request.daemon.Token, connection))
                 {
                     TasksCompleted(request.CompletedTasks);
-                    //Zjistí zda je Daemon už zaregistrovaný, pokud ne, přidá ho do databáze
-                    string DaemonId = mySqlCom.GetDaemonId(request.daemon, connection);
+                    int DaemonId = mySqlCom.GetDaemonId(request.daemon, connection);
                     mySqlCom.DaemonSeen(DaemonId, connection);
-                    // Vybere task určený pro daemona.
                     List<Task> tasks = mySqlCom.GetTasks(DaemonId, connection);
                     List<int> ToRemove = new List<int>();
                     List<int> BackupJournalNotNeeded = new List<int>();

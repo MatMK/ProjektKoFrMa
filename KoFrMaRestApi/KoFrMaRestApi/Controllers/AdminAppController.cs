@@ -285,6 +285,10 @@ namespace KoFrMaRestApi.Controllers
         {
             if (this.Authorized(postAdmin.adminInfo))
             {
+                if (((ChangePasswordRequest)postAdmin.request).newPasswordInBase64.Length < 6)
+                {
+                    throw new HttpResponseException(HttpStatusCode.BadRequest);
+                }
                 if (Permitted(postAdmin.adminInfo.UserName, new int[] { 3, 5 })||postAdmin.adminInfo.UserName == ((ChangePasswordRequest)postAdmin.request).targetUsername)
                 {
                     mySqlCom.UpdatePassword(((ChangePasswordRequest)postAdmin.request).newPasswordInBase64, ((ChangePasswordRequest)postAdmin.request).targetUsername);

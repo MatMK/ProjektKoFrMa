@@ -4,7 +4,7 @@ import { NetworkCredential } from "../../network-credential.model";
 export class DestinationPathFTP implements IDestinationPath
 {
     /* Adresa FTP serveru a podsložka pro nahrání zálohy */
-    public path : string;
+    public Path : string;
     /* Přístupové údaje k FTP serveru */
-    public networkCredential : NetworkCredential
+    public NetworkCredential : NetworkCredential
 }

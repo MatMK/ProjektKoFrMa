@@ -9,6 +9,7 @@ export class Data
 {
     public ServerRootURL : string;
     public Loading : boolean = false;
+    public ChangePassword : boolean = false;
     public adminInfo : AdminInfo = new AdminInfo();
     public Data : AdminData = new AdminData();
     public ErrorMessage : string;

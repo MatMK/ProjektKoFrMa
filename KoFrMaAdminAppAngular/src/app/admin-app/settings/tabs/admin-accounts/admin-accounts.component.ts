@@ -11,6 +11,7 @@ import { FormControl } from '@angular/forms';
 import { ChangePermission } from '../../../server-connection/models/sql-data/change-permission.model';
 import { DeleteRowRequest } from '../../../server-connection/models/communication-models/post-admin/delete-row-request.model';
 import { ExistsRequest } from '../../../server-connection/models/communication-models/post-admin/exists-request.model';
+import { AppComponent } from '../../../../app.component';
 
 @Component({
   selector: 'app-admin-accounts',
@@ -23,7 +24,7 @@ export class AdminAccountsComponent {
   disableSelect = new FormControl(false);
   private check : InputCheck = new InputCheck();
   private selectedPerm : PermInterface[][];
-  constructor(private service : ServerConnectionService, private data : Data) {
+  constructor(private service : ServerConnectionService, private data : Data, private app : AppComponent) {
   }
   displayedColumns = ['Id', 'Username', 'Email', 'Enabled', 'Permission', 'Delete', 'ResetPassword'];
   applyFilter(filterValue: string) {
@@ -77,17 +78,6 @@ export class AdminAccountsComponent {
       }
     });
   }
-  alterPassword(value, id, elem : HTMLInputElement)
-  {
-    if(!this.check.password(value))
-    {
-      let val = elem.getAttribute('prevVal');
-      elem.value = val;
-      return;
-    }
-    //this.service.AlterDataUsername(new ChangeTable(id, value))
-    alert("unifinished");
-  }
   saveVal(elem : HTMLInputElement)
   {
     elem.setAttribute('prevVal',elem.value);
@@ -121,6 +111,6 @@ export class AdminAccountsComponent {
   }
   resetPassword(username)
   {
-    this.service.UpdatePassword("123456",username).catch(r=>{});
+    this.app.changePasswordModal(username);
   }
 }

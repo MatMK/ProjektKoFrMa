@@ -5,26 +5,28 @@ using System.Web;
 namespace KoFrMaRestApi.Models.Daemon
 {
     /// <summary>
-    /// Info které server obdrží od Daemonu
+    /// Information about the daemon
     /// </summary>
     public class DaemonInfo
     {
         /// <summary>
-        /// Verze daemonu
+        /// Daemon version
         /// </summary>
         public int Version { get; set; }
         /// <summary>
-        /// Operační systém na kterém daemón běží
+        /// Operating system on which the deamon is running
         /// </summary>
         public string OS { get; set; }
         /// <summary>
-        /// Unikátní číslo počítače
+        /// Computer unique key
         /// </summary>
-        /// Zjištění unique ID z dxdiag, např XOR, dxdiag /x filename, přečíst soubor (xml), nebo machineID tvořené při prvním bootu
         public string PC_Unique { get; set; }
+        /// <summary>
+        /// Token used for authorizing the daemon
+        /// </summary>
         public string Token { get; set; }
         /// <summary>
-        /// Id of the daemon in database
+        /// Daemon ID
         /// </summary>
         public int? Id { get; set; }
     }

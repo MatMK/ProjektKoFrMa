@@ -5,7 +5,6 @@ namespace KoFrMaRestApi
 {
     public class BundleConfig
     {
-        // Další informace o sdružování najdete na webu https://go.microsoft.com/fwlink/?LinkId=301862.
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
@@ -14,8 +13,6 @@ namespace KoFrMaRestApi
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
 
-            // Použijte k vývoji a k získání informací vývojovou verzi produktu Modernizr. Až budete
-            // Připraveno na produkční prostředí. Použijte nástroj pro sestavení na webu https://modernizr.com a vyberte jenom testy, které potřebujete.
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 

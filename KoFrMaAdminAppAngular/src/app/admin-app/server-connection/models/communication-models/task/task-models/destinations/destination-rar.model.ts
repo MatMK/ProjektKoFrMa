@@ -2,7 +2,9 @@ import { IDestination } from "../idestitnation.interface";
 
 export class DestinationRar implements IDestination
 {
-    /** Nastavení cesty, kde bude výsledný rar */
-    public path: IDestination;
-    public compressionLevel: number;
+    /** Path to where the rar archive will be stored */
+    public Path: any;
+    public CompressionLevel: any;
+    /** After what number of MiBs will be the archive split (optional, if not entered or null archive won't be split) */
+    public SplitAfter: number;
 }

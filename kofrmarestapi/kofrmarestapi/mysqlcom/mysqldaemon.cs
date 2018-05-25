@@ -15,59 +15,69 @@ namespace KoFrMaRestApi.MySqlCom
     public class MySqlDaemon
     {
         /// <summary>
-        /// Zjistí zda je Daemon už zaregistrovaný, pokud ne, přidá ho do databáze
+        /// Returns daemons database id.
         /// </summary>
         /// <param name="daemon"></param>
         /// <param name="connection"></param>
-        /// <returns>Vrací ID daemona v databázi</returns>
-        public string GetDaemonId(DaemonInfo daemon, MySqlConnection connection)
+        /// <returns></returns>
+        public int GetDaemonId(DaemonInfo daemon, MySqlConnection connection)
         {
 
             using (MySqlDataReader reader = SelectFromTableByPcId(connection, daemon))
             {
-                if (reader.Read())
+                int count = 0;
+                int result=0;
+                while (reader.Read())
                 {
-                    return reader.GetString(0);
+                    count++;
+                    result = (int)reader["id"];
                 }
-                else
-                {
-                    return null;
-                }
+                if (count == 0)
+                    throw new Exception("No daemon with given pc unique");
+                if (count > 1)
+                    throw new Exception("Multiple daemons with given pc unique");
+                return result;
             }
         }
-        public string RegisterDaemonAndGetId(DaemonInfo daemon, string Password, MySqlConnection connection)
+        public int RegisterDaemonAndGetId(DaemonInfo daemon, string Password, MySqlConnection connection)
         {
             using (MySqlDataReader reader = SelectFromTableByPcId(connection, daemon))
             {
-                if (reader.Read())
+                try
                 {
-                    return reader.GetString(0);
+                    return GetDaemonId(daemon, connection);
                 }
-                else
+                catch (Exception ex)
                 {
-                    reader.Close();
-                    string SqlInsert = @"insert into tbDaemons values(null, @version, @os, @pc_unique, 1, now(),@password,'')";
-                    using (MySqlCommand command = new MySqlCommand(SqlInsert, connection))
+                    if (ex.Message == "No daemon with given pc unique")
                     {
-                        command.Parameters.AddWithValue("@version", daemon.Version);
-                        command.Parameters.AddWithValue("@os", daemon.OS);
-                        command.Parameters.AddWithValue("@pc_unique", daemon.PC_Unique);
-                        command.Parameters.AddWithValue("@password", Password);
-                        command.ExecuteNonQuery();
-                        return GetDaemonId(daemon,connection);
+                        reader.Close();
+                        string SqlInsert = @"insert into tbDaemons values(null, @version, @os, @pc_unique, 1, now(),@password,'')";
+                        using (MySqlCommand command = new MySqlCommand(SqlInsert, connection))
+                        {
+                            command.Parameters.AddWithValue("@version", daemon.Version);
+                            command.Parameters.AddWithValue("@os", daemon.OS);
+                            command.Parameters.AddWithValue("@pc_unique", daemon.PC_Unique);
+                            command.Parameters.AddWithValue("@password", Password);
+                            command.ExecuteNonQuery();
+                            return GetDaemonId(daemon, connection);
+                        }
+                    }
+                    else
+                    {
+                        throw ex;
                     }
                 }
             }
 
         }
-
         /// <summary>
-        /// Vybere tasky pro daemona z databáze
+        /// Gets a list of tasks for daemon to execute
         /// </summary>
-        /// <param name="DaemonId">ID daemona v databázy, lze použí GetDaemonId()</param>
-        /// <param name="connection"></param>
-        /// <returns>Vrací repeat.ExecutionTimes tasku pro daemona</returns>
-        public List<Task> GetTasks(string DaemonId, MySqlConnection connection)
+        /// <param name="DaemonId">Id of daemon</param>
+        /// <param name="connection">open sql connection</param>
+        /// <returns>List of tasks for daemon to execute</returns>
+        public List<Task> GetTasks(int DaemonId, MySqlConnection connection)
         {
             List<Task> result = new List<Task>();
             MySqlCommand sqlCommand = new MySqlCommand(@"SELECT Task, TimeOfExecution, Id FROM `tbTasks` WHERE `IdDaemon` = @Id and `Completed` = 0", connection);
@@ -86,11 +96,6 @@ namespace KoFrMaRestApi.MySqlCom
             reader.Dispose();
             return result;
         }
-        /// <summary>
-        /// Rozhodne zda task z databáze smazat nebo změnit jeho provedení na později
-        /// </summary>
-        /// <param name="task"></param>
-        /// <param name="connection"></param>
         public void TaskCompletionRecieved(TaskComplete task, MySqlConnection connection)
         {
             using (MySqlCommand command = new MySqlCommand(@"SELECT `RepeatInJSON`,`TimeOfExecution` FROM `tbTasks` WHERE Id = @Id", connection))
@@ -301,7 +306,7 @@ namespace KoFrMaRestApi.MySqlCom
         /// <summary>
         /// Updates lastSeen column in database
         /// </summary>
-        public void DaemonSeen(string DaemonId, MySqlConnection connection)
+        public void DaemonSeen(int DaemonId, MySqlConnection connection)
         {
             using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbDaemons` SET `LastSeen`= Now() where Id = @Id", connection))
             {

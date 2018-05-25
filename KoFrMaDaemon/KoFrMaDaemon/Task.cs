@@ -22,9 +22,9 @@ namespace KoFrMaDaemon
         /// Source of the backup, it can contain multiple sources if task is full backup, backup journal if it is differential/incremental or database connection to backup a database
         /// </summary>
         public ISource Sources { get; set; }
-/// <summary>
-/// List of destinations of the backup, there can be more than one and it can contain different combinations of formats (plain folder, zip file, rar file, 7z file) and destinations (local drive, FTP server, SFTP server, Network shared folder)
-/// </summary>
+        /// <summary>
+        /// List of destinations of the backup, there can be more than one and it can contain different combinations of formats (plain folder, zip file, rar file, 7z file) and destinations (local drive, FTP server, SFTP server, Network shared folder)
+        /// </summary>
         public List<IDestination> Destinations { get; set; }
 
         /// <summary>

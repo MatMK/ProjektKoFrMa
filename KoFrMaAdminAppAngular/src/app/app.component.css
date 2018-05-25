@@ -1,14 +1,14 @@
 
-#wrap {
+.modal {
     margin: 0 auto;
     width: 200px;
   }
-  #loading, #outlet {
+  #loading, #outlet, #changepwd {
       width: 100%;
       height: 100%;
       position: absolute;
   }
-  #loading{
+  #loading, #changepwd{
       text-align: center;
       z-index: 10;
       height: 100px;

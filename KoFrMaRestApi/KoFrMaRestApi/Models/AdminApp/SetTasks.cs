@@ -10,29 +10,33 @@ using KoFrMaRestApi.Models.Daemon.Task.BackupJournal;
 namespace KoFrMaRestApi.Models.AdminApp
 {
     /// <summary>
-    /// Obsahuje instrukce pro Daemon
+    /// Contains instructions for Daemon
     /// </summary>
     public class SetTasks
     {
+        /// <summary>
+        /// Repeating of task
+        /// </summary>
         public TaskRepeating ExecutionTimes { get; set; }
         /// <summary>
-        /// Id daemona který má task dokončit
+        /// Database id if the daemon
         /// </summary>
         public int DaemonId { get; set; }
         /// <summary>
-        /// Čas, kdy se má úloha spustit (server může předáváat démonu ulohy napřed)
+        /// Time of execution
         /// </summary>
         public DateTime TimeToBackup { get; set; }
-
         /// <summary>
-        /// Co zálohovat, pokud se jedná o full zálohu je zde path ke složce, pokud je záloha diferenciální/inkrementální je toto pole prázdné
+        /// Source of backup
         /// </summary>
         public ISource Sources { get; set; }
-
+        /// <summary>
+        /// List of backup destinations
+        /// </summary>
         public List<IDestination> Destinations { get; set; }
 
         /// <summary>
-        /// Jaké data chce server vrátit až se dokončí úloha, viz. třída DebugLog (LogOperations)
+        /// What data will be saved to log
         /// 0 = Don't create log
         /// 1 = Fatal errors only that shuts down whole service/program
         /// 2 = Errors that cause some process to fail
@@ -46,13 +50,16 @@ namespace KoFrMaRestApi.Models.AdminApp
         /// 10 = Program will be more like a log writer than actually doing the process
         /// </summary>
         public byte LogLevel { get; set; }
-
-        public ScriptInfo ScriptBefore { get; set; }
-
-        public ScriptInfo ScriptAfter { get; set; }
-
         /// <summary>
-        /// Velikost v MB jak velká může v jednu chvíli maximálně být dočasná složka na disku C pokud se zálohuje do archivu nebo na vzdálené úložiště.
+        /// Script that will be run BEFORE the task
+        /// </summary>
+        public ScriptInfo ScriptBefore { get; set; }
+        /// <summary>
+        /// Script that will be run AFTER the task
+        /// </summary>
+        public ScriptInfo ScriptAfter { get; set; }
+        /// <summary>
+        /// Size in MB how big can at one moment be temporary folder on drive C, is used only when destination is archive and/or is remote
         /// </summary>
         public int? TemporaryFolderMaxBuffer { get; set; }
     }

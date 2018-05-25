@@ -8,11 +8,11 @@ namespace KoFrMaRestApi.Models.Daemon.Task
     public class DestinationRar : IDestination
     {
         /// <summary>
-        /// Nastavení cesty, kde bude výsledný rar
+        /// Path to where the rar archive will be stored
         /// </summary>
         public IDestinationPath Path { get; set; }
 
-        /// Jaká úroveň komprese bude použita
+        /// What level of compression will be used
         /// 0 = No Compression
         /// 1 = Fastest
         /// 2 = Fast
@@ -20,5 +20,10 @@ namespace KoFrMaRestApi.Models.Daemon.Task
         /// 4 = Good
         /// 5 = Best
         public byte CompressionLevel { get; set; }
+
+        /// <summary>
+        /// After what number of MiBs will be the archive split (optional, if not entered or null archive won't be split)
+        /// </summary>
+        public int? SplitAfter { get; set; }
     }
 }

@@ -4,5 +4,5 @@ import { NetworkCredential } from "../../network-credential.model";
 export class DestinationPathLocal implements IDestinationPath
 {
     /* Cesta k lokální složce*/
-    public path : string;
+    public Path : string;
 }

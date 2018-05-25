@@ -8,7 +8,7 @@ namespace KoFrMaRestApi.Models.Daemon.Task
     public class DestinationPlain:IDestination
     {
         /// <summary>
-        /// Nastavení cesty, kde bude umístěna záloha jako obyčejná složka
+        /// Destination where the folder will be uploaded
         /// </summary>
         public IDestinationPath Path { get; set; }
     }

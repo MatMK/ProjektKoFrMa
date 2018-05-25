@@ -16,7 +16,7 @@ namespace KoFrMaRestApi
     public static class WebApiConfig
     {
         /// <summary>
-        /// Url of AdminApp
+        /// Url of AdminApp. 
         /// Used for Email links
         /// </summary>
         public static string WebServerURL = "http://localhost:4200/";
@@ -39,11 +39,9 @@ namespace KoFrMaRestApi
         /// <param name="config"></param>
         public static void Register(HttpConfiguration config)
         {
-            //překládání xml na json
             config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
             config.Formatters.JsonFormatter.SerializerSettings.SerializationBinder = JsonSerializationUtility.jsonSettings.SerializationBinder;
             config.Formatters.JsonFormatter.SerializerSettings.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto;
-            //Služby a konfigurace rozhraní Web API
             //config.Formatters.JsonFormatter
             //Trasy rozhraní Web API
             config.MapHttpAttributeRoutes();

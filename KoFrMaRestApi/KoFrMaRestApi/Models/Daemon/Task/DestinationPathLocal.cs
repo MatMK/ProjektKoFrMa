@@ -8,7 +8,7 @@ namespace KoFrMaRestApi.Models.Daemon.Task
     class DestinationPathLocal : IDestinationPath
     {
         /// <summary>
-        /// Cesta k lokální složce
+        /// Path to a local folder
         /// </summary>
         public string Path { get; set; }
     }
