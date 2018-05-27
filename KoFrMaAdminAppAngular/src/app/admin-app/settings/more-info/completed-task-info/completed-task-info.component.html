@@ -1,1 +1,9 @@
-<div [innerHTML]="log"></div>
+<h4>Log</h4>
+<!--Dont forget to use <pre></pre> for the lof to make enters visible-->
+<pre>{{log}}</pre><br>
+<h4>Task id</h4>
+{{taskId}}<br>
+<h4>Task successful</h4>
+{{isSuccessful}}<br>
+<h4>Date</h4>
+{{timeOfCompletion | date}}<br>

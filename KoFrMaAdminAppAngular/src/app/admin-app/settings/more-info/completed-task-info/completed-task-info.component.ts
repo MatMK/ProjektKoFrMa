@@ -11,20 +11,44 @@ import { ServerConnectionService } from '../../../server-connection/server-conne
 export class CompletedTaskInfoComponent {
 
   taskId : number;
-  log : string = "";
-  constructor(private activeRoute:ActivatedRoute, private data : Data, private router : Router, private service : ServerConnectionService) {
-    if(this.data.Data.tbCompletedTasks.data.length == 0)
-      this.service.RefreshData([4]).then(res=>{
-        this.activeRoute.params.subscribe(params => {
-          this.taskId = params.completedTaskId;
-          this.checkIfNumberValid(true);
-          this.data.Data.tbCompletedTasks.data.forEach(element=> {
-            if(this.taskId == element.Id)
-            this.log = "ahoj\npepo"
+  log : string;
+  isSuccessful : boolean;
+  timeOfCompletion : Date;
 
-          })
-      })
-    });
+  constructor(private activeRoute:ActivatedRoute, private data : Data, private router : Router, private service : ServerConnectionService) {
+    this.activeRoute.params.subscribe(params => 
+    {
+      this.taskId = params.completedTaskId;
+      if(this.checkIfNumberValid(true))
+      {
+        if(this.data.Data.tbCompletedTasks.data.length == 0)
+        {
+          this.service.RefreshData([4]).then(res=>{
+              this.data.Data.tbCompletedTasks.data.forEach(element=> {
+                if(this.taskId == element.Id)
+                {
+                  this.log = element.DebugLog;
+                  this.taskId = element.Id;
+                  this.isSuccessful = element.IsSuccessful;
+                  this.timeOfCompletion = element.TimeOfCompetion;
+                }
+              })
+          });
+        }
+        else
+        {
+            this.data.Data.tbCompletedTasks.data.forEach(element=> {
+              if(this.taskId == element.Id)
+              {
+                this.log = element.DebugLog;
+                this.taskId = element.Id;
+                this.isSuccessful = element.IsSuccessful;
+                this.timeOfCompletion = element.TimeOfCompetion;
+              }
+            });
+        }
+      }
+    })
    }
    checkIfNumberValid(showMsg : boolean) : boolean
    {
@@ -32,7 +56,7 @@ export class CompletedTaskInfoComponent {
     {
       this.taskId = undefined;
       if(showMsg)
-        alert("Daemon Id is not valid!")
+        alert("Id is not valid!")
       return false;
     }
     return true;
