@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.button_cancel = new System.Windows.Forms.Button();
             this.button_apply = new System.Windows.Forms.Button();
             this.textBox_ServerIP = new System.Windows.Forms.TextBox();
@@ -48,11 +49,13 @@
             this.button_browse7zip = new System.Windows.Forms.Button();
             this.button_WinrarSearch = new System.Windows.Forms.Button();
             this.button_7zipSearch = new System.Windows.Forms.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // button_cancel
             // 
-            this.button_cancel.Location = new System.Drawing.Point(252, 182);
+            this.button_cancel.Location = new System.Drawing.Point(101, 179);
             this.button_cancel.Name = "button_cancel";
             this.button_cancel.Size = new System.Drawing.Size(124, 37);
             this.button_cancel.TabIndex = 0;
@@ -62,11 +65,11 @@
             // 
             // button_apply
             // 
-            this.button_apply.Location = new System.Drawing.Point(382, 182);
+            this.button_apply.Location = new System.Drawing.Point(411, 179);
             this.button_apply.Name = "button_apply";
             this.button_apply.Size = new System.Drawing.Size(124, 37);
             this.button_apply.TabIndex = 1;
-            this.button_apply.Text = "Apply";
+            this.button_apply.Text = "Save";
             this.button_apply.UseVisualStyleBackColor = true;
             this.button_apply.Click += new System.EventHandler(this.button_apply_Click);
             // 
@@ -86,9 +89,9 @@
             // 
             // textBox_LogPath
             // 
-            this.textBox_LogPath.Location = new System.Drawing.Point(101, 156);
+            this.textBox_LogPath.Location = new System.Drawing.Point(179, 133);
             this.textBox_LogPath.Name = "textBox_LogPath";
-            this.textBox_LogPath.Size = new System.Drawing.Size(405, 20);
+            this.textBox_LogPath.Size = new System.Drawing.Size(327, 20);
             this.textBox_LogPath.TabIndex = 4;
             this.textBox_LogPath.Visible = false;
             // 
@@ -142,7 +145,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(512, 156);
+            this.button1.Location = new System.Drawing.Point(512, 133);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(24, 20);
             this.button1.TabIndex = 10;
@@ -222,11 +225,22 @@
             this.button_7zipSearch.UseVisualStyleBackColor = true;
             this.button_7zipSearch.Click += new System.EventHandler(this.button_7zipSearch_Click);
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(12, 133);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(80, 86);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 19;
+            this.pictureBox1.TabStop = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(548, 238);
+            this.ClientSize = new System.Drawing.Size(548, 228);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.button_7zipSearch);
             this.Controls.Add(this.button_WinrarSearch);
             this.Controls.Add(this.button_browse7zip);
@@ -248,6 +262,7 @@
             this.Controls.Add(this.button_cancel);
             this.Name = "Form1";
             this.Text = "Form1";
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -275,6 +290,7 @@
         private System.Windows.Forms.Button button_browse7zip;
         private System.Windows.Forms.Button button_WinrarSearch;
         private System.Windows.Forms.Button button_7zipSearch;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
 
