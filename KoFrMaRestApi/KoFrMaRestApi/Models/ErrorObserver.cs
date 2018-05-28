@@ -2,13 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
+using System.Web.Http.ExceptionHandling;
+using System.Web.Http.Results;
 
 namespace KoFrMaRestApi.Models
 {
-    public static class ErrorObserver
+    public class ErrorObserver : ExceptionLogger
     {
-        public static void RegisterError(Exception exception)
+
+        public void RegisterError(Exception exception)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
             using (MySqlCommand command = new MySqlCommand("INSERT INTO `tbRestApiExceptions`(`ExceptionInJson`, `TimeOfException`, `Severity`) VALUES (@Exception, @TimeOfException,@severity)", connection))
@@ -19,6 +24,10 @@ namespace KoFrMaRestApi.Models
                 command.Parameters.AddWithValue("@severity", DBNull.Value);
                 command.ExecuteNonQuery();
             }
+        }
+        public override void Log(ExceptionLoggerContext context)
+        {
+            this.RegisterError(context.Exception);
         }
     }
 }

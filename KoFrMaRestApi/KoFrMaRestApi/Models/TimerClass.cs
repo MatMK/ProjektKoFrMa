@@ -37,7 +37,8 @@ namespace KoFrMaRestApi.Models
         /// Starts a timer, should only be called once;
         /// </summary>
         public void StartTimer()
-        {/*
+        {
+            /*
             CorrectTime(new TaskRepeating()
             {
                 ExecutionTimes = new List<DateTime>() { new DateTime(2018, 5, 24, 16, 50, 0), new DateTime(2018, 5, 23, 16, 50, 0), new DateTime(2018, 5, 24, 16, 10, 0) },

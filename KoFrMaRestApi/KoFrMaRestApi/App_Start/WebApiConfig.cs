@@ -7,6 +7,7 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using KoFrMaRestApi.Models;
 using MySql.Data.MySqlClient;
+using System.Web.Http.ExceptionHandling;
 
 namespace KoFrMaRestApi
 {
@@ -37,8 +38,9 @@ namespace KoFrMaRestApi
         /// Sets up APIs
         /// </summary>
         /// <param name="config"></param>
-        public static void Register(HttpConfiguration config)
+        public static void  Register(HttpConfiguration config)
         {
+            config.Services.Add(typeof(IExceptionLogger), new ErrorObserver());
             config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
             config.Formatters.JsonFormatter.SerializerSettings.SerializationBinder = JsonSerializationUtility.jsonSettings.SerializationBinder;
             config.Formatters.JsonFormatter.SerializerSettings.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto;
