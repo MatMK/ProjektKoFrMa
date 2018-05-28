@@ -18,8 +18,9 @@ namespace KoFrMaRestApi.EmailSender
         string smtpAddress = "smtp.gmail.com";
         int portNumber = 587;
         string SemailFrom = "kofrmabackup@gmail.com";
+        string SemailFromName = "KoFrMa Report Daemon";
         string Spassword = "KoFrMa123456";
-        string Ssubject = "Test";
+        string Ssubject = "KoFrMa report";
         string Sbody = "";
 
         public void SendEmail(List<EmailSettings> emailSettings)
@@ -57,13 +58,13 @@ namespace KoFrMaRestApi.EmailSender
                 command.ExecuteNonQuery();
             }
             MailMessage mail = new MailMessage();
-            mail.From = new MailAddress(SemailFrom);
+            mail.From = new MailAddress(SemailFrom,SemailFromName,Encoding.UTF8);
             mail.Subject = Ssubject;
             //Sbody += "< div style='border: medium solid grey; width: 500px; height: 266px;font-family: arial,sans-serif; font-size: 17px;'>";
             Sbody += "<h3 style='background-color: blueviolet; margin-top:0px;'>KOFRMA backup agency</h3>";
-            Sbody += "<br />";
+            Sbody += "<br/>";
             Sbody += "Dear user,";
-            Sbody += "<br />";
+            Sbody += "<br/>";
             if (exceptions.Count > 0)
             {
                 Sbody += $"Since last time, there has been {exceptions.Count} errors on KoFrMaRestApi server, here are the messages:";
@@ -86,11 +87,11 @@ namespace KoFrMaRestApi.EmailSender
                 }
             }
             Sbody += "<p>";
-            Sbody += "Thank you for using our backup </p>";
-            Sbody += " <br />";
+            Sbody += "Thank you for using our backup</p>";
+            Sbody += "<br/>";
             Sbody += "Thanks,";
-            Sbody += "<br />";
-            Sbody += "<b>The Team</b>";
+            Sbody += "<br/>";
+            Sbody += "<b>The KoFrMa Team</b>";
             Sbody += "</div>";
             SmtpClient smt = new SmtpClient();
             mail.IsBodyHtml = true;

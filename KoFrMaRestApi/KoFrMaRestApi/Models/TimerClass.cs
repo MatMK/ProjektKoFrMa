@@ -97,7 +97,14 @@ namespace KoFrMaRestApi.Models
         public bool CorrectTime(TaskRepeating taskRepeating, int Id, string TableName, string ColumnName)
         {
             taskRepeating.ExecutionTimes.Sort();
-            taskRepeating.ExceptionDates.Sort();
+            if (taskRepeating.ExceptionDates != null)
+            {
+                taskRepeating.ExceptionDates.Sort();
+            }
+            else
+            {
+                taskRepeating.ExceptionDates = new List<ExceptionDate>();
+            }
             bool eligible = false;
             foreach (DateTime item in taskRepeating.ExecutionTimes)
             {
