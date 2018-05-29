@@ -129,10 +129,7 @@ height: 28px;
     opacity: 1;
 }
 
-.basicRadio{
-    width: 40px;
-    margin-right: 30px;
-}
+
 
 .destTypeRad{
    
@@ -150,3 +147,23 @@ height: 28px;
    margin-left: 25px;
    background-color: white;
 }
+.basicDate{
+    width: 380px;
+margin-bottom: 3px;
+background-color: white;
+font-size: 20px;
+border: none;
+border-bottom: 1px solid #d3d3d3;
+border-radius: 0px;
+}
+
+   .basicRadio{
+  
+    align-content: right;
+
+}
+#sourceType, #destinationSelect, #backupType{
+    text-align: left;
+    width: 450px;
+}
+
