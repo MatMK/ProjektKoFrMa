@@ -23,10 +23,6 @@ namespace KoFrMaRestApi.Models.AdminApp
         /// </summary>
         public int DaemonId { get; set; }
         /// <summary>
-        /// Time of execution
-        /// </summary>
-        public DateTime TimeToBackup { get; set; }
-        /// <summary>
         /// Source of backup
         /// </summary>
         public ISource Sources { get; set; }

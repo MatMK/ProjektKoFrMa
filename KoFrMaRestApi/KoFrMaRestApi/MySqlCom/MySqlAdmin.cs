@@ -174,7 +174,6 @@ namespace KoFrMaRestApi.MySqlCom
                         Task task = new Task()
                         {
                             IDTask = NextAutoIncrement("tbTasks"),
-                            TimeToBackup = item.TimeToBackup,
                             Sources = item.Sources,
                             Destinations = item.Destinations,
                             LogLevel = item.LogLevel,
@@ -190,7 +189,7 @@ namespace KoFrMaRestApi.MySqlCom
                             Repeating = DBNull.Value;
                         command.Parameters.AddWithValue("@DaemonId", item.DaemonId);
                         command.Parameters.AddWithValue("@Task", JsonConvert.SerializeObject(task));
-                        command.Parameters.AddWithValue("@DateOfCompletion", item.TimeToBackup);
+                        command.Parameters.AddWithValue("@DateOfCompletion", "");
                         command.Parameters.AddWithValue("@Repeating", Repeating);
                         command.ExecuteNonQuery();
                     }

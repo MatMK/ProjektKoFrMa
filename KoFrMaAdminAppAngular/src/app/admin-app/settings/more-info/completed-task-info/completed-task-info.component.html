@@ -1,21 +1,17 @@
 <div id="tableDiv">
-<table style="width:100%">
-    <tr>      
-        <th>Task id</th>
-         <th>Date</th> 
-         <th>Task successfull</th>
-         <th>Log</th>
-        
-    </tr>
-    <tr>    
-        <th>{{taskId}}</th>     
-        <th>{{timeOfCompletion | date}}</th>
-        <th>{{isSuccessful}}</th>
-        <th><pre>{{log}}</pre></th>
-    </tr>
-   
-
-<!--Dont forget to use <pre></pre> for the lof to make enters visible-->
-
-</table>
+    <table style="width:100%">
+        <tr>      
+            <th>Task id<th>
+            <th>Date</th> 
+            <th>Task successfull</th>
+            <th>Log</th>
+            
+        </tr>
+        <tr>    
+            <th>{{taskId}}</th>     
+            <th>{{timeOfCompletion | date}}</th>
+            <th>{{isSuccessful}}</th>
+            <th><pre>{{log}}</pre></th>
+        </tr>
+    </table>
 </div>

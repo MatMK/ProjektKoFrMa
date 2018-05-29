@@ -1,6 +1,9 @@
 <div id="app">
         <div id="outlet">
-            <app-completed-task-info></app-completed-task-info>
+        <!--
+            <app-add-task></app-add-task>
+        -->
+        <router-outlet></router-outlet>
         </div>
     <div id="wrap" class="modal">
         <div id="loading" *ngIf="data.Loading">

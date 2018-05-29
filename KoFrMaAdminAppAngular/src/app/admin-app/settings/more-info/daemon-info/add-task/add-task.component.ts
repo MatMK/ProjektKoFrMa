@@ -1,4 +1,4 @@
-import { Component, Renderer2, OnInit  } from '@angular/core';
+import { Component, Renderer2, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatRadioModule, MatRadioButton } from '@angular/material/radio';
 import { SetTask } from '../../../../server-connection/models/communication-models/task/set-task.model';
@@ -6,23 +6,33 @@ import { EventEmitter } from 'events';
 import { TaskRepeating } from '../../../../server-connection/models/communication-models/task/task-repeating.model';
 import { ServerConnectionService } from '../../../../server-connection/server-connection.service';
 import { Data } from '../../../../server-connection/data.model';
+import { IDestination } from '../../../../server-connection/models/communication-models/task/task-models/idestitnation.interface';
+import { DestinationPlain } from '../../../../server-connection/models/communication-models/task/task-models/destinations/destination-plain.model';
+import { DestinationRar } from '../../../../server-connection/models/communication-models/task/task-models/destinations/destination-rar.model';
+import { DestinationZip } from '../../../../server-connection/models/communication-models/task/task-models/destinations/destination-zip.model';
+import { Destination7z } from '../../../../server-connection/models/communication-models/task/task-models/destinations/destination-7z.model';
 
 @Component({
   selector: 'app-add-task',
   templateUrl: './add-task.component.html',
   styleUrls: ['./add-task.component.css']
 })
-export class AddTaskComponent  {
+export class AddTaskComponent  
+{
   private daemonId : number;
-  private sourcepath : string;
-  private destinationpath : string;
+  //private sourcepath : string;
+  //private destinationpath : string;
   private backuptype : string;
   private date : Date;
   private ncUsername : string;
   private ncPassword : string;
-  private compression : string;
+  private ncPath : string;
   private sourcetype : string;
   private destinationtype :string;
+  private destinations : IDestination[];
+  private compress : boolean = false;
+  private compressType : string = "Rar";
+  private compressLevel : number = 1;
 
   constructor(private activeRoute:ActivatedRoute, private service : ServerConnectionService, private renderer: Renderer2, private router : Router, private data : Data) {
       this.activeRoute.params.subscribe(params => {
@@ -46,58 +56,103 @@ export class AddTaskComponent  {
     if(this.checkIfNumberValid(true))
     {
       let newTask : SetTask = new SetTask()
-      newTask.daemonId = this.daemonId;
-      newTask.timeToBackup = this.date;
-      newTask.sources = [this.sourcepath];
-      newTask.destinations = [this.destinationpath];
-      newTask.ncusername = this.ncUsername;
-      newTask.ncpassword = this.ncPassword;
-      newTask.backuptype = this.backuptype;
-      newTask.sourcetype = this.sourcetype;
-      newTask.destinationtype = this.destinationtype;
-
-      this.data.Loading = true;
-      this.service.SetTask([newTask]).then(res => this.service.RefreshData([3]))
-      this.router.navigate(['backup', 'app','tasks']);
-
-      /*
-      let t : SetTask = new SetTask()
-      t.DaemonId = this.daemonId;
-      t.SourceOfBackup = this.sourcepath;
-      t.WhereToBackup = [this.destinationpath];
-      t.ExecutionTimes = new TaskRepeating();
-      t.ExecutionTimes.ExecutionTimes = [this.date];
-      t.TimeToBackup = this.date;
-      var select = (<HTMLSelectElement> document.getElementById('dropdownCompress'));
-      t.CompressionType = select.options[select.selectedIndex].value;
-      if(t.CompressionType == "Rar")
-      {
-        var select = (<HTMLSelectElement> document.getElementById('dropdownRar'));
-        t.CompressionLevel = +select.options[select.selectedIndex].value;
-      }
-      if(t.CompressionType == "7zip")
-      {
-        var select = (<HTMLSelectElement> document.getElementById('dropdownZip'));
-        t.CompressionLevel = +select.options[select.selectedIndex].value;
-      }
-      if(t.CompressionType == "Zip")
-      {
-        var select = (<HTMLSelectElement> document.getElementById('dropdown7zip'));
-        t.CompressionLevel = +select.options[select.selectedIndex].value;
-      }
-      alert(t.CompressionLevel);
-      this.data.Loading = true;
-      this.service.SetTask([t]).then(res => this.service.RefreshData([3]))
-      this.router.navigate(['backup', 'app','tasks']);*/
+      newTask.DaemonId = this.daemonId;
+      newTask.Destinations
+      console.log(newTask);
+      //this.data.Loading = true;
+      //this.service.SetTask([newTask]).then(res => this.service.RefreshData([3]))
+      //this.router.navigate(['backup', 'app','tasks']);
     }
   }
   private onDateChange(value : Date)
   {
     this.date = value;
   }
-  
-   
+  AddLocalDestination()
+  {
+    if(this.destinationtype != undefined)
+    {
+      var result : IDestination = this.getDestination(this.compressType, this.compressLevel, undefined);
+      if(result == undefined)
+      {
+        alert("Define destination");
+      }
+      else
+      {
+        
+        var newDiv = this.renderer.createElement('div'); 
+        newDiv.Id='idNewDiv'
+        newDiv.className='aditionalDivClass'
+        var inputDestination = <HTMLDivElement>document.getElementById("inputDestiDiv");
+        var input = this.renderer.createElement('p');
+        input.style = "display:inline-block; vertical-align: middle;";
+        if(this.destinationtype.trim() == 'SFTP')
+        {
+          input.innerHTML = "SFTP";
+        }
+        if(this.destinationtype.trim() == 'FTP')
+        {
+          input.innerHTML = "FTP";
+        }
+        if(this.destinationtype.trim() == 'LOCAL')
+        {
+          input.innerHTML = "LOCAL";
+        } 
+        var button = this.renderer.createElement('button'); 
+        button.innerHTML = 'X';
+        button.style = "display:inline-block; vertical-align: middle;";
+        this.renderer.listen(button, 'click', (event) => this.RemoveLocalDestination(event));
+        var br = this.renderer.createElement("br");
+        this.renderer.appendChild(newDiv, input);
+        this.renderer.appendChild(inputDestination,newDiv);
+        this.renderer.appendChild(newDiv,button);
+        /*inputDestination.appendChild(input);*/
+        /*inputDestination.appendChild(br);*/
+        //this.destinationtype = undefined;
+        this.ncPath = undefined;
+        this.ncPassword = undefined;
+        this.ncUsername = undefined;
+      }
+    }
+    else
+    {
+      alert("You need to select destination first")
+    }
+  }
+  private getDestination(compression : string, compressionLevel : number, compressionMaxFile : number) : IDestination
+  {
+    if(compression == undefined || compression == null)
+    {
+      return new DestinationPlain()
+    }
+    if(compression == "Rar")
+    {
+      let result : DestinationRar = new DestinationRar();
+      result.CompressionLevel = compressionLevel;
+      result.SplitAfter = compressionMaxFile;
+      return result;
+    }
+    if(compression == "Zip")
+    {
+      let result : DestinationZip = new DestinationZip();
+      result.CompressionLevel = compressionLevel;
+      result.SplitAfter = compressionMaxFile;
+      return result;
+    }
+    if(compression == "7zip")
+    {
+      let result : Destination7z = new Destination7z();
+      result.CompressionLevel = compressionLevel;
+      result.SplitAfter = compressionMaxFile;
+      return result;
+    }
+    return undefined;
+  }
+  private getDestinationPath()
+  {
 
+  }
+/*
 BUcheck() {
   var radioOptD = <HTMLInputElement>document.getElementById("distant")
   var radioSftp = <HTMLInputElement>document.getElementById("sftp")
@@ -107,7 +162,7 @@ BUcheck() {
   }
   else radioDiv.style.display = 'none';
   }
-
+*/
 ShowAddSource(){
   var radioOptL = <HTMLInputElement>document.getElementById("sourceLocal")
   var radioOptF = <HTMLInputElement>document.getElementById("IdtypeFull")
@@ -140,7 +195,8 @@ else
 compressDiv.style.display = 'none';
 
 }
-ShowCompressOption(){
+ShowCompressOption()
+{
   var selectBox = <HTMLSelectElement>document.getElementById("dropdownCompress")
   var optionRar = <HTMLOptionElement>document.getElementById("optionRar")
   var option7zip = <HTMLOptionElement>document.getElementById("option7zip")
@@ -164,58 +220,27 @@ ShowCompressOption(){
     dropRar.style.display = 'none'; 
   }*/
 
-  if(selectBox.selectedIndex == 0){
-    dropRar.style.display = 'block';
-    drop7Zip.style.display = 'none'; 
-    dropZip.style.display = 'none'; 
-  }
-  else if(selectBox.selectedIndex == 1){
-    drop7Zip.style.display = 'block';
-    dropZip.style.display = 'none'; 
-    dropRar.style.display = 'none'; 
-  }
-  else if(selectBox.selectedIndex == 2){
-    dropZip.style.display = 'block';
-    drop7Zip.style.display = 'none'; 
-    dropRar.style.display = 'none'; 
-  }
-
-  
- 
-}
-
-
-
-AddLocalDestination(){
-      var newDiv = this.renderer.createElement('div'); 
-      newDiv.Id='idNewDiv'
-      newDiv.className='aditionalDivClass'
-      var inputDestination = <HTMLDivElement>document.getElementById("inputDestiDiv");
-      var input = this.renderer.createElement('input');
-      input.type = 'text';
-      input.Ngmodel ='kokong';
-      input.className = 'BasicInputNew';
-      input.placeholder ='Aditional destination';
-      var button = this.renderer.createElement('button'); 
-      button.innerHTML = 'X';
-
-      this.renderer.listen(button, 'click', (event) => this.RemoveLocalDestination(event));
-    
-      var br = this.renderer.createElement("br");
-      this.renderer.appendChild(newDiv, input);
-      this.renderer.appendChild(inputDestination,newDiv);
-      this.renderer.appendChild(newDiv,button);
-      this.renderer.appendChild(newDiv, br);
-      /*inputDestination.appendChild(input);*/
-      /*inputDestination.appendChild(br);*/
-      
+    if(selectBox.selectedIndex == 0){
+      dropRar.style.display = 'block';
+      drop7Zip.style.display = 'none'; 
+      dropZip.style.display = 'none'; 
     }
+    else if(selectBox.selectedIndex == 1){
+      drop7Zip.style.display = 'block';
+      dropZip.style.display = 'none'; 
+      dropRar.style.display = 'none'; 
+    }
+    else if(selectBox.selectedIndex == 2){
+      dropZip.style.display = 'block';
+      drop7Zip.style.display = 'none'; 
+      dropRar.style.display = 'none'; 
+    }
+  }
     RemoveLocalDestination(event: any){
       var target = event.target || event.srcElement || event.currentTarget;
       var inputDestiDiv = <HTMLDivElement>document.getElementById("inputDestiDiv");
       this.renderer.removeChild(inputDestiDiv,target.parentNode);
     }
-
     AddSource(){
       var newDiv = this.renderer.createElement('div'); 
       newDiv.className='aditionalDivClass'
@@ -238,13 +263,11 @@ AddLocalDestination(){
       this.renderer.appendChild(newDiv,button);
       this.renderer.appendChild(newDiv, br);
     }
-
     RemoveSource(event: any){
       var target = event.target || event.srcElement || event.currentTarget;
       var inputDestiDiv = <HTMLDivElement>document.getElementById("inputDestiDiv");
       this.renderer.removeChild(inputDestiDiv,target.parentNode);
     }
-
   AddDestinationNew(){
 
     var mensiDiv = <HTMLDivElement>document.getElementById("mensiDiv");
@@ -514,29 +537,30 @@ RemoveDestinationNew(event: any){
     this.renderer.removeChild(inputDestiDiv,target.parentNode);
 }
 
-ShowCompressNew(){
-  var selectBox = <HTMLSelectElement>document.getElementById("compressSelect")
-  var optionRar = <HTMLOptionElement>document.getElementById("compressOptionRar")
-  var option7zip = <HTMLOptionElement>document.getElementById("compressOption7zip")
-  var optionZip = <HTMLOptionElement>document.getElementById("compressOptionZip")
-  var dropRar = <HTMLSelectElement>document.getElementById("compressSelectRar")
-  var dropZip = <HTMLSelectElement>document.getElementById("compressSelectZip")
-  var drop7Zip = <HTMLSelectElement>document.getElementById("compressSelect7zip")
+ShowCompressNew()
+  {
+    var selectBox = <HTMLSelectElement>document.getElementById("compressSelect")
+    var optionRar = <HTMLOptionElement>document.getElementById("compressOptionRar")
+    var option7zip = <HTMLOptionElement>document.getElementById("compressOption7zip")
+    var optionZip = <HTMLOptionElement>document.getElementById("compressOptionZip")
+    var dropRar = <HTMLSelectElement>document.getElementById("compressSelectRar")
+    var dropZip = <HTMLSelectElement>document.getElementById("compressSelectZip")
+    var drop7Zip = <HTMLSelectElement>document.getElementById("compressSelect7zip")
 
-  if(selectBox.selectedIndex == 1){
-    dropRar.style.display = 'block';
-    drop7Zip.style.display = 'none'; 
-    dropZip.style.display = 'none'; 
-  }
-  else if(selectBox.selectedIndex == 2){
-    drop7Zip.style.display = 'block';
-    dropZip.style.display = 'none'; 
-    dropRar.style.display = 'none'; 
-  }
-  else if(selectBox.selectedIndex == 3){
-    dropZip.style.display = 'block';
-    drop7Zip.style.display = 'none'; 
-    dropRar.style.display = 'none'; 
+    if(selectBox.selectedIndex == 1){
+      dropRar.style.display = 'block';
+      drop7Zip.style.display = 'none'; 
+      dropZip.style.display = 'none'; 
+    }
+    else if(selectBox.selectedIndex == 2){
+      drop7Zip.style.display = 'block';
+      dropZip.style.display = 'none'; 
+      dropRar.style.display = 'none'; 
+    }
+    else if(selectBox.selectedIndex == 3){
+      dropZip.style.display = 'block';
+      drop7Zip.style.display = 'none'; 
+      dropRar.style.display = 'none'; 
+    }
   }
 }
-  }

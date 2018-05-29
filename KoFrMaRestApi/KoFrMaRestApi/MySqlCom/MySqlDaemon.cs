@@ -80,16 +80,21 @@ namespace KoFrMaRestApi.MySqlCom
         public List<Task> GetTasks(int DaemonId, MySqlConnection connection)
         {
             List<Task> result = new List<Task>();
-            MySqlCommand sqlCommand = new MySqlCommand(@"SELECT Task, TimeOfExecution, Id FROM `tbTasks` WHERE `IdDaemon` = @Id and `Completed` = 0", connection);
+            MySqlCommand sqlCommand = new MySqlCommand(@"SELECT Task, Id, RepeatInJSON FROM `tbTasks` WHERE `IdDaemon` = @Id and `Completed` = 0", connection);
             sqlCommand.Parameters.AddWithValue("@Id", DaemonId);
             MySqlDataReader reader = sqlCommand.ExecuteReader();
             while (reader.Read())
             {
-                if (Convert.ToDateTime(reader["TimeOfExecution"]) <= DateTime.Now)
+                var t = JsonSerializationUtility.Deserialize<TaskRepeating>((string)reader["RepeatInJSON"]);
+                if (t.ExecutionTimes != null || t.ExecutionTimes.Count() > 0)
                 {
-                    string json = (string)reader["Task"];
-                    result.Add(JsonSerializationUtility.Deserialize<Task>(json));
-                    result.Last().IDTask = (int)reader["Id"];
+                    t.ExecutionTimes.Sort();
+                    if (t.ExecutionTimes[0] <= DateTime.Now)
+                    {
+                        string json = (string)reader["Task"];
+                        result.Add(JsonSerializationUtility.Deserialize<Task>(json));
+                        result.Last().IDTask = (int)reader["Id"];
+                    }
                 }
             }
             sqlCommand.Dispose();
