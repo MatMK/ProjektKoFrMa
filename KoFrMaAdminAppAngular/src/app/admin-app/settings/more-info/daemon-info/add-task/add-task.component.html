@@ -2,17 +2,19 @@
   <div id="celek">
     <div id="menuTask">
        <input type="text" id="daemonId" [(ngModel)]="daemonId" placeholder="Daemon Id" class="BasicInput" (change)="checkIfNumberValid()">         
-       <div id="backupType">
+       <div id="backupType"><strong>Backup Type:</strong>
       Full<input type="radio" id="IdtypeFull" (click)="ShowAddSource()" class="basicRadio" name="buChoice" value="Full" [(ngModel)]="backuptype">  
       Incremental <input type="radio" class="basicRadio" name="buChoice" value="Incremental" [(ngModel)]="backuptype">  
       Differencial <input type="radio" class="basicRadio" name="buChoice" value="Differencial" [(ngModel)]="backuptype"><br>
     </div>
     <div id="sourceType">
+      <strong>Source Type:</strong>
       Local <input type="radio" (click)="ShowAddSource();DbCheck()" class="basicRadio" id="sourceLocal" name="sourceType" value="Local" [(ngModel)]="sourceType">
       DbMySQL <input type="radio" (click)="ShowAddSource();DbCheck()" class="basicRadio" id="sourceDbMY" name="sourceType" value="DbMySQL" [(ngModel)]="sourceType"> 
       DbMSSQL <input type="radio" (click)="ShowAddSource();DbCheck()" class="basicRadio" id="sourceDbMS" name="sourceType" value="DbMSSQL" [(ngModel)]="sourceType">
     </div>
     <div id="destinationSelect">
+      <strong>Destination Type:</strong>
       FTP <input type="radio" class="basicRadio" (click)="BUcheck()" name="type" id="distant" [(ngModel)]="destinationType">
       SFTP<input type="radio" class="basicRadio" (click)="BUcheck()" name="type" id="sftp"[(ngModel)]="destinationType">  
       Local <input type="radio" class="basicRadio" (click)="BUcheck()" name="type" id="local"[(ngModel)]="destinationType">
@@ -55,10 +57,19 @@
       <hr>
       <input type="text" id="inputDbName" placeholder="Database name" [(ngModel)]="dbname" class="BasicInput" style="display:none">
       <input type="text" id="inputSource" placeholder="Source of backup" [(ngModel)]="sourcepath" class="BasicInput"><br>
-      <input type="datetime-local" id="inputDateExecution" [value] = "_date" class="BasicInput" (change) = "onDateChange($event.target.value)" ><br>
+      Execution: <input type="datetime-local" id="inputDateExecution" [value] = "_date" class="basicDate" (change) = "onDateChange($event.target.value)" ><br>
+        <input type="text" placeholder="Backup destination - C:\Users " class="BasicInput" id="inputDestination" [(ngModel)]="destinationpath">
+        Repeat task? <input type="checkbox" id="repeatCheckboxId" class="basicCheckbox" (change)="ShowRepeat();" >
+        <hr>
+        <div id="showRepeat" style="display:none">
+          <input type="text" id="repeatEvery" class="BasicInput" [(ngModel)]="repeatEvery" placeholder="Repeat every:">
+          Repeat till: <input type="datetime-local" id="repeatTill" class="basicDate" [value] = "_date" (change) = "onDateChangeTill($event.target.value)" >
+          <input type="submit" value="Add execution date" id="repeatAddExecutionSubmit" class="basicSubmit" (click)="AddExecutionDate()">
+          <input type="submit" value="Add exception date" id="repeatAddExceptionSubmit" class="basicSubmit" (click)="AddExceptionDate()">
+        </div>
         <div id="inputDestiDiv">
           
-            <input type="text" placeholder="Backup destination - C:\Users " class="BasicInput" id="inputDestination" [(ngModel)]="destinationpath">
+            
             <input type="submit" class="basicSubmit" id="AddDestLocal" value="AddDest" (click)="AddLocalDestination()">
             <input type="submit" class="basicSubmit" id="AddDestNew" value="AddDestNew" (click)="AddDestinationNew()">
             <div id="sourceButtonDiv" style="display:none">

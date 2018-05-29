@@ -95,6 +95,11 @@ export class AddTaskComponent  {
   {
     this.date = value;
   }
+
+  private onDateChangeTill(value : Date)
+  {
+    this.date = value;
+  }
   
    
 
@@ -140,6 +145,18 @@ else
 compressDiv.style.display = 'none';
 
 }
+
+ShowRepeat(){
+  var checkbox = <HTMLInputElement>document.getElementById("repeatCheckboxId")
+  var showRepeat = <HTMLDivElement>document.getElementById("showRepeat")
+
+  if(checkbox.checked){
+    showRepeat.style.display = 'block';
+  }
+  else
+  showRepeat.style.display = 'none';
+}
+
 ShowCompressOption(){
   var selectBox = <HTMLSelectElement>document.getElementById("dropdownCompress")
   var optionRar = <HTMLOptionElement>document.getElementById("optionRar")
@@ -224,7 +241,7 @@ AddLocalDestination(){
 
       var input = this.renderer.createElement('input');
       input.type = 'text';
-      input.Ngmodel ='vong';
+      input.Ngmodel ='newSource';
       input.className = 'BasicInputNew'
       input.placeholder ='Aditional source'
 
@@ -243,6 +260,64 @@ AddLocalDestination(){
       var target = event.target || event.srcElement || event.currentTarget;
       var inputDestiDiv = <HTMLDivElement>document.getElementById("inputDestiDiv");
       this.renderer.removeChild(inputDestiDiv,target.parentNode);
+    }
+
+    AddExecutionDate(){
+      var newDiv = this.renderer.createElement('div'); 
+      newDiv.className='aditionalDivClass'
+
+      var showRepeat = <HTMLDivElement>document.getElementById("inputDestiDiv");
+
+      var textExecution = this.renderer.createText('Execution date');
+
+      var input = this.renderer.createElement('input');
+      input.type = 'datetime-local';
+      input.Ngmodel ='newExecutionDate';
+      input.className = 'BasicInputNew'
+      input.placeholder ='Aditional execution date'
+
+      var button = this.renderer.createElement('button'); 
+      button.innerHTML = 'X';
+
+      this.renderer.listen(button, 'click', (event) => this.RemoveExecutionDate(event) )
+      var br = this.renderer.createElement("br");
+      this.renderer.appendChild(newDiv, input);
+      this.renderer.appendChild(showRepeat,newDiv);
+      this.renderer.appendChild(newDiv,textExecution);
+      this.renderer.appendChild(newDiv,button);
+      this.renderer.appendChild(newDiv, br);
+    }
+
+    RemoveExecutionDate(event : any){
+      var target = event.target || event.srcElement || event.currentTarget;
+      var inputDestiDiv = <HTMLDivElement>document.getElementById("inputDestiDiv");
+      this.renderer.removeChild(inputDestiDiv,target.parentNode);
+    }
+
+    AddExceptionDate(){
+      var newDiv = this.renderer.createElement('div'); 
+      newDiv.className='aditionalDivClass'
+
+      var showRepeat = <HTMLDivElement>document.getElementById("inputDestiDiv");
+
+      var textException = this.renderer.createText('Exception date');
+
+      var input = this.renderer.createElement('input');
+      input.type = 'datetime-local';
+      input.Ngmodel ='newExceptionDate';
+      input.className = 'BasicInputNew'
+      input.placeholder ='Aditional exception date'
+
+      var button = this.renderer.createElement('button'); 
+      button.innerHTML = 'X';
+
+      this.renderer.listen(button, 'click', (event) => this.RemoveExecutionDate(event) )
+      var br = this.renderer.createElement("br");
+      this.renderer.appendChild(newDiv, input);
+      this.renderer.appendChild(showRepeat,newDiv);
+      this.renderer.appendChild(newDiv,textException);
+      this.renderer.appendChild(newDiv,button);
+      this.renderer.appendChild(newDiv, br);
     }
 
   AddDestinationNew(){
