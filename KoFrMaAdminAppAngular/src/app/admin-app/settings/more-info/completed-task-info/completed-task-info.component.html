@@ -1,9 +1,23 @@
-<h4>Log</h4>
+<div id="tableDiv">
+<table style="width:100%">
+    <tr>      
+        <th>Task id</th>
+         <th>{{taskId}}</th> 
+    </tr>
+    <tr>    
+        <th>Date</th>       
+        <th>{{timeOfCompletion | date}}</th>
+    </tr>
+    <tr>
+        <th>Task successfull</th>
+        <th>{{isSuccessful}}</th>
+    </tr>
+    <tr>
+        <th>Log</th>
+        <th><pre>{{log}}</pre></th>
+    </tr>
+
 <!--Dont forget to use <pre></pre> for the lof to make enters visible-->
-<pre>{{log}}</pre><br>
-<h4>Task id</h4>
-{{taskId}}<br>
-<h4>Task successful</h4>
-{{isSuccessful}}<br>
-<h4>Date</h4>
-{{timeOfCompletion | date}}<br>
+
+</table>
+</div>
