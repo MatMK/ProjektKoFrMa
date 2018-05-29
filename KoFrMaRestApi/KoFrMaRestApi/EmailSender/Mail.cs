@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using KoFrMaRestApi.Models.Daemon;
 using KoFrMaRestApi.Models;
 using KoFrMaRestApi.Models.Daemon.Task.BackupJournal;
+using System.IO;
 
 namespace KoFrMaRestApi.EmailSender
 {
@@ -20,11 +21,16 @@ namespace KoFrMaRestApi.EmailSender
         string SemailFrom = "kofrmabackup@gmail.com";
         string SemailFromName = "KoFrMa Report Daemon";
         string Spassword = "KoFrMa123456";
-        string Ssubject = "KoFrMa report";
+        string Ssubject = "KoFrMaBackup report (" + DateTime.Now.ToShortDateString() + ")";
         string Sbody = "";
 
         public void SendEmail(List<EmailSettings> emailSettings)
         {
+            string body = string.Empty;
+            using (StreamReader reader = new StreamReader(Path.Combine(AppContext.BaseDirectory, "EmailSender", "Email.html")))
+            {
+                Sbody = reader.ReadToEnd();
+            }
             List<Exception> exceptions = new List<Exception>();
             List<TaskComplete> completedTasks = new List<TaskComplete>();
             using (MySqlConnection connection = WebApiConfig.Connection())
@@ -60,39 +66,7 @@ namespace KoFrMaRestApi.EmailSender
             MailMessage mail = new MailMessage();
             mail.From = new MailAddress(SemailFrom,SemailFromName,Encoding.UTF8);
             mail.Subject = Ssubject;
-            //Sbody += "< div style='border: medium solid grey; width: 500px; height: 266px;font-family: arial,sans-serif; font-size: 17px;'>";
-            Sbody += "<h3 style='background-color: blueviolet; margin-top:0px;'>KOFRMA backup agency</h3>";
-            Sbody += "<br/>";
-            Sbody += "Dear user,";
-            Sbody += "<br/>";
-            if (exceptions.Count > 0)
-            {
-                Sbody += $"Since last time, there has been {exceptions.Count} errors on KoFrMaRestApi server, here are the messages:";
-                Sbody += "<br/>";
-                foreach (var item in exceptions)
-                {
-                    Sbody += item.Message;
-                    Sbody += "<br/>";
-                }
-            }
-            if (completedTasks.Count > 0)
-            {
-                Sbody += $"Since last time, {completedTasks.Count} tasks were completed, here is more info:";
-                Sbody += "<br/>";
-                foreach (var item in completedTasks)
-                {
-                    Sbody += item.IDTask;
-                    Sbody += $"<a href=\"{WebApiConfig.WebServerURL}\">More info</a>";
-                    Sbody += "<br/>";
-                }
-            }
-            Sbody += "<p>";
-            Sbody += "Thank you for using our backup</p>";
-            Sbody += "<br/>";
-            Sbody += "Thanks,";
-            Sbody += "<br/>";
-            Sbody += "<b>The KoFrMa Team</b>";
-            Sbody += "</div>";
+            mail.Body = Sbody;
             SmtpClient smt = new SmtpClient();
             mail.IsBodyHtml = true;
             smt.Host = smtpAddress;

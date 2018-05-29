@@ -12,7 +12,6 @@ namespace KoFrMaRestApi.Models
 {
     public class ErrorObserver : ExceptionLogger
     {
-
         public void RegisterError(Exception exception)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
