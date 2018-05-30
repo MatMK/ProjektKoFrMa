@@ -63,6 +63,23 @@ namespace KoFrMaRestApi.EmailSender
                 command.CommandText = "UPDATE `tbRestApiExceptions` SET `AdminNotified`=1 WHERE `AdminNotified`= 0";
                 command.ExecuteNonQuery();
             }
+            int successful = 0;
+            foreach (var item in completedTasks)
+            {
+                if (item.IsSuccessfull)
+                {
+                    successful++;
+                }
+            }
+            Sbody.Replace("{Date}", DateTime.Now.ToShortDateString());
+            Sbody.Replace("{AdminAppUrl}", WebApiConfig.WebServerURL);
+            Sbody.Replace("{ErrorCount}", exceptions.Count.ToString());
+            Sbody.Replace("{CompletedTasks}", completedTasks.Count.ToString());
+            Sbody.Replace("{Successful}", successful.ToString());
+            Sbody.Replace("{ListOfTasks}", "< li style = \"margin:0 0 10px 30px;\" class=\"list-item-first\">A list item.</li>");
+            Sbody.Replace("{ListOfExceptions}", "< li style = \"margin:0 0 10px 30px;\" class=\"list-item-first\">A list item.</li>");
+            Sbody.Replace("{TextAfterTasks}", "");
+            Sbody.Replace("{TextAfterExceptions}", "");
             MailMessage mail = new MailMessage();
             mail.From = new MailAddress(SemailFrom,SemailFromName,Encoding.UTF8);
             mail.Subject = Ssubject;
