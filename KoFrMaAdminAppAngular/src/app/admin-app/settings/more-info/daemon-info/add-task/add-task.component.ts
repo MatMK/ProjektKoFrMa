@@ -11,6 +11,10 @@ import { DestinationPlain } from '../../../../server-connection/models/communica
 import { DestinationRar } from '../../../../server-connection/models/communication-models/task/task-models/destinations/destination-rar.model';
 import { DestinationZip } from '../../../../server-connection/models/communication-models/task/task-models/destinations/destination-zip.model';
 import { Destination7z } from '../../../../server-connection/models/communication-models/task/task-models/destinations/destination-7z.model';
+import { DestinationPathLocal } from '../../../../server-connection/models/communication-models/task/task-models/destinations/destination-path-local.model';
+import { DestinationPathFTP } from '../../../../server-connection/models/communication-models/task/task-models/destinations/destination-path-ftp.model';
+import { NetworkCredential } from '../../../../server-connection/models/communication-models/task/network-credential.model';
+import { DestinationPathSFTP } from '../../../../server-connection/models/communication-models/task/task-models/destinations/destionation-path-sftp.model';
 
 @Component({
   selector: 'app-add-task',
@@ -29,7 +33,7 @@ export class AddTaskComponent
   private ncPath : string;
   private sourcetype : string;
   private destinationtype :string;
-  private destinations : IDestination[];
+  private destinations : IDestination[] = [];
   private compress : boolean = false;
   private compressType : string = "Rar";
   private compressLevel : number = 1;
@@ -79,28 +83,42 @@ export class AddTaskComponent
       }
       else
       {
-        
         var newDiv = this.renderer.createElement('div'); 
         newDiv.Id='idNewDiv'
         newDiv.className='aditionalDivClass'
         var inputDestination = <HTMLDivElement>document.getElementById("inputDestiDiv");
         var input = this.renderer.createElement('p');
         input.style = "display:inline-block; vertical-align: middle;";
-        if(this.destinationtype.trim() == 'SFTP')
+        if(this.destinationtype.trim() === 'LOCAL')
         {
-          input.innerHTML = "SFTP";
+          let dest = new DestinationPathLocal();
+          dest.Path = this.ncPath;
+          result.Path = dest;
         }
-        if(this.destinationtype.trim() == 'FTP')
+        if(this.destinationtype.trim() === 'FTP')
         {
-          input.innerHTML = "FTP";
+          let dest = new DestinationPathFTP();
+          dest.NetworkCredential = new NetworkCredential();
+          dest.NetworkCredential.Password = this.ncPassword;
+          dest.NetworkCredential.Password = this.ncUsername;
+          dest.Path = this.ncPath;
+          result.Path = dest;
         }
-        if(this.destinationtype.trim() == 'LOCAL')
+        if(this.destinationtype.trim() === 'SFTP')
         {
-          input.innerHTML = "LOCAL";
-        } 
-        var button = this.renderer.createElement('button'); 
+          let dest = new DestinationPathSFTP();
+          dest.NetworkCredential = new NetworkCredential();
+          dest.NetworkCredential.Password = this.ncPassword;
+          dest.NetworkCredential.Password = this.ncUsername;
+          dest.Path = this.ncPath;
+          result.Path = dest;
+        }
+        this.destinations.push(result);
+        input.innerHTML = this.destinationtype
+        var button = this.renderer.createElement('button');
         button.innerHTML = 'X';
         button.style = "display:inline-block; vertical-align: middle;";
+        button.id = this.destinations.length-1;
         this.renderer.listen(button, 'click', (event) => this.RemoveLocalDestination(event));
         var br = this.renderer.createElement("br");
         this.renderer.appendChild(newDiv, input);
@@ -112,6 +130,7 @@ export class AddTaskComponent
         this.ncPath = undefined;
         this.ncPassword = undefined;
         this.ncUsername = undefined;
+        console.log(this.destinations);
       }
     }
     else
@@ -121,7 +140,7 @@ export class AddTaskComponent
   }
   private getDestination(compression : string, compressionLevel : number, compressionMaxFile : number) : IDestination
   {
-    if(compression == undefined || compression == null)
+    if(!this.compress)
     {
       return new DestinationPlain()
     }
@@ -148,14 +167,10 @@ export class AddTaskComponent
     }
     return undefined;
   }
-
   private onDateChangeTill(value : Date)
   {
     this.date = value;
   }
-  
-   
-
   private getDestinationPath()
   {
 
@@ -255,11 +270,14 @@ ShowCompressOption(){
       dropRar.style.display = 'none'; 
     }
   }
-    RemoveLocalDestination(event: any){
-      var target = event.target || event.srcElement || event.currentTarget;
-      var inputDestiDiv = <HTMLDivElement>document.getElementById("inputDestiDiv");
-      this.renderer.removeChild(inputDestiDiv,target.parentNode);
-    }
+  RemoveLocalDestination(event: any)
+  {
+    var target = event.target || event.srcElement || event.currentTarget;
+    var inputDestiDiv = <HTMLDivElement>document.getElementById("inputDestiDiv");
+    this.renderer.removeChild(inputDestiDiv,target.parentNode);
+    console.log(target.id);
+    delete this.destinations[target.id];
+  }
     AddSource(){
       var newDiv = this.renderer.createElement('div'); 
       newDiv.className='aditionalDivClass'

@@ -20,7 +20,7 @@ namespace KoFrMaRestApi
         /// Url of AdminApp. 
         /// Used for Email links
         /// </summary>
-        public static string WebServerURL = "http://localhost:4200/";
+        public static string WebServerURL = "http://localhost:4200";
         /// <summary>
         /// returns MySqlConnection
         /// </summary>

@@ -24,7 +24,7 @@ namespace KoFrMaRestApi.EmailSender
         string Ssubject = "KoFrMaBackup report (" + DateTime.Now.ToShortDateString() + ")";
         string Sbody = "";
 
-        public void SendEmail(List<EmailSettings> emailSettings)
+        public void SendEmail(EmailSettings emailSettings, int AdminId)
         {
             string body = string.Empty;
             using (StreamReader reader = new StreamReader(Path.Combine(AppContext.BaseDirectory, "EmailSender", "Email.html")))
@@ -34,7 +34,7 @@ namespace KoFrMaRestApi.EmailSender
             List<Exception> exceptions = new List<Exception>();
             List<TaskComplete> completedTasks = new List<TaskComplete>();
             using (MySqlConnection connection = WebApiConfig.Connection())
-            using (MySqlCommand command = new MySqlCommand("select * from tbRestApiExceptions where AdminNotified = 0", connection))
+            using (MySqlCommand command = new MySqlCommand("SELECT * FROM tbRestApiExceptions inner join tbRestApiExceptionsAdminNOTNotified on tbRestApiExceptions.Id = tbRestApiExceptionsAdminNOTNotified.IdTaskCompleted where tbRestApiExceptionsAdminNOTNotified.IdAdmin = " + AdminId, connection))
             {
                 connection.Open();
                 using (MySqlDataReader reader = command.ExecuteReader())
@@ -44,7 +44,7 @@ namespace KoFrMaRestApi.EmailSender
                         exceptions.Add(JsonConvert.DeserializeObject<Exception>((string)reader["ExceptionInJson"]));
                     }
                 }
-                command.CommandText = "SELECT * FROM `tbTasksCompleted` WHERE `AdminNotified` = 0";
+                command.CommandText = "SELECT * FROM tbTasksCompleted inner join tbTasksCompletedAdminNOTNotified on tbTasksCompleted.Id = tbTasksCompletedAdminNOTNotified.IdTaskCompleted where tbTasksCompletedAdminNOTNotified.IdAdmin = " + AdminId;
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -60,8 +60,9 @@ namespace KoFrMaRestApi.EmailSender
                         });
                     }
                 }
-                command.CommandText = "UPDATE `tbRestApiExceptions` SET `AdminNotified`=1 WHERE `AdminNotified`= 0";
+                command.CommandText = "DELETE FROM `tbTasksCompletedAdminNOTNotified` WHERE IdAdmin = " + AdminId;
                 command.ExecuteNonQuery();
+                command.CommandText = "DELETE FROM `tbRestApiExceptionsAdminNOTNotified` WHERE IdAdmin = " + AdminId;
             }
             int successful = 0;
             foreach (var item in completedTasks)
@@ -71,15 +72,32 @@ namespace KoFrMaRestApi.EmailSender
                     successful++;
                 }
             }
-            Sbody.Replace("{Date}", DateTime.Now.ToShortDateString());
-            Sbody.Replace("{AdminAppUrl}", WebApiConfig.WebServerURL);
-            Sbody.Replace("{ErrorCount}", exceptions.Count.ToString());
-            Sbody.Replace("{CompletedTasks}", completedTasks.Count.ToString());
-            Sbody.Replace("{Successful}", successful.ToString());
-            Sbody.Replace("{ListOfTasks}", "< li style = \"margin:0 0 10px 30px;\" class=\"list-item-first\">A list item.</li>");
-            Sbody.Replace("{ListOfExceptions}", "< li style = \"margin:0 0 10px 30px;\" class=\"list-item-first\">A list item.</li>");
-            Sbody.Replace("{TextAfterTasks}", "");
-            Sbody.Replace("{TextAfterExceptions}", "");
+            Sbody = Sbody.Replace("{Date}", DateTime.Now.ToShortDateString());
+            Sbody = Sbody.Replace("{AdminAppUrl}", WebApiConfig.WebServerURL);
+            Sbody = Sbody.Replace("{ErrorCount}", exceptions.Count.ToString());
+            Sbody = Sbody.Replace("{CompletedTasks}", completedTasks.Count.ToString());
+            Sbody = Sbody.Replace("{Successful}", successful.ToString());
+            string listCompletedTasks = "";
+            foreach (var item in completedTasks)
+            {
+                listCompletedTasks += "<li style = \"margin:0 0 10px 30px;\" class=\"list-item-first\"><a href=" + WebApiConfig.WebServerURL + "/backup/completed-task-info/" + item.IDTask+">";
+                listCompletedTasks += $"Task {item.IDTask} was ";
+                listCompletedTasks += item.IsSuccessfull ? "successful" : "unsuccessful";
+                listCompletedTasks += $". It was completed {item.TimeOfCompletition.ToShortDateString()} at {item.TimeOfCompletition.ToShortTimeString()}";
+                listCompletedTasks += "</a></li>";
+
+            }
+            string listExceptions = "";
+            foreach (var item in exceptions)
+            {
+                listExceptions += "<li style = \"margin:0 0 10px 30px;\" class=\"list-item-first\">";
+                listExceptions += $"{item.Message}";
+                listExceptions += "</li>";
+            }
+            Sbody = Sbody.Replace("{ListOfTasks}", listCompletedTasks);
+            Sbody = Sbody.Replace("{ListOfExceptions}", listExceptions);
+            Sbody = Sbody.Replace("{TextAfterTasks}", "");
+            Sbody = Sbody.Replace("{TextAfterExceptions}", "");
             MailMessage mail = new MailMessage();
             mail.From = new MailAddress(SemailFrom,SemailFromName,Encoding.UTF8);
             mail.Subject = Ssubject;
@@ -93,10 +111,7 @@ namespace KoFrMaRestApi.EmailSender
             //smtp.UseDefaultCredentials = true;
             mail.Body = Sbody;
             smt.Credentials = nc;
-            foreach (var item in emailSettings)
-            {
-                mail.To.Add(item.EmailAddress);
-            }
+            mail.To.Add(emailSettings.EmailAddress);
             smt.Send(mail);
         }
     }

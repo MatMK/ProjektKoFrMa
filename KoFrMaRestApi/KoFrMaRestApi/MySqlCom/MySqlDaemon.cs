@@ -14,6 +14,7 @@ namespace KoFrMaRestApi.MySqlCom
 {
     public class MySqlDaemon
     {
+        MySqlAdmin sqlAdmin = new MySqlAdmin();
         /// <summary>
         /// Returns daemons database id.
         /// </summary>
@@ -26,7 +27,7 @@ namespace KoFrMaRestApi.MySqlCom
             using (MySqlDataReader reader = SelectFromTableByPcId(connection, daemon))
             {
                 int count = 0;
-                int result=0;
+                int result = 0;
                 while (reader.Read())
                 {
                     count++;
@@ -149,12 +150,29 @@ namespace KoFrMaRestApi.MySqlCom
                     debugLog += item + "\n";
                 }
             }
-
-            using (MySqlCommand command = new MySqlCommand($"INSERT INTO `tbTasksCompleted`VALUES (null,{GetDaemonId(taskComplete.DaemonInfo,connection)},{taskComplete.IDTask},'{JsonSerializationUtility.Serialize(taskComplete.DatFile)}',@datetime,'{debugLog}',{taskComplete.IsSuccessfull})", connection))
+            using (MySqlCommand command = new MySqlCommand($"INSERT INTO `tbTasksCompleted`VALUES (null,{GetDaemonId(taskComplete.DaemonInfo, connection)},{taskComplete.IDTask},'{JsonSerializationUtility.Serialize(taskComplete.DatFile)}',@datetime,'{debugLog}',{taskComplete.IsSuccessfull})", connection))
             {
                 command.Parameters.AddWithValue("@datetime", taskComplete.TimeOfCompletition);
                 command.ExecuteNonQuery();
             }
+            int Id = sqlAdmin.NextAutoIncrement("tbTasksCompleted") - 1;
+            List<int> toInsert = new List<int>();
+            using (MySqlCommand command = new MySqlCommand($"select Id from tbAdminAccounts where 1 order by Id", connection))
+            {
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        toInsert.Add((int)reader["Id"]);
+                    }
+                }
+                foreach (int item in toInsert)
+                {
+                    command.CommandText = $"INSERT INTO `tbTasksCompletedAdminNOTNotified`(`IdTaskCompleted`, `IdAdmin`) VALUES({Id}, {item})";
+                    command.ExecuteNonQuery();
+                }
+            }
+
         }
         /// <summary>
         /// If next execution time exists new task is created and current is marked as completed else task is removed with <see cref="TaskRemove(TaskComplete, MySqlConnection, bool)"/>
@@ -162,7 +180,7 @@ namespace KoFrMaRestApi.MySqlCom
         /// <param name="taskComplete">Completed task</param>
         /// <param name="JsonTime">T<see cref="TaskRepeating"/> in json</param>
         /// <param name="connection">open MySqlConnection</param>
-        private void TaskExtend(TaskComplete taskComplete,string JsonTime, MySqlConnection connection)
+        private void TaskExtend(TaskComplete taskComplete, string JsonTime, MySqlConnection connection)
         {
             TaskRepeating repeat = JsonSerializationUtility.Deserialize<TaskRepeating>(JsonTime);
             DateTime nextDate = repeat.ExecutionTimes.Last();
@@ -279,7 +297,7 @@ namespace KoFrMaRestApi.MySqlCom
         {
             bool result = true;
             if (ExceptionDates != null)
-            foreach (var time in ExceptionDates)
+                foreach (var time in ExceptionDates)
                 {
                     if (item > time.Start && item < time.End)
                     {

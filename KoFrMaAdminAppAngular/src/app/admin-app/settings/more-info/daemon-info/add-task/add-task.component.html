@@ -13,17 +13,18 @@
       DbMSSQL <input type="radio" (click)="ShowAddSource();DbCheck()" class="basicRadio" id="sourceDbMS" name="sourceType" value="DbMSSQL" [(ngModel)]="sourceType">
     </div>
     <div id="destinationSelect">
+        <strong>Destination Type:</strong>
       FTP <input type="radio" class="basicRadio" name="type" id="distant" [(ngModel)]="destinationtype" value="FTP">
       SFTP<input type="radio" class="basicRadio" name="type" id="sftp"[(ngModel)]="destinationtype" value="SFTP">  
       Local <input type="radio" class="basicRadio" name="type" id="local"[(ngModel)]="destinationtype" value="LOCAL">
     </div>
     <div id="ifServer">
+      <div *ngIf="destinationtype != undefined">
+        <input type='text'placeholder="Path" class="BasicInput" id='distPath' name='dPath'[(ngModel)]="ncPath">
+      </div>
       <div *ngIf="destinationtype === 'SFTP'||destinationtype === 'FTP'">
         <input type='text' placeholder="Username" class="BasicInput" id='distUser' name='dUser'[(ngModel)]="ncUsername" ><br>
         <input type='text'placeholder="Password" class="BasicInput" id='distPass' name='dPass'[(ngModel)]="ncPassword">
-      </div>
-      <div *ngIf="destinationtype === 'LOCAL'">
-        <input type='text'placeholder="Path" class="BasicInput" id='distPath' name='dPath'[(ngModel)]="ncPath">
       </div>
     </div>
     Compress? <input type="checkbox" id="checkboxCompression" class="basicCheckbox" [(ngModel)]="compress" style="vertical-align: middle;">

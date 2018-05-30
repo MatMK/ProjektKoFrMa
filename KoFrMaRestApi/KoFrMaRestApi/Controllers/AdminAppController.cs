@@ -380,7 +380,8 @@ namespace KoFrMaRestApi.Controllers
         [HttpGet, Route(@"api/AdminApp/test")]
         public string test()
         {
-            return JsonConvert.DeserializeObject<string>("Pepa");
+            string t = HttpContext.Current.Request.Url.ToString().Replace("user/login", "");
+            return t;
             //return WebApiConfig.privateKey;
             /*
             MySqlDaemon d = new MySqlDaemon();

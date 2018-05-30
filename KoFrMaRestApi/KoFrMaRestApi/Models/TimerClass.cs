@@ -38,21 +38,6 @@ namespace KoFrMaRestApi.Models
         /// </summary>
         public void StartTimer()
         {
-            /*
-            CorrectTime(new TaskRepeating()
-            {
-                ExecutionTimes = new List<DateTime>() { new DateTime(2018, 5, 24, 16, 50, 0), new DateTime(2018, 5, 23, 16, 50, 0), new DateTime(2018, 5, 24, 16, 10, 0) },
-                ExceptionDates = new List<ExceptionDate>()
-                {
-                    new ExceptionDate()
-                    {
-                        Start = new DateTime(2018, 5, 23, 16, 49, 0),
-                        End = new DateTime(2018, 5, 23, 16, 51, 0)
-                    }
-                },
-                Repeating = new TimeSpan(2, 0, 0, 0),
-                RepeatTill = new DateTime(2018,5,25)
-            },1, "tbEmailPreferences", "RepeatInJSON");*/
             if (timer == null)
             {
                 timer = new Timer(10000);
@@ -79,7 +64,7 @@ namespace KoFrMaRestApi.Models
                             EmailSettings email = new EmailSettings() { EmailAddress = (string)reader["RecievingEmail"], SendOnlyFailed = Convert.ToBoolean(reader["SendOnlyFailed"]) };
                             if (this.CorrectTime(JsonSerializationUtility.Deserialize<TaskRepeating>((string)reader["RepeatInJSON"]), (int)reader["id"], "tbEmailPreferences", "RepeatInJSON"))
                             {
-                                this.mail.SendEmail(new List<EmailSettings>() { email });
+                                //this.mail.SendEmail(email, (int)reader["IdAdmin"]);
                             }
                         }
                     }
