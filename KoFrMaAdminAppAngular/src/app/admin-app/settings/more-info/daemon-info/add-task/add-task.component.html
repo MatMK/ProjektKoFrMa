@@ -12,76 +12,80 @@
       DbMySQL <input type="radio" (click)="ShowAddSource();DbCheck()" class="basicRadio" id="sourceDbMY" name="sourceType" value="DbMySQL" [(ngModel)]="sourceType"> 
       DbMSSQL <input type="radio" (click)="ShowAddSource();DbCheck()" class="basicRadio" id="sourceDbMS" name="sourceType" value="DbMSSQL" [(ngModel)]="sourceType">
     </div>
-    <div id="destinationSelect">
-        <strong>Destination Type:</strong>
-      FTP <input type="radio" class="basicRadio" name="type" id="distant" [(ngModel)]="destinationtype" value="FTP">
-      SFTP<input type="radio" class="basicRadio" name="type" id="sftp"[(ngModel)]="destinationtype" value="SFTP">  
-      Local <input type="radio" class="basicRadio" name="type" id="local"[(ngModel)]="destinationtype" value="LOCAL">
-    </div>
-    <div id="ifServer">
-      <div *ngIf="destinationtype != undefined">
-        <input type='text'placeholder="Path" class="BasicInput" id='distPath' name='dPath'[(ngModel)]="ncPath">
+    <div class="destinationAll">
+      <div id="destinationSelect">
+          <strong>Destination Type:</strong>
+        FTP <input type="radio" class="basicRadio" name="type" id="distant" [(ngModel)]="destinationtype" value="FTP">
+        SFTP<input type="radio" class="basicRadio" name="type" id="sftp"[(ngModel)]="destinationtype" value="SFTP">  
+        Local <input type="radio" class="basicRadio" name="type" id="local"[(ngModel)]="destinationtype" value="LOCAL">
       </div>
-      <div *ngIf="destinationtype === 'SFTP'||destinationtype === 'FTP'">
-        <input type='text' placeholder="Username" class="BasicInput" id='distUser' name='dUser'[(ngModel)]="ncUsername" ><br>
-        <input type='text'placeholder="Password" class="BasicInput" id='distPass' name='dPass'[(ngModel)]="ncPassword">
-      </div>
-    </div>
-    Compress? <input type="checkbox" id="checkboxCompression" class="basicCheckbox" [(ngModel)]="compress" style="vertical-align: middle;">
-    <div *ngIf="compress==true">
-      <div id="divCompress">
-        <select id="dropdownCompress" class="basicSelect" [(ngModel)]="compressType" (change)="compressLevel=1"> 
-          <option value="Rar" id="optionRar">Rar</option> 
-          <option value="7zip" id="option7zip">7zip</option> 
-          <option value="Zip" id="optionZip">Zip</option> 
-        </select>
-      </div>
-      <div id="dropMenuDiv" >
-        <select id="dropdownRar" class="basicSelect" *ngIf="compressType=='Rar'" [(ngModel)]="compressLevel"> 
-          <option value="1" id="optionRar1">Fastest</option> 
-          <option value="2" id="optionRar2">Fast</option> 
-          <option value="3" id="optionRar3">Normal</option> 
-          <option value="4" id="optionRar4">Good</option> 
-          <option value="5" id="optionRar5">Best</option> 
-        </select>   
-        <select id="dropdownZip" class="basicSelect" *ngIf="compressType=='Zip'" [(ngModel)]="compressLevel">
-          <option value="0" id="optionZip0">Optimal</option> 
-          <option value="1" id="optionZip1">Fastest</option>
-        </select>  
-        <select id="dropdown7zip" class="basicSelect" *ngIf="compressType=='7zip'" [(ngModel)]="compressLevel">
-          <option value="1" id="option7zip1">Fastest</option> 
-          <option value="3" id="option7Zip2">Fast</option> 
-          <option value="5" id="option7Zip3">Normal</option> 
-          <option value="7" id="option7Zip4">Maximum</option> 
-          <option value="9" id="option7Zip5">Ultra</option> 
-        </select>
-      </div>
-    </div>
-      <hr>
-      <input type="text" id="inputDbName" placeholder="Database name" [(ngModel)]="dbname" class="BasicInput" style="display:none">
-      <input type="text" id="inputSource" placeholder="Source of backup" [(ngModel)]="sourcepath" class="BasicInput"><br>
-      Execution: <input type="datetime-local" id="inputDateExecution" [value] = "_date" class="basicDate" (change) = "onDateChange($event.target.value)" ><br>
-        <input type="text" placeholder="Backup destination - C:\Users " class="BasicInput" id="inputDestination" [(ngModel)]="destinationpath">
-        Repeat task? <input type="checkbox" id="repeatCheckboxId" class="basicCheckbox" (change)="ShowRepeat();" >
-        <hr>
-        <div id="showRepeat" style="display:none">
-          <input type="text" id="repeatEvery" class="BasicInput" [(ngModel)]="repeatEvery" placeholder="Repeat every:">
-          Repeat till: <input type="datetime-local" id="repeatTill" class="basicDate" [value] = "_date" (change) = "onDateChangeTill($event.target.value)" >
-          <input type="submit" value="Add execution date" id="repeatAddExecutionSubmit" class="basicSubmit" (click)="AddExecutionDate()">
-          <input type="submit" value="Add exception date" id="repeatAddExceptionSubmit" class="basicSubmit" (click)="AddExceptionDate()">
+      <div id="ifServer">
+        <div *ngIf="destinationtype != undefined">
+          <input type='text'placeholder="Path" class="BasicInput" id='distPath' name='dPath'[(ngModel)]="ncPath">
         </div>
-        <div id="inputDestiDiv">
-          
-            
-            <input type="submit" class="basicSubmit" id="AddDestLocal" value="AddDest" (click)="AddLocalDestination()">
-            <input type="submit" class="basicSubmit" id="AddDestNew" value="AddDestNew" (click)="AddDestinationNew()">
-            <div id="sourceButtonDiv" style="display:none">
-              <input type="submit" class="basicSubmit" id="AddSource" value="AddSource" (click)="AddSource()">
-            </div>
-            <br>
-        </div><hr>
-      <input type="submit" value="Save" id="inputSaveTask" class="basicSubmit"  (click)="AddTask()">
+        <div *ngIf="destinationtype === 'SFTP'||destinationtype === 'FTP'">
+          <input type='text' placeholder="Username" class="BasicInput" id='distUser' name='dUser'[(ngModel)]="ncUsername" ><br>
+          <input type='text'placeholder="Password" class="BasicInput" id='distPass' name='dPass'[(ngModel)]="ncPassword">
+        </div>
       </div>
+      <div *ngIf="destinationtype != undefined">
+        Compress? <input type="checkbox" id="checkboxCompression" class="basicCheckbox" [(ngModel)]="compress" style="vertical-align: middle;">
+        <div *ngIf="compress==true">
+          <div id="divCompress">
+            <select id="dropdownCompress" class="basicSelect" [(ngModel)]="compressType" (change)="compressLevel=1"> 
+              <option value="Rar" id="optionRar">Rar</option> 
+              <option value="7zip" id="option7zip">7zip</option> 
+              <option value="Zip" id="optionZip">Zip</option> 
+            </select>
+          </div>
+          <div id="dropMenuDiv" >
+            <select id="dropdownRar" class="basicSelect" *ngIf="compressType=='Rar'" [(ngModel)]="compressLevel"> 
+              <option value="1" id="optionRar1">Fastest</option> 
+              <option value="2" id="optionRar2">Fast</option> 
+              <option value="3" id="optionRar3">Normal</option> 
+              <option value="4" id="optionRar4">Good</option> 
+              <option value="5" id="optionRar5">Best</option> 
+            </select>   
+            <select id="dropdownZip" class="basicSelect" *ngIf="compressType=='Zip'" [(ngModel)]="compressLevel">
+              <option value="0" id="optionZip0">Optimal</option> 
+              <option value="1" id="optionZip1">Fastest</option>
+            </select>  
+            <select id="dropdown7zip" class="basicSelect" *ngIf="compressType=='7zip'" [(ngModel)]="compressLevel">
+              <option value="1" id="option7zip1">Fastest</option> 
+              <option value="3" id="option7Zip2">Fast</option> 
+              <option value="5" id="option7Zip3">Normal</option> 
+              <option value="7" id="option7Zip4">Maximum</option> 
+              <option value="9" id="option7Zip5">Ultra</option> 
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <input type="text" id="inputDbName" placeholder="Database name" [(ngModel)]="dbname" class="BasicInput" style="display:none">
+    <input type="text" id="inputSource" placeholder="Source of backup" [(ngModel)]="sourcepath" class="BasicInput"><br>
+    Execution: <input type="datetime-local" id="inputDateExecution" [value] = "_date" class="basicDate" (change) = "onDateChange($event.target.value)" ><br>
+      <input type="text" placeholder="Backup destination - C:\Users " class="BasicInput" id="inputDestination" [(ngModel)]="destinationpath">
+      Repeat task? <input type="checkbox" id="repeatCheckboxId" class="basicCheckbox" (change)="ShowRepeat();" >
+      <hr>
+      <div id="showRepeat" style="display:none">
+        <input type="text" id="repeatEvery" class="BasicInput" [(ngModel)]="repeatEvery" placeholder="Repeat every:">
+        Repeat till: <input type="datetime-local" id="repeatTill" class="basicDate" [value] = "_date" (change) = "onDateChangeTill($event.target.value)" >
+        <input type="submit" value="Add execution date" id="repeatAddExecutionSubmit" class="basicSubmit" (click)="AddExecutionDate()">
+        <input type="submit" value="Add exception date" id="repeatAddExceptionSubmit" class="basicSubmit" (click)="AddExceptionDate()">
+      </div>
+      <div id="inputDestiDiv">
+        
+          
+          <input type="submit" class="basicSubmit" id="AddDestLocal" value="AddDest" (click)="AddLocalDestination()">
+          <input type="submit" class="basicSubmit" id="AddDestNew" value="AddDestNew" (click)="AddDestinationNew()">
+          <div id="sourceButtonDiv" style="display:none">
+            <input type="submit" class="basicSubmit" id="AddSource" value="AddSource" (click)="AddSource()">
+          </div>
+          <br>
+      </div><hr>
+      <input type="submit" value="Save" id="inputSaveTask" class="basicSubmit"  (click)="AddTask()">
+    </div>
       <div id="mensiDiv">
     </div>
   </div>
