@@ -42,7 +42,7 @@ namespace KoFrMaRestApi.MySqlCom
                     }
                     if (NumberOfAdmins == 0)
                     {
-                        //throw new Exception("No admin with this username");
+                        throw new Exception("No admin with this username");
                     }
                     if(NumberOfAdmins > 1)
                     {

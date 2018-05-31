@@ -15,6 +15,10 @@ import { DestinationPathLocal } from '../../../../server-connection/models/commu
 import { DestinationPathFTP } from '../../../../server-connection/models/communication-models/task/task-models/destinations/destination-path-ftp.model';
 import { NetworkCredential } from '../../../../server-connection/models/communication-models/task/network-credential.model';
 import { DestinationPathSFTP } from '../../../../server-connection/models/communication-models/task/task-models/destinations/destionation-path-sftp.model';
+import { SourceMySQL } from '../../../../server-connection/models/communication-models/task/task-models/sources/source-my-sql.model';
+import { ISource } from '../../../../server-connection/models/communication-models/task/task-models/isource.interface';
+import { SourceMSSQL } from '../../../../server-connection/models/communication-models/task/task-models/sources/source-ms-sql.model';
+import { SourceFolders } from '../../../../server-connection/models/communication-models/task/task-models/sources/source-file.model';
 
 @Component({
   selector: 'app-add-task',
@@ -31,6 +35,13 @@ export class AddTaskComponent
   private ncUsername : string;
   private ncPassword : string;
   private ncPath : string;
+
+  private srcPath : {id: number, value : string}[] = [{id: 0, value: ""}];
+  private srcDatabaseName : string;
+  private srcServerName : string;
+  private srcPassword : string;
+  private srcUsername : string;
+  
   private sourcetype : string;
   private destinationtype :string;
   private destinations : IDestination[] = [];
@@ -59,9 +70,24 @@ export class AddTaskComponent
   {
     if(this.checkIfNumberValid(true))
     {
+      var i : number = 0;
+      this.destinations.forEach(element => {
+        if(element != undefined)
+          i++;
+      });
+      if(i==0)
+      {
+        alert("Select at least one destination");
+        return;
+      }
       let newTask : SetTask = new SetTask()
       newTask.DaemonId = this.daemonId;
-      newTask.Destinations
+      newTask.Destinations = this.destinations.filter(function( element ) {
+        return element !== undefined;
+      });
+      newTask.Sources = this.getSource(this.sourcetype, this.backuptype)
+      if(newTask.Sources==undefined)
+        return;
       console.log(newTask);
       //this.data.Loading = true;
       //this.service.SetTask([newTask]).then(res => this.service.RefreshData([3]))
@@ -76,6 +102,7 @@ export class AddTaskComponent
   {
     if(this.destinationtype != undefined)
     {
+      //Adding destinaion to an array
       var result : IDestination = this.getDestination(this.compressType, this.compressLevel, undefined);
       if(result == undefined)
       {
@@ -83,12 +110,6 @@ export class AddTaskComponent
       }
       else
       {
-        var newDiv = this.renderer.createElement('div'); 
-        newDiv.Id='idNewDiv'
-        newDiv.className='aditionalDivClass'
-        var inputDestination = <HTMLDivElement>document.getElementById("inputDestiDiv");
-        var input = this.renderer.createElement('p');
-        input.style = "display:inline-block; vertical-align: middle;";
         if(this.destinationtype.trim() === 'LOCAL')
         {
           let dest = new DestinationPathLocal();
@@ -114,6 +135,16 @@ export class AddTaskComponent
           result.Path = dest;
         }
         this.destinations.push(result);
+        this.ncPath = undefined;
+        this.ncPassword = undefined;
+        this.ncUsername = undefined;
+        //Renderign new destination
+        var newDiv = this.renderer.createElement('div'); 
+        newDiv.Id='idNewDiv'
+        newDiv.className='aditionalDivClass'
+        var inputDestination = <HTMLDivElement>document.getElementById("inputDestiDiv");
+        var input = this.renderer.createElement('p');
+        input.style = "display:inline-block; vertical-align: middle;";
         input.innerHTML = this.destinationtype
         var button = this.renderer.createElement('button');
         button.innerHTML = 'X';
@@ -127,10 +158,6 @@ export class AddTaskComponent
         /*inputDestination.appendChild(input);*/
         /*inputDestination.appendChild(br);*/
         //this.destinationtype = undefined;
-        this.ncPath = undefined;
-        this.ncPassword = undefined;
-        this.ncUsername = undefined;
-        console.log(this.destinations);
       }
     }
     else
@@ -167,13 +194,72 @@ export class AddTaskComponent
     }
     return undefined;
   }
+  private getSource(source : string, backup : string) : ISource
+  {
+    console.log(source)
+    console.log(backup)
+    console.log(this.srcPath)
+    if(source == "Local")
+    {
+      let i : number = 0;
+      this.srcPath.forEach(element => {
+        if(element != undefined && element.value.length !=0)
+          i++;
+      });
+      if(i == 0)
+      {
+        alert("Please select at least one source path");
+        return undefined;
+      }
+      let result : SourceFolders = new SourceFolders();
+      result.Paths = [];
+      this.srcPath.forEach(element => {
+        if(element != undefined)
+          result.Paths.push(element.value);
+      });
+      return result;
+    }
+    if (backup == "Full")
+    {
+      if(source == "MySQL")
+      {
+        let result : SourceMySQL = new SourceMySQL()
+        result.DatabaseName = this.srcDatabaseName;
+        result.ServerName = this.srcServerName;
+        result.NetworkCredential = {UserName: this.srcUsername, Password: this.srcPassword}
+        return result;
+      }
+      else if(source == "MsSQL")
+      {
+        let result : SourceMSSQL = new SourceMSSQL()
+        result.DatabaseName = this.srcDatabaseName;
+        result.ServerName = this.srcServerName;
+        result.NetworkCredential = {UserName: this.srcUsername, Password: this.srcPassword}
+        return result;
+      }
+    }
+    else
+    {
+      alert("Backup type is not compatible with" + source)
+    }
+    return undefined;
+  }
   private onDateChangeTill(value : Date)
   {
     this.date = value;
   }
-  private getDestinationPath()
+  addSrcPath()
   {
-
+    var count : number = this.srcPath.length;
+    this.srcPath.push({id: count, value: ""});
+  }
+  removeSrcPath(id : number)
+  {
+    delete this.srcPath[id];
+  }
+  test()
+  {
+    console.log(this.srcPath)
   }
 /*
 BUcheck() {
@@ -186,6 +272,7 @@ BUcheck() {
   else radioDiv.style.display = 'none';
   }
 */
+/*
 ShowAddSource(){
   var radioOptL = <HTMLInputElement>document.getElementById("sourceLocal")
   var radioOptF = <HTMLInputElement>document.getElementById("IdtypeFull")
@@ -195,7 +282,8 @@ ShowAddSource(){
   }
   else sourceDiv.style.display = 'none';
   }
-
+*/
+/*
   DbCheck(){
     var dbMYSQL = <HTMLInputElement>document.getElementById("sourceDbMY")
     var dbMSSQL = <HTMLInputElement>document.getElementById("sourceDbMS")
@@ -205,7 +293,7 @@ ShowAddSource(){
     }
     else dbName.style.display = 'none';
   }
-
+*/
 ShowCompress(){
 var checkbox = <HTMLInputElement>document.getElementById("checkboxCompression")
 var compressDiv = <HTMLDivElement>document.getElementById("divCompress")
@@ -275,7 +363,6 @@ ShowCompressOption(){
     var target = event.target || event.srcElement || event.currentTarget;
     var inputDestiDiv = <HTMLDivElement>document.getElementById("inputDestiDiv");
     this.renderer.removeChild(inputDestiDiv,target.parentNode);
-    console.log(target.id);
     delete this.destinations[target.id];
   }
     AddSource(){

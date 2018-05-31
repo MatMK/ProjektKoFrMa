@@ -29,6 +29,7 @@ import { ServerExceptionsComponent } from './admin-app/settings/tabs/server-exce
 import { CompletedTasksComponent } from './admin-app/settings/tabs/completed-tasks/completed-tasks.component';
 import { CompletedTaskInfoComponent } from './admin-app/settings/more-info/completed-task-info/completed-task-info.component';
 import { ExceptionInfoComponent } from './admin-app/settings/more-info/exception-info/exception-info.component';
+import { EmailInfoComponent } from './admin-app/settings/more-info/email-info/email-info.component';
 
 const routes : Routes = [
   {path: '', redirectTo:'login', pathMatch:'full'},
@@ -66,7 +67,8 @@ const routes : Routes = [
     ServerExceptionsComponent,
     CompletedTasksComponent,
     CompletedTaskInfoComponent,
-    ExceptionInfoComponent
+    ExceptionInfoComponent,
+    EmailInfoComponent
 
   ],
   imports: [

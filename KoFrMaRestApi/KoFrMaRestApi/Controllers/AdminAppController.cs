@@ -67,7 +67,18 @@ namespace KoFrMaRestApi.Controllers
         [HttpPost, Route(@"api/AdminApp/RegisterToken")]
         public string RegisterToken(AdminLogin adminLogin)
         {
-            return mySqlCom.RegisterToken(adminLogin);
+            try
+            {
+                return mySqlCom.RegisterToken(adminLogin);
+            }
+            catch(Exception ex)
+            {
+                if (ex.Message == "No admin with this username")
+                { 
+                    throw new HttpResponseException(HttpStatusCode.BadRequest);
+                }
+                throw ex;
+            }
         }
         /// <summary>
         /// Used for determining if an admin has permission

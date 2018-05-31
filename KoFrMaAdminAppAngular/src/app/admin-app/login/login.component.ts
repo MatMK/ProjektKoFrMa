@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('url', this.data.ServerRootURL);
         this.router.navigate(['backup', 'app']);
       }
-    })
+    }).catch(error => alert("Invalid username or password"))
   }
   ngOnInit() {
   }
