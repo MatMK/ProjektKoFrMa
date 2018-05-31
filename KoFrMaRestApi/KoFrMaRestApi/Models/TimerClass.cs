@@ -20,6 +20,7 @@ namespace KoFrMaRestApi.Models
         private Timer timer;
         private Mail mail = new Mail();
         private MySqlAdmin mySql = new MySqlAdmin();
+        private ErrorObserver observer = new ErrorObserver();
         /// <summary>
         /// Returns an instance of this class
         /// </summary>
@@ -51,24 +52,31 @@ namespace KoFrMaRestApi.Models
         }
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
-            using (MySqlConnection connection = WebApiConfig.Connection())
-            using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbEmailPreferences`", connection))
+            try
             {
-                connection.Open();
-                using (MySqlDataReader reader = command.ExecuteReader())
+                using (MySqlConnection connection = WebApiConfig.Connection())
+                using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbEmailPreferences`", connection))
                 {
-                    while (reader.Read())
+                    connection.Open();
+                    using (MySqlDataReader reader = command.ExecuteReader())
                     {
-                        if (reader["RepeatInJSON"] != DBNull.Value)
+                        while (reader.Read())
                         {
-                            EmailSettings email = new EmailSettings() { EmailAddress = (string)reader["RecievingEmail"], SendOnlyFailed = Convert.ToBoolean(reader["SendOnlyFailed"]) };
-                            if (this.CorrectTime(JsonSerializationUtility.Deserialize<TaskRepeating>((string)reader["RepeatInJSON"]), (int)reader["id"], "tbEmailPreferences", "RepeatInJSON"))
+                            if (reader["RepeatInJSON"] != DBNull.Value)
                             {
-                                //this.mail.SendEmail(email, (int)reader["IdAdmin"]);
+                                EmailSettings email = new EmailSettings() { EmailAddress = (string)reader["RecievingEmail"], SendOnlyFailed = Convert.ToBoolean(reader["SendOnlyFailed"]) };
+                                if (this.CorrectTime(JsonSerializationUtility.Deserialize<TaskRepeating>((string)reader["RepeatInJSON"]), (int)reader["id"], "tbEmailPreferences", "RepeatInJSON"))
+                                {
+                                    //this.mail.SendEmail(email, (int)reader["IdAdmin"]);
+                                }
                             }
                         }
                     }
                 }
+            }
+            catch(Exception ex)
+            {
+                observer.RegisterError(ex);
             }
         }
         /// <summary>

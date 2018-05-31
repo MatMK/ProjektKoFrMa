@@ -16,9 +16,9 @@ border-radius: 0px;
 
 #menuTask{
     font-size: 20px;
-    float: right;
+    position: relative;
     height: 716px;
-    width: 38%;
+    width: 90%;
     background-color: white;
     padding: 40px;
     border: none;
@@ -26,20 +26,14 @@ border-radius: 0px;
     border-radius: 5px;
     margin: 0 auto;
     margin-bottom:10px;
-    margin-top: 50px;
+    margin-top: 30px;
     box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
 }
 #mensiDiv{
     float: left;
-    height: 800px;
     width: 55%;
-    margin-top: 50px;
-    
     border: none;
-    
-    
     margin-bottom:10px;
-   
 }
 #backupType{
     background-color: white;
@@ -102,6 +96,9 @@ height: 28px;
     text-decoration:none;
     cursor:pointer;
     }
+.basicSubmit{
+
+}
 
 .newTaskDiv{
      float: left;
@@ -166,4 +163,11 @@ border-radius: 0px;
     text-align: left;
     width: 450px;
 }
-
+.vl {
+    border-left: 3px solid grey;
+    height: 797px;
+    position: absolute;
+    left: 50%;
+    margin-left: -1px;
+    top: 0;
+}

@@ -35,6 +35,7 @@ export class AddTaskComponent
   private ncUsername : string;
   private ncPassword : string;
   private ncPath : string;
+  private splitAfter : number;
 
   private srcPath : {id: number, value : string}[] = [{id: 0, value: ""}];
   private srcDatabaseName : string;
@@ -80,6 +81,8 @@ export class AddTaskComponent
         alert("Select at least one destination");
         return;
       }
+      if(this.ncPath != undefined && this.ncPath.length !=0)
+        this.AddLocalDestination();
       let newTask : SetTask = new SetTask()
       newTask.DaemonId = this.daemonId;
       newTask.Destinations = this.destinations.filter(function( element ) {
@@ -102,8 +105,13 @@ export class AddTaskComponent
   {
     if(this.destinationtype != undefined)
     {
+      if(this.ncPath == undefined || this.ncPath.length == 0)
+      {
+        alert("Please enter destination path")
+        return;
+      }
       //Adding destinaion to an array
-      var result : IDestination = this.getDestination(this.compressType, this.compressLevel, undefined);
+      var result : IDestination = this.getDestination(this.compressType, this.compressLevel, this.splitAfter);
       if(result == undefined)
       {
         alert("Define destination");
@@ -135,17 +143,14 @@ export class AddTaskComponent
           result.Path = dest;
         }
         this.destinations.push(result);
-        this.ncPath = undefined;
-        this.ncPassword = undefined;
-        this.ncUsername = undefined;
-        //Renderign new destination
+        //Rendering new destination
         var newDiv = this.renderer.createElement('div'); 
         newDiv.Id='idNewDiv'
         newDiv.className='aditionalDivClass'
         var inputDestination = <HTMLDivElement>document.getElementById("inputDestiDiv");
         var input = this.renderer.createElement('p');
         input.style = "display:inline-block; vertical-align: middle;";
-        input.innerHTML = this.destinationtype
+        input.innerHTML = "Path: " + (this.ncPath.length>20?"..." + this.ncPath.substring(this.ncPath.length-25):this.ncPath) + ", Type: " + this.destinationtype +", Compression: "  + (this.compress?this.compressType:"None")
         var button = this.renderer.createElement('button');
         button.innerHTML = 'X';
         button.style = "display:inline-block; vertical-align: middle;";
@@ -155,9 +160,10 @@ export class AddTaskComponent
         this.renderer.appendChild(newDiv, input);
         this.renderer.appendChild(inputDestination,newDiv);
         this.renderer.appendChild(newDiv,button);
-        /*inputDestination.appendChild(input);*/
-        /*inputDestination.appendChild(br);*/
-        //this.destinationtype = undefined;
+        
+        this.ncPath = undefined;
+        this.ncPassword = undefined;
+        this.ncUsername = undefined;
       }
     }
     else
@@ -196,9 +202,6 @@ export class AddTaskComponent
   }
   private getSource(source : string, backup : string) : ISource
   {
-    console.log(source)
-    console.log(backup)
-    console.log(this.srcPath)
     if(source == "Local")
     {
       let i : number = 0;
@@ -244,10 +247,6 @@ export class AddTaskComponent
     }
     return undefined;
   }
-  private onDateChangeTill(value : Date)
-  {
-    this.date = value;
-  }
   addSrcPath()
   {
     var count : number = this.srcPath.length;
@@ -256,10 +255,6 @@ export class AddTaskComponent
   removeSrcPath(id : number)
   {
     delete this.srcPath[id];
-  }
-  test()
-  {
-    console.log(this.srcPath)
   }
 /*
 BUcheck() {
