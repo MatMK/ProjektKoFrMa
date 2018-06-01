@@ -403,7 +403,7 @@ namespace KoFrMaRestApi.Controllers
                 {
                     throw new HttpResponseException(HttpStatusCode.BadRequest);
                 }
-                string token = mySqlCom.SelectToken(password, password);
+                string token = mySqlCom.SelectToken(username, password);
                 return token;
             }
             catch (Exception ex)
