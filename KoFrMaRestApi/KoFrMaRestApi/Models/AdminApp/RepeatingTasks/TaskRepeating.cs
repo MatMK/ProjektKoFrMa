@@ -14,29 +14,7 @@ namespace KoFrMaRestApi.Models.AdminApp.RepeatingTasks
         /// Times when the task executes, DateTimes have to be in order from lowest to highest in order for this to work
         /// </summary>
         public List<DateTime> ExecutionTimes
-        {/*
-            get
-            {
-                DateTime temp;
-
-                for (int write = 0; write < _ExecutionTime.Count; write++)
-                {
-                    for (int sort = 0; sort < _ExecutionTime.Count - 1; sort++)
-                    {
-                        if (_ExecutionTime[sort] > _ExecutionTime[sort + 1])
-                        {
-                            temp = _ExecutionTime[sort + 1];
-                            _ExecutionTime[sort + 1] = _ExecutionTime[sort];
-                            _ExecutionTime[sort] = temp;
-                        }
-                    }
-                }
-                return _ExecutionTime;
-            }
-            set
-            {
-                _ExecutionTime = value;
-            }*/
+        {
             get;set;
         }
         public List<ExceptionDate> ExceptionDates { get; set; }
