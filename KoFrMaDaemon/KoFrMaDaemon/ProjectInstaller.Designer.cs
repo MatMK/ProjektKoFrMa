@@ -33,15 +33,16 @@
             // 
             // serviceProcessInstaller1
             // 
-            this.serviceProcessInstaller1.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
+            this.serviceProcessInstaller1.Account = System.ServiceProcess.ServiceAccount.NetworkService;
             this.serviceProcessInstaller1.Password = null;
             this.serviceProcessInstaller1.Username = null;
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.Description = "KoFrMa Backup daemon";
+            this.serviceInstaller1.Description = "KoFrMa Backuping Daemon";
             this.serviceInstaller1.DisplayName = "KoFrMa Daemon";
             this.serviceInstaller1.ServiceName = "KoFrMaDaemon";
+            this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
             // ProjectInstaller
             // 

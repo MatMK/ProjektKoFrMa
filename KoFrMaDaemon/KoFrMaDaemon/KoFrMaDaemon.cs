@@ -18,7 +18,7 @@ using System.Diagnostics;
 
 namespace KoFrMaDaemon
 {
-    public partial class ServiceKoFrMa : ServiceBase
+    public partial class KoFrMaDaemon : ServiceBase
     {
         private bool inProgress;
         private Timer timerTasks;
@@ -39,11 +39,11 @@ namespace KoFrMaDaemon
         /// </summary>
         private List<TaskComplete> CompletedTasksYetToSend;
         //List<int> JournalCacheList;
-        public ServiceKoFrMa()
+        public KoFrMaDaemon()
         {
             InitializeComponent();
 
-
+            
             ScheduledTasks = new List<Task>();
 
             inProgress = false;

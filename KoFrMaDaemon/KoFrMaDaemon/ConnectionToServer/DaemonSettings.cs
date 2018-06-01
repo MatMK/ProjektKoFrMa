@@ -12,7 +12,7 @@ namespace KoFrMaDaemon.ConnectionToServer
     public class DaemonSettings
     {
         /// <summary>
-        /// Sets values for different timer actions, see <see cref="KoFrMaDaemon.TimerValues"/>
+        /// Sets values for different timer actions, see <see cref="global::KoFrMaDaemon.TimerValues"/>
         /// </summary>
         public TimerValues TimerValues { get; set; }
 

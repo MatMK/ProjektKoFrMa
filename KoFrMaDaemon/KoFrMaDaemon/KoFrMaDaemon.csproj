@@ -135,11 +135,11 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ScriptInfo.cs" />
-    <Compile Include="ServiceKoFrMa.cs">
+    <Compile Include="KoFrMaDaemon.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ServiceKoFrMa.Designer.cs">
-      <DependentUpon>ServiceKoFrMa.cs</DependentUpon>
+    <Compile Include="KoFrMaDaemon.Designer.cs">
+      <DependentUpon>KoFrMaDaemon.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

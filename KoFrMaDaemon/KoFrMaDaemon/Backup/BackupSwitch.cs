@@ -64,7 +64,7 @@ namespace KoFrMaDaemon.Backup
 
             if (!atLeastOneDestinationIsLocalFolder)
             {
-                ServiceKoFrMa.debugLog.WriteToLog("No destination points to local path, creating temporary folder at "+ Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp"), 5);
+                KoFrMaDaemon.debugLog.WriteToLog("No destination points to local path, creating temporary folder at "+ Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp"), 5);
                 Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp"));
                 this.temporaryDestinationInfo = new DirectoryInfo(Path.Combine(Path.GetTempPath(),"KoFrMaBackupTemp"));
             }
@@ -133,12 +133,12 @@ namespace KoFrMaDaemon.Backup
             DateTime timeOfBackup = DateTime.Now;
 
             string temporaryDebugInfo = "";
-            if (ServiceKoFrMa.debugLog._logLevel >= 4)
+            if (KoFrMaDaemon.debugLog._logLevel >= 4)
                 temporaryDebugInfo = "Full backup started at  " + timeOfBackup.ToString();
             Directory.CreateDirectory(destination.FullName + @"\KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup) + @"_Full\KoFrMaBackup");
             destinationInfo = new DirectoryInfo(destination + @"\KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup) + @"_Full\KoFrMaBackup");
 
-            ServiceKoFrMa.debugLog.WriteToLog("Log of including operations is located in " + destinationInfo.Parent.FullName + @"\KoFrMaDebug.log", 4);
+            KoFrMaDaemon.debugLog.WriteToLog("Log of including operations is located in " + destinationInfo.Parent.FullName + @"\KoFrMaDebug.log", 4);
 
             //this.taskDebugLog = new DebugLog(destinationInfo.Parent.FullName + @"\KoFrMaDebug.log", ServiceKoFrMa.debugLog.writeToWindowsEventLog, ServiceKoFrMa.debugLog._logLevel);
 
@@ -221,12 +221,12 @@ namespace KoFrMaDaemon.Backup
             DateTime timeOfBackup = DateTime.Now;
 
             string temporaryDebugInfo = "";
-            if (ServiceKoFrMa.debugLog._logLevel >= 4)
+            if (KoFrMaDaemon.debugLog._logLevel >= 4)
                 temporaryDebugInfo = "Starting the differential/incremental backup in " + timeOfBackup.ToString();
 
             destinationInfo = new DirectoryInfo(destination.FullName).CreateSubdirectory("KoFrMaBackup_" + String.Format("{0:yyyy_MM_dd_HH_mm_ss}", timeOfBackup)).CreateSubdirectory("KoFrMaBackup");
 
-            ServiceKoFrMa.debugLog.WriteToLog("Log of including operations is located in " + destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log", 4);
+            KoFrMaDaemon.debugLog.WriteToLog("Log of including operations is located in " + destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log", 4);
 
             //DebugLog DebugLog = new DebugLog(destinationInfo.Parent.FullName + @"\" + "KoFrMaDebug.log", ServiceKoFrMa.debugLog.writeToWindowsEventLog, ServiceKoFrMa.debugLog._logLevel);
 
@@ -546,14 +546,14 @@ namespace KoFrMaDaemon.Backup
                 {
                     if (bufferSize != null)
                     {
-                        ServiceKoFrMa.debugLog.WriteToLog("Buffer is set, comparing its size with temp folder. Buffer value is "+bufferSize+"MB", 9);
+                        KoFrMaDaemon.debugLog.WriteToLog("Buffer is set, comparing its size with temp folder. Buffer value is "+bufferSize+"MB", 9);
                         if (currentSizeSum < bufferSize * 1000000)
                         {
-                            ServiceKoFrMa.debugLog.WriteToLog("There is no need to flush buffer, copying the file. There is still"+ (bufferSize - (currentSizeSum/1000000))+" MB left until flushing.", 9);
+                            KoFrMaDaemon.debugLog.WriteToLog("There is no need to flush buffer, copying the file. There is still"+ (bufferSize - (currentSizeSum/1000000))+" MB left until flushing.", 9);
                         }
                         else
                         {
-                            ServiceKoFrMa.debugLog.WriteToLog("Flushing the buffer because the limit was exceedid by " + (bufferSize - (currentSizeSum / 1000000)) + " MB", 6);
+                            KoFrMaDaemon.debugLog.WriteToLog("Flushing the buffer because the limit was exceedid by " + (bufferSize - (currentSizeSum / 1000000)) + " MB", 6);
                             currentSizeSum = 0;
                             this.FinishBackup();
                         }
@@ -582,7 +582,7 @@ namespace KoFrMaDaemon.Backup
         /// </summary>
         private void FinishBackup()
         {
-            ServiceKoFrMa.debugLog.WriteToLog("Making desired destinations...", 7);
+            KoFrMaDaemon.debugLog.WriteToLog("Making desired destinations...", 7);
             for (int i = 0; i < task.Destinations.Count; i++)
             {
                 this.CreateDestinationFormat(this.destinationInfo.Parent.FullName, task.Destinations[i]);
@@ -592,14 +592,14 @@ namespace KoFrMaDaemon.Backup
             //Directory.Delete(destinationInfo.FullName, true);
             if (!atLeastOneDestinationIsLocalFolder)
             {
-                ServiceKoFrMa.debugLog.WriteToLog("Backup done, deleting temporary files at " + Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp"), 7);
+                KoFrMaDaemon.debugLog.WriteToLog("Backup done, deleting temporary files at " + Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp"), 7);
                 try
                 {
                     Directory.Delete(Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp"), true);
                 }
                 catch (Exception ex)
                 {
-                    ServiceKoFrMa.debugLog.WriteToLog("Cannot delete files in temporary directory because of "+ex.Message, 3);
+                    KoFrMaDaemon.debugLog.WriteToLog("Cannot delete files in temporary directory because of "+ex.Message, 3);
                 }
                 try
                 {
@@ -615,7 +615,7 @@ namespace KoFrMaDaemon.Backup
                         }
                         catch (Exception ex)
                         {
-                            ServiceKoFrMa.debugLog.WriteToLog("Cannot delete files in temporary directory because of " + ex.Message, 3);
+                            KoFrMaDaemon.debugLog.WriteToLog("Cannot delete files in temporary directory because of " + ex.Message, 3);
                         }
 
                     }
@@ -628,14 +628,14 @@ namespace KoFrMaDaemon.Backup
                         }
                         catch (Exception ex)
                         {
-                            ServiceKoFrMa.debugLog.WriteToLog("Cannot delete files in temporary directory because of " + ex.Message, 3);
+                            KoFrMaDaemon.debugLog.WriteToLog("Cannot delete files in temporary directory because of " + ex.Message, 3);
                         }
 
                     }
                 }
                 catch (Exception ex)
                 {
-                    ServiceKoFrMa.debugLog.WriteToLog("Cannot delete files in temporary directory because of " + ex.Message, 3);
+                    KoFrMaDaemon.debugLog.WriteToLog("Cannot delete files in temporary directory because of " + ex.Message, 3);
                 }
 
             }
@@ -649,7 +649,7 @@ namespace KoFrMaDaemon.Backup
         {
             if (destination is DestinationZip)
             {
-                ServiceKoFrMa.debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip (" + destination + ')', 5);
+                KoFrMaDaemon.debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .zip (" + destination + ')', 5);
                 DestinationZip destinationZip = (DestinationZip)destination;
                 Compression compression = new Compression();
                 if (destination.Path is DestinationPathLocal)
@@ -668,13 +668,13 @@ namespace KoFrMaDaemon.Backup
                 Compression compression = new Compression();
                 if (destination.Path is DestinationPathLocal)
                 {
-                    ServiceKoFrMa.debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .7z (" + destination + ')', 5);
-                    ServiceKoFrMa.debugLog.WriteToLog("Archive will be made from this folder " + backupPath + @"\ and put into this location " + destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".7z", 7);
-                    compression.CompressTo7z(ServiceKoFrMa.daemonSettings.SevenZipPath, backupPath + @"\", destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".7z", destination7z.CompressionLevel, destination7z.SplitAfter);
+                    KoFrMaDaemon.debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .7z (" + destination + ')', 5);
+                    KoFrMaDaemon.debugLog.WriteToLog("Archive will be made from this folder " + backupPath + @"\ and put into this location " + destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".7z", 7);
+                    compression.CompressTo7z(KoFrMaDaemon.daemonSettings.SevenZipPath, backupPath + @"\", destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".7z", destination7z.CompressionLevel, destination7z.SplitAfter);
                 }
                 else
                 {
-                    compression.CompressTo7z(ServiceKoFrMa.daemonSettings.SevenZipPath, backupPath + @"\", temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".7z", destination7z.CompressionLevel,destination7z.SplitAfter);
+                    compression.CompressTo7z(KoFrMaDaemon.daemonSettings.SevenZipPath, backupPath + @"\", temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".7z", destination7z.CompressionLevel,destination7z.SplitAfter);
                     this.CreateDestination(temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".7z", destination.Path);
                 }
 
@@ -684,13 +684,13 @@ namespace KoFrMaDaemon.Backup
                 Compression compression = new Compression();
                 if (destination.Path is DestinationPathLocal)
                 {
-                    ServiceKoFrMa.debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .rar (" + destination + ')', 5);
-                    ServiceKoFrMa.debugLog.WriteToLog("Archive will be made from this folder " + backupPath + @"\ and put into this location " + destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".rar", 7);
-                    compression.CompressToRar(ServiceKoFrMa.daemonSettings.WinRARPath, backupPath + @"\", destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".rar", destinationRar.CompressionLevel, destinationRar.SplitAfter);
+                    KoFrMaDaemon.debugLog.WriteToLog("Starting backuping to archive, because the path to destination ends with .rar (" + destination + ')', 5);
+                    KoFrMaDaemon.debugLog.WriteToLog("Archive will be made from this folder " + backupPath + @"\ and put into this location " + destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".rar", 7);
+                    compression.CompressToRar(KoFrMaDaemon.daemonSettings.WinRARPath, backupPath + @"\", destination.Path.Path + @"\" + destinationInfo.Parent.Name + ".rar", destinationRar.CompressionLevel, destinationRar.SplitAfter);
                 }
                 else
                 {
-                    compression.CompressToRar(ServiceKoFrMa.daemonSettings.WinRARPath, backupPath + @"\", temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".rar", destinationRar.CompressionLevel, destinationRar.SplitAfter);
+                    compression.CompressToRar(KoFrMaDaemon.daemonSettings.WinRARPath, backupPath + @"\", temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".rar", destinationRar.CompressionLevel, destinationRar.SplitAfter);
                     this.CreateDestination(temporaryDestinationInfo.FullName + @"\" + destinationInfo.Parent.Name + ".7z", destination.Path);
                 }
 
@@ -703,8 +703,8 @@ namespace KoFrMaDaemon.Backup
                 {
                     if (destination.Path is DestinationPathLocal)
                     {
-                        ServiceKoFrMa.debugLog.WriteToLog("Copying files to another local folder...", 6);
-                        ServiceKoFrMa.debugLog.WriteToLog("because " + backupPath + " is not " + destinationInfo.Parent.FullName, 6);
+                        KoFrMaDaemon.debugLog.WriteToLog("Copying files to another local folder...", 6);
+                        KoFrMaDaemon.debugLog.WriteToLog("because " + backupPath + " is not " + destinationInfo.Parent.FullName, 6);
                         Directory.CreateDirectory(destination.Path.Path);
                         this.CopyDirectoryRecursivlyWithoutLog(new DirectoryInfo(backupPath), new DirectoryInfo(destination.Path.Path));
                     }
@@ -716,7 +716,7 @@ namespace KoFrMaDaemon.Backup
                 }
                 else
                 {
-                    ServiceKoFrMa.debugLog.WriteToLog("Keeping the plain backup where it is.", 6);
+                    KoFrMaDaemon.debugLog.WriteToLog("Keeping the plain backup where it is.", 6);
                 }
 
 
@@ -733,18 +733,18 @@ namespace KoFrMaDaemon.Backup
         {
             if (destinationPath is DestinationPathNetworkShare destinationPathNetworkShare)
             {
-                ServiceKoFrMa.debugLog.WriteToLog("Starting uploading files to samba/shared server, because the path to destination starts with \\ (" + destinationPath.Path + ')', 5);
+                KoFrMaDaemon.debugLog.WriteToLog("Starting uploading files to samba/shared server, because the path to destination starts with \\ (" + destinationPath.Path + ')', 5);
 
             }
             else if (destinationPath is DestinationPathFTP destinationPathFTP)
             {
-                ServiceKoFrMa.debugLog.WriteToLog("Starting uploading files to ftp, because the path to destination starts with ftp:// (" + destinationPath.Path + ')', 5);
+                KoFrMaDaemon.debugLog.WriteToLog("Starting uploading files to ftp, because the path to destination starts with ftp:// (" + destinationPath.Path + ')', 5);
                 FTPConnection fTPConnection = new FTPConnection(destinationPathFTP);
                 fTPConnection.UploadToFTP(backupPath);
             }
             else if (destinationPath is DestinationPathSFTP destinationPathSFTP)
             {
-                ServiceKoFrMa.debugLog.WriteToLog("Starting uploading files to ftp, because the path to destination starts with sftp:// (" + destinationPath.Path + ')', 5);
+                KoFrMaDaemon.debugLog.WriteToLog("Starting uploading files to ftp, because the path to destination starts with sftp:// (" + destinationPath.Path + ')', 5);
                 SSHConnection sSHConnection = new SSHConnection(destinationPathSFTP);
                 sSHConnection.UploadToSSH(backupPath);
             }

@@ -17,7 +17,7 @@ namespace KoFrMaDaemon
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new ServiceKoFrMa()
+                new KoFrMaDaemon()
             };
             ServiceBase.Run(ServicesToRun);
         }
