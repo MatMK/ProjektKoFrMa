@@ -100,9 +100,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(54, 13);
+            this.label1.Size = new System.Drawing.Size(66, 13);
             this.label1.TabIndex = 5;
-            this.label1.Text = "Server IP:";
+            this.label1.Text = "Server URL:";
             // 
             // label2
             // 
@@ -181,9 +181,9 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(12, 87);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(66, 13);
+            this.label5.Size = new System.Drawing.Size(68, 13);
             this.label5.TabIndex = 14;
-            this.label5.Text = "Path to 7zip:";
+            this.label5.Text = "Path to 7Zip:";
             // 
             // button_browseWinrar
             // 
@@ -237,6 +237,7 @@
             // 
             // Form1
             // 
+            this.AcceptButton = this.button_apply;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(548, 228);
@@ -260,8 +261,12 @@
             this.Controls.Add(this.textBox_ServerIP);
             this.Controls.Add(this.button_apply);
             this.Controls.Add(this.button_cancel);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.HelpButton = true;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "KoFrMa LocalDaemonConfig";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
