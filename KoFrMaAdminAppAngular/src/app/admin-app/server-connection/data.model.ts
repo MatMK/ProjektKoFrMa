@@ -13,5 +13,5 @@ export class Data
     public adminInfo : AdminInfo = new AdminInfo();
     public Data : AdminData = new AdminData();
     public ErrorMessage : string;
-    public Permissions : PermInterface[] = [{name:'Add Admins', number:1}, {name: 'Add Tasks', number:2}, {name: 'Change Table Data', number: 3}, {name: 'Change Permissions', number: 4}, {name: 'Change Passwords', number: 5}];
+    public Permissions : PermInterface[] = [{name:'Add Admins', number:1}, {name: 'Add Tasks', number:2}, {name: 'Change Table Data', number: 3}, {name: 'Change Permissions', number: 4}, {name: 'Change Passwords', number: 5}, {name: 'Change server Settings', number: 6}];
 }

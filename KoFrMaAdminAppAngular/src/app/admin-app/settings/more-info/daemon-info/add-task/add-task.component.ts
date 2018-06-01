@@ -1,8 +1,7 @@
-import { Component, Renderer2, OnInit } from '@angular/core';
+import { Component, Renderer2, OnInit, Testability } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatRadioModule, MatRadioButton } from '@angular/material/radio';
 import { SetTask } from '../../../../server-connection/models/communication-models/task/set-task.model';
-import { EventEmitter } from 'events';
 import { TaskRepeating } from '../../../../server-connection/models/communication-models/task/task-repeating.model';
 import { ServerConnectionService } from '../../../../server-connection/server-connection.service';
 import { Data } from '../../../../server-connection/data.model';
@@ -19,6 +18,7 @@ import { SourceMySQL } from '../../../../server-connection/models/communication-
 import { ISource } from '../../../../server-connection/models/communication-models/task/task-models/isource.interface';
 import { SourceMSSQL } from '../../../../server-connection/models/communication-models/task/task-models/sources/source-ms-sql.model';
 import { SourceFolders } from '../../../../server-connection/models/communication-models/task/task-models/sources/source-file.model';
+import { Time } from '@angular/common';
 
 @Component({
   selector: 'app-add-task',
@@ -28,34 +28,54 @@ import { SourceFolders } from '../../../../server-connection/models/communicatio
 export class AddTaskComponent  
 {
   private daemonId : number;
-  //private sourcepath : string;
-  //private destinationpath : string;
+  //Destinations
   private backuptype : string;
-  private date : Date;
   private ncUsername : string;
   private ncPassword : string;
   private ncPath : string;
   private splitAfter : number;
-
+  private compress : boolean = false;
+  private compressType : string = "Rar";
+  private compressLevel : number = 1;
+  private destinationtype :string;
+  private destinations : IDestination[] = [];
+  //Source
   private srcPath : {id: number, value : string}[] = [{id: 0, value: ""}];
   private srcDatabaseName : string;
   private srcServerName : string;
   private srcPassword : string;
   private srcUsername : string;
-  
   private sourcetype : string;
-  private destinationtype :string;
-  private destinations : IDestination[] = [];
-  private compress : boolean = false;
-  private compressType : string = "Rar";
-  private compressLevel : number = 1;
-
+  //Repeat
+  private repeat : string = "Minute";
+  private repeatEvery : number;
+  private executionDates : {id : number, date: Date, time: Time}[] = [];
+  private exceptionDates : {id : number, date: Date, time: Time}[] = [];
+  private repeatTill : Date;
+  //Advanced
+  private advanced : boolean;
+  //log
+  private logLevel : number = 7;
+  private logOptions : {id: number, value : string}[] = [{id: 0, value: "Don't create log"}, 
+    {id: 1, value: "Only errors that shut down entire daemon"}, 
+    {id: 2, value: "Errors that cause some process to fail"}, 
+    {id: 3, value: "Errors that program can handle"}, 
+    {id: 4, value: "Basic info about operations that program runs"}, 
+    {id: 5, value: "Debug info that could lead to fixing or optimizing some processes"}, 
+    {id: 6, value: "Tracing info for every process that is likely to fail"}, 
+    {id: 7, value: "Tracing info about everything program does"}, 
+    {id: 8, value: "Tracing info including loop cycles"}, 
+    {id: 9, value: "Tracing info including large loop cycles that will slow down the process a lot"}, 
+    {id: 10, value: "Program will be more like a log writer than actually doing the process"}]
+  //scirpts
+  private fileText : string;
   constructor(private activeRoute:ActivatedRoute, private service : ServerConnectionService, private renderer: Renderer2, private router : Router, private data : Data) {
       this.activeRoute.params.subscribe(params => {
       this.daemonId = params.daemonid;
       this.checkIfNumberValid(false);
     });
    }
+   
    checkIfNumberValid(showMsg : boolean) : boolean
    {
     if (!(this.daemonId >= 0 || this.daemonId<0))
@@ -83,6 +103,7 @@ export class AddTaskComponent
       }
       if(this.ncPath != undefined && this.ncPath.length !=0)
         this.AddLocalDestination();
+
       let newTask : SetTask = new SetTask()
       newTask.DaemonId = this.daemonId;
       newTask.Destinations = this.destinations.filter(function( element ) {
@@ -91,6 +112,37 @@ export class AddTaskComponent
       newTask.Sources = this.getSource(this.sourcetype, this.backuptype)
       if(newTask.Sources==undefined)
         return;
+      //Adding repeat task class
+      if(this.repeatEvery != undefined && this.repeatEvery != 0)
+      {
+        if(this.repeatEvery <0)
+        {
+          alert("Repeat every: cannot be negative");
+          return;
+        }
+        newTask.ExecutionTimes = new TaskRepeating()
+        newTask.ExecutionTimes.Repeating = this.repeatEvery;
+        newTask.ExecutionTimes.RepeatTill = this.repeatTill;
+        newTask.ExecutionTimes.ExecutionTimes = [];
+        let count : number = 0;
+        this.executionDates.forEach(element => {
+          if(element != undefined)
+          {
+            count++;
+            newTask.ExecutionTimes.ExecutionTimes.push(new Date(element.date.toString()  + "T" + element.time.toString()))
+          }
+        });
+        if(count == 0)
+        {
+          alert("Please insert at least one execution time");
+        }
+        this.exceptionDates.forEach(element => {
+          if(element != undefined)
+          {
+            newTask.ExecutionTimes.ExceptionDates.push(new Date(element.date.toString()  + "T" + element.time.toString()))
+          }
+        });
+      }
       console.log(newTask);
       //this.data.Loading = true;
       //this.service.SetTask([newTask]).then(res => this.service.RefreshData([3]))
@@ -99,7 +151,15 @@ export class AddTaskComponent
   }
   private onDateChange(value : Date)
   {
-    this.date = value;
+    this.repeatTill= value;
+  }
+  fileUpload(event) {
+    var reader = new FileReader();
+    reader.readAsText(event.srcElement.files[0]);
+    var me = this;
+    reader.onload = function () {
+      me.fileText = reader.result;
+    }
   }
   AddLocalDestination()
   {
@@ -256,6 +316,7 @@ export class AddTaskComponent
   {
     delete this.srcPath[id];
   }
+  
 /*
 BUcheck() {
   var radioOptD = <HTMLInputElement>document.getElementById("distant")
@@ -387,63 +448,21 @@ ShowCompressOption(){
       var inputDestiDiv = <HTMLDivElement>document.getElementById("inputDestiDiv");
       this.renderer.removeChild(inputDestiDiv,target.parentNode);
     }
-
     AddExecutionDate(){
-      var newDiv = this.renderer.createElement('div'); 
-      newDiv.className='aditionalDivClass'
-
-      var showRepeat = <HTMLDivElement>document.getElementById("inputDestiDiv");
-
-      var textExecution = this.renderer.createText('Execution date');
-
-      var input = this.renderer.createElement('input');
-      input.type = 'datetime-local';
-      input.Ngmodel ='newExecutionDate';
-      input.className = 'BasicInputNew'
-      input.placeholder ='Aditional execution date'
-
-      var button = this.renderer.createElement('button'); 
-      button.innerHTML = 'X';
-
-      this.renderer.listen(button, 'click', (event) => this.RemoveExecutionDate(event) )
-      var br = this.renderer.createElement("br");
-      this.renderer.appendChild(newDiv, input);
-      this.renderer.appendChild(showRepeat,newDiv);
-      this.renderer.appendChild(newDiv,textExecution);
-      this.renderer.appendChild(newDiv,button);
-      this.renderer.appendChild(newDiv, br);
+      var i :number = this.executionDates.length;
+      this.executionDates.push({id:i, date: undefined, time: undefined});
     }
-
-    RemoveExecutionDate(event : any){
-      var target = event.target || event.srcElement || event.currentTarget;
-      var inputDestiDiv = <HTMLDivElement>document.getElementById("inputDestiDiv");
-      this.renderer.removeChild(inputDestiDiv,target.parentNode);
+    RemoveExecutionDate(id : number)
+    {
+      delete this.executionDates[id];
     }
-
+    RemoveExceptionDate(id: number)
+    {
+      delete this.exceptionDates[id];
+    }
     AddExceptionDate(){
-      var newDiv = this.renderer.createElement('div'); 
-      newDiv.className='aditionalDivClass'
-
-      var showRepeat = <HTMLDivElement>document.getElementById("inputDestiDiv");
-
-      var textException = this.renderer.createText('Exception date');
-
-      var input = this.renderer.createElement('input');
-      input.type = 'datetime-local';
-      input.Ngmodel ='newExceptionDate';
-      input.className = 'BasicInputNew'
-      input.placeholder ='Aditional exception date'
-
-      var button = this.renderer.createElement('button'); 
-      button.innerHTML = 'X';
-
-      this.renderer.listen(button, 'click', (event) => this.RemoveExecutionDate(event) )
-      var br = this.renderer.createElement("br");
-      this.renderer.appendChild(newDiv, input);
-      this.renderer.appendChild(showRepeat,newDiv);
-      this.renderer.appendChild(newDiv,textException);
-      this.renderer.appendChild(newDiv,button);
-      this.renderer.appendChild(newDiv, br);
+      var i :number = this.exceptionDates.length;
+      this.exceptionDates .push({id:i, date: undefined, time: undefined});
     }
 
   AddDestinationNew(){
@@ -714,7 +733,6 @@ RemoveDestinationNew(event: any){
     var inputDestiDiv = <HTMLDivElement>document.getElementById("mensiDiv");
     this.renderer.removeChild(inputDestiDiv,target.parentNode);
 }
-
 ShowCompressNew()
   {
     var selectBox = <HTMLSelectElement>document.getElementById("compressSelect")
