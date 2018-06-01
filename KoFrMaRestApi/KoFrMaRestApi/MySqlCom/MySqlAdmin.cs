@@ -346,5 +346,31 @@ namespace KoFrMaRestApi.MySqlCom
                 }
             }
         }
+        public string SelectToken(string password, string username)
+        {
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbAdminAccounts` WHERE `Username` = @username and `Password` = @password", connection))
+            {
+                connection.Open();
+                command.Parameters.AddWithValue("@username", username);
+                command.Parameters.AddWithValue("@password", password);
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    int count = 0;
+                    string result = null;
+                    while (reader.Read())
+                    {
+                        count++;
+                        result = (string)reader["Token"];
+
+                    }
+                    if (result == null)
+                    {
+                        result = this.RegisterToken(new AdminLogin() { Password = password, UserName = username });
+                    }
+                    return result;
+                }
+            }
+        }
     }
 }

@@ -388,62 +388,32 @@ namespace KoFrMaRestApi.Controllers
             else
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
         }
-        [HttpGet, Route(@"api/AdminApp/test")]
-        public string test()
+        [HttpPost, Route("api/AdminApp/login-server")]
+        public string LoginServer(string username, string password)
         {
-            string t = HttpContext.Current.Request.Url.ToString().Replace("user/login", "");
-            return t;
-            //return WebApiConfig.privateKey;
-            /*
-            MySqlDaemon d = new MySqlDaemon();
-            MySqlConnection connection = WebApiConfig.Connection();
-            connection.Open();
-            d.TaskCompletionRecieved(new Models.Daemon.TaskComplete() {
-                DaemonInfo = new Models.Daemon.DaemonInfo()
-                {
-                    OS = "",
-                    Version = 0,
-                    PC_Unique = "160984079301212",
-                    Token = ""
-                },
-                IDTask = 2,
-                TimeOfCompletition = DateTime.Now,
-                DatFile = new Models.Daemon.Task.BackupJournal.BackupJournalObject()
-                {
-                    BackupJournalFiles = null,
-                    BackupJournalFolders = null,
-                    RelativePath = ""
-                },
-                DebugLog = new List<string>(),
-                IsSuccessfull = true
-            }, connection);
-            /*
-            return new Task()
+            if (username == null || password == null)
             {
-                IDTask = 2,
-                TimeToBackup = DateTime.Now,
-                Sources = new SourceFolders()
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
+            }
+            string token = mySqlCom.SelectToken(password, password);
+            return token;
+        }
+        [HttpPost, Route("api/AdminApp/change-server-data")]
+        public void ChangeServerData(string username, string token/*add stuff you need to set set it in WebApiConfig*/)
+        {
+            if (this.Authorized(new AdminInfo() {Token = token, UserName = username}))
+            {
+                if (this.Permitted(username, new int[] { 6 }))
                 {
-                    Paths = new List<string>()
-                    {
-                        "C:\\Data",
-                        "C:\\Data2"
-                    }
-                },
-                Destinations = new List<IDestination>() {
-                    new DestinationPlain()
-                    {
-                        Path = new DestinationPathLocal()
-                        {
-                            Path = "C:\\Data_backup"
-                        }
-                    }
-                },
-                LogLevel = 7,
-                InProgress = false,
-                ScriptBefore = null,
-                ScriptAfter = null,
-                TemporaryFolderMaxBuffer = null*/
+                    //your code
+                }
+                else
+                    throw new HttpResponseException(HttpStatusCode.Forbidden);
+            }
+            else
+            {
+                throw new HttpResponseException(HttpStatusCode.Unauthorized);
+            }
         }
     }
 }
