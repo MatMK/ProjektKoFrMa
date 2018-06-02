@@ -93,6 +93,7 @@ namespace KoFrMaDaemon
                 if (daemonSettings.ServerIP == "" || daemonSettings.ServerIP == null)
                 {
                     debugLog.WriteToLog("Server IP not entered in config file. Run local configurator to set it to your server, than restart this service or computer.", 1);
+                    //throw new ArgumentNullException();
                 }
                 else
                 {

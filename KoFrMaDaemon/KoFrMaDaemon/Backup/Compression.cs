@@ -16,7 +16,7 @@ namespace KoFrMaDaemon.Backup
         /// </summary>
         /// <param name="source">Path to folder that will be compressed</param>
         /// <param name="destination">Path to name of the file where the zip will be placed</param>
-        /// <param name="compressionLevel">Desired level of compression, see the DestinationZip for possible values <see cref=">KoFrMaDaemon.Backup.DestinationZip"/></param>
+        /// <param name="compressionLevel">Desired level of compression, see the DestinationZip for possible values <see cref = "KoFrMaDaemon.Backup.DestinationZip"/></param>
         /// <param name="splitAfter">Number of MiB by what the zip will be split (null if no splitting)</param>
         public void CompressToZip(string source, string destination, byte? compressionLevel, int? splitAfter)
         {
@@ -61,7 +61,7 @@ namespace KoFrMaDaemon.Backup
         /// <param name="PathTo7zFolder">Path to folder where the third party 7-Zip programm is installed</param>
         /// <param name="source">Path to folder that will be compressed</param>
         /// <param name="destination">Path to name of the file where the 7z will be placed</param>
-        /// <param name="compressionLevel">Desired level of compression, see the Destination7z for possible values <see cref=">KoFrMaDaemon.Backup.Destination7z"/></param>
+        /// <param name="compressionLevel">Desired level of compression, see the Destination7z for possible values <see cref="KoFrMaDaemon.Backup.Destination7z"/></param>
         /// <param name="splitAfter">Number of MiB by what the 7z will be split (null if no splitting)</param>
         public void CompressTo7z(string PathTo7zFolder, string source, string destination, byte? compressionLevel, int? splitAfter)
         {
@@ -105,7 +105,7 @@ namespace KoFrMaDaemon.Backup
         /// <param name="PathToRarFolder">Path to folder where the third party WinRAR programm is installed</param>
         /// <param name="source">Path to folder that will be compressed</param>
         /// <param name="destination">Path to name of the file where the rar will be placed</param>
-        /// <param name="compressionLevel">Desired level of compression, see the DestinationRar for possible values <see cref=">KoFrMaDaemon.Backup.DestinationRar"/></param>
+        /// <param name="compressionLevel">Desired level of compression, see the Destination7z for possible values <see cref=">KoFrMaDaemon.Backup.DestinationRar"/></param>
         /// <param name="splitAfter">Number of MiB by what the rar will be split (null if no splitting)</param>
         public void CompressToRar(string PathToRarFolder, string source, string destination, byte? compressionLevel, int? splitAfter)
         {

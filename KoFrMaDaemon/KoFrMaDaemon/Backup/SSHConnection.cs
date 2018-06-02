@@ -21,6 +21,7 @@ namespace KoFrMaDaemon.Backup
         /// <param name="SSHAddress">Address with subfolder to the SFTP server</param>
         /// <param name="username">Username to the SFTP server</param>
         /// <param name="password">Password to the SFTP server</param>
+        /// <param name="debugLog">Debug Log used for logging actions</param>
         public SSHConnection(string SSHAddress, string username, string password, DebugLog debugLog)
         {
             debugLog.WriteToLog("Setting up settings needed for the SSH trasfer...", 7);
