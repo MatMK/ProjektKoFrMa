@@ -24,7 +24,7 @@ import { ExistsRequest } from './models/communication-models/post-admin/exists-r
 import { ErrorReport } from './error-report.service';
 import { ChangePasswordRequest } from './models/communication-models/post-admin/change-password-request.model';
 import { tbCompletedTasks } from './models/sql-data/data/tb-completed-tasks';
-import { tbServerExceptions } from './models/sql-data/data/tb-server-exceptions.mode';
+import { tbServerExceptions } from './models/sql-data/data/tb-server-exceptions.model';
 
 @Injectable()
 

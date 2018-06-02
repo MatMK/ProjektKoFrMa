@@ -3,7 +3,7 @@ import { tbDaemons } from "./data/tb-daemons.model";
 import { tbAdminAccounts } from "./data/tb-admin-accounts.model";
 import { MainTask } from "../communication-models/task/main-task.model";
 import { tbCompletedTasks } from "./data/tb-completed-tasks";
-import { tbServerExceptions } from "./data/tb-server-exceptions.mode";
+import { tbServerExceptions } from "./data/tb-server-exceptions.model";
 
 export class AdminData
 {

@@ -3,7 +3,7 @@
     <!--Left side-->
     <div style="float: left;width: 45%; max-height:710px; overflow: auto;">
       <h2>Backup settings</h2>
-      <strong>Daemon id:</strong><input type="number" id="daemonId" [(ngModel)]="daemonId"  class="BasicInput" (change)="checkIfNumberValid()" style="margin: 10px">
+      <strong>Daemon id:</strong><input type="number" id="daemonId" [(ngModel)]="daemonId"  class="BasicInput" (change)="checkIfNumberValid()" style="margin: 10px; max-width: 200px;">
       <hr>
       <div id="backupType"><strong>Backup Type:</strong>
         Full<input type="radio" id="IdtypeFull" class="basicRadio" name="buChoice" value="Full" [(ngModel)]="backuptype">  
@@ -133,8 +133,12 @@
         <div style="max-height: 150px; overflow: auto;">
           <div *ngFor="let element of exceptionDates">
             <div style="white-space: nowrap;" *ngIf="element!=undefined">
-              <input type="date" class="basicDate" [(ngModel)]="element.date" style="width: 200px;">
-              <input type="time" class="basicDate" [(ngModel)]="element.time" style="width: 100px;">
+              Start:
+              <input type="date" class="basicDate" [(ngModel)]="element.dateStart" style="width: 200px;">
+              <input type="time" class="basicDate" [(ngModel)]="element.timeStart" style="width: 100px;">
+              End:
+              <input type="date" class="basicDate" [(ngModel)]="element.dateEnd" style="width: 200px;">
+              <input type="time" class="basicDate" [(ngModel)]="element.timeEnd" style="width: 100px;">
               <button (click)="RemoveExceptionDate(element.id)">X</button>
             </div>
           </div>
@@ -166,12 +170,12 @@
             </th>
             <th>
               <tr>
-                <input type="file" accept=".txt, .bat, .cmd, .ps1, .vbs" (change)="fileUpload($event, true)">
-                <input type="text" [(ngModel)]="scriptBeforePath" placeholder="Path on daemon" class="BasicInput">
+                <input *ngIf="scriptBeforeLocal" type="file" accept=".txt, .bat, .cmd, .ps1, .vbs" (change)="fileUpload($event, true)">
+                <input *ngIf="!scriptBeforeLocal" type="text" [(ngModel)]="scriptBeforePath" placeholder="Path in daemon" class="BasicInput">
               </tr>
               <tr>
-                <input type="file" accept=".txt, .bat, .cmd, .ps1, .vbs" (change)="fileUpload($event, false)">
-                <input type="text" [(ngModel)]="scriptAfterPath" placeholder="Path on daemon" class="BasicInput">
+                <input *ngIf="scriptAfterLocal" type="file" accept=".txt, .bat, .cmd, .ps1, .vbs" (change)="fileUpload($event, false)">
+                <input *ngIf="!scriptAfterLocal" type="text" [(ngModel)]="scriptAfterPath" placeholder="Path in daemon" class="BasicInput">
               </tr>
             </th>
           </table>
