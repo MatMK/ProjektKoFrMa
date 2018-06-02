@@ -19,11 +19,11 @@ namespace KoFrMaDaemon.Backup
         private List<string> tmpList;
 
         /// <summary>
-        /// Fuction that writes backup journal (that can be later build on) to drive and also saves the backup journal to local cache named as ID of the task so it can automatically selected by daemon when communicating with the server
+        /// Fuction that writes backup journal (that can be later build on) to drive and also saves the backup journal to local cache named as ID of the task so it can be automatically selected by daemon when communicating with the server
         /// </summary>
         /// <param name="backupJournalObject">The backup journal you want to save to disk</param>
         /// <param name="pathToJournalFile">Path to location including the filename where the backup journal should by saved</param>
-        /// <param name="TaskID">ID of the task that you which backup journal you are saving</param>
+        /// <param name="TaskID">ID of the task that you are saving, if null not saving it</param>
         /// <param name="debugLog"><c>DebugLog</c> instance for logging performed actions</param>
         public void CreateBackupJournal(BackupJournalObject backupJournalObject, string pathToJournalFile, int TaskID, DebugLog debugLog)
         {
@@ -101,6 +101,72 @@ namespace KoFrMaDaemon.Backup
         /// <param name="pathToJournal">Path to the backup journal you want to load including the filename</param>
         /// <param name="debugLog"><c>DebugLog</c> instance for logging performed actions</param>
         /// <returns><c>BackupJournalObject that will be loaded</c></returns>
+
+        public BackupJournalObject MergeJournalObjects(BackupJournalObject journalObjectOld, BackupJournalObject journalObjectNew)
+        {
+            BackupJournalObject result = new BackupJournalObject();
+
+            result.RelativePaths = journalObjectOld.RelativePaths;
+            result.BackupJournalFiles = new List<FileInfoObject>(journalObjectOld.BackupJournalFiles.Count+journalObjectNew.BackupJournalFiles.Count);
+            result.BackupJournalFolders = new List<FolderObject>(journalObjectOld.BackupJournalFiles.Count + journalObjectNew.BackupJournalFiles.Count);
+            result.BackupJournalFilesDelete = new List<string>(journalObjectOld.BackupJournalFiles.Count + journalObjectNew.BackupJournalFiles.Count);
+            result.BackupJournalFoldersDelete = new List<string>(journalObjectOld.BackupJournalFiles.Count + journalObjectNew.BackupJournalFiles.Count);
+            List<string> compareList;
+
+            result.BackupJournalFiles.AddRange(journalObjectNew.BackupJournalFiles);
+            compareList = new List<string>(journalObjectNew.BackupJournalFiles.Count);
+            for (int i = 0; i < journalObjectNew.BackupJournalFiles.Count; i++)
+            {
+                compareList.Add(journalObjectNew.BackupJournalFiles[i].FullPath);
+            }
+            for (int i = 0; i < journalObjectOld.BackupJournalFiles.Count; i++)
+            {
+                if (!compareList.Contains(journalObjectOld.BackupJournalFiles[i].FullPath))
+                {
+                    result.BackupJournalFiles.Add(journalObjectOld.BackupJournalFiles[i]);
+                }
+            }
+
+            result.BackupJournalFolders.AddRange(journalObjectNew.BackupJournalFolders);
+            compareList = new List<string>(journalObjectNew.BackupJournalFolders.Count);
+            for (int i = 0; i < journalObjectNew.BackupJournalFolders.Count; i++)
+            {
+                compareList.Add(journalObjectNew.BackupJournalFolders[i].FullPath);
+            }
+            for (int i = 0; i < journalObjectOld.BackupJournalFolders.Count; i++)
+            {
+                if (!compareList.Contains(journalObjectOld.BackupJournalFolders[i].FullPath))
+                {
+                    result.BackupJournalFolders.Add(journalObjectOld.BackupJournalFolders[i]);
+                }
+            }
+
+
+            result.BackupJournalFilesDelete.AddRange(journalObjectNew.BackupJournalFilesDelete);
+            for (int i = 0; i < journalObjectOld.BackupJournalFilesDelete.Count; i++)
+            {
+                if (!journalObjectNew.BackupJournalFilesDelete.Contains(journalObjectOld.BackupJournalFilesDelete[i]))
+                {
+                    result.BackupJournalFilesDelete.Add(journalObjectOld.BackupJournalFilesDelete[i]);
+                }
+            }
+
+
+            result.BackupJournalFoldersDelete.AddRange(journalObjectNew.BackupJournalFoldersDelete);
+            for (int i = 0; i < journalObjectOld.BackupJournalFoldersDelete.Count; i++)
+            {
+                if (!journalObjectNew.BackupJournalFoldersDelete.Contains(journalObjectOld.BackupJournalFoldersDelete[i]))
+                {
+                    result.BackupJournalFoldersDelete.Add(journalObjectOld.BackupJournalFoldersDelete[i]);
+                }
+            }
+
+
+
+            return result;
+        }
+
+
         public BackupJournalObject LoadBackupJournalObject(string pathToJournal, DebugLog debugLog)
         {
             BackupJournalObject backupJournalObject = new BackupJournalObject();
@@ -110,14 +176,15 @@ namespace KoFrMaDaemon.Backup
                 r = new StreamReader(pathToJournal);
                 debugLog.WriteToLog("Loading relative paths from backup journal...",7);
                 backupJournalObject.RelativePaths = new List<string>(1);
-                while (!r.EndOfStream && r.Peek() != '!')
+                while (r.Peek() != '!')
                 {
                     backupJournalObject.RelativePaths.Add(r.ReadLine());
                 }
+                r.ReadLine();
                 debugLog.WriteToLog("Loading list of files from backup journal...", 7);
                 List<FileInfoObject> tmpListFiles = new List<FileInfoObject>(100);
                 string[] tmp;
-                while (!r.EndOfStream&&r.Peek() != '?')
+                while (r.Peek() != '?')
                 {
                     tmp = r.ReadLine().Split('|');
                     if (tmp.Length == 7)
@@ -134,23 +201,24 @@ namespace KoFrMaDaemon.Backup
                         debugLog.WriteToLog("Error when trying to load file row from backup journal, the row is: " + tmpRow, 3);
                     }
                 }
+                r.ReadLine();
                 backupJournalObject.BackupJournalFiles = tmpListFiles;
 
                 debugLog.WriteToLog("Loading list of deleted files from backup journal...", 7);
                 List<string> tmpListDeletedFiles = new List<string>(100);
-                while (!r.EndOfStream&&r.Peek() != ':')
+                while (r.Peek() != ':')
                 {
                     tmpListDeletedFiles.Add(r.ReadLine());
                 }
+                r.ReadLine();
                 backupJournalObject.BackupJournalFilesDelete = tmpListDeletedFiles;
 
                 debugLog.WriteToLog("Loading list of folders from backup journal...", 7);
                 List<FolderObject> tmpListFolders = new List<FolderObject>(100);
-                r.ReadLine();
-                while (!r.EndOfStream&& r.Peek() != '?')
+                while ( r.Peek() != '?')
                 {
                     tmp = r.ReadLine().Split('|');
-                    if (tmp.Length == 5)
+                    if (tmp.Length == 4)
                     {
                         tmpListFolders.Add(new FolderObject() { FullPath = tmp[0], CreationTimeUtc = DateTime.FromBinary(Convert.ToInt64(tmp[1])), Attributes = tmp[2], HashRow = Convert.ToInt32(tmp[3]) });
                     }
@@ -161,9 +229,10 @@ namespace KoFrMaDaemon.Backup
                         {
                             tmpRow += ('|' + tmp[i]);
                         }
-                        debugLog.WriteToLog("Error when trying to load folder row from backup journal, the row is: " + tmpRow, 3);
+                        debugLog.WriteToLog("Error when trying to load folder row from backup journal, row has different values, number of values is" +tmp.Length+" and the row is: " + tmpRow, 3);
                     }
                 }
+                r.ReadLine();
                 backupJournalObject.BackupJournalFolders = tmpListFolders;
 
 

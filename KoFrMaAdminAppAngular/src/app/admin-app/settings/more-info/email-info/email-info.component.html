@@ -1,6 +1,42 @@
-<!--Cau, udelas tady prosím: 
-  • to stejný s tím opakováním tásků akorát že tady se tím budou nastavovat emaily
-  • checkbox jestli vůbec chtěj dostávat ty emaily
-to je vsechno diky ♥♥♥
-PS: neres to aby to nastavovalo neaky hodnoty to dodelam ja.
--->
+
+<div id="emailDiv">
+  <h2 style="text-align: center">Sending emails setup</h2>
+
+    <input type="checkbox" class="basicCheckbox" id="emailCheckbox" [(ngModel)]="emailCheck"> Do you want to receive emails?
+    <br>
+    <div *ngIf="emailCheck==true">
+      <Strong style="margin: 5px">Send every: </Strong>
+        <input type="number" id="sendEvery" class="BasicInput" [(ngModel)]="sendEvery" style="margin: 5px; width:30%">
+        <select id="dropdownTimeChoice" class="basicSelect" [(ngModel)]="send"> 
+          <option value="Minute" id="optionTime" >Minutes</option> 
+          <option value="Hour" id="optionTime">Hours</option> 
+          <option value="Day" id="optionTime">Days</option>
+          <option value="Week" id="optionTime">Weeks</option>
+        </select>
+      <br>
+        <strong style="margin: 5px">Send till: </strong><input type="datetime-local" id="sendTill" class="basicDate" [value] = "_date" (change) = "onDateChange($event.target.value)">
+      <hr>
+      <input type="submit" value="Petr" id="sendAddExecutionSubmit" class="basicSubmit" (click)="AddSendDate()">
+        <div style="max-height: 150px; overflow: auto;">
+          <div *ngFor="let element of executionDates">
+            <div style="white-space: nowrap;" *ngIf="element!=undefined">
+              <input type="date" class="basicDate" [(ngModel)]="element.date" style="width: 200px;">
+              <input type="time" class="basicDate" [(ngModel)]="element.time" style="width: 100px;">
+              <button (click)="RemoveSendDate(element.id)">X</button>
+            </div>
+          </div>
+        </div>
+        <input type="submit" value="Matěj" id="sendAddExceptionSubmit" class="basicSubmit" (click)="AddExceptionEmailDate()">
+        <div style="max-height: 150px; overflow: auto;">
+          <div *ngFor="let element of exceptionDates">
+            <div style="white-space: nowrap;" *ngIf="element!=undefined">
+              <input type="date" class="basicDate" [(ngModel)]="element.date" style="width: 200px;">
+              <input type="time" class="basicDate" [(ngModel)]="element.time" style="width: 100px;">
+              <button (click)="RemoveExceptionEmailDate(element.id)">X</button>
+            </div>
+          </div>
+        </div>
+
+  </div>
+
+</div>
