@@ -19,6 +19,7 @@ import { ISource } from '../../../../server-connection/models/communication-mode
 import { SourceMSSQL } from '../../../../server-connection/models/communication-models/task/task-models/sources/source-ms-sql.model';
 import { SourceFolders } from '../../../../server-connection/models/communication-models/task/task-models/sources/source-file.model';
 import { Time } from '@angular/common';
+import { ScriptInfo } from '../../../../server-connection/models/communication-models/task/script-info.model';
 
 @Component({
   selector: 'app-add-task',
@@ -68,29 +69,29 @@ export class AddTaskComponent
     {id: 9, value: "Tracing info including large loop cycles that will slow down the process a lot"}, 
     {id: 10, value: "Program will be more like a log writer than actually doing the process"}]
   //scirpts
-  private fileText : string;
+  private scriptBefore : string;
+  private scriptBeforePath : string;
+  private scriptAfter : string;
+  private scriptAfterPath : string;
+  private scriptBeforeLocal : boolean = true;
+  private scriptAfterLocal : boolean = true;
+  private scriptBeforeType : string;
+  private scriptAfterType : string;
+  
+  private temporaryFolderMaxBuffer : number;
+
   constructor(private activeRoute:ActivatedRoute, private service : ServerConnectionService, private renderer: Renderer2, private router : Router, private data : Data) {
       this.activeRoute.params.subscribe(params => {
       this.daemonId = params.daemonid;
       this.checkIfNumberValid(false);
     });
    }
-   
-   checkIfNumberValid(showMsg : boolean) : boolean
-   {
-    if (!(this.daemonId >= 0 || this.daemonId<0))
-    {
-      this.daemonId = undefined;
-      if(showMsg == true)
-        alert("Daemon Id is not valid!")
-      return false;
-    }
-    return true;
-   }
-  AddTask()
+   AddTask()
   {
     if(this.checkIfNumberValid(true))
     {
+      if(this.ncPath != undefined && this.ncPath.length !=0)
+        this.AddLocalDestination();
       var i : number = 0;
       this.destinations.forEach(element => {
         if(element != undefined)
@@ -101,8 +102,6 @@ export class AddTaskComponent
         alert("Select at least one destination");
         return;
       }
-      if(this.ncPath != undefined && this.ncPath.length !=0)
-        this.AddLocalDestination();
 
       let newTask : SetTask = new SetTask()
       newTask.DaemonId = this.daemonId;
@@ -143,22 +142,95 @@ export class AddTaskComponent
           }
         });
       }
+      //Advanced
+      if(this.advanced)
+      {
+        if(this.temporaryFolderMaxBuffer < 0)
+        {
+          alert("Max temporary folder size cannot be lower than 0");
+        }
+        newTask.TemporaryFolderMaxBuffer = this.temporaryFolderMaxBuffer == 0?null:this.temporaryFolderMaxBuffer;
+        if(this.scriptBeforeLocal)
+        {
+          if(this.scriptBeforePath != undefined || this.scriptBeforePath.length != 0)
+          {
+            newTask.ScriptBefore = new ScriptInfo();
+            newTask.ScriptBefore.PathToLocalScript = this.scriptBeforePath;
+          }
+        }
+        else
+        {
+          if(this.scriptBefore != undefined || this.scriptBefore.length != 0)
+          {
+            newTask.ScriptBefore = new ScriptInfo();
+            newTask.ScriptBefore.ScriptItself = this.scriptBefore;
+            newTask.ScriptBefore.ScriptItselfFormat = this.scriptAfterType;
+          }
+        }
+        if(this.scriptAfterLocal)
+        {
+          if(this.scriptAfterPath != undefined || this.scriptAfterPath.length != 0)
+          {
+            newTask.ScriptAfter = new ScriptInfo();
+            newTask.ScriptAfter.PathToLocalScript = this.scriptAfterPath;
+            newTask.ScriptAfter.ScriptItselfFormat = this.scriptAfterType;
+          }
+        }
+        else
+        {
+          if(this.scriptAfter != undefined || this.scriptAfter.length != 0)
+          {
+            newTask.ScriptAfter = new ScriptInfo();
+            newTask.ScriptAfter.ScriptItself = this.scriptAfter;
+            newTask.ScriptAfter.ScriptItselfFormat = this.scriptAfterType;
+          }
+        }
+      }
+      else
+      {
+        newTask.LogLevel = 7;
+      }
       console.log(newTask);
-      //this.data.Loading = true;
-      //this.service.SetTask([newTask]).then(res => this.service.RefreshData([3]))
+      this.data.Loading = true;
+      this.service.SetTask([newTask]).then(res => this.service.RefreshData([3]))
       //this.router.navigate(['backup', 'app','tasks']);
     }
   }
+
+   checkIfNumberValid(showMsg : boolean) : boolean
+   {
+    if (!(this.daemonId >= 0 || this.daemonId<0))
+    {
+      this.daemonId = undefined;
+      if(showMsg == true)
+        alert("Daemon Id is not valid!")
+      return false;
+    }
+    return true;
+   }
+  
   private onDateChange(value : Date)
   {
     this.repeatTill= value;
   }
-  fileUpload(event) {
+  fileUpload(event, scriptBefore : boolean) {
     var reader = new FileReader();
-    reader.readAsText(event.srcElement.files[0]);
-    var me = this;
-    reader.onload = function () {
-      me.fileText = reader.result;
+    if(event.srcElement.files.length != 0)
+    {
+      reader.readAsText(event.srcElement.files[0]);
+      var me = this;
+      reader.onload = function () {
+        if(scriptBefore)
+        {
+          me.scriptBefore = reader.result;
+          me.scriptBeforeType = event.srcElement.files[0].name.substring(event.srcElement.files[0].name.length-3)
+        }
+        else if(!scriptBefore)
+        {
+          me.scriptAfter = reader.result;
+          me.scriptAfterType = event.srcElement.files[0].name.substring(event.srcElement.files[0].name.length-3)
+        }
+      }
     }
   }
   AddLocalDestination()
@@ -208,19 +280,19 @@ export class AddTaskComponent
         newDiv.Id='idNewDiv'
         newDiv.className='aditionalDivClass'
         var inputDestination = <HTMLDivElement>document.getElementById("inputDestiDiv");
-        var input = this.renderer.createElement('p');
+        var input = this.renderer.createElement('div');
         input.style = "display:inline-block; vertical-align: middle;";
-        input.innerHTML = "Path: " + (this.ncPath.length>20?"..." + this.ncPath.substring(this.ncPath.length-25):this.ncPath) + ", Type: " + this.destinationtype +", Compression: "  + (this.compress?this.compressType:"None")
+        input.innerHTML = "Path: " + (this.ncPath.length>40?"..." + this.ncPath.substring(this.ncPath.length-43):this.ncPath) + ", Type: " + this.destinationtype +", Compression: "  + (this.compress?this.compressType:"None")
         var button = this.renderer.createElement('button');
         button.innerHTML = 'X';
-        button.style = "display:inline-block; vertical-align: middle;";
+        button.style = "display:inline-block; vertical-align: middle;float:right;";
         button.id = this.destinations.length-1;
         this.renderer.listen(button, 'click', (event) => this.RemoveLocalDestination(event));
         var br = this.renderer.createElement("br");
         this.renderer.appendChild(newDiv, input);
         this.renderer.appendChild(inputDestination,newDiv);
         this.renderer.appendChild(newDiv,button);
-        
+        this.compress = false;
         this.ncPath = undefined;
         this.ncPassword = undefined;
         this.ncUsername = undefined;
@@ -316,7 +388,35 @@ export class AddTaskComponent
   {
     delete this.srcPath[id];
   }
-  
+  AddExecutionDate()
+  {
+    var i :number = this.executionDates.length;
+    this.executionDates.push({id:i, date: undefined, time: undefined});
+  }
+  RemoveExecutionDate(id : number)
+  {
+    delete this.executionDates[id];
+  }
+  RemoveExceptionDate(id: number)
+  {
+    delete this.exceptionDates[id];
+  }
+  AddExceptionDate(){
+    var i :number = this.exceptionDates.length;
+    this.exceptionDates .push({id:i, date: undefined, time: undefined});
+  }
+  RemoveLocalDestination(event: any)
+  {
+    var target = event.target || event.srcElement || event.currentTarget;
+    var inputDestiDiv = <HTMLDivElement>document.getElementById("inputDestiDiv");
+    this.renderer.removeChild(inputDestiDiv,target.parentNode);
+    delete this.destinations[target.id];
+  }
+  /*RemoveSource(event: any){
+    var target = event.target || event.srcElement || event.currentTarget;
+    var inputDestiDiv = <HTMLDivElement>document.getElementById("inputDestiDiv");
+    this.renderer.removeChild(inputDestiDiv,target.parentNode);
+  }*/
 /*
 BUcheck() {
   var radioOptD = <HTMLInputElement>document.getElementById("distant")
@@ -349,7 +449,7 @@ ShowAddSource(){
     }
     else dbName.style.display = 'none';
   }
-*/
+
 ShowCompress(){
 var checkbox = <HTMLInputElement>document.getElementById("checkboxCompression")
 var compressDiv = <HTMLDivElement>document.getElementById("divCompress")
@@ -362,7 +462,8 @@ else
 compressDiv.style.display = 'none';
 
 }
-
+*/
+/*
 ShowRepeat(){
   var checkbox = <HTMLInputElement>document.getElementById("repeatCheckboxId")
   var showRepeat = <HTMLDivElement>document.getElementById("showRepeat")
@@ -397,6 +498,7 @@ ShowCompressOption(){
     drop7Zip.style.display = 'none'; 
     dropRar.style.display = 'none'; 
   }*/
+  /*
 
     if(selectBox.selectedIndex == 0){
       dropRar.style.display = 'block';
@@ -413,14 +515,10 @@ ShowCompressOption(){
       drop7Zip.style.display = 'none'; 
       dropRar.style.display = 'none'; 
     }
-  }
-  RemoveLocalDestination(event: any)
-  {
-    var target = event.target || event.srcElement || event.currentTarget;
-    var inputDestiDiv = <HTMLDivElement>document.getElementById("inputDestiDiv");
-    this.renderer.removeChild(inputDestiDiv,target.parentNode);
-    delete this.destinations[target.id];
-  }
+}
+*/
+
+  /*
     AddSource(){
       var newDiv = this.renderer.createElement('div'); 
       newDiv.className='aditionalDivClass'
@@ -442,29 +540,8 @@ ShowCompressOption(){
       this.renderer.appendChild(inputDestination,newDiv);
       this.renderer.appendChild(newDiv,button);
       this.renderer.appendChild(newDiv, br);
-    }
-    RemoveSource(event: any){
-      var target = event.target || event.srcElement || event.currentTarget;
-      var inputDestiDiv = <HTMLDivElement>document.getElementById("inputDestiDiv");
-      this.renderer.removeChild(inputDestiDiv,target.parentNode);
-    }
-    AddExecutionDate(){
-      var i :number = this.executionDates.length;
-      this.executionDates.push({id:i, date: undefined, time: undefined});
-    }
-    RemoveExecutionDate(id : number)
-    {
-      delete this.executionDates[id];
-    }
-    RemoveExceptionDate(id: number)
-    {
-      delete this.exceptionDates[id];
-    }
-    AddExceptionDate(){
-      var i :number = this.exceptionDates.length;
-      this.exceptionDates .push({id:i, date: undefined, time: undefined});
-    }
-
+    }*/
+/*
   AddDestinationNew(){
 
     var mensiDiv = <HTMLDivElement>document.getElementById("mensiDiv");
@@ -719,14 +796,14 @@ ShowCompressOption(){
     this.renderer.appendChild(compressSelectZip, cOptionZip3)
     this.renderer.appendChild(compressSelectZip, cOptionZip4)
     this.renderer.appendChild(compressSelectZip, cOptionZip5)*/
-
+/*
     this.renderer.appendChild(destinationDiv,hr1);
     this.renderer.appendChild(destinationDiv,button1)
 
-    
+    */
   /* this.renderer.insertBefore(mensiDiv,destinationTypeRadioLocal,);
   
-  mensiDiv.appendChild(destinationTypeRadioLocal)*/
+  mensiDiv.appendChild(destinationTypeRadioLocal)*//*
   }
 RemoveDestinationNew(event: any){
     var target = event.target || event.srcElement || event.currentTarget;
@@ -758,5 +835,5 @@ ShowCompressNew()
       drop7Zip.style.display = 'none'; 
       dropRar.style.display = 'none'; 
     }
-  }
+  } */
 }
