@@ -3,6 +3,7 @@ import { IDestinationPath } from "../idestination-path.interface";
 
 export class DestinationZip implements IDestination
 {
+    constructor(public $type : string = "DestinationZip"){}
     /** Path to where the zip archive will be stored */
 		public Path: IDestinationPath;
 		public CompressionLevel: number;

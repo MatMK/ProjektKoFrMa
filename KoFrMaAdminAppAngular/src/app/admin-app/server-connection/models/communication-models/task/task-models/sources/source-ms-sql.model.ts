@@ -3,6 +3,7 @@ import { NetworkCredential } from "../../network-credential.model";
 
 export class SourceMSSQL implements ISource
 {
+    constructor(public $type : string = "SourceMSSQL"){}
     /** Address of the MSSQL server from where the backup will be made */
     public ServerName: string;
     /** Credential to the MSSQL server */

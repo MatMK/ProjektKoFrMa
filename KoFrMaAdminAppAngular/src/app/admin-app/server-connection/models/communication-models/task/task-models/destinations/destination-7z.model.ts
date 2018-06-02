@@ -3,6 +3,7 @@ import { IDestination } from "../idestitnation.interface";
 
 export class Destination7z implements IDestination
 {
+    constructor(public $type : string = "Destination7z"){}
     /** Path to where the 7z archive will be stored */
     public Path: IDestinationPath;
     public CompressionLevel: number;
