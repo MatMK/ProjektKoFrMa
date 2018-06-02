@@ -3,7 +3,7 @@ import { ServerConnectionService } from '../../../server-connection/server-conne
 import { Data } from '../../../server-connection/data.model';
 import { MatTableDataSource } from '@angular/material';
 import { tbCompletedTasks } from '../../../server-connection/models/sql-data/data/tb-completed-tasks';
-import { tbServerExceptions } from '../../../server-connection/models/sql-data/data/tb-server-exceptions.mode';
+import { tbServerExceptions } from '../../../server-connection/models/sql-data/data/tb-server-exceptions.model';
 
 @Component({
   selector: 'app-server-exceptions',

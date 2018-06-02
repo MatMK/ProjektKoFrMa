@@ -41,25 +41,23 @@ border-radius: 0px;
 .autoDestiLocal{
     background-color: white;
 }
+
 .basicSelect{
     border: none;
     border-bottom: 1px solid #d3d3d3;
     border-top: 1px solid #d3d3d3;;
     border-radius: 0px;
-font-size: 20PX;
-margin-bottom: 2px;
-width: 171.33px;
+    margin-bottom: 2px;
+    font-size: 18px;
+    width: 171.33px;
 }
-
-.BasicSelect{
+.smallSelect{
     border: none;
     border-bottom: 1px solid #d3d3d3;
     border-top: 1px solid #d3d3d3;;
     border-radius: 0px;
-font-size: 20PX;
-margin-bottom: 2px;
-margin-left: 24px;
-width: 171.33px;
+    margin-bottom: 2px;
+    font-size: 15px;
 }
 
 
@@ -81,7 +79,7 @@ height: 28px;
     border-radius: 5px;
     text-align: center;
     text-decoration: none;
-    font-size: 20PX;
+    font-size: 18PX;
     padding: 0px 16px;
     height: 28px;
     color: black;
@@ -112,7 +110,7 @@ height: 28px;
     margin-left: 25px;
     margin-bottom: 3px;
     background-color: white;
-    font-size: 20px;
+    font-size: 18px;
     border: none;
     border-bottom: 1px solid #d3d3d3;
     border-radius: 0px;
@@ -144,7 +142,7 @@ height: 28px;
     width: 380px;
 margin-bottom: 3px;
 background-color: white;
-font-size: 20px;
+font-size: 18px;
 border: none;
 border-bottom: 1px solid #d3d3d3;
 border-radius: 0px;

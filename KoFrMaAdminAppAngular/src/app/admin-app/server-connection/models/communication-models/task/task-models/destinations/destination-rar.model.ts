@@ -3,6 +3,7 @@ import { IDestinationPath } from "../idestination-path.interface";
 
 export class DestinationRar implements IDestination
 {
+    constructor(public $type : string = "DestinationRar"){}
     /** Path to where the rar archive will be stored */
     public Path: IDestinationPath;
     public CompressionLevel: number;
