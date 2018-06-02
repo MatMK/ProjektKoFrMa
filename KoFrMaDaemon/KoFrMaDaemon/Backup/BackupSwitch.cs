@@ -443,7 +443,8 @@ namespace KoFrMaDaemon.Backup
                 BackupJournalFilesDelete = FilesToDelete,
                 BackupJournalFoldersDelete = FoldersToDelete
             };
-            BackupJournal.CreateBackupJournal(BackupJournalNew, destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", task.IDTask, this.taskDebugLog);
+            BackupJournalObject backupJournalMerge = BackupJournal.MergeJournalObjects(backupJournalSource, BackupJournalNew);
+            BackupJournal.CreateBackupJournal(backupJournalMerge, destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", task.IDTask, this.taskDebugLog);
             this.taskDebugLog.WriteToLog("Transaction log successfully created in destination " + destinationInfo.Parent.FullName + @"\KoFrMaBackup.dat", 5);
 
 
@@ -563,7 +564,19 @@ namespace KoFrMaDaemon.Backup
                     }
                     Directory.CreateDirectory(Path.GetDirectoryName(filesToCopy[i].DestinationPath));
                     filesToCopy[i].SourceFileInfo.CopyTo(filesToCopy[i].DestinationPath);
-                    File.SetCreationTimeUtc(filesToCopy[i].DestinationPath, filesToCopy[i].SourceFileInfo.CreationTimeUtc);
+                    try
+                    {
+                        File.SetCreationTimeUtc(filesToCopy[i].DestinationPath, filesToCopy[i].SourceFileInfo.CreationTimeUtc);
+                        File.SetLastWriteTimeUtc(filesToCopy[i].DestinationPath, filesToCopy[i].SourceFileInfo.LastWriteTimeUtc);
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        File.SetAttributes(filesToCopy[i].DestinationPath, FileAttributes.Normal);
+                        File.SetCreationTimeUtc(filesToCopy[i].DestinationPath, filesToCopy[i].SourceFileInfo.CreationTimeUtc);
+                        File.SetLastWriteTimeUtc(filesToCopy[i].DestinationPath, filesToCopy[i].SourceFileInfo.LastWriteTimeUtc);
+                        File.SetAttributes(filesToCopy[i].DestinationPath, filesToCopy[i].SourceFileInfo.Attributes);
+                    }
+
                     //destinationInfo.FullName + @"\" + filesToCopy[i].RelativePath
                     FilesCorrect.Add(new FileInfoObject { FullPath = filesToCopy[i].SourceFileInfo.FullName, Length = filesToCopy[i].SourceFileInfo.Length, CreationTimeUtc = filesToCopy[i].SourceFileInfo.CreationTimeUtc, LastWriteTimeUtc = filesToCopy[i].SourceFileInfo.LastWriteTimeUtc, Attributes = filesToCopy[i].SourceFileInfo.Attributes.ToString(), MD5 = this.CalculateMD5(filesToCopy[i].SourceFileInfo.FullName) });
 
@@ -571,7 +584,7 @@ namespace KoFrMaDaemon.Backup
                 catch (Exception ex)
                 {
                     this.FilesErrorCopy.Add(new CopyErrorObject() { FullPath = filesToCopy[i].SourceFileInfo.FullName, ExceptionMessage = ex.Message });
-                    this.taskDebugLog.WriteToLog("Unable to copy or edit" + filesToCopy[i].SourceFileInfo.FullName + " to " + destinationInfo.FullName + filesToCopy[i].DestinationPath + " because of exception " + ex.Message + ". Path to destination folder: " + filesToCopy[i].SourceFileInfo.Directory.FullName, 8);
+                    this.taskDebugLog.WriteToLog("Unable to copy " + filesToCopy[i].SourceFileInfo.FullName + " to " + destinationInfo.FullName + filesToCopy[i].DestinationPath + " because of exception " + ex + ". Path to destination folder: " + filesToCopy[i].SourceFileInfo.Directory.FullName, 8);
                 }
 
             }
@@ -615,6 +628,7 @@ namespace KoFrMaDaemon.Backup
                         try
                         {
                             //File.Delete(Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp") + @"\" + FileList[i].RelativePath);
+                            File.SetAttributes(FileList[i].FullPath, FileAttributes.Normal);
                             File.Delete(FileList[i].FullPath);
                         }
                         catch (Exception ex)
@@ -628,6 +642,7 @@ namespace KoFrMaDaemon.Backup
                         try
                         {
                             //Directory.Delete(Path.Combine(Path.GetTempPath(), "KoFrMaBackupTemp") + @"\" + FolderList[i].RelativePath, true);
+                            File.SetAttributes(FolderList[i].FullPath, FileAttributes.Normal);
                             Directory.Delete(FolderList[i].FullPath);
                         }
                         catch (Exception ex)

@@ -144,8 +144,8 @@ namespace KoFrMaDaemon
             //tmpDestinations.Add(new DestinationZip() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" }, CompressionLevel = 0, SplitAfter = 0 });
             Task taskTest = new Task
             {
-                //Sources = cheatBackupJournalOperations.LoadBackupJournalObject(@"d:\KoFrMa\BackupGoesHere\KoFrMaBackup_2018_05_20_14_22_12_Full\KoFrMaBackup.dat", debugLog),
-                Sources = tmpSourceFolders,
+                Sources = cheatBackupJournalOperations.LoadBackupJournalObject(@"d:\KoFrMa\BackupGoesHere\KoFrMaBackup_2018_06_02_15_02_59\KoFrMaBackup.dat", debugLog),
+                //Sources = tmpSourceFolders,
                 IDTask = 1,
                 LogLevel = 8,
                 TemporaryFolderMaxBuffer = null,
@@ -348,7 +348,6 @@ namespace KoFrMaDaemon
             //}
             timerConnection.Start();
         }
-
 
         private void GetTasks()
         {
