@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { MatRadioModule, MatRadioButton } from '@angular/material/radio';
 import { SetTask } from '../../../server-connection/models/communication-models/task/set-task.model';
 import { EventEmitter } from 'events';
-import { TaskRepeating } from '../../../server-connection/models/communication-models/task/task-repeating.model';
+import { TaskRepeatingNoTimespan } from '../../../server-connection/models/communication-models/task/task-repeating.model';
 import { ServerConnectionService } from '../../../server-connection/server-connection.service';
 
 @Component({

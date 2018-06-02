@@ -17,7 +17,7 @@ namespace KoFrMaRestApi.Models.AdminApp
         /// <summary>
         /// Repeating of task
         /// </summary>
-        public TaskRepeating ExecutionTimes { get; set; }
+        public TaskRepeatingNoTimespan ExecutionTimes { get; set; }
         /// <summary>
         /// Database id if the daemon
         /// </summary>

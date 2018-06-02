@@ -1,5 +1,5 @@
 import { Task } from "./task.model";
-import { TaskRepeating } from "./task-repeating.model";
+import { TaskRepeatingNoTimespan } from "./task-repeating.model";
 
 export class MainTask
 {
@@ -7,6 +7,6 @@ export class MainTask
     public IdDaemon : number;
     public Task : Task;
     public TimeOfExecution : Date;
-    public RepeatInJSON : TaskRepeating;
+    public RepeatInJSON : TaskRepeatingNoTimespan;
     public Completed : boolean;
 }

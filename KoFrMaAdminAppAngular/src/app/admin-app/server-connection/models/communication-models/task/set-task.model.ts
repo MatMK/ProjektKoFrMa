@@ -1,4 +1,4 @@
-import { TaskRepeating } from './task-repeating.model';
+import { TaskRepeatingNoTimespan } from './task-repeating.model';
 import { ScriptInfo } from './script-info.model';
 import { NetworkCredential } from './network-credential.model';
 import { ISource } from './task-models/isource.interface';
@@ -6,7 +6,7 @@ import { IDestination } from './task-models/idestitnation.interface';
 
 export class SetTask {
     /** Repeating of task */
-    ExecutionTimes: TaskRepeating
+    ExecutionTimes: TaskRepeatingNoTimespan
     /** Database id if the daemon */
     DaemonId: number;
     /** Source of backup */
@@ -20,5 +20,5 @@ export class SetTask {
     /** Script that will be run AFTER the task */
     ScriptAfter : ScriptInfo
     /** Size in MB how big can at one moment be temporary folder on drive C, is used only when destination is archive and/or is remote */
-    TemporaryFolderMaxBuffer?: number;
+    TemporaryFolderMaxBuffer: number;
 }

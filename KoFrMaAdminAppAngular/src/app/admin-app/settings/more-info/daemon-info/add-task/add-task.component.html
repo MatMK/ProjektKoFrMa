@@ -111,10 +111,7 @@
         <Strong style="margin: 5px">Repeat every: </Strong>
         <input type="number" id="repeatEvery" class="BasicInput" [(ngModel)]="repeatEvery" style="margin: 5px; width:30%">
         <select id="dropdownRepeat" class="basicSelect" [(ngModel)]="repeat"> 
-          <option value="Minute" id="optionTime" >Minutes</option> 
-          <option value="Hour" id="optionTime">Hours</option> 
-          <option value="Day" id="optionTime">Days</option>
-          <option value="Week" id="optionTime">Weeks</option>
+          <option *ngFor="let element of repeatOptions" value="{{element.value}}" id="optionTime" >{{element.text}}</option> 
         </select>
         <hr>
         <strong style="margin: 5px">Repeat till: </strong><input type="datetime-local" id="repeatTill" class="basicDate" [value] = "_date" (change) = "onDateChange($event.target.value)">

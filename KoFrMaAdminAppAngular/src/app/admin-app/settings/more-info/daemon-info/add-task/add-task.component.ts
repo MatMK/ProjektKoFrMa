@@ -2,7 +2,7 @@ import { Component, Renderer2, OnInit, Testability } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatRadioModule, MatRadioButton } from '@angular/material/radio';
 import { SetTask } from '../../../../server-connection/models/communication-models/task/set-task.model';
-import { TaskRepeating } from '../../../../server-connection/models/communication-models/task/task-repeating.model';
+import { TaskRepeatingNoTimespan } from '../../../../server-connection/models/communication-models/task/task-repeating.model';
 import { ServerConnectionService } from '../../../../server-connection/server-connection.service';
 import { Data } from '../../../../server-connection/data.model';
 import { IDestination } from '../../../../server-connection/models/communication-models/task/task-models/idestitnation.interface';
@@ -21,6 +21,7 @@ import { SourceFolders } from '../../../../server-connection/models/communicatio
 import { Time } from '@angular/common';
 import { ScriptInfo } from '../../../../server-connection/models/communication-models/task/script-info.model';
 import { ExceptionDate } from '../../../../server-connection/models/communication-models/task/exception-date.model';
+
 
 @Component({
   selector: 'app-add-task',
@@ -50,10 +51,17 @@ export class AddTaskComponent
   private srcUsername : string;
   private sourcetype : string;
   //Repeat
-  private repeat : string = "Minute";
+  private repeat : number = 3600
   private repeatEvery : number;
   private executionDates : {id : number, date: Date, time: Time}[] = [{id:0,date: undefined, time:undefined}];
   private exceptionDates : {id : number, dateStart: Date, timeStart: Time, dateEnd: Date, timeEnd: Time, }[] = [];
+  private repeatOptions : {value : number, text : string}[] = [
+    {value: 1 , text:"Seconds"},
+    {value: 60 , text:"Minutes"},
+    {value: 3600 , text:"Hours"},
+    {value: 86400, text:"Days"},
+    {value: 604800 , text:"Weeks"},
+  ]
   private repeatTill : Date;
   //Advanced
   private advanced : boolean;
@@ -133,6 +141,7 @@ export class AddTaskComponent
       if(newTask.Sources==undefined)
       {
         alert("Please select a source");
+        return;
       }
       //Adding repeat task class
       if(this.repeatEvery != undefined && this.repeatEvery != 0)
@@ -142,8 +151,8 @@ export class AddTaskComponent
           alert("Repeat every: cannot be negative");
           return;
         }
-        newTask.ExecutionTimes = new TaskRepeating()
-        newTask.ExecutionTimes.Repeating = this.repeatEvery;
+        newTask.ExecutionTimes = new TaskRepeatingNoTimespan()
+        newTask.ExecutionTimes.Repeating = this.repeatEvery * this.repeat;
         newTask.ExecutionTimes.RepeatTill = this.repeatTill;
         newTask.ExecutionTimes.ExecutionTimes = [];
         newTask.ExecutionTimes.ExceptionDates = [];
@@ -152,12 +161,13 @@ export class AddTaskComponent
           if(element != undefined)
           {
             count++;
-            newTask.ExecutionTimes.ExecutionTimes.push(new Date(element.date.toString()  + "T" + element.time.toString()))
+            newTask.ExecutionTimes.ExecutionTimes.push(this.parseDate(element.date, element.time))
           }
         });
         if(count == 0)
         {
           alert("Please insert at least one execution time");
+          return;
         }
         this.exceptionDates.forEach(element => {
           if(element != undefined)
@@ -176,8 +186,10 @@ export class AddTaskComponent
         if(this.temporaryFolderMaxBuffer < 0)
         {
           alert("Max temporary folder size cannot be lower than 0");
+          return;
         }
-        newTask.TemporaryFolderMaxBuffer = this.temporaryFolderMaxBuffer == 0?null:this.temporaryFolderMaxBuffer;
+        newTask.TemporaryFolderMaxBuffer = this.temporaryFolderMaxBuffer == 0?null:this.temporaryFolderMaxBuffer
+
         if(!this.scriptBeforeLocal)
         {
           if(this.scriptBeforePath != undefined && this.scriptBeforePath.length != 0)
@@ -220,7 +232,7 @@ export class AddTaskComponent
       }
       console.log(newTask);
       this.data.Loading = true;
-      this.service.SetTask([newTask]).then(res => this.service.RefreshData([3]))
+      this.service.SetTask([newTask])//.then(res => this.service.RefreshData([3]))
       //this.router.navigate(['backup', 'app','tasks']);
     }
   }
@@ -434,7 +446,8 @@ export class AddTaskComponent
   {
     delete this.exceptionDates[id];
   }
-  AddExceptionDate(){
+  AddExceptionDate()
+  {
     var i :number = this.exceptionDates.length;
     this.exceptionDates.push({id:i, dateStart: undefined, dateEnd: undefined, timeEnd: undefined, timeStart: undefined});
   }

@@ -126,6 +126,7 @@ namespace KoFrMaRestApi.Controllers
         /// <param name="postAdmin">Information about administrator</param>
         [HttpPost, Route(@"api/AdminApp/SetTask")]
         public void SetTask(PostAdmin postAdmin)
+
         {
             if (this.Authorized(postAdmin.adminInfo))
             {

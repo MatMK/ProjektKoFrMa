@@ -52,8 +52,7 @@ namespace KoFrMaRestApi.Models
         }
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
-            try
-            {
+
                 using (MySqlConnection connection = WebApiConfig.Connection())
                 using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbEmailPreferences`", connection))
                 {
@@ -73,11 +72,6 @@ namespace KoFrMaRestApi.Models
                         }
                     }
                 }
-            }
-            catch(Exception ex)
-            {
-                observer.RegisterError(ex);
-            }
         }
         /// <summary>
         /// Checks TaskRepeat, extends all dates to be higher than current date.

@@ -1,6 +1,7 @@
 ﻿using KoFrMaRestApi.Models;
 using KoFrMaRestApi.Models.AdminApp;
 using KoFrMaRestApi.Models.AdminApp.PostAdmin;
+using KoFrMaRestApi.Models.AdminApp.RepeatingTasks;
 using KoFrMaRestApi.Models.Daemon.Task;
 using KoFrMaRestApi.Models.Tables;
 using MySql.Data.MySqlClient;
@@ -183,13 +184,21 @@ namespace KoFrMaRestApi.MySqlCom
                             InProgress = false,
                         };
                         dynamic Repeating;
+                        TaskRepeating taskRepeating = new TaskRepeating()
+                        {
+                            ExceptionDates = item.ExecutionTimes.ExceptionDates,
+                            ExecutionTimes = item.ExecutionTimes.ExecutionTimes,
+                            RepeatTill = item.ExecutionTimes.RepeatTill,
+                            Repeating = new TimeSpan(0, 0, item.ExecutionTimes.Repeating)
+                        };
+                        taskRepeating.ExecutionTimes.Sort();
                         if (item.ExecutionTimes != null)
-                            Repeating = JsonConvert.SerializeObject(item.ExecutionTimes);
+                            Repeating = JsonConvert.SerializeObject(taskRepeating);
                         else
-                            Repeating = DBNull.Value;
+                            throw new Exception("Task repeating cannot be null");
                         command.Parameters.AddWithValue("@DaemonId", item.DaemonId);
                         command.Parameters.AddWithValue("@Task", JsonConvert.SerializeObject(task));
-                        command.Parameters.AddWithValue("@DateOfCompletion", "");
+                        command.Parameters.AddWithValue("@DateOfCompletion", taskRepeating.ExecutionTimes[0]);
                         command.Parameters.AddWithValue("@Repeating", Repeating);
                         command.ExecuteNonQuery();
                     }

@@ -1,5 +1,5 @@
 import { Task } from "../../communication-models/task/task.model";
-import { TaskRepeating } from "../../communication-models/task/task-repeating.model";
+import { TaskRepeatingNoTimespan } from "../../communication-models/task/task-repeating.model";
 
 export class tbTasks
 {
