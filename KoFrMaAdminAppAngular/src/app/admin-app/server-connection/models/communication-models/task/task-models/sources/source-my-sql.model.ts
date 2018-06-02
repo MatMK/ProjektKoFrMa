@@ -3,10 +3,10 @@ import { NetworkCredential } from "../../network-credential.model";
 
 export class SourceMySQL implements ISource
 {
-    	/** Address of the MySQL server from where the backup will be made */
-		public ServerName: string;
-		/** Credential to the MySQL server */
-		public NetworkCredential: NetworkCredential
-		/** Name of the database that will be backuped */
-		public DatabaseName: string;
+	/** Address of the MySQL server from where the backup will be made */
+	public ServerName: string;
+	/** Credential to the MySQL server */
+	public NetworkCredential: NetworkCredential
+	/** Name of the database that will be backuped */
+	public DatabaseName: string;
 }

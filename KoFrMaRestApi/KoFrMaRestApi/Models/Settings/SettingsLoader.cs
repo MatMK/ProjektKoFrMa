@@ -49,7 +49,7 @@ namespace KoFrMaRestApi.Models.Settings
             try
             {
                 StreamWriter w = new StreamWriter(configpath);
-                if (!File.Exists(configpath)
+                if (!File.Exists(configpath))
                 {
                     Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\");
                     File.Create(configpath);

@@ -3,7 +3,7 @@
     <!--Left side-->
     <div style="float: left;width: 45%; max-height:710px; overflow: auto;">
       <h2>Backup settings</h2>
-      <strong>Daemon id:</strong><input type="text" id="daemonId" [(ngModel)]="daemonId"  class="BasicInput" (change)="checkIfNumberValid()" style="margin: 10px">
+      <strong>Daemon id:</strong><input type="number" id="daemonId" [(ngModel)]="daemonId"  class="BasicInput" (change)="checkIfNumberValid()" style="margin: 10px">
       <hr>
       <div id="backupType"><strong>Backup Type:</strong>
         Full<input type="radio" id="IdtypeFull" class="basicRadio" name="buChoice" value="Full" [(ngModel)]="backuptype">  
@@ -32,10 +32,10 @@
             <button (click)="addSrcPath()">Add path</button>
           </div>
           <div *ngIf="sourcetype == 'MySQL' || sourcetype == 'MsSQL'">
-            <input type='text'placeholder="Username" class="BasicInput" id='distPath' name='dPath'[(ngModel)]="srcUsername">
-            <input type='text'placeholder="Password" class="BasicInput" id='distPath' name='dPath'[(ngModel)]="srcPassword">
-            <input type='text'placeholder="Server name" class="BasicInput" id='distPath' name='dPath'[(ngModel)]="srcServerName">
-            <input type='text'placeholder="Database name" class="BasicInput" id='distPath' name='dPath'[(ngModel)]="srcDatabaseName">
+            <input type='text'placeholder="Username" class="BasicInput" id='distPath' name='dPath'[(ngModel)]="srcUsername"><br>
+            <input type='text'placeholder="Password" class="BasicInput" id='distPath' name='dPath'[(ngModel)]="srcPassword"><br>
+            <input type='text'placeholder="Server name" class="BasicInput" id='distPath' name='dPath'[(ngModel)]="srcServerName"><br>
+            <input type='text'placeholder="Database name" class="BasicInput" id='distPath' name='dPath'[(ngModel)]="srcDatabaseName"><br>
           </div>
         </div>
       </div>
@@ -89,12 +89,12 @@
               <option value="9" id="option7Zip5">Ultra</option> 
             </select>
           </div>
-          <p style="white-space: nowrap; line-height: 10px">Split to files (only one file if empty):<input type="text" [(ngModel)]="splitAfter" placeholder="Size in MiB" class="BasicInput" (change)="checkIfNumberValid()" style="margin: 10px"></p>
+          <p style="white-space: nowrap; line-height: 10px">Split to files (only one file if empty):<input type="number" [(ngModel)]="splitAfter" placeholder="Size in MiB" class="BasicInput" (change)="checkIfNumberValid()" style="margin: 10px; max-width: 200px;"></p>
         </div>
         <input type="submit" class="basicSubmit" id="AddDestLocal" value="Add destination" (click)="AddLocalDestination()"style="">
       </div>
     </div>
-    <div id="inputDestiDiv" style="max-height: 200px; overflow: auto;">
+    <div id="inputDestiDiv" style="max-height: 200px; overflow: auto; line-height: 1.8">
       <div id="sourceButtonDiv">
       </div>
       <br>
@@ -109,7 +109,7 @@
       <h2>Task repeating</h2>
       <div id="showRepeat">
         <Strong style="margin: 5px">Repeat every: </Strong>
-        <input type="number" id="repeatEvery" class="BasicInput" [(ngModel)]="repeatEvery" placeholder="time" style="margin: 5px; width:30%">
+        <input type="number" id="repeatEvery" class="BasicInput" [(ngModel)]="repeatEvery" style="margin: 5px; width:30%">
         <select id="dropdownRepeat" class="basicSelect" [(ngModel)]="repeat"> 
           <option value="Minute" id="optionTime" >Minutes</option> 
           <option value="Hour" id="optionTime">Hours</option> 
@@ -140,36 +140,46 @@
           </div>
         </div>
       </div>
-      <!--Advanced-->
+      <!--Advanced options-->
       <hr>
       <div>
         <input type="checkbox" class="basicCheckbox" [(ngModel)]="advanced" style="vertical-align: middle;"><strong>Advanced options</strong>
         <div *ngIf="advanced">
-          Log level: <select id="dropdownRepeat" class="basicSelect" [(ngModel)]="logLevel" style="margin: 10px; width: 70%">
+          Log level: <select class="basicSelect" [(ngModel)]="logLevel" style="margin: 10px; width: 70%">
             <option *ngFor="let element of logOptions" value="{{element.id}}" >{{element.id}}: {{element.value}}</option>
           </select><br>
           <table>
             <th>
-              <tr>
+              <tr style="font-weight:500;text-align: right;">
                 Script before: 
               </tr>
-              <tr>
+              <tr style="font-weight:500;text-align: right;">
                 Script after:
+              </tr>
+            </th>
+            <th style="line-height: 0.1; overflow:visible; position: relative;">
+              <tr>
+                <!--<input type="checkbox" [(ngModel)]="scriptBeforeLocal">-->
+              </tr>
+              <tr>
               </tr>
             </th>
             <th>
               <tr>
-                <input id="file-upload" type="file" accept=".txt" (change)="fileUpload($event)"><br>
+                <input type="file" accept=".txt, .bat, .cmd, .ps1, .vbs" (change)="fileUpload($event, true)">
+                <input type="text" [(ngModel)]="scriptBeforePath" placeholder="Path on daemon" class="BasicInput">
               </tr>
               <tr>
-                <input id="file-upload" type="file" accept=".txt" (change)="fileUpload($event)">
+                <input type="file" accept=".txt, .bat, .cmd, .ps1, .vbs" (change)="fileUpload($event, false)">
+                <input type="text" [(ngModel)]="scriptAfterPath" placeholder="Path on daemon" class="BasicInput">
               </tr>
             </th>
           </table>
+          Max temporary folder size: <input type="number" [(ngModel)]="temporaryFolderMaxBuffer"  class="BasicInput" style="width: 10%">
+          <hr>
         </div>
       </div>
       <input type="submit" value="Save" id="inputSaveTask" class="basicSubmit"  (click)="AddTask()">
     </div>
     </div>
   </div>
-</div>
