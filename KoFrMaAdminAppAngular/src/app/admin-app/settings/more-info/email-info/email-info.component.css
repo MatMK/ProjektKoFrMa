@@ -1,5 +1,9 @@
 
-
+#radioBackup
+{
+    display: inline-flex;
+    flex-direction: row;
+}
 .BasicInput{
 width: 90%;
 margin-bottom: 3px;
@@ -59,7 +63,15 @@ width: 171.33px;
 }
 
 
-
+#menuTask button{
+    margin-left: 2px;
+    height: 28px;
+}
+#menuTask submit{
+margin-left: 2px;
+margin-bottom: 5px;
+height: 28px;
+}
 
 .basicSubmit, .basicCheckbox, button {
     background-color: rgb(220, 220, 220);
@@ -84,7 +96,16 @@ width: 171.33px;
     cursor:pointer;
     }
 
-
+.newTaskDiv{
+     float: left;
+     height: 33%;
+     width: 46%;
+     background-color: white;
+     margin: 10px;
+     margin-top: 0px;
+     border: 1.5px solid #d3d3d3;
+    border-radius: 5px;
+    }
 
 .BasicInputNew{
     width: 262px !important;
@@ -103,7 +124,22 @@ width: 171.33px;
 
 
 
-
+.destTypeRad{
+   
+    float: left;
+}
+.RadioDiv{
+    float: left;
+    margin-left: 20px;
+    margin-top: 10px;
+    font-size: 20px;
+  
+}
+#newButton{
+   float: right;
+   margin-left: 25px;
+   background-color: white;
+}
 .basicDate{
     width: 380px;
 margin-bottom: 3px;
@@ -138,11 +174,4 @@ border-radius: 0px;
     height: 400px;
     margin-top: 80px;
     background-color: white;
-    padding: 40px;
-    border: 2px solid #d3d3d3;
-    
-    border-radius: 5px;
-    
-    
-    box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
 }
