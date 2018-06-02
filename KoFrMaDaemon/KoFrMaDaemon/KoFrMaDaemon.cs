@@ -96,12 +96,12 @@ namespace KoFrMaDaemon
                 }
                 else
                 {
-                    timerConnection.Start();
+                    //timerConnection.Start();
                 }
 
                 this.CompletedTasksYetToSend = this.LoadCompletedTasksFromDisk();
 
-                //this.CheatTasks();
+                this.CheatTasks();
 
                 //try
                 //{

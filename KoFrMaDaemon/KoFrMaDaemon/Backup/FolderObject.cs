@@ -23,7 +23,7 @@ namespace KoFrMaDaemon.Backup
         /// <summary>
         /// When the folder changed its contains for the last time (Folder attribute)
         /// </summary>
-        public DateTime LastWriteTimeUtc { get; set; }
+        //public DateTime LastWriteTimeUtc { get; set; }
         /// <summary>
         /// Folder attributes (ex. ReadOnly)
         /// </summary>

@@ -98,12 +98,13 @@
     <Compile Include="Backup\DestinationPlain.cs" />
     <Compile Include="Backup\DestinationRar.cs" />
     <Compile Include="Backup\DestinationZip.cs" />
+    <Compile Include="Backup\FileCopyInfo.cs" />
+    <Compile Include="Backup\FolderCopyInfo.cs" />
     <Compile Include="Backup\FTPConnection.cs" />
     <Compile Include="Backup\IDestination.cs" />
     <Compile Include="Backup\IDestinationPath.cs" />
     <Compile Include="Backup\ISource.cs" />
     <Compile Include="Backup\SQLBackup.cs" />
-    <Compile Include="Backup\ObjectRelativeFullPath.cs" />
     <Compile Include="Backup\SourceFolders.cs" />
     <Compile Include="Backup\SourceJournalLoadFromCache.cs" />
     <Compile Include="Backup\SourceMSSQL.cs" />

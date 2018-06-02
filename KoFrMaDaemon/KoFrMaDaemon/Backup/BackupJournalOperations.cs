@@ -58,7 +58,7 @@ namespace KoFrMaDaemon.Backup
                 tmpList.Add(":");
                 for (int i = 0; i < folderBackupJournalHash.Count; i++)
                 {
-                    tmpList.Add(folderBackupJournalHash[i].FullPath + '|' + folderBackupJournalHash[i].CreationTimeUtc.ToBinary().ToString() + '|' + folderBackupJournalHash[i].LastWriteTimeUtc.ToBinary().ToString() + '|' + folderBackupJournalHash[i].Attributes.ToString() + '|' + folderBackupJournalHash[i ].HashRow.ToString());
+                    tmpList.Add(folderBackupJournalHash[i].FullPath + '|' + folderBackupJournalHash[i].CreationTimeUtc.ToBinary().ToString() + '|' +  folderBackupJournalHash[i].Attributes.ToString() + '|' + folderBackupJournalHash[i ].HashRow.ToString());
                 }
                 tmpList.Add("?");
                 if (backupJournalObject.BackupJournalFoldersDelete != null)
@@ -152,7 +152,7 @@ namespace KoFrMaDaemon.Backup
                     tmp = r.ReadLine().Split('|');
                     if (tmp.Length == 5)
                     {
-                        tmpListFolders.Add(new FolderObject() { FullPath = tmp[0], CreationTimeUtc = DateTime.FromBinary(Convert.ToInt64(tmp[1])), LastWriteTimeUtc = DateTime.FromBinary(Convert.ToInt64(tmp[2])), Attributes = tmp[3], HashRow = Convert.ToInt32(tmp[4]) });
+                        tmpListFolders.Add(new FolderObject() { FullPath = tmp[0], CreationTimeUtc = DateTime.FromBinary(Convert.ToInt64(tmp[1])), Attributes = tmp[2], HashRow = Convert.ToInt32(tmp[3]) });
                     }
                     else
                     {
@@ -215,7 +215,7 @@ namespace KoFrMaDaemon.Backup
             string tmp;
             for (int i = 0; i < tmpList.Count; i++)
             {
-                tmp = listWithoutHashCodes[i].FullPath + listWithoutHashCodes[i].CreationTimeUtc.ToBinary().ToString() + listWithoutHashCodes[i].LastWriteTimeUtc.ToBinary().ToString() + listWithoutHashCodes[i].Attributes;
+                tmp = listWithoutHashCodes[i].FullPath + listWithoutHashCodes[i].CreationTimeUtc.ToBinary().ToString() + listWithoutHashCodes[i].Attributes;
                 listWithoutHashCodes[i].HashRow = tmp.GetHashCode();
             }
 
