@@ -29,7 +29,7 @@ namespace KoFrMaDaemon.ConnectionToServer
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
 
-            ///Timeout aby se aplikace nesekla když se nepřipojí, potom předělat na nastevní hodnoty ze serveru
+            //Timeout aby se aplikace nesekla když se nepřipojí, potom předělat na nastevní hodnoty ze serveru
             httpWebRequest.Timeout = 5000;
             httpWebRequest.ReadWriteTimeout = 32000;
 
