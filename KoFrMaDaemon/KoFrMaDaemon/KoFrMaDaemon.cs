@@ -173,6 +173,7 @@ namespace KoFrMaDaemon
             this.timerTasks.Interval = 2147483647;
             if (this.ScheduledTasks.Count > 0)
             {
+                List<Task> tasksDelete = new List<Task>();
                 debugLog.WriteToLog("Tasks found, starting to check if the time has come for each of the tasks", 5);
                 bool successfull = false;
                 foreach (Task item in ScheduledTasks)
@@ -249,7 +250,7 @@ namespace KoFrMaDaemon
                                 TaskComplete completedTask = new TaskComplete { TimeOfCompletition = DateTime.Now, IDTask = item.IDTask, DatFile = backupInstance.BackupJournalNew, IsSuccessfull = successfull,DebugLog = backupInstance.taskDebugLog.logReport };
                                 CompletedTasksYetToSend.Add(completedTask);
                                 this.SaveCompletedTaskToDisk(completedTask);
-
+                                tasksDelete.Add(item);
                                 //, DebugLog = backupInstance.taskDebugLog.logReport
                             }
                         }
@@ -281,6 +282,11 @@ namespace KoFrMaDaemon
                         //ScheduledTasks.Remove(item);
                     }
                 }
+                foreach (Task item in tasksDelete)
+                {
+                    ScheduledTasks.Remove(item);
+                }
+                tasksDelete = null;
                 if (timerTasks.Interval == 2147483647)
                 {
                     debugLog.WriteToLog("No other tasks planned", 5);
