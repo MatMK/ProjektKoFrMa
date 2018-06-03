@@ -103,8 +103,6 @@ namespace KoFrMaDaemon
 
                 this.CompletedTasksYetToSend = this.LoadCompletedTasksFromDisk();
 
-                this.CheatTasks();
-
                 //try
                 //{
                 //    FTPConnection fTPConnection = new FTPConnection(@"ftp://e64.cz/WWWRoot/DRead/", "v013823a", "3wZ1ySRlLY8c7k6", debugLog);
