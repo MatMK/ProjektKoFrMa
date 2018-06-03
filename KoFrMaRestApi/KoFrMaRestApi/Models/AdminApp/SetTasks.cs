@@ -58,5 +58,15 @@ namespace KoFrMaRestApi.Models.AdminApp
         /// Size in MB how big can at one moment be temporary folder on drive C, is used only when destination is archive and/or is remote
         /// </summary>
         public int? TemporaryFolderMaxBuffer { get; set; }
+        /// <summary>
+        /// 0-Full
+        /// 1-Incremental
+        /// 2-Differencial
+        /// </summary>
+        public string FullAfterBackup { get; set; }
+        /// <summary>
+        /// Id of a backup journal
+        /// </summary>
+        public int? BackupJournalCompletedTaskId { get; set; }
     }
 }

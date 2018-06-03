@@ -126,10 +126,17 @@ namespace KoFrMaRestApi.Controllers
         /// <param name="postAdmin">Information about administrator</param>
         [HttpPost, Route(@"api/AdminApp/SetTask")]
         public void SetTask(PostAdmin postAdmin)
-
         {
             if (this.Authorized(postAdmin.adminInfo))
             {
+                var i = ((SetTasksRequest)postAdmin.request).setTasks;
+                foreach (var item in i)
+                {
+                    if (item.Sources == null || item.ExecutionTimes== null || item.ExecutionTimes.ExecutionTimes == null || item.ExecutionTimes.ExecutionTimes.Count==0 || item.Destinations == null || item.DaemonId < 0 || item.Destinations.Count<1)
+                    {
+                        throw new HttpResponseException(HttpStatusCode.BadRequest);
+                    }
+                }
                 mySqlCom.SetTasks(((SetTasksRequest)postAdmin.request).setTasks);
             }
             else
@@ -388,6 +395,34 @@ namespace KoFrMaRestApi.Controllers
             }
             else
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
+        }
+        [HttpPost, Route("api/AdminApp/ChangeEmail")]
+        public void ChangeEmail(PostAdmin postAdmin)
+        {
+            if (this.Authorized(postAdmin.adminInfo))
+            {
+                int? id = this.mySqlCom.GetAdminId(postAdmin.adminInfo.UserName);
+                if (id == null)
+                    throw new Exception("No admin with such name");
+                this.mySqlCom.UpdateEmail((int)id,((EditEmailRequest)postAdmin.request));
+            }
+            else
+                throw new HttpResponseException(HttpStatusCode.Unauthorized);
+        }
+        [HttpPost, Route("api/AdminApp/GetEmail")]
+        public EditEmailRequest GetEmail(AdminInfo adminInfo)
+        {
+            if (this.Authorized(adminInfo))
+            {
+                int? i = this.mySqlCom.GetAdminId(adminInfo.UserName);
+                if (i == null)
+                {
+                    throw new Exception("No admin with such name");
+                }
+                return this.mySqlCom.GetEmailData((int)i);
+            }
+            else
+                throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
         /// <summary>
         /// Returns a token if it exists, if not it creates a new one.

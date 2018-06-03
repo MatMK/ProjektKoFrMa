@@ -25,6 +25,8 @@ import { ErrorReport } from './error-report.service';
 import { ChangePasswordRequest } from './models/communication-models/post-admin/change-password-request.model';
 import { tbCompletedTasks } from './models/sql-data/data/tb-completed-tasks';
 import { tbServerExceptions } from './models/sql-data/data/tb-server-exceptions.model';
+import { EditEmailRequest } from './models/communication-models/post-admin/edit-email-request.model';
+import { IPromise } from 'q';
 
 @Injectable()
 
@@ -249,96 +251,6 @@ export class ServerConnectionService{
                                 return null;
                             })
     }
-    /*AlterDataUsername(table : ChangeTable) : Promise<string>
-    {
-        //this.data.Loading = true;
-        let url = this.data.ServerRootURL + "api/AdminApp/AlterDataUsername";
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangeTableRequest("ChangeTableRequest",table));
-        return this.http.post(url,postAdmin).toPromise()
-                        .then(res => 
-                            {
-                                //this.data.Loading = false
-                                return res.json();
-                            })
-                        .catch(msg => 
-                            {
-                                //this.data.Loading = false;
-                                this.report.handleError(msg);
-                                throw new Error();
-                            })
-    }
-    AlterDataEmail(table : ChangeTable) : Promise<string>
-    {
-        //this.data.Loading = true;
-        let url = this.data.ServerRootURL + "api/AdminApp/AlterDataEmail";
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangeTableRequest("ChangeTableRequest",table));
-        return this.http.post(url,postAdmin).toPromise()
-                .then(res => 
-                    {
-                        //this.data.Loading = false
-                        return res.json();
-                    })
-                .catch(msg => 
-                    {
-                        //this.data.Loading = false;
-                        this.report.handleError(msg);
-                        throw new Error();
-                    })
-    }
-    AlterDataEnabled(table : ChangeTable) : Promise<string>
-    {
-        //this.data.Loading = true;
-        let url = this.data.ServerRootURL + "api/AdminApp/AlterDataEnabled";
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangeTableRequest("ChangeTableRequest",table));
-        return this.http.post(url,postAdmin).toPromise()
-                .then(res => 
-                    {
-                        //this.data.Loading = false
-                        return res.json();
-                    })
-                .catch(msg => 
-                    {
-                        //this.data.Loading = false;
-                        this.report.handleError(msg);
-                        throw new Error();
-                    })
-    }
-    AlterDataIdDaemon(table : ChangeTable) : Promise<string>
-    {
-        //this.data.Loading = true;
-        let url = this.data.ServerRootURL + "api/AdminApp/AlterDataIdDaemon";
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangeTableRequest("ChangeTableRequest",table));
-        return this.http.post(url,postAdmin).toPromise()
-        .then(res => 
-            {
-                //this.data.Loading = false
-                return res.json();
-            })
-        .catch(msg => 
-            {
-                //this.data.Loading = false;
-                this.report.handleError(msg);
-                throw new Error();
-            })
-    }
-    AlterDataAllowed(table : ChangeTable) : Promise<string>
-    {
-        //this.data.Loading = true;
-        let url = this.data.ServerRootURL + "api/AdminApp/AlterDataAllowed";
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,new ChangeTableRequest("ChangeTableRequest",table));
-        return this.http.post(url,postAdmin).toPromise()
-        .then(res => 
-            {
-                //this.data.Loading = false
-                return res.json();
-            })
-        .catch(msg => 
-            {
-                //this.data.Loading = false;
-                this.report.handleError(msg);
-                throw new Error();
-            })
-    }*/
     AlterDataPermissions(permission : ChangePermission) : Promise<string>
     {
         //this.data.Loading = true;
@@ -392,5 +304,40 @@ export class ServerConnectionService{
                 this.report.handleError(msg);
                 throw new Error();
             })
+    }
+    ChangeEmail(email : EditEmailRequest) : Promise<string>
+    {
+        this.data.Loading = true;
+        let url = this.data.ServerRootURL + "api/AdminApp/ChangeEmail";
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,email);
+        return this.http.post(url,postAdmin).toPromise()
+            .then(res => 
+                {
+                    this.data.Loading = false
+                    return res.json();
+                })
+            .catch(msg => 
+                {
+                    this.data.Loading = false;
+                    this.report.handleError(msg);
+                    throw new Error();
+                })
+    }
+    GetMail() : Promise<EditEmailRequest>
+    {
+        this.data.Loading = true;
+        let url = this.data.ServerRootURL + "api/AdminApp/GetEmail";
+        return this.http.post(url,this.data.adminInfo).toPromise()
+            .then(res => 
+                {
+                    this.data.Loading = false
+                    return res.json();
+                })
+            .catch(msg => 
+                {
+                    this.data.Loading = false;
+                    this.report.handleError(msg);
+                    throw new Error();
+                })
     }
 }

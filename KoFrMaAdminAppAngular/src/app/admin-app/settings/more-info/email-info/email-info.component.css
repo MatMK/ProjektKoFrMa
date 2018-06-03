@@ -1,13 +1,13 @@
 
 
 .BasicInput{
-width: 90%;
-margin-bottom: 3px;
-background-color: white;
-font-size: 20px;
-border: none;
-border-bottom: 1px solid #d3d3d3;
-border-radius: 0px;
+    width: 90%;
+    margin-bottom: 3px;
+    background-color: white;
+    font-size: 20px;
+    border: none;
+    border-bottom: 1px solid #d3d3d3;
+    border-radius: 0px;
 }
 
 #menuTask{

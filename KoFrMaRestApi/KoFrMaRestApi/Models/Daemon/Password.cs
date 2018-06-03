@@ -7,7 +7,7 @@ namespace KoFrMaRestApi.Models.Daemon
 {
     public class Password
     {
-        public Int64 password { get; set; }
+        public string password { get; set; }
         public DaemonInfo daemon { get; set; }
 
     }

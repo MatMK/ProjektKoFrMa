@@ -31,9 +31,11 @@ import { ExceptionDate } from '../../../../server-connection/models/communicatio
 export class AddTaskComponent  
 {
   private daemonId : number;
+  //Backuptype
+  private backuptype : string = "Full";
+  private fullBackupAfter : number;
+  private followupTo : number;
   //Destinations
-  private backuptype : string = "Full"
-  ;
   private ncUsername : string;
   private ncPassword : string;
   private ncPath : string;
@@ -49,7 +51,7 @@ export class AddTaskComponent
   private srcServerName : string;
   private srcPassword : string;
   private srcUsername : string;
-  private sourcetype : string;
+  private sourcetype : string = "Local";
   //Repeat
   private repeat : number = 3600
   private repeatEvery : number;
@@ -91,7 +93,9 @@ export class AddTaskComponent
   private temporaryFolderMaxBuffer : number;
 
   constructor(private activeRoute:ActivatedRoute, private service : ServerConnectionService, private renderer: Renderer2, private router : Router, private data : Data) {
-      this.activeRoute.params.subscribe(params => {
+    if(this.data.Data.tbCompletedTasks.data.length == 0)  
+      this.service.RefreshData([4])
+    this.activeRoute.params.subscribe(params => {
       this.daemonId = params.daemonid;
       this.checkIfNumberValid(false);
     });
@@ -100,6 +104,12 @@ export class AddTaskComponent
   {
     if(this.checkIfNumberValid(true))
     {
+      if(this.fullBackupAfter < 0)
+      {
+        alert("Full backup after every: cannot be null")
+        return;
+      }
+
       if(this.exceptionDates == undefined || this.executionDates.length == 0)
       {
         alert("At least one execution time is required")
@@ -133,6 +143,25 @@ export class AddTaskComponent
       }
 
       let newTask : SetTask = new SetTask()
+      if(this.backuptype != "Full" && this.fullBackupAfter != undefined && this.fullBackupAfter > 0)
+      {
+        newTask.FullAfterBackup = "";
+        if(this.followupTo == undefined)
+        {
+          newTask.FullAfterBackup = "0";
+        }
+        for (let i = 0; i < this.fullBackupAfter; i++) {
+          newTask.FullAfterBackup += this.backuptype == "Incremental"?"1":"2"
+        }
+      }
+      else if(this.backuptype != "Full")
+      {
+        newTask.FullAfterBackup += this.backuptype == "Incremental"?"1":"2"
+      }
+      else
+      {
+        newTask.FullAfterBackup = "0";
+      }
       newTask.DaemonId = this.daemonId;
       newTask.Destinations = this.destinations.filter(function( element ) {
         return element !== undefined;
@@ -144,41 +173,38 @@ export class AddTaskComponent
         return;
       }
       //Adding repeat task class
-      if(this.repeatEvery != undefined && this.repeatEvery != 0)
+      if(this.repeatEvery <0)
       {
-        if(this.repeatEvery <0)
-        {
-          alert("Repeat every: cannot be negative");
-          return;
-        }
-        newTask.ExecutionTimes = new TaskRepeatingNoTimespan()
-        newTask.ExecutionTimes.Repeating = this.repeatEvery * this.repeat;
-        newTask.ExecutionTimes.RepeatTill = this.repeatTill;
-        newTask.ExecutionTimes.ExecutionTimes = [];
-        newTask.ExecutionTimes.ExceptionDates = [];
-        let count : number = 0;
-        this.executionDates.forEach(element => {
-          if(element != undefined)
-          {
-            count++;
-            newTask.ExecutionTimes.ExecutionTimes.push(this.parseDate(element.date, element.time))
-          }
-        });
-        if(count == 0)
-        {
-          alert("Please insert at least one execution time");
-          return;
-        }
-        this.exceptionDates.forEach(element => {
-          if(element != undefined)
-          {
-            let exceptionDate : ExceptionDate = new ExceptionDate();
-            exceptionDate.Start = this.parseDate(element.dateStart, element.timeStart)
-            exceptionDate.End = this.parseDate(element.dateEnd, element.timeEnd)
-            newTask.ExecutionTimes.ExceptionDates.push(exceptionDate)
-          }
-        });
+        alert("Repeat every: cannot be negative");
+        return;
       }
+      newTask.ExecutionTimes = new TaskRepeatingNoTimespan()
+      newTask.ExecutionTimes.Repeating = this.repeatEvery * this.repeat;
+      newTask.ExecutionTimes.RepeatTill = this.repeatTill;
+      newTask.ExecutionTimes.ExecutionTimes = [];
+      newTask.ExecutionTimes.ExceptionDates = [];
+      let count : number = 0;
+      this.executionDates.forEach(element => {
+        if(element != undefined)
+        {
+          count++;
+          newTask.ExecutionTimes.ExecutionTimes.push(this.parseDate(element.date, element.time))
+        }
+      });
+      if(count == 0)
+      {
+        alert("Please insert at least one execution time");
+        return;
+      }
+      this.exceptionDates.forEach(element => {
+        if(element != undefined)
+        {
+          let exceptionDate : ExceptionDate = new ExceptionDate();
+          exceptionDate.Start = this.parseDate(element.dateStart, element.timeStart)
+          exceptionDate.End = this.parseDate(element.dateEnd, element.timeEnd)
+          newTask.ExecutionTimes.ExceptionDates.push(exceptionDate)
+        }
+      });
       //Advanced
       if(this.advanced)
       {
@@ -203,7 +229,7 @@ export class AddTaskComponent
           if(this.scriptBefore != undefined && this.scriptBefore.length != 0)
           {
             newTask.ScriptBefore = new ScriptInfo();
-            newTask.ScriptBefore.ScriptItself = this.scriptBefore;
+            newTask.ScriptBefore.ScriptItself = btoa(this.scriptBefore);
             newTask.ScriptBefore.ScriptItselfFormat = this.scriptAfterType;
           }
         }
@@ -221,7 +247,7 @@ export class AddTaskComponent
           if(this.scriptAfter != undefined && this.scriptAfter.length != 0)
           {
             newTask.ScriptAfter = new ScriptInfo();
-            newTask.ScriptAfter.ScriptItself = this.scriptAfter;
+            newTask.ScriptAfter.ScriptItself = btoa(this.scriptAfter);
             newTask.ScriptAfter.ScriptItselfFormat = this.scriptAfterType;
           }
         }
@@ -231,17 +257,41 @@ export class AddTaskComponent
         newTask.LogLevel = 7;
       }
       console.log(newTask);
-      this.data.Loading = true;
       this.service.SetTask([newTask])//.then(res => this.service.RefreshData([3]))
       //this.router.navigate(['backup', 'app','tasks']);
+    }
+  }
+  isEnabled()
+  {
+    if(this.backuptype == "Incremental" || this.backuptype == "Differencial")
+    {
+      document.getElementById("sourceDbMY").setAttribute("disabled", "true")
+      document.getElementById("sourceDbMS").setAttribute("disabled", "true")
+      this.sourcetype = "Local"
+    }
+    else
+    {
+      document.getElementById("sourceDbMY").removeAttribute("disabled")
+      document.getElementById("sourceDbMS").removeAttribute("disabled")
+    }
+    if(this.sourcetype == "MsSQL" || this.sourcetype == "MySQL")
+    {
+      document.getElementById("incr").setAttribute("disabled", "true")
+      document.getElementById("diff").setAttribute("disabled", "true")
+      this.backuptype = "Full"
+    }
+    else
+    {
+      document.getElementById("incr").removeAttribute("disabled")
+      document.getElementById("diff").removeAttribute("disabled")
     }
   }
   parseDate(date : Date, time : Time) : Date
   {
     return new Date(date+"T"+time)
   }
-   checkIfNumberValid(showMsg : boolean) : boolean
-   {
+  checkIfNumberValid(showMsg : boolean) : boolean
+  {
     if (!(this.daemonId >= 0 || this.daemonId<0))
     {
       this.daemonId = undefined;
@@ -250,7 +300,7 @@ export class AddTaskComponent
       return false;
     }
     return true;
-   }
+  }
   
   private onDateChange(value : Date)
   {

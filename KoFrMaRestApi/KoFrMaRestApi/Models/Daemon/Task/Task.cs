@@ -46,12 +46,10 @@ namespace KoFrMaRestApi.Models.Daemon.Task
         /// 10 = Programm will be more like a log writer than actually doing the process
         /// </summary>
         public byte LogLevel { get; set; }
-
         /// <summary>
         /// Define if task is already running to not run the same task multiple times
         /// </summary>
         public bool InProgress { get; set; }
-
         /// <summary>
         /// Script that will be run BEFORE the task
         /// </summary>
@@ -60,7 +58,6 @@ namespace KoFrMaRestApi.Models.Daemon.Task
         /// Script that will be run AFTER the task
         /// </summary>
         public ScriptInfo ScriptAfter { get; set; }
-
         /// <summary>
         /// Size in MB how big can at one moment be temporary folder on drive C, is used only when destination is archive and/or is remote
         /// </summary>

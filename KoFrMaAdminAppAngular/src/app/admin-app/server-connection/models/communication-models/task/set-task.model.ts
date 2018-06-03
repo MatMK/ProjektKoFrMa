@@ -21,4 +21,6 @@ export class SetTask {
     ScriptAfter : ScriptInfo
     /** Size in MB how big can at one moment be temporary folder on drive C, is used only when destination is archive and/or is remote */
     TemporaryFolderMaxBuffer: number;
+    FullAfterBackup : string;
+    BackupJournalCompletedTaskId : number;
 }

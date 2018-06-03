@@ -32,13 +32,14 @@ namespace KoFrMaRestApi.Controllers
         [HttpPost, Route(@"api/Daemon/GetInstructions")]
         public List<Task> GetInstructions(Request request)
         {
+            request.daemon.Token = request.daemon.Token.Replace("\"", "");
             using (MySqlConnection connection = WebApiConfig.Connection())
             {
                 connection.Open();
                 if (mySqlCom.Authorized(request.daemon.PC_Unique, request.daemon.Token, connection))
                 {
                     TasksCompleted(request.CompletedTasks);
-                    int DaemonId = mySqlCom.GetDaemonId(request.daemon, connection);
+                    int DaemonId = (int)mySqlCom.GetDaemonId(request.daemon, connection);
                     mySqlCom.DaemonSeen(DaemonId, connection);
                     List<Task> tasks = mySqlCom.GetTasks(DaemonId, connection);
                     List<int> ToRemove = new List<int>();
@@ -114,10 +115,10 @@ namespace KoFrMaRestApi.Controllers
             Bcrypter encrypt = new Bcrypter();
             using (MySqlConnection connection = WebApiConfig.Connection())
             {
-                encryptedPassword = encrypt.BcryptPasswordInBase64(encrypt.Base64Encode(password.password));
+                encryptedPassword = encrypt.BcryptPasswordInBase64(password.password.ToString());
                 connection.Open();
-                mySqlCom.DaemonSeen(mySqlCom.GetDaemonId(password.daemon, connection), connection);
-                mySqlCom.RegisterDaemonAndGetId(password.daemon, encryptedPassword, connection);
+                mySqlCom.RegisterDaemonAndGetId(password.daemon, encryptedPassword);
+                mySqlCom.DaemonSeen((int)mySqlCom.GetDaemonId(password.daemon, connection), connection);
                 connection.Close();
             }
             mySqlCom.RegisterToken(password.daemon.PC_Unique,encryptedPassword,token);

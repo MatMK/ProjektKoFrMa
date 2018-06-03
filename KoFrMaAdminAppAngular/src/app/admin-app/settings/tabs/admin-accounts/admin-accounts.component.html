@@ -1,78 +1,81 @@
 <div>
-    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-</div>
+  <div>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+  </div>
 
-<div class="table-admin">
-  <mat-table #table [dataSource]="data.Data.tbAdminAccounts">
-    <!-- Id Column -->
-    <ng-container matColumnDef="Id">
-      <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
-    </ng-container>
+  <div class="table-admin">
+    <mat-table #table [dataSource]="data.Data.tbAdminAccounts">
+      <!-- Id Column -->
+      <ng-container matColumnDef="Id">
+        <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
+      </ng-container>
 
-    <!-- Username Column -->
-    <ng-container matColumnDef="Username">
-      <mat-header-cell *matHeaderCellDef> Username </mat-header-cell>
-      <mat-cell *matCellDef="let element"><input type="text" [(ngModel)] = "element.UserName" 
-        (change)="alterUsername($event.target.value, element.Id, $event.target)"
-        (click)="saveVal($event.target)"> </mat-cell>
-    </ng-container>
-
-    <!-- Email Column -->
-    <ng-container matColumnDef="Email">
-      <mat-header-cell *matHeaderCellDef> Email </mat-header-cell>
-      <mat-cell *matCellDef="let element"> <input type="text" [(ngModel)] = "element.Email" 
-          (change)="alterEmail($event.target.value, element.Id, $event.target)"
+      <!-- Username Column -->
+      <ng-container matColumnDef="Username">
+        <mat-header-cell *matHeaderCellDef> Username </mat-header-cell>
+        <mat-cell *matCellDef="let element"><input type="text" [(ngModel)] = "element.UserName" 
+          (change)="alterUsername($event.target.value, element.Id, $event.target)"
           (click)="saveVal($event.target)"> </mat-cell>
-    </ng-container>
+      </ng-container>
 
-    <!-- Enabled Column -->
-    <ng-container matColumnDef="Enabled">
-      <mat-header-cell *matHeaderCellDef> Enabled </mat-header-cell>
-      <mat-cell *matCellDef="let element"> 
-        <mat-form-field>
-          <mat-select placeholder="Enabled" [(ngModel)]="element.Enabled">
-            <mat-option [value]="true" (click)="changeEnabled(element.Id, true)">True</mat-option>
-            <mat-option [value]="false" (click)="changeEnabled(element.Id, false)">False</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </mat-cell>
-    </ng-container>
+      <!-- Email Column -->
+      <ng-container matColumnDef="Email">
+        <mat-header-cell *matHeaderCellDef> Email </mat-header-cell>
+        <mat-cell *matCellDef="let element"> <input type="text" [(ngModel)] = "element.Email" 
+            (change)="alterEmail($event.target.value, element.Id, $event.target)"
+            (click)="saveVal($event.target)"> </mat-cell>
+      </ng-container>
 
-    <!-- Permission Column -->
-    <ng-container matColumnDef="Permission">
-      <mat-header-cell *matHeaderCellDef> Permission </mat-header-cell>
-      <mat-cell *matCellDef="let element"> 
+      <!-- Enabled Column -->
+      <ng-container matColumnDef="Enabled">
+        <mat-header-cell *matHeaderCellDef> Enabled </mat-header-cell>
+        <mat-cell *matCellDef="let element"> 
           <mat-form-field>
-            <mat-select placeholder="Permission" multiple [(ngModel)]="element.Permission">
-              <mat-option *ngFor="let perm of data.Permissions" [value]="perm.number" (click)="changePerm(element.Id)">{{perm.name}}</mat-option>
+            <mat-select placeholder="Enabled" [(ngModel)]="element.Enabled">
+              <mat-option [value]="true" (click)="changeEnabled(element.Id, true)">True</mat-option>
+              <mat-option [value]="false" (click)="changeEnabled(element.Id, false)">False</mat-option>
             </mat-select>
           </mat-form-field>
-        <!--{{service.NumberToPermission(element.Permission)}}-->
         </mat-cell>
-    </ng-container>
+      </ng-container>
 
-    <!-- Delete Column -->
-    <ng-container matColumnDef="Delete">
-      <mat-header-cell *matHeaderCellDef> Delete </mat-header-cell>
-      <mat-cell *matCellDef="let element"> 
-        <button (click)="deleteRow(element.Id)">Delete</button>
-      </mat-cell>
-    </ng-container>
+      <!-- Permission Column -->
+      <ng-container matColumnDef="Permission">
+        <mat-header-cell *matHeaderCellDef> Permission </mat-header-cell>
+        <mat-cell *matCellDef="let element"> 
+            <mat-form-field>
+              <mat-select placeholder="Permission" multiple [(ngModel)]="element.Permission">
+                <mat-option *ngFor="let perm of data.Permissions" [value]="perm.number" (click)="changePerm(element.Id)">{{perm.name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          <!--{{service.NumberToPermission(element.Permission)}}-->
+          </mat-cell>
+      </ng-container>
 
-    <!-- Reset Password -->
-    <ng-container matColumnDef="ResetPassword">
-      <mat-header-cell *matHeaderCellDef> Reset password </mat-header-cell>
-      <mat-cell *matCellDef="let element">
-          <button (click)="resetPassword(element.UserName)">Reset password</button>
-      </mat-cell>
-    </ng-container>
+      <!-- Delete Column -->
+      <ng-container matColumnDef="Delete">
+        <mat-header-cell *matHeaderCellDef> Delete </mat-header-cell>
+        <mat-cell *matCellDef="let element"> 
+          <button (click)="deleteRow(element.Id)">Delete</button>
+        </mat-cell>
+      </ng-container>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>
-</div>
-<div>
-  <button routerLink="/backup/add-admin">Add Administrator</button>
-  <button (click)=service.RefreshData([1])>Refresh</button>
+      <!-- Reset Password -->
+      <ng-container matColumnDef="ResetPassword">
+        <mat-header-cell *matHeaderCellDef> Reset password </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <button (click)="resetPassword(element.UserName)">Reset password</button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  </div>
+  <div>
+    <button routerLink="/backup/add-admin">Add Administrator</button>
+    <button (click)=service.RefreshData([1])>Refresh</button>
+    <button routerLink="/backup/manage-emails">Manage emails</button>
+  </div>
 </div>

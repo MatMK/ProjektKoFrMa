@@ -24,7 +24,7 @@ namespace KoFrMaRestApi.Models
             using (MySqlCommand command = new MySqlCommand("INSERT INTO `tbRestApiExceptions`(`ExceptionInJson`, `TimeOfException`, `Severity`) VALUES (@Exception, @TimeOfException,@severity)", connection))
             {
                 connection.Open();
-                command.Parameters.AddWithValue("@Exception",JsonSerializationUtility.Serialize(exception));
+                command.Parameters.AddWithValue("@Exception",exception.Message);
                 command.Parameters.AddWithValue("@TimeOfException", DateTime.Now);
                 command.Parameters.AddWithValue("@severity", DBNull.Value);
                 command.ExecuteNonQuery();
@@ -40,7 +40,9 @@ namespace KoFrMaRestApi.Models
                 }
                 foreach (int item in toInsert)
                 {
-                    command.CommandText = $"INSERT INTO `tbRestApiExceptionsAdminNOTNotified`(`	IdRestApiExceptions	`, `IdAdmin`) VALUES({Id}, {item})";
+                    command.CommandText = $"INSERT INTO `tbRestApiExceptionsAdminNOTNotified`(`	IdRestApiExceptions	`, `IdAdmin`) VALUES(@Id,@Item)";
+                    command.Parameters.AddWithValue("@Id", Id);
+                    command.Parameters.AddWithValue("@Item", item);
                     command.ExecuteNonQuery();
                 }
             }

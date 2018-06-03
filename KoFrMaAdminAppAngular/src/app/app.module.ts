@@ -32,7 +32,7 @@ import { ExceptionInfoComponent } from './admin-app/settings/more-info/exception
 import { EmailInfoComponent } from './admin-app/settings/more-info/email-info/email-info.component';
 
 const routes : Routes = [
-  {path: '', redirectTo:'login', pathMatch:'full'},
+  {path: '', redirectTo:'backup/app/tasks', pathMatch:'full'},
   {path: 'login', component: LoginComponent},
   {path: 'backup', component: ToolbarComponent, canActivate: [AuthGuard], children : [
     {path: 'app', component: MainComponent, children: [
@@ -47,6 +47,7 @@ const routes : Routes = [
     {path: 'add-task/:daemonid', component:AddTaskComponent},
     {path: 'completed-task-info/:completedTaskId', component:CompletedTaskInfoComponent},
     {path: 'add-admin', component: AddAdminComponent, canActivate: [PermissionGuard], data: {roles: [1]}},
+    {path: 'manage-emails', component: EmailInfoComponent}
   ]},
   {path: '**', component: NotFoundComponent}
 ]
