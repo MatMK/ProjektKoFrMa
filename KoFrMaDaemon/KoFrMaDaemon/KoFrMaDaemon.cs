@@ -92,9 +92,9 @@ namespace KoFrMaDaemon
 
                 if (daemonSettings.ServerIP == "" || daemonSettings.ServerIP == null)
                 {
-                    debugLog.WriteToLog("Server IP not entered in config file. Run local configurator to set it to your server, than restart this service or computer.", 1);
+                    //debugLog.WriteToLog("Server IP not entered in config file. Run local configurator to set it to your server, than restart this service or computer.", 1);
                     this.CheatTasks();
-                    //throw new ArgumentNullException();
+                    //throw new ArgumentNullException("ServerIP","Server IP not entered in config file. Run local configurator to set it to your server, than restart this service or computer.");
                 }
                 else
                 {
@@ -140,7 +140,7 @@ namespace KoFrMaDaemon
             tmpSourceFoldersPaths.Add(@"D:\KoFrMa\BackupThisFolder\");
             tmpSourceFolders.Paths = tmpSourceFoldersPaths;
 
-            //tmpDestinations.Add(new DestinationPlain() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" } });
+            tmpDestinations.Add(new DestinationPlain() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" } });
             tmpDestinations.Add(new Destination7z() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" }, CompressionLevel = 0, SplitAfter = 5 });
             Task taskTest = new Task
             {

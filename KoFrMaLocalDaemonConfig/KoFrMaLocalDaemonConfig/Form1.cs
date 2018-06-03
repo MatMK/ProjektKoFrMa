@@ -16,7 +16,7 @@ namespace KoFrMaLocalDaemonConfig
         public Form1()
         {
             InitializeComponent();
-
+            this.textBox_Password.PasswordChar = '•';
             LoadIniFile();
             CheckIfChecked();
         }
@@ -53,10 +53,10 @@ namespace KoFrMaLocalDaemonConfig
                         {
                             this.textBox_ServerIP.Text = tmpRow.Substring(9);
                         }
-                        else if (tmpRow.StartsWith("Password="))
-                        {
-                            this.textBox_Password.Text = tmpRow.Substring(9);
-                        }
+                        //else if (tmpRow.StartsWith("Password="))
+                        //{
+                        //    this.textBox_Password.Text = tmpRow.Substring(9);
+                        //}
                         else if (tmpRow.StartsWith("LocalLogPath="))
                         {
                             if (tmpRow.Substring(13) != "")
@@ -91,13 +91,14 @@ namespace KoFrMaLocalDaemonConfig
                             this.textBox_7zip.Text = tmpRow.Substring(13);
                         }
                     }
-                    r.Close();
-                    r.Dispose();
                 }
 
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
+                }
+                finally
+                {
                     r.Close();
                     r.Dispose();
                 }
@@ -113,7 +114,7 @@ namespace KoFrMaLocalDaemonConfig
         {
             this.LoadIniFile();
         }
-
+        private Bcrypt bcrypt = new Bcrypt();
         private StreamWriter w;
         private void button_apply_Click(object sender, EventArgs e)
         {
@@ -126,7 +127,7 @@ namespace KoFrMaLocalDaemonConfig
                 }
                 w = new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\config.ini");
                 w.WriteLine("ServerIP=" + this.textBox_ServerIP.Text);
-                w.WriteLine("Password=" + this.textBox_Password.Text);
+                w.WriteLine("Password=" + bcrypt.BcryptPasswordInBase64(this.textBox_Password.Text));
                 string tmp = this.textBox_LogPath.Text;
                 if (this.checkBox_showPath.Checked)
                 {
@@ -144,16 +145,19 @@ namespace KoFrMaLocalDaemonConfig
                     w.WriteLine("LocalLogPath=");
                 }
 
-                w.WriteLine("WindowsLog=" + (this.checkBox_LogWindows.Checked?1:0));
+                w.WriteLine("WindowsLog=" + (this.checkBox_LogWindows.Checked ? 1 : 0));
 
                 w.WriteLine("WinRARPath=" + this.textBox_Winrar.Text);
                 w.WriteLine("SevenZipPath=" + this.textBox_7zip.Text);
-                w.Close();
-                w.Dispose();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                w.Close();
+                w.Dispose();
             }
 
         }

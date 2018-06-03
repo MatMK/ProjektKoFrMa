@@ -58,6 +58,7 @@ namespace KoFrMaDaemon.Backup
                     {
                         this.atLeastOneDestinationIsLocalFolder = true;
                         this.temporaryDestinationInfo = new DirectoryInfo(item.Path.Path);
+                        break;
                     }
                 }
             }
