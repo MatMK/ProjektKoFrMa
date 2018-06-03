@@ -796,26 +796,21 @@ namespace KoFrMaDaemon.Backup
         /// </summary>
         /// <param name="directory"><c>DirectoryInfo</c> from where the size will be calculated</param>
         /// <returns>Number of bytes that the directory takes</returns>
-        private Int64 CalculateDirectorySize(DirectoryInfo directory)
+        private long CalculateDirectorySize(DirectoryInfo directory)
         {
-            Int64 tmp = 0;
-            this.CalculateDirectorySizeRecursively(directory, tmp);
-            return tmp;
-        }
-
-        private void CalculateDirectorySizeRecursively(DirectoryInfo directoryInfo, Int64 size)
-        {
-            foreach (FileInfo item in directoryInfo.GetFiles())
+            long size = 0;
+            FileInfo[] fis = directory.GetFiles();
+            foreach (FileInfo fi in fis)
             {
-                size+=item.Length;
+                size += fi.Length;
             }
-
-            foreach (DirectoryInfo item in directoryInfo.GetDirectories())
+            DirectoryInfo[] dis = directory.GetDirectories();
+            foreach (DirectoryInfo di in dis)
             {
-                this.CalculateDirectorySizeRecursively(item, size);
+                size += CalculateDirectorySize(di);
             }
+            return size;
         }
-
 
         //private void CopyDirectoryRecursivly(DirectoryInfo from, DirectoryInfo to)
         //{
@@ -875,17 +870,17 @@ namespace KoFrMaDaemon.Backup
         /// <param name="destinations">List of destination(s) of multiple types that all inherit from <c>IDestination</c> for which it will be checked for available space</param>
         private void CheckIfSpaceAvailable(List<string>sources, List<IDestination> destinations)
         {
-            Int64 sourceLength = 0;
+            long sourceLength=0;
             for (int i = 0; i < sources.Count; i++)
             {
-                sourceLength+=this.CalculateDirectorySize(new DirectoryInfo(sources[i]));
+                sourceLength=this.CalculateDirectorySize(new DirectoryInfo(sources[i]));
             }
             for (int i = 0; i < destinations.Count; i++)
             {
                 if (destinations[i].Path is DestinationPathLocal)
                 {
-                    Int64 destinationLength =  new DriveInfo(destinations[i].Path.Path.Substring(0, 1)).AvailableFreeSpace;
-                    this.taskDebugLog.WriteToLog("Space that will be taken by this backup: " + sourceLength/1048576 + "MB, space that is available: " + destinationLength/1048576+"MB.", 7);
+                    long destinationLength =  new DriveInfo(destinations[i].Path.Path.Substring(0, 1)).AvailableFreeSpace;
+                    this.taskDebugLog.WriteToLog("Space that will be taken by this backup: " + Math.Round(Convert.ToDouble(sourceLength)/1048576f,1) + "MB, space that is available: " + Math.Round(Convert.ToDouble(destinationLength) / 1048576f, 1) + "MB.", 7);
                     if (destinationLength>=sourceLength)
                     {
                         this.taskDebugLog.WriteToLog("Space check succeeded, there is enough space for the backup.",5);
