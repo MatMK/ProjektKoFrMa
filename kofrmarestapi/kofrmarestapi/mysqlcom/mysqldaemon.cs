@@ -15,6 +15,7 @@ namespace KoFrMaRestApi.MySqlCom
     public class MySqlDaemon
     {
         MySqlAdmin sqlAdmin = new MySqlAdmin();
+        TimerClass timer = TimerClass.GetInstance();
         /// <summary>
         /// Returns daemons database id.
         /// </summary>
@@ -58,6 +59,24 @@ namespace KoFrMaRestApi.MySqlCom
         /// <returns>List of tasks for daemon to execute</returns>
         public List<Task> GetTasks(int DaemonId, MySqlConnection connection)
         {
+            using (MySqlCommand command = new MySqlCommand("SELECT Task, Id, RepeatInJSON FROM `tbTasks` WHERE `IdDaemon` = @Id and `Completed` = 0", connection))
+            {
+                List<Task> result = new List<Task>();
+                command.Parameters.AddWithValue("@Id", DaemonId);
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (timer.CorrectTime(JsonSerializationUtility.Deserialize<TaskRepeating>((string)reader["RepeatInJSON"])))
+                        {
+                            result.Add(JsonSerializationUtility.Deserialize<Task>((string)reader["Task"]));
+                            result.Last().IDTask = (int)reader["Id"];
+                        }
+                    }
+                }
+                return result;
+            }
+            /*
             List<Task> result = new List<Task>();
             MySqlCommand sqlCommand = new MySqlCommand(@"SELECT Task, Id, RepeatInJSON FROM `tbTasks` WHERE `IdDaemon` = @Id and `Completed` = 0", connection);
             sqlCommand.Parameters.AddWithValue("@Id", DaemonId);
@@ -78,7 +97,7 @@ namespace KoFrMaRestApi.MySqlCom
             }
             sqlCommand.Dispose();
             reader.Dispose();
-            return result;
+            return result;*/
         }
         public void TaskCompletionRecieved(TaskComplete task, MySqlConnection connection)
         {
@@ -89,16 +108,16 @@ namespace KoFrMaRestApi.MySqlCom
                 {
                     if (reader.Read())
                     {
-                        if (reader["RepeatInJSON"] == DBNull.Value)
+                        if (reader["RepeatInJSON"] == DBNull.Value || JsonSerializationUtility.Deserialize<TaskRepeating>((string)reader["RepeatInJSON"]).Repeating == new TimeSpan(0))
                         {
                             reader.Close();
-                            TaskRemove(task, connection, true);
+                            TaskRemove(task);
                         }
                         else
                         {
                             string json = (string)reader["RepeatInJSON"];
                             reader.Close();
-                            TaskExtend(task, json, connection);
+                            TaskExtend(task, json);
                         }
                     }
                 }
@@ -110,47 +129,50 @@ namespace KoFrMaRestApi.MySqlCom
         /// <param name="taskComplete">Completed task</param>
         /// <param name="connection">Open MySQL connection</param>
         /// <param name="isSuccessful">Was task successful</param>
-        private void TaskRemove(TaskComplete taskComplete, MySqlConnection connection, bool isSuccessful)
+        public void TaskRemove(TaskComplete taskComplete)
         {
-            if (isSuccessful)
+            using (MySqlConnection connection = WebApiConfig.Connection())
             {
-                using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbTasks` SET `Completed`= 1 WHERE `Id` = @IdTask", connection))
+                connection.Open();
+                if (taskComplete.IsSuccessfull)
                 {
-                    command.Parameters.AddWithValue("@IdTask", taskComplete.IDTask);
-                    command.ExecuteNonQuery();
-                }
-            }
-            string debugLog = "";
-            if (taskComplete.DebugLog != null)
-            {
-                foreach (string item in taskComplete.DebugLog)
-                {
-                    debugLog += item + "\n";
-                }
-            }
-            using (MySqlCommand command = new MySqlCommand($"INSERT INTO `tbTasksCompleted`VALUES (null,{GetDaemonId(taskComplete.DaemonInfo, connection)},{taskComplete.IDTask},'{JsonSerializationUtility.Serialize(taskComplete.DatFile)}',@datetime,'{debugLog}',{taskComplete.IsSuccessfull})", connection))
-            {
-                command.Parameters.AddWithValue("@datetime", taskComplete.TimeOfCompletition);
-                command.ExecuteNonQuery();
-            }
-            int Id = sqlAdmin.NextAutoIncrement("tbTasksCompleted") - 1;
-            List<int> toInsert = new List<int>();
-            using (MySqlCommand command = new MySqlCommand($"select Id from tbAdminAccounts where 1 order by Id", connection))
-            {
-                using (MySqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
+                    using (MySqlCommand command = new MySqlCommand(@"UPDATE `tbTasks` SET `Completed`= 1 WHERE `Id` = @IdTask", connection))
                     {
-                        toInsert.Add((int)reader["Id"]);
+                        command.Parameters.AddWithValue("@IdTask", taskComplete.IDTask);
+                        command.ExecuteNonQuery();
                     }
                 }
-                foreach (int item in toInsert)
+                string debugLog = "";
+                if (taskComplete.DebugLog != null)
                 {
-                    command.CommandText = $"INSERT INTO `tbTasksCompletedAdminNOTNotified`(`IdTaskCompleted`, `IdAdmin`) VALUES({Id}, {item})";
+                    foreach (string item in taskComplete.DebugLog)
+                    {
+                        debugLog += item + "\n";
+                    }
+                }
+                using (MySqlCommand command = new MySqlCommand($"INSERT INTO `tbTasksCompleted`VALUES (null,{GetDaemonId(taskComplete.DaemonInfo, connection)},{taskComplete.IDTask},'{JsonSerializationUtility.Serialize(taskComplete.DatFile)}',@datetime,'{debugLog}',{taskComplete.IsSuccessfull})", connection))
+                {
+                    command.Parameters.AddWithValue("@datetime", taskComplete.TimeOfCompletition);
                     command.ExecuteNonQuery();
                 }
+                int Id = sqlAdmin.NextAutoIncrement("tbTasksCompleted") - 1;
+                List<int> toInsert = new List<int>();
+                using (MySqlCommand command = new MySqlCommand($"select Id from tbAdminAccounts where 1 order by Id", connection))
+                {
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            toInsert.Add((int)reader["Id"]);
+                        }
+                    }
+                    foreach (int item in toInsert)
+                    {
+                        command.CommandText = $"INSERT INTO `tbTasksCompletedAdminNOTNotified`(`IdTaskCompleted`, `IdAdmin`) VALUES({Id}, {item})";
+                        command.ExecuteNonQuery();
+                    }
+                }
             }
-
         }
         /// <summary>
         /// If next execution time exists new task is created and current is marked as completed else task is removed with <see cref="TaskRemove(TaskComplete, MySqlConnection, bool)"/>
@@ -158,128 +180,190 @@ namespace KoFrMaRestApi.MySqlCom
         /// <param name="taskComplete">Completed task</param>
         /// <param name="JsonTime">T<see cref="TaskRepeating"/> in json</param>
         /// <param name="connection">open MySqlConnection</param>
-        private void TaskExtend(TaskComplete taskComplete, string JsonTime, MySqlConnection connection)
+        private void TaskExtend(TaskComplete taskComplete, string JsonTime)
         {
-            TaskRepeating repeat = JsonSerializationUtility.Deserialize<TaskRepeating>(JsonTime);
-            DateTime nextDate = repeat.ExecutionTimes.Last();
-            bool DateChanged = false;
-            foreach (var item in repeat.ExecutionTimes)
+            using (MySqlConnection connection = WebApiConfig.Connection())
             {
-                if (item > DateTime.Now)
+                connection.Open();
+                TaskRepeating repeat = JsonSerializationUtility.Deserialize<TaskRepeating>(JsonTime);
+                repeat = timer.TaskExtend(repeat);
+                if (repeat == null)
                 {
-                    bool NotException = HasDateException(item, repeat.ExceptionDates);
-                    if (NotException)
+                    TaskRemove(taskComplete);
+                    return;
+                }
+                else
+                {
+                    foreach (var item in repeat.ExecutionTimes)
                     {
-                        nextDate = item;
-                        DateChanged = true;
-                        break;
+                        while(this.HasDateException(item,repeat.ExceptionDates))
+                        {
+                            item.Add(repeat.Repeating);
+                        }
                     }
                 }
-            }
-            if (!DateChanged)
-            {
-                if (repeat.RepeatTill == null)
+                repeat = timer.TaskExtend(repeat);
+                Task originalTask = null;
+                Task newTask;
+                string order = "";
+                using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbTasks` WHERE `Id` = @id", connection))
                 {
-                    bool DateOk = true;
-                    while (repeat.ExecutionTimes[0] < DateTime.Now || !DateOk)
+                    command.Parameters.AddWithValue("@id", taskComplete.IDTask);
+                    using (MySqlDataReader reader = command.ExecuteReader())
                     {
-                        for (int i = 0; i < repeat.ExecutionTimes.Count; i++)
+                        while (reader.Read())
                         {
-                            repeat.ExecutionTimes[i] += repeat.Repeating;
+                            originalTask = JsonSerializationUtility.Deserialize<Task>((string)reader["Task"]);
+                            order = (string)reader["BackupType"];
                         }
-                        DateOk = DateAvailable(repeat.ExecutionTimes, repeat.ExceptionDates);
+                    }
+                }
+                if (originalTask == null)
+                {
+                    throw new Exception("Task " + taskComplete.IDTask + "cannot be found in database");
+                }
+                if (order != null && order.Length > 0)
+                {
+                    newTask = originalTask;
+                    newTask.TimeToBackup = repeat.ExecutionTimes[0];
+                    if(originalTask.Sources is BackupJournalObject && order[0] == '1')
+                    {
+                        newTask.Sources = taskComplete.DatFile;
+                    }
+                    else if(originalTask.Sources is BackupJournalObject && order[0] == '2')
+                    {
+
                     }
                 }
                 else
                 {
-                    bool DateOk = true;
-                    while (repeat.ExecutionTimes[0] < DateTime.Now || !DateOk)
-                    {
-                        List<int> ToDelete = new List<int>();
-                        for (int i = 0; i < repeat.ExecutionTimes.Count; i++)
-                        {
-                            if (repeat.ExecutionTimes[i] + repeat.Repeating < repeat.RepeatTill)
-                                repeat.ExecutionTimes[i] += repeat.Repeating;
-                            else
-                                ToDelete.Add(i);
-                        }
-                        for (int i = ToDelete.Count - 1; i >= 0; i--)
-                        {
-                            repeat.ExecutionTimes.RemoveAt(ToDelete[i]);
-                        }
-                        if (repeat.ExecutionTimes.Count == 0)
-                            break;
-                        DateOk = DateAvailable(repeat.ExecutionTimes, repeat.ExceptionDates);
-                    }
+                    throw new Exception("Order is undefined");
                 }
+                newTask.IDTask = sqlAdmin.NextAutoIncrement("tbTasks");
+                sqlAdmin.AlterTable(new Models.Tables.ChangeTable() { ColumnName = "RepeatInJSON", Id = taskComplete.IDTask, TableName = "tbTasks", Value = JsonSerializationUtility.Serialize(repeat) });
+                TaskRemove(taskComplete);
+                /*
+                repeat.ExecutionTimes.Sort();
+                DateTime nextDate = repeat.ExecutionTimes.Last();
+                bool DateChanged = false;
                 foreach (var item in repeat.ExecutionTimes)
                 {
                     if (item > DateTime.Now)
                     {
-                        nextDate = item;
-                        break;
+                        bool NotException = HasDateException(item, repeat.ExceptionDates);
+                        if (NotException)
+                        {
+                            nextDate = item;
+                            DateChanged = true;
+                            break;
+                        }
                     }
                 }
-            }
-            if (repeat.ExecutionTimes.Count == 0)
-            {
-                TaskRemove(taskComplete, connection, true);
-            }
-            else
-            {
-                using (MySqlCommand command = new MySqlCommand(@"SELECT * FROM `tbTasks` WHERE Id = @Id", connection))
+                if (!DateChanged)
                 {
-                    int IdDaemon;
-                    string Task;
-                    DateTime TimeOfExecution;
-                    string RepeatInJSON;
-                    command.Parameters.AddWithValue("@Id", taskComplete.IDTask);
-                    using (MySqlDataReader reader = command.ExecuteReader())
+                    if (repeat.RepeatTill == null)
                     {
-                        if (reader.Read())
+                        bool DateOk = true;
+                        while (repeat.ExecutionTimes[0] < DateTime.Now || !DateOk)
                         {
-                            IdDaemon = (int)reader["IdDaemon"];
-                            Task = (string)reader["Task"];
-                            TimeOfExecution = (DateTime)reader["TimeOfExecution"];
-                            RepeatInJSON = (string)reader["RepeatInJSON"];
-                        }
-                        else
-                        {
-                            throw new Exception();
+                            for (int i = 0; i < repeat.ExecutionTimes.Count; i++)
+                            {
+                                repeat.ExecutionTimes[i] += repeat.Repeating;
+                            }
+                            DateOk = DateAvailable(repeat.ExecutionTimes, repeat.ExceptionDates);
                         }
                     }
-                    Task TaskClass = JsonSerializationUtility.Deserialize<Task>(Task);
-                    TaskRemove(taskComplete, connection, true);
-                    command.CommandText = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '3b1_kocourekmatej_db2' AND TABLE_NAME = 'tbTasks'";
-                    using (MySqlDataReader reader = command.ExecuteReader())
+                    else
                     {
-                        if (reader.Read())
-                            taskComplete.IDTask = Convert.ToInt32(reader["AUTO_INCREMENT"]);
-                        else
-                            throw new Exception();
+                        bool DateOk = true;
+                        while (repeat.ExecutionTimes[0] < DateTime.Now || !DateOk)
+                        {
+                            List<int> ToDelete = new List<int>();
+                            for (int i = 0; i < repeat.ExecutionTimes.Count; i++)
+                            {
+                                if (repeat.ExecutionTimes[i] + repeat.Repeating < repeat.RepeatTill)
+                                    repeat.ExecutionTimes[i] += repeat.Repeating;
+                                else
+                                    ToDelete.Add(i);
+                            }
+                            for (int i = ToDelete.Count - 1; i >= 0; i--)
+                            {
+                                repeat.ExecutionTimes.RemoveAt(ToDelete[i]);
+                            }
+                            if (repeat.ExecutionTimes.Count == 0)
+                                break;
+                            DateOk = DateAvailable(repeat.ExecutionTimes, repeat.ExceptionDates);
+                        }
                     }
-                    TaskClass.IDTask = taskComplete.IDTask;
-                    TaskClass.Sources = taskComplete.DatFile;
-                    Task = JsonSerializationUtility.Serialize(TaskClass);
-                    command.CommandText = "INSERT INTO `tbTasks` VALUES (null, @IdDaemon, @Task, @TimeOfExecution, @RepeatInJSON, @Completed)";
-                    command.Parameters.AddWithValue("@IdDaemon", IdDaemon);
-                    command.Parameters.AddWithValue("@Task", Task);
-                    command.Parameters.AddWithValue("@TimeOfExecution", TimeOfExecution);
-                    command.Parameters.AddWithValue("@RepeatInJSON", RepeatInJSON);
-                    command.Parameters.AddWithValue("@Completed", 0);
-                    command.ExecuteNonQuery();
+                    foreach (var item in repeat.ExecutionTimes)
+                    {
+                        if (item > DateTime.Now)
+                        {
+                            nextDate = item;
+                            break;
+                        }
+                    }
                 }
+                if (repeat.ExecutionTimes.Count == 0)
+                {
+                    TaskRemove(taskComplete);
+                }
+                else
+                {
+                    using (MySqlCommand command = new MySqlCommand(@"SELECT * FROM `tbTasks` WHERE Id = @Id", connection))
+                    {
+                        int IdDaemon;
+                        string Task;
+                        DateTime TimeOfExecution;
+                        string RepeatInJSON;
+                        command.Parameters.AddWithValue("@Id", taskComplete.IDTask);
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                IdDaemon = (int)reader["IdDaemon"];
+                                Task = (string)reader["Task"];
+                                TimeOfExecution = (DateTime)reader["TimeOfExecution"];
+                                RepeatInJSON = (string)reader["RepeatInJSON"];
+                            }
+                            else
+                            {
+                                throw new Exception();
+                            }
+                        }
+                        Task TaskClass = JsonSerializationUtility.Deserialize<Task>(Task);
+                        TaskRemove(taskComplete);
+                        command.CommandText = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '3b1_kocourekmatej_db2' AND TABLE_NAME = 'tbTasks'";
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                                taskComplete.IDTask = Convert.ToInt32(reader["AUTO_INCREMENT"]);
+                            else
+                                throw new Exception();
+                        }
+                        TaskClass.IDTask = taskComplete.IDTask;
+                        TaskClass.Sources = taskComplete.DatFile;
+                        Task = JsonSerializationUtility.Serialize(TaskClass);
+                        command.CommandText = "INSERT INTO `tbTasks` VALUES (null, @IdDaemon, @Task, @TimeOfExecution, @RepeatInJSON, @Completed)";
+                        command.Parameters.AddWithValue("@IdDaemon", IdDaemon);
+                        command.Parameters.AddWithValue("@Task", Task);
+                        command.Parameters.AddWithValue("@TimeOfExecution", TimeOfExecution);
+                        command.Parameters.AddWithValue("@RepeatInJSON", RepeatInJSON);
+                        command.Parameters.AddWithValue("@Completed", 0);
+                        command.ExecuteNonQuery();
+                    }
+                }*/
             }
         }
         private bool HasDateException(DateTime item, List<ExceptionDate> ExceptionDates)
         {
-            bool result = true;
+            bool result = false;
             if (ExceptionDates != null)
                 foreach (var time in ExceptionDates)
                 {
                     if (item > time.Start && item < time.End)
                     {
-                        result = false;
+                        result = true;
                     }
                 }
             return result;
@@ -289,7 +373,7 @@ namespace KoFrMaRestApi.MySqlCom
             int Dates = 0;
             foreach (var item in ExecutionTimes)
             {
-                if (!HasDateException(item, ExceptionDates))
+                if (HasDateException(item, ExceptionDates))
                     Dates++;
             }
             if (Dates == ExecutionTimes.Count)
@@ -373,20 +457,12 @@ namespace KoFrMaRestApi.MySqlCom
                     reader.Close();
                 }
                 Bcrypter bcrypter = new Bcrypter();
-                if (bcrypter.PasswordMatches(Password, DatabasePassword));
+                if (bcrypter.PasswordMatches(Password, DatabasePassword)) ;
                 {
                     command.CommandText = @"UPDATE `tbDaemons` SET `Token`= @Token WHERE `PC_Unique` = @PC_Unique";
                     command.Parameters.AddWithValue("@Token", Token);
                     command.ExecuteNonQuery();
                 }
-            }
-        }
-        public void TaskFailed(TaskComplete taskComplete)
-        {
-            using (MySqlConnection connection = WebApiConfig.Connection())
-            {
-                connection.Open();
-                TaskRemove(taskComplete, connection, false);
             }
         }
     }

@@ -96,7 +96,7 @@ namespace KoFrMaRestApi.Controllers
                     }
                     else
                     {
-                        mySqlCom.TaskFailed(taskCompleted);
+                        mySqlCom.TaskRemove(taskCompleted);
                     }
                 }
                 connection.Close();

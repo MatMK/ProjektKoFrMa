@@ -153,6 +153,9 @@ export class AddTaskComponent
         for (let i = 0; i < this.fullBackupAfter; i++) {
           newTask.FullAfterBackup += this.backuptype == "Incremental"?"1":"2"
         }
+        if(this.followupTo != undefined)
+          newTask.FullAfterBackup += "0";
+
       }
       else if(this.backuptype != "Full")
       {

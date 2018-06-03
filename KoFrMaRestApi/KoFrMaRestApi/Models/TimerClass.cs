@@ -53,35 +53,36 @@ namespace KoFrMaRestApi.Models
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
 
-                using (MySqlConnection connection = WebApiConfig.Connection())
-                using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbEmailPreferences`", connection))
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbEmailPreferences`", connection))
+            {
+                connection.Open();
+                using (MySqlDataReader reader = command.ExecuteReader())
                 {
-                    connection.Open();
-                    using (MySqlDataReader reader = command.ExecuteReader())
+                    while (reader.Read())
                     {
-                        while (reader.Read())
+                        if (reader["RepeatInJSON"] != DBNull.Value)
                         {
-                            if (reader["RepeatInJSON"] != DBNull.Value)
+                            EmailSettings email = new EmailSettings() { EmailAddress = (string)reader["RecievingEmail"], SendOnlyFailed = Convert.ToBoolean(reader["SendOnlyFailed"]) };
+                            if (this.CorrectTime(JsonSerializationUtility.Deserialize<TaskRepeating>((string)reader["RepeatInJSON"])))
                             {
-                                EmailSettings email = new EmailSettings() { EmailAddress = (string)reader["RecievingEmail"], SendOnlyFailed = Convert.ToBoolean(reader["SendOnlyFailed"]) };
-                                if (this.CorrectTime(JsonSerializationUtility.Deserialize<TaskRepeating>((string)reader["RepeatInJSON"]), (int)reader["id"], "tbEmailPreferences", "RepeatInJSON"))
-                                {
-                                    //this.mail.SendEmail(email, (int)reader["IdAdmin"]);
-                                }
+                                //this.mail.SendEmail(email, (int)reader["IdAdmin"]);
                             }
+                            TaskExtendDatabase(JsonSerializationUtility.Deserialize<TaskRepeating>((string)reader["RepeatInJSON"]), (int)reader["id"], "tbEmailPreferences", "RepeatInJSON");
                         }
                     }
                 }
+            }
         }
         /// <summary>
-        /// Checks TaskRepeat, extends all dates to be higher than current date.
+        /// Checks TaskRepeat
         /// </summary>
         /// <param name="taskRepeating">times to see if it's time</param>
         /// <param name="Id">Id of column to edit time in</param>
         /// <param name="TableName">Name of the table to edit time in</param>
         /// <param name="ColumnName">Name of the column to edit value in</param>
         /// <returns>True if it's time to execute a task</returns>
-        public bool CorrectTime(TaskRepeating taskRepeating, int Id, string TableName, string ColumnName)
+        public bool CorrectTime(TaskRepeating taskRepeating)
         {
             taskRepeating.ExecutionTimes.Sort();
             if (taskRepeating.ExceptionDates != null)
@@ -108,7 +109,6 @@ namespace KoFrMaRestApi.Models
                     }
                 }
             }
-            this.TaskExtend(taskRepeating, Id, TableName, ColumnName);
             return eligible;
         }
         /// <summary>
@@ -118,11 +118,11 @@ namespace KoFrMaRestApi.Models
         /// <param name="Id">Id of column to edit time in</param>
         /// <param name="TableName">Name of the table to edit time in</param>
         /// <param name="ColumnName">Name of the column to edit value in</param>
-        public void TaskExtend(TaskRepeating taskRepeating, int Id, string TableName, string ColumnName)
+        public TaskRepeating TaskExtendDatabase(TaskRepeating taskRepeating, int Id, string TableName, string ColumnName)
         {
             TaskRepeating reference = taskRepeating;
             taskRepeating.ExecutionTimes.Sort();
-            for (int i = taskRepeating.ExecutionTimes.Count-1; i >= 0; i--)
+            for (int i = taskRepeating.ExecutionTimes.Count - 1; i >= 0; i--)
             {
                 if (taskRepeating.ExecutionTimes[i] <= DateTime.Now)
                 {
@@ -138,12 +138,38 @@ namespace KoFrMaRestApi.Models
             }
             if (taskRepeating.ExecutionTimes.Count == 0)
             {
-                mySql.AlterTable(new ChangeTable() { Id = Id, TableName = TableName, ColumnName = ColumnName, Value = DBNull.Value });
+                    mySql.AlterTable(new ChangeTable() { Id = Id, TableName = TableName, ColumnName = ColumnName, Value = DBNull.Value });
+                return null;
             }
-            else if (taskRepeating.Equals(reference))    
+            else if (taskRepeating.Equals(reference))
             {
-                mySql.AlterTable(new ChangeTable() {Id = Id, TableName = TableName, ColumnName = ColumnName, Value = JsonSerializationUtility.Serialize(taskRepeating) });
+                    mySql.AlterTable(new ChangeTable() { Id = Id, TableName = TableName, ColumnName = ColumnName, Value = JsonSerializationUtility.Serialize(taskRepeating) });
             }
+            return taskRepeating;
+        }
+        public TaskRepeating TaskExtend(TaskRepeating taskRepeating)
+        {
+            TaskRepeating reference = taskRepeating;
+            taskRepeating.ExecutionTimes.Sort();
+            for (int i = taskRepeating.ExecutionTimes.Count - 1; i >= 0; i--)
+            {
+                if (taskRepeating.ExecutionTimes[i] <= DateTime.Now)
+                {
+                    while (taskRepeating.ExecutionTimes[i] <= DateTime.Now)
+                    {
+                        taskRepeating.ExecutionTimes[i] = taskRepeating.ExecutionTimes[i] + taskRepeating.Repeating;
+                    }
+                    if (taskRepeating.ExecutionTimes[i] >= taskRepeating.RepeatTill)
+                    {
+                        taskRepeating.ExecutionTimes.RemoveAt(i);
+                    }
+                }
+            }
+            if (taskRepeating.ExecutionTimes.Count == 0)
+            {
+                return null;
+            }
+            return taskRepeating;
         }
     }
 }

@@ -172,6 +172,14 @@ namespace KoFrMaRestApi.MySqlCom
                 {
                     using (MySqlCommand command = new MySqlCommand("INSERT INTO `tbTasks` VALUES (null, @DaemonId, @Task, @DateOfCompletion,@BackupType, @Repeating,0)", connection))
                     {
+                        TaskRepeating taskRepeating = new TaskRepeating()
+                        {
+                            ExceptionDates = item.ExecutionTimes.ExceptionDates,
+                            ExecutionTimes = item.ExecutionTimes.ExecutionTimes,
+                            RepeatTill = item.ExecutionTimes.RepeatTill,
+                            Repeating = new TimeSpan(0, 0, item.ExecutionTimes.Repeating)
+                        };
+                        taskRepeating.ExecutionTimes.Sort();
                         Task task = new Task()
                         {
                             IDTask = NextAutoIncrement("tbTasks"),
@@ -182,22 +190,16 @@ namespace KoFrMaRestApi.MySqlCom
                             ScriptAfter = item.ScriptAfter,
                             TemporaryFolderMaxBuffer = item.TemporaryFolderMaxBuffer,
                             InProgress = false,
+                            TimeToBackup = taskRepeating.ExecutionTimes[0]
                         };
                         dynamic Repeating;
-                        TaskRepeating taskRepeating = new TaskRepeating()
-                        {
-                            ExceptionDates = item.ExecutionTimes.ExceptionDates,
-                            ExecutionTimes = item.ExecutionTimes.ExecutionTimes,
-                            RepeatTill = item.ExecutionTimes.RepeatTill,
-                            Repeating = new TimeSpan(0, 0, item.ExecutionTimes.Repeating)
-                        };
-                        taskRepeating.ExecutionTimes.Sort();
+                        
                         if (item.ExecutionTimes != null)
-                            Repeating = JsonConvert.SerializeObject(taskRepeating);
+                            Repeating = JsonSerializationUtility.Serialize(taskRepeating);
                         else
                             throw new Exception("Task repeating cannot be null");
                         command.Parameters.AddWithValue("@DaemonId", item.DaemonId);
-                        command.Parameters.AddWithValue("@Task", JsonConvert.SerializeObject(task));
+                        command.Parameters.AddWithValue("@Task", JsonSerializationUtility.Serialize(task));
                         command.Parameters.AddWithValue("@DateOfCompletion", taskRepeating.ExecutionTimes[0]);
                         command.Parameters.AddWithValue("@Repeating", Repeating);
                         command.Parameters.AddWithValue("@BackupType", item.FullAfterBackup);
