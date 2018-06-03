@@ -1,22 +1,17 @@
-
-<div id="emailDiv">
+<div id="emailDiv" style="align-content: center;">
   <h2 style="text-align: center">Sending emails setup</h2>
-
-    <input type="checkbox" class="basicCheckbox" id="emailCheckbox" [(ngModel)]="emailCheck"> Do you want to receive emails?
+    <mat-checkbox [(ngModel)]="emailCheck">Recieve emails</mat-checkbox>
     <br>
     <div *ngIf="emailCheck==true">
-      <Strong style="margin: 5px">Send every: </Strong>
+      <Strong style="margin: 5px">Repeat send dates </Strong>
         <input type="number" id="sendEvery" class="BasicInput" [(ngModel)]="sendEvery" style="margin: 5px; width:30%">
         <select id="dropdownTimeChoice" class="basicSelect" [(ngModel)]="send"> 
-          <option value="Minute" id="optionTime" >Minutes</option> 
-          <option value="Hour" id="optionTime">Hours</option> 
-          <option value="Day" id="optionTime">Days</option>
-          <option value="Week" id="optionTime">Weeks</option>
+          <option *ngFor="let element of options" value="{{element.value}}" id="optionTime" >{{element.text}}</option>
         </select>
       <br>
         <strong style="margin: 5px">Send till: </strong><input type="datetime-local" id="sendTill" class="basicDate" [value] = "_date" (change) = "onDateChange($event.target.value)">
       <hr>
-      <input type="submit" value="Petr" id="sendAddExecutionSubmit" class="basicSubmit" (click)="AddSendDate()">
+      <input type="submit" value="Send dates" id="sendAddExecutionSubmit" class="basicSubmit" (click)="AddSendDate()">
         <div style="max-height: 150px; overflow: auto;">
           <div *ngFor="let element of executionDates">
             <div style="white-space: nowrap;" *ngIf="element!=undefined">
@@ -26,17 +21,20 @@
             </div>
           </div>
         </div>
-        <input type="submit" value="Matěj" id="sendAddExceptionSubmit" class="basicSubmit" (click)="AddExceptionEmailDate()">
+        <input type="submit" value="Exception dates" id="sendAddExceptionSubmit" class="basicSubmit" (click)="AddExceptionEmailDate()">
         <div style="max-height: 150px; overflow: auto;">
           <div *ngFor="let element of exceptionDates">
             <div style="white-space: nowrap;" *ngIf="element!=undefined">
-              <input type="date" class="basicDate" [(ngModel)]="element.date" style="width: 200px;">
-              <input type="time" class="basicDate" [(ngModel)]="element.time" style="width: 100px;">
-              <button (click)="RemoveExceptionEmailDate(element.id)">X</button>
+              Start:
+              <input type="date" class="basicDate" [(ngModel)]="element.dateStart" style="width: 180px;">
+              <input type="time" class="basicDate" [(ngModel)]="element.timeStart" style="width: 80px;">
+              End:
+              <input type="date" class="basicDate" [(ngModel)]="element.dateEnd" style="width:  180px;">
+              <input type="time" class="basicDate" [(ngModel)]="element.timeEnd" style="width: 80px;">
+              <button (click)="RemoveExceptionDate(element.id)">X</button>
             </div>
           </div>
         </div>
-
   </div>
-
+  <button class="basicSubmit" (click)="Apply()">Apply</button>
 </div>

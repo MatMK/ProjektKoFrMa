@@ -21,54 +21,32 @@ namespace KoFrMaRestApi.MySqlCom
         /// <param name="daemon"></param>
         /// <param name="connection"></param>
         /// <returns></returns>
-        public int GetDaemonId(DaemonInfo daemon, MySqlConnection connection)
+        public int? GetDaemonId(DaemonInfo daemon, MySqlConnection connection)
         {
+            return SelectFromTableByPcId(daemon);
 
-            using (MySqlDataReader reader = SelectFromTableByPcId(connection, daemon))
-            {
-                int count = 0;
-                int result = 0;
-                while (reader.Read())
-                {
-                    count++;
-                    result = (int)reader["id"];
-                }
-                if (count == 0)
-                    throw new Exception("No daemon with given pc unique");
-                if (count > 1)
-                    throw new Exception("Multiple daemons with given pc unique");
-                return result;
-            }
         }
-        public int RegisterDaemonAndGetId(DaemonInfo daemon, string Password, MySqlConnection connection)
+        public int RegisterDaemonAndGetId(DaemonInfo daemon, string Password)
         {
-            using (MySqlDataReader reader = SelectFromTableByPcId(connection, daemon))
+            using (MySqlConnection connection = WebApiConfig.Connection())
             {
-                try
+                connection.Open();
+                int? o = SelectFromTableByPcId(daemon);
+                if (o == null)
                 {
-                    return GetDaemonId(daemon, connection);
-                }
-                catch (Exception ex)
-                {
-                    if (ex.Message == "No daemon with given pc unique")
+                    string SqlInsert = @"insert into tbDaemons values(null, @version, @os, @pc_unique, 1, now(),@password,'')";
+                    using (MySqlCommand command = new MySqlCommand(SqlInsert, connection))
                     {
-                        reader.Close();
-                        string SqlInsert = @"insert into tbDaemons values(null, @version, @os, @pc_unique, 1, now(),@password,'')";
-                        using (MySqlCommand command = new MySqlCommand(SqlInsert, connection))
-                        {
-                            command.Parameters.AddWithValue("@version", daemon.Version);
-                            command.Parameters.AddWithValue("@os", daemon.OS);
-                            command.Parameters.AddWithValue("@pc_unique", daemon.PC_Unique);
-                            command.Parameters.AddWithValue("@password", Password);
-                            command.ExecuteNonQuery();
-                            return GetDaemonId(daemon, connection);
-                        }
-                    }
-                    else
-                    {
-                        throw ex;
+                        command.Parameters.AddWithValue("@version", daemon.Version);
+                        command.Parameters.AddWithValue("@os", daemon.OS);
+                        command.Parameters.AddWithValue("@pc_unique", daemon.PC_Unique);
+                        command.Parameters.AddWithValue("@password", Password.ToString());
+                        command.ExecuteNonQuery();
+                        return (int)GetDaemonId(daemon, connection);
                     }
                 }
+                return (int)o;
+
             }
 
         }
@@ -319,12 +297,22 @@ namespace KoFrMaRestApi.MySqlCom
             else
                 return true;
         }
-        private MySqlDataReader SelectFromTableByPcId(MySqlConnection connection, DaemonInfo daemon)
+        private int? SelectFromTableByPcId(DaemonInfo daemon)
         {
-            string SqlCommand = "SELECT id FROM `tbDaemons` WHERE PC_Unique = @PC_ID";
-            MySqlCommand query = new MySqlCommand(SqlCommand, connection);
-            query.Parameters.AddWithValue("@PC_ID", daemon.PC_Unique);
-            return query.ExecuteReader();
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand("SELECT id FROM `tbDaemons` WHERE PC_Unique = @PC_ID", connection))
+            {
+                connection.Open();
+                command.Parameters.AddWithValue("@PC_ID", daemon.PC_Unique);
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        return (int)reader["id"];
+                    }
+                    return null;
+                }
+            }
         }
         /// <summary>
         /// Updates lastSeen column in database
@@ -380,11 +368,12 @@ namespace KoFrMaRestApi.MySqlCom
                 {
                     while (reader.Read())
                     {
-                        DatabasePassword = (string)reader["Password"];
+                        DatabasePassword = reader["Password"].ToString();
                     }
                     reader.Close();
                 }
-                if (DatabasePassword == Password)
+                Bcrypter bcrypter = new Bcrypter();
+                if (bcrypter.PasswordMatches(Password, DatabasePassword));
                 {
                     command.CommandText = @"UPDATE `tbDaemons` SET `Token`= @Token WHERE `PC_Unique` = @PC_Unique";
                     command.Parameters.AddWithValue("@Token", Token);

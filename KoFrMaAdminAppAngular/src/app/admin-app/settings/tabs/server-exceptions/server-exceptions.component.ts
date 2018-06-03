@@ -23,8 +23,5 @@ export class ServerExceptionsComponent {
       return "Unknown";
     return severity.toString();
   }
-  exceptionMessage(exceptionJson : string) : string
-  {
-    return JSON.parse(exceptionJson).Message;
-  }
+  
 }

@@ -170,7 +170,7 @@ namespace KoFrMaRestApi.MySqlCom
                 connection.Open();
                 foreach (var item in tasks)
                 {
-                    using (MySqlCommand command = new MySqlCommand("INSERT INTO `tbTasks` VALUES (null, @DaemonId, @Task, @DateOfCompletion, @Repeating,0)", connection))
+                    using (MySqlCommand command = new MySqlCommand("INSERT INTO `tbTasks` VALUES (null, @DaemonId, @Task, @DateOfCompletion,@BackupType, @Repeating,0)", connection))
                     {
                         Task task = new Task()
                         {
@@ -200,6 +200,7 @@ namespace KoFrMaRestApi.MySqlCom
                         command.Parameters.AddWithValue("@Task", JsonConvert.SerializeObject(task));
                         command.Parameters.AddWithValue("@DateOfCompletion", taskRepeating.ExecutionTimes[0]);
                         command.Parameters.AddWithValue("@Repeating", Repeating);
+                        command.Parameters.AddWithValue("@BackupType", item.FullAfterBackup);
                         command.ExecuteNonQuery();
                     }
                 }
@@ -378,6 +379,65 @@ namespace KoFrMaRestApi.MySqlCom
                         result = this.RegisterToken(new AdminLogin() { Password = password, UserName = username });
                     }
                     return result;
+                }
+            }
+        }
+        public void UpdateEmail(int AdminId, EditEmailRequest email)
+        {
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbEmailPreferences` WHERE `Id` = " + AdminId, connection))
+            {
+                connection.Open();
+                if (email.RecieveMail == false)
+                {
+                    command.CommandText = "DELETE FROM `tbEmailPreferences` WHERE `Id` = " + AdminId;
+                }
+                else
+                {
+                    if (command.ExecuteNonQuery() == 0)
+                    {
+                        command.CommandText = $"INSERT INTO `tbEmailPreferences`(`IdAdmin`, `RepeatInJSON`, `RecievingEmail`) VALUES (1,{JsonSerializationUtility.Serialize(email.Repeating)},{GetAdminEmail(AdminId)})";
+                    }
+                    else
+                    {
+                        command.CommandText = $"UPDATE `tbEmailPreferences` SET `RepeatInJSON`=[value-4] WHERE `IdAdmin` = " + AdminId;
+                    }
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+        private string GetAdminEmail(int Id)
+        {
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbAdminAccounts` WHERE `Id` = " + Id , connection))
+            {
+                connection.Open();
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        return (string)reader["Email"];
+                    }
+                    throw new Exception("No admin with such id");
+                }
+            }
+        }
+        public EditEmailRequest GetEmailData(int AdminId)
+        {
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbEmailPreferences` WHERE Id = " + AdminId, connection))
+            {
+                connection.Open();
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var i = new EditEmailRequest();
+                        i.RecieveMail = true;
+                        i.Repeating = JsonSerializationUtility.Deserialize<TaskRepeatingNoTimespan>((string)reader["RepeatInJSON"]);
+                        return i;
+                    }
+                    return new EditEmailRequest() { RecieveMail = false };
                 }
             }
         }

@@ -8,7 +8,7 @@
 
   <ng-container matColumnDef="exceptionInJson">
     <mat-header-cell *matHeaderCellDef> Exception Text </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{exceptionMessage(element.ExceptionInJson)}} </mat-cell>
+    <mat-cell *matCellDef="let element"> {{element.ExceptionInJson}} </mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="timeOfException">

@@ -3,21 +3,29 @@
     <!--Left side-->
     <div style="float: left;width: 45%; max-height:710px; overflow: auto;">
       <h2>Backup settings</h2>
-      <strong>Daemon id:</strong><input type="number" id="daemonId" [(ngModel)]="daemonId"  class="BasicInput" (change)="checkIfNumberValid()" style="margin: 10px; max-width: 200px;">
+      <strong>Daemon id:</strong><input type="number" min="0" id="daemonId" [(ngModel)]="daemonId"  class="BasicInput" (change)="checkIfNumberValid()" style="margin: 10px; max-width: 200px;">
       <hr>
       <div id="backupType"><strong>Backup Type:</strong>
-        Full<input type="radio" id="IdtypeFull" class="basicRadio" name="buChoice" value="Full" [(ngModel)]="backuptype">  
-        Incremental <input type="radio" class="basicRadio" name="buChoice" value="Incremental" [(ngModel)]="backuptype">  
-        Differencial <input type="radio" class="basicRadio" name="buChoice" value="Differencial" [(ngModel)]="backuptype"><br>
+        Full<input type="radio" class="basicRadio" name="buChoice" value="Full" [(ngModel)]="backuptype" (change)="isEnabled()" id="full">  
+        Incremental <input type="radio" class="basicRadio" name="buChoice" value="Incremental" [(ngModel)]="backuptype" (change)="isEnabled()" id="incr">  
+        Differencial <input type="radio" class="basicRadio" name="buChoice" value="Differencial" [(ngModel)]="backuptype" (change)="isEnabled()" id="diff"><br>
+      </div>
+      <div *ngIf="backuptype=='Incremental'||backuptype=='Differencial'">
+        Full backup after every: <input type="number" class="BasicInput" style="margin: 10px; max-width: 80px;" [(ngModel)]="fullBackupAfter">
+        Backup by: 
+        <select class="basicSelect" [(ngModel)]="followupTo" style="width: 250px"> 
+            <option value="undefined" id="optionRar">Do a full backup first</option> 
+            <option *ngFor="let element of data.Data.tbCompletedTasks.data" >Completed task id: {{element.Id}}</option>
+          </select>
       </div>
       <hr>
       <!--Sources-->
       <div>
         <div id="sourceType">
           <strong>Source Type:</strong>
-          Local <input type="radio" class="basicRadio" id="sourceLocal" name="sourceType" value="Local" [(ngModel)]="sourcetype">
-          MySQL <input type="radio" class="basicRadio" id="sourceDbMY" name="sourceType" value="MySQL" [(ngModel)]="sourcetype"> 
-          MsSQL <input type="radio" class="basicRadio" id="sourceDbMS" name="sourceType" value="MsSQL" [(ngModel)]="sourcetype">
+          Local <input type="radio" class="basicRadio" id="sourceLocal" name="sourceType" value="Local" [(ngModel)]="sourcetype" (change)="isEnabled()">
+          MySQL <input type="radio" class="basicRadio" id="sourceDbMY" name="sourceType" value="MySQL" [(ngModel)]="sourcetype" (change)="isEnabled()"> 
+          MsSQL <input type="radio" class="basicRadio" id="sourceDbMS" name="sourceType" value="MsSQL" [(ngModel)]="sourcetype" (change)="isEnabled()">
         </div>
         <div>
           <div *ngIf="sourcetype == 'Local'">
@@ -44,9 +52,9 @@
       <div>
         <div id="destinationSelect">
           <strong>Destination Type:</strong>
+          Local <input type="radio" class="basicRadio" name="type" id="local"[(ngModel)]="destinationtype" value="LOCAL">
           FTP <input type="radio" class="basicRadio" name="type" id="distant" [(ngModel)]="destinationtype" value="FTP">
           SFTP<input type="radio" class="basicRadio" name="type" id="sftp"[(ngModel)]="destinationtype" value="SFTP">
-          Local <input type="radio" class="basicRadio" name="type" id="local"[(ngModel)]="destinationtype" value="LOCAL">
         </div>
       <div id="ifServer">
         <div *ngIf="destinationtype != undefined">
@@ -71,6 +79,7 @@
           </div>
           <div id="dropMenuDiv" >
             <select id="dropdownRar" class="basicSelect" *ngIf="compressType=='Rar'" [(ngModel)]="compressLevel"> 
+              <option value="0" id="optionRar0">No compression</option>
               <option value="1" id="optionRar1">Fastest</option> 
               <option value="2" id="optionRar2">Fast</option> 
               <option value="3" id="optionRar3">Normal</option> 
@@ -80,8 +89,10 @@
             <select id="dropdownZip" class="basicSelect" *ngIf="compressType=='Zip'" [(ngModel)]="compressLevel">
               <option value="0" id="optionZip0">Optimal</option> 
               <option value="1" id="optionZip1">Fastest</option>
+              <option value="2" id="optionZip2">No compression</option>
             </select>  
             <select id="dropdown7zip" class="basicSelect" *ngIf="compressType=='7zip'" [(ngModel)]="compressLevel">
+              <option value="0" id="option7zip0">No compression</option>
               <option value="1" id="option7zip1">Fastest</option> 
               <option value="3" id="option7Zip2">Fast</option> 
               <option value="5" id="option7Zip3">Normal</option> 
@@ -89,7 +100,7 @@
               <option value="9" id="option7Zip5">Ultra</option> 
             </select>
           </div>
-          <p style="white-space: nowrap; line-height: 10px">Split to files (only one file if empty):<input type="number" [(ngModel)]="splitAfter" placeholder="Size in MiB" class="BasicInput" (change)="checkIfNumberValid()" style="margin: 10px; max-width: 200px;"></p>
+          <p style="white-space: nowrap; line-height: 10px">Split to files (only one file if empty):<input type="number" [(ngModel)]="splitAfter" placeholder="Size in MiB" class="BasicInput" style="margin: 10px; max-width: 200px;"></p>
         </div>
         <input type="submit" class="basicSubmit" id="AddDestLocal" value="Add destination" (click)="AddLocalDestination()"style="">
       </div>
