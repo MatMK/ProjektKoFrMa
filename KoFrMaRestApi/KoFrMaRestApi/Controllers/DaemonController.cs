@@ -110,18 +110,16 @@ namespace KoFrMaRestApi.Controllers
         [HttpPost, Route(@"api/Daemon/RegisterToken")]
         public string Register(Password password)
         {
-            string encryptedPassword;
             string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
             Bcrypter encrypt = new Bcrypter();
             using (MySqlConnection connection = WebApiConfig.Connection())
             {
-                encryptedPassword = encrypt.BcryptPasswordInBase64(password.password.ToString());
                 connection.Open();
-                mySqlCom.RegisterDaemonAndGetId(password.daemon, encryptedPassword);
+                mySqlCom.RegisterDaemonAndGetId(password.daemon, password.password);
                 mySqlCom.DaemonSeen((int)mySqlCom.GetDaemonId(password.daemon, connection), connection);
                 connection.Close();
             }
-            mySqlCom.RegisterToken(password.daemon.PC_Unique,encryptedPassword,token);
+            mySqlCom.RegisterToken(password.daemon.PC_Unique,password.password,token);
             return token;
         }
     }
