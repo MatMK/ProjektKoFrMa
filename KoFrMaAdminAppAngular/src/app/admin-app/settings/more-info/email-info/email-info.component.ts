@@ -29,21 +29,11 @@ export class EmailInfoComponent implements OnInit {
   private emailCheck : boolean;
 
   constructor(private service : ServerConnectionService, private data : Data) { 
-    /*this.service.GetMail().then(res=> {
-      this.emailCheck = res.RecieveMail
-      if(res.RecieveMail)
-      {
-        this.exceptionDates = [];
-        this.executionDates = [];
-        res.Repeating.ExecutionTimes.forEach(element => {
-          this.executionDates.push({id: this.executionDates.length, date: element, time: i})
-        });
-      }
-    })*/
+    this.service.GetMail().then(res => console.log(res));
   }
   Apply()
   {
-    var email : EditEmailRequest = new EditEmailRequest()
+    var email : EditEmailRequest = new EditEmailRequest("EditEmailRequest",null,null)
     email.RecieveMail = this.emailCheck;
     if(this.emailCheck)
     {
@@ -76,7 +66,6 @@ export class EmailInfoComponent implements OnInit {
       email.Repeating.RepeatTill = this.sendTill;
       email.Repeating.Repeating = this.send * this.sendEvery;
     }
-    console.log(email);
     this.service.ChangeEmail(email)
   }
   parseDate(date : Date, time : Time) : Date

@@ -170,7 +170,7 @@ namespace KoFrMaRestApi.MySqlCom
                 connection.Open();
                 foreach (var item in tasks)
                 {
-                    using (MySqlCommand command = new MySqlCommand("INSERT INTO `tbTasks` VALUES (null, @DaemonId, @Task, @DateOfCompletion,@BackupType, @Repeating,0)", connection))
+                    using (MySqlCommand command = new MySqlCommand("INSERT INTO `tbTasks` VALUES (null, @DaemonId, @Task, @DateOfCompletion,@BackupType,@IdPreviousTask, @BackupTypePlan,@Repeating,0)", connection))
                     {
                         TaskRepeating taskRepeating = new TaskRepeating()
                         {
@@ -202,7 +202,9 @@ namespace KoFrMaRestApi.MySqlCom
                         command.Parameters.AddWithValue("@Task", JsonSerializationUtility.Serialize(task));
                         command.Parameters.AddWithValue("@DateOfCompletion", taskRepeating.ExecutionTimes[0]);
                         command.Parameters.AddWithValue("@Repeating", Repeating);
-                        command.Parameters.AddWithValue("@BackupType", item.FullAfterBackup);
+                        command.Parameters.AddWithValue("@BackupType", item.BackupType);
+                        command.Parameters.AddWithValue("@IdPreviousTask", item.FollowupTo);
+                        command.Parameters.AddWithValue("@BackupTypePlan", item.FullAfterBackup);
                         command.ExecuteNonQuery();
                     }
                 }

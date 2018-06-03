@@ -203,6 +203,7 @@ namespace KoFrMaRestApi.MySqlCom
                     }
                 }
                 repeat = timer.TaskExtend(repeat);
+                //new task
                 Task originalTask = null;
                 Task newTask;
                 string order = "";
@@ -240,7 +241,7 @@ namespace KoFrMaRestApi.MySqlCom
                     throw new Exception("Order is undefined");
                 }
                 newTask.IDTask = sqlAdmin.NextAutoIncrement("tbTasks");
-                sqlAdmin.AlterTable(new Models.Tables.ChangeTable() { ColumnName = "RepeatInJSON", Id = taskComplete.IDTask, TableName = "tbTasks", Value = JsonSerializationUtility.Serialize(repeat) });
+                //sqlAdmin.AlterTable(new Models.Tables.ChangeTable() { ColumnName = "RepeatInJSON", Id = taskComplete.IDTask, TableName = "tbTasks", Value = JsonSerializationUtility.Serialize(repeat) });
                 TaskRemove(taskComplete);
                 /*
                 repeat.ExecutionTimes.Sort();

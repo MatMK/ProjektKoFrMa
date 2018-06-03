@@ -210,6 +210,7 @@
     <Compile Include="Models\AdminApp\PostAdmin\IRequest.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\PostAdmin.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\SetTasksRequest.cs" />
+    <Compile Include="Models\AdminApp\PostAdmin\test.cs" />
     <Compile Include="Models\AdminApp\RepeatingTasks\ExceptionDate.cs" />
     <Compile Include="Models\AdminApp\RepeatingTasks\TaskRepeatingNoTimespan.cs" />
     <Compile Include="Models\AdminApp\SetTasks.cs" />

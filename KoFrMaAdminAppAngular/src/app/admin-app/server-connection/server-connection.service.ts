@@ -307,21 +307,19 @@ export class ServerConnectionService{
     }
     ChangeEmail(email : EditEmailRequest) : Promise<string>
     {
-        this.data.Loading = true;
-        let url = this.data.ServerRootURL + "api/AdminApp/ChangeEmail";
-        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,email);
-        return this.http.post(url,postAdmin).toPromise()
-            .then(res => 
-                {
-                    this.data.Loading = false
-                    return res.json();
-                })
-            .catch(msg => 
-                {
-                    this.data.Loading = false;
-                    this.report.handleError(msg);
-                    throw new Error();
-                })
+        let url = this.data.ServerRootURL + "api/AdminApp/test";
+        return this.http.post(url,"eeee").toPromise()
+                        .then(res => 
+                            {
+                                //this.data.Loading = false
+                                return res.json();
+                            })
+                        .catch(msg => 
+                            {
+                                //this.data.Loading = false;
+                                this.report.handleError(msg);
+                                return null;
+                            })
     }
     GetMail() : Promise<EditEmailRequest>
     {

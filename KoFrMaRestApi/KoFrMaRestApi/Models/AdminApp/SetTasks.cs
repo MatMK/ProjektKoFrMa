@@ -68,5 +68,12 @@ namespace KoFrMaRestApi.Models.AdminApp
         /// Id of a backup journal
         /// </summary>
         public int? BackupJournalCompletedTaskId { get; set; }
+        /// <summary>
+        /// 0 - Full
+        /// 1 - Incremental
+        /// 2 - Differencial
+        /// </summary>
+        public int BackupType { get; set; }
+        public int FollowupTo { get; set; }
     }
 }

@@ -103,15 +103,13 @@ namespace KoFrMaRestApi.Models.Tables
                     {
                         while (reader.Read())
                         {
-                            tb.Add(new tbTasks()
-                            {
-                                Id = (int)reader["Id"],
-                                IdDaemon = (int)reader["IdDaemon"],
-                                Task = (string)reader["Task"],
-                                TimeOfExecution = (DateTime)reader["TimeOfExecution"],
-                                RepeatInJSON = (object)reader["RepeatInJSON"] == (object)DBNull.Value ? null : (string)reader["RepeatInJSON"],
-                                Completed = Convert.ToBoolean(reader["Completed"])
-                            });
+                            tb.Add(new tbTasks());
+                            tb.Last().Id = (int)reader["Id"];
+                            tb.Last().IdDaemon = (int)reader["IdDaemon"];
+                            tb.Last().Task = (string)reader["Task"];
+                            tb.Last().TimeOfExecution = (DateTime)reader["TimeOfExecution"];
+                            tb.Last().RepeatInJSON = (object)reader["RepeatInJSON"] == (object)DBNull.Value ? null : (string)reader["RepeatInJSON"];
+                            tb.Last().Completed = Convert.ToBoolean(reader["Completed"]);
                         }
                     }
                 }

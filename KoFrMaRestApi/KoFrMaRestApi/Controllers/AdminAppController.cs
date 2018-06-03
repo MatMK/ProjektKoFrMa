@@ -409,6 +409,12 @@ namespace KoFrMaRestApi.Controllers
             else
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
+        [HttpPost, Route("api/AdminApp/test")]
+        public void Test(string request)
+        {
+            int i = 0;
+            i++;
+        }
         [HttpPost, Route("api/AdminApp/GetEmail")]
         public EditEmailRequest GetEmail(AdminInfo adminInfo)
         {

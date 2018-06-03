@@ -23,4 +23,6 @@ export class SetTask {
     TemporaryFolderMaxBuffer: number;
     FullAfterBackup : string;
     BackupJournalCompletedTaskId : number;
+    BackupType : number;
+    FollowupTo : number;
 }

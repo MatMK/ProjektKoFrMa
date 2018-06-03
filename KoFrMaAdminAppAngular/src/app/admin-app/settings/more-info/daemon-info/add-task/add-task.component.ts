@@ -94,7 +94,7 @@ export class AddTaskComponent
 
   constructor(private activeRoute:ActivatedRoute, private service : ServerConnectionService, private renderer: Renderer2, private router : Router, private data : Data) {
     if(this.data.Data.tbCompletedTasks.data.length == 0)  
-      this.service.RefreshData([4])
+      this.service.RefreshData([2,4])
     this.activeRoute.params.subscribe(params => {
       this.daemonId = params.daemonid;
       this.checkIfNumberValid(false);
@@ -143,32 +143,7 @@ export class AddTaskComponent
       }
 
       let newTask : SetTask = new SetTask()
-      if(this.backuptype != "Full" && this.fullBackupAfter != undefined && this.fullBackupAfter > 0)
-      {
-        newTask.FullAfterBackup = "";
-        if(this.followupTo == undefined)
-        {
-          newTask.FullAfterBackup = "0";
-        }
-        for (let i = 0; i < this.fullBackupAfter; i++) {
-          newTask.FullAfterBackup += this.backuptype == "Incremental"?"1":"2"
-        }
-        if(this.followupTo != undefined)
-          newTask.FullAfterBackup += "0";
-
-      }
-      else if(this.backuptype != "Full")
-      {
-        newTask.FullAfterBackup += this.backuptype == "Incremental"?"1":"2"
-      }
-      else
-      {
-        newTask.FullAfterBackup = "0";
-      }
-      newTask.DaemonId = this.daemonId;
-      newTask.Destinations = this.destinations.filter(function( element ) {
-        return element !== undefined;
-      });
+      
       newTask.Sources = this.getSource(this.sourcetype, this.backuptype)
       if(newTask.Sources==undefined)
       {
@@ -259,7 +234,40 @@ export class AddTaskComponent
       {
         newTask.LogLevel = 7;
       }
+      //BackupType
+      
+      if(this.backuptype !="Full")
+      {
+        newTask.FullAfterBackup = "";
+        if(this.followupTo == undefined)
+        {
+          newTask.FullAfterBackup += "0";
+        }
+        if(this.fullBackupAfter != undefined && this.fullBackupAfter != 0)
+        {
+          for (let index = 0; index < this.fullBackupAfter; index++) {
+            newTask.FullAfterBackup += this.backuptype == "Incremental"?"1":"2";
+          }
+          if(this.followupTo != undefined)
+          {
+            newTask.FullAfterBackup += "0";
+          }
+        }
+        else
+          newTask.FullAfterBackup = newTask.FullAfterBackup += this.backuptype == "Incremental"?"1":"2";
+        
+      }
+      newTask.DaemonId = this.daemonId;
+      newTask.Destinations = this.destinations.filter(function( element ) {
+        return element !== undefined;
+      });
+      newTask.FollowupTo = this.followupTo;
+      if (this.backuptype == "Full")
+        newTask.BackupType = 0;
+      else
+        newTask.BackupType = this.backuptype == "Incremental"?1:2;
       console.log(newTask);
+      console.log(this)
       this.service.SetTask([newTask])//.then(res => this.service.RefreshData([3]))
       //this.router.navigate(['backup', 'app','tasks']);
     }

@@ -3,7 +3,10 @@
     <!--Left side-->
     <div style="float: left;width: 45%; max-height:710px; overflow: auto;">
       <h2>Backup settings</h2>
-      <strong>Daemon id:</strong><input type="number" min="0" id="daemonId" [(ngModel)]="daemonId"  class="BasicInput" (change)="checkIfNumberValid()" style="margin: 10px; max-width: 200px;">
+      <strong>Daemon id:</strong>
+      <select class="basicSelect" [(ngModel)]="daemonId" style="width: 250px"> 
+        <option *ngFor="let element of data.Data.tbDaemons.data" >{{element.Id}}</option>
+      </select>
       <hr>
       <div id="backupType"><strong>Backup Type:</strong>
         Full<input type="radio" class="basicRadio" name="buChoice" value="Full" [(ngModel)]="backuptype" (change)="isEnabled()" id="full">  
@@ -15,7 +18,7 @@
         Backup by: 
         <select class="basicSelect" [(ngModel)]="followupTo" style="width: 250px"> 
             <option value="undefined" id="optionRar">Do a full backup first</option> 
-            <option *ngFor="let element of data.Data.tbCompletedTasks.data" >Completed task id: {{element.Id}}</option>
+            <option *ngFor="let element of data.Data.tbCompletedTasks.data" value="{{element.Id}}" >Completed task id: {{element.Id}}</option>
           </select>
       </div>
       <hr>

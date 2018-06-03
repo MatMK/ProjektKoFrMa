@@ -6,7 +6,7 @@ using System.Web;
 
 namespace KoFrMaRestApi.Models.AdminApp.PostAdmin
 {
-    public class EditEmailRequest
+    public class EditEmailRequest : IRequest
     {
         public bool RecieveMail { get; set; }
         public TaskRepeatingNoTimespan Repeating { get; set; }
