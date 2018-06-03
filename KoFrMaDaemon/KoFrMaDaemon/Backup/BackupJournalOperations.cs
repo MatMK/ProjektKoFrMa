@@ -74,18 +74,27 @@ namespace KoFrMaDaemon.Backup
 
 
                 debugLog.WriteToLog("Writing backup journal to disk...", 7);
-                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\");
+
                 w1 = new StreamWriter(pathToJournalFile);
-                w2 = new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\"+TaskID.ToString()+".dat",false);
                 for (int i = 0; i < tmpList.Count; i++)
                 {
                     w1.WriteLine(tmpList[i]);
-                    w2.WriteLine(tmpList[i]);
                 }
                 w1.Close();
                 w1.Dispose();
-                w2.Close();
-                w2.Dispose();
+
+                if (TaskID >0)
+                {
+                    Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\");
+                    File.Copy(pathToJournalFile, Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\" + TaskID.ToString() + ".dat", true);
+                    //w2 = new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\KoFrMa\journalcache\" + TaskID.ToString() + ".dat", false);
+                    //for (int i = 0; i < tmpList.Count; i++)
+                    //{
+                    //    w2.WriteLine(tmpList[i]);
+                    //}
+                    //w2.Close();
+                    //w2.Dispose();
+                }
             }
             catch (Exception ex)
             {

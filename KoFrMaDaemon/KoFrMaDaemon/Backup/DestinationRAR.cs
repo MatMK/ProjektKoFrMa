@@ -23,7 +23,7 @@ namespace KoFrMaDaemon.Backup
         public byte CompressionLevel { get; set; }
 
         /// <summary>
-        /// After what number of MiBs will be the archive split (optional, if not entered or null archive won't be split)
+        /// After what number of MBs will be the archive split (optional, if not entered or null archive won't be split)
         /// </summary>
         public int? SplitAfter { get; set; }
     }

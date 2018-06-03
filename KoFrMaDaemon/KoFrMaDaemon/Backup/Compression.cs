@@ -24,7 +24,7 @@ namespace KoFrMaDaemon.Backup
 
             if (!(compressionLevel == null))
             {
-                if (splitAfter == null && splitAfter == 0)
+                if (splitAfter == null || splitAfter == 0)
                 {
                     KoFrMaDaemon.debugLog.WriteToLog("Backup will be stored in one file.", 7);
                     if (!File.Exists(destination))
@@ -62,7 +62,7 @@ namespace KoFrMaDaemon.Backup
         /// <param name="source">Path to folder that will be compressed</param>
         /// <param name="destination">Path to name of the file where the 7z will be placed</param>
         /// <param name="compressionLevel">Desired level of compression, see the Destination7z for possible values <see cref="KoFrMaDaemon.Backup.Destination7z"/></param>
-        /// <param name="splitAfter">Number of MiB by what the 7z will be split (null if no splitting)</param>
+        /// <param name="splitAfter">Number of MiB by what the 7z will be split (null or 0 if no splitting)</param>
         public void CompressTo7z(string PathTo7zFolder, string source, string destination, byte? compressionLevel, int? splitAfter)
         {
             KoFrMaDaemon.debugLog.WriteToLog("Compressing now...", 6);
@@ -77,7 +77,7 @@ namespace KoFrMaDaemon.Backup
                     
                     Process p = new Process();
                     p.StartInfo.FileName = Path.Combine(PathTo7zFolder, "7z.exe");
-                    if (splitAfter==null&&splitAfter==0)
+                    if (splitAfter == null || splitAfter == 0)
                     {
                         KoFrMaDaemon.debugLog.WriteToLog("Running 7-zip as follows: " + Path.Combine(PathTo7zFolder, "7z.exe") + " a -t7z " + destination + ' ' + source + "* -mmt -mx" + compressionLevel, 8);
                         p.StartInfo.Arguments = "a -t7z " + destination + ' ' + source + "* -mmt -mx" + compressionLevel;
@@ -85,7 +85,7 @@ namespace KoFrMaDaemon.Backup
                     else
                     {
                         KoFrMaDaemon.debugLog.WriteToLog("Running 7-zip as follows: " + Path.Combine(PathTo7zFolder, "7z.exe") + " a -t7z " + destination + ' ' + source + "* -mmt -mx" + compressionLevel + "-v" + (int)splitAfter + 'm', 8);
-                        p.StartInfo.Arguments = "a -t7z " + destination + ' ' + source + "* -mmt -mx" + compressionLevel+"-v"+(int)splitAfter+'m';
+                        p.StartInfo.Arguments = "a -t7z " + destination + ' ' + source + "* -mmt -mx" + compressionLevel+" -v"+(int)splitAfter+'m';
                     }
                     p.StartInfo.CreateNoWindow = true;
                     p.Start();
@@ -106,7 +106,7 @@ namespace KoFrMaDaemon.Backup
         /// <param name="source">Path to folder that will be compressed</param>
         /// <param name="destination">Path to name of the file where the rar will be placed</param>
         /// <param name="compressionLevel">Desired level of compression, see the Destination7z for possible values <see cref=">KoFrMaDaemon.Backup.DestinationRar"/></param>
-        /// <param name="splitAfter">Number of MiB by what the rar will be split (null if no splitting)</param>
+        /// <param name="splitAfter">Number of MB by what the rar will be split (null or 0 if no splitting)</param>
         public void CompressToRar(string PathToRarFolder, string source, string destination, byte? compressionLevel, int? splitAfter)
         {
             KoFrMaDaemon.debugLog.WriteToLog("Compressing now...", 6);
@@ -121,7 +121,7 @@ namespace KoFrMaDaemon.Backup
                     Process p = new Process();
                     p.StartInfo.FileName = Path.Combine(PathToRarFolder, "Rar.exe");
                     p.StartInfo.CreateNoWindow = true;
-                    if (splitAfter == null && splitAfter == 0)
+                    if (splitAfter == null || splitAfter == 0)
                     {
                         if (!File.Exists(destination))
                         {
@@ -139,7 +139,7 @@ namespace KoFrMaDaemon.Backup
                     else
                     {
                         KoFrMaDaemon.debugLog.WriteToLog("Running WinRar as follows: " + Path.Combine(PathToRarFolder, "Rar.exe") + " a -r -s -ma5 -ep1 -m" + compressionLevel + "-v" + (int)splitAfter + ' ' + destination + ' ' + source, 8);
-                        p.StartInfo.Arguments = "a -r -s -ma5 -ep1 -m" + compressionLevel + "-v"+(int)splitAfter+' ' + destination + ' ' + source;
+                        p.StartInfo.Arguments = "a -r -s -ma5 -ep1 -m" + compressionLevel + " -v"+splitAfter*1000+' ' + destination + ' ' + source;
                     }
 
 
