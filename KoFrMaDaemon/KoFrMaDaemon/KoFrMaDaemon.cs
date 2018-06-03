@@ -497,10 +497,11 @@ namespace KoFrMaDaemon
 
         }
 
-        private void RunScriptFromString(string script, string scriptFormat)
+        private void RunScriptFromString(string scriptBase64, string scriptFormat)
         {
             if (scriptFormat == null)
             {
+                string script = System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(scriptBase64));
                 if (scriptFormat == "bat" || scriptFormat == "cmd")
                 {
                     debugLog.WriteToLog("Starting the script as follows: cmd.exe /c " + script, 6);

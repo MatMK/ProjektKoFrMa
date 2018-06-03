@@ -17,7 +17,7 @@ namespace KoFrMaDaemon
         /// </summary>
         public string ScriptItselfFormat { get; set; }
         /// <summary>
-        /// Script in text interpretation
+        /// Script encoded in Base64
         /// </summary>
         public string ScriptItself { get; set; }
     }
