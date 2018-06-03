@@ -370,6 +370,7 @@ namespace KoFrMaRestApi.Controllers
                         else if (((ChangeTableRequest)postAdmin.request).changeTable.ColumnName == "Email" &&
                                 ((ChangeTableRequest)postAdmin.request).changeTable.Value is string)
                         {
+                            mySqlCom.AlterTable(new ChangeTable() {ColumnName = "RecievingEmail", Id = (int)mySqlCom.GetAdminId(postAdmin.adminInfo.UserName),TableName = "tbEmailPreferences", Value = ((ChangeTableRequest)postAdmin.request).changeTable.Value}, "IdAdmin");
                             mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable);
                         }
                         else if (((ChangeTableRequest)postAdmin.request).changeTable.ColumnName == "Username" &&
@@ -408,12 +409,6 @@ namespace KoFrMaRestApi.Controllers
             }
             else
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
-        }
-        [HttpPost, Route("api/AdminApp/test")]
-        public void Test(string request)
-        {
-            int i = 0;
-            i++;
         }
         [HttpPost, Route("api/AdminApp/GetEmail")]
         public EditEmailRequest GetEmail(AdminInfo adminInfo)

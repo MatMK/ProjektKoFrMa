@@ -43,7 +43,7 @@ export class AddTaskComponent
   private compress : boolean = false;
   private compressType : string = "Rar";
   private compressLevel : number = 1;
-  private destinationtype :string;
+  private destinationtype :string ="LOCAL";
   private destinations : IDestination[] = [];
   //Source
   private srcPath : {id: number, value : string}[] = [{id: 0, value: ""}];
@@ -68,7 +68,7 @@ export class AddTaskComponent
   //Advanced
   private advanced : boolean;
   //log
-  private logLevel : number = 7;
+  private logLevel : number = 3;
   private logOptions : {id: number, value : string}[] = [{id: 0, value: "Don't create log"}, 
     {id: 1, value: "Only errors that shut down entire daemon"}, 
     {id: 2, value: "Errors that cause some process to fail"}, 
@@ -78,7 +78,7 @@ export class AddTaskComponent
     {id: 6, value: "Tracing info for every process that is likely to fail"}, 
     {id: 7, value: "Tracing info about everything program does"}, 
     {id: 8, value: "Tracing info including loop cycles"}, 
-    {id: 9, value: "Tracing info including large loop cycles that will slow down the process a lot"}, 
+    {id: 9, value: "Tracing info including large loop cycles (will slow down the process)"}, 
     {id: 10, value: "Program will be more like a log writer than actually doing the process"}]
   //scirpts
   private scriptBefore : string;
@@ -239,19 +239,12 @@ export class AddTaskComponent
       if(this.backuptype !="Full")
       {
         newTask.FullAfterBackup = "";
-        if(this.followupTo == undefined)
-        {
-          newTask.FullAfterBackup += "0";
-        }
         if(this.fullBackupAfter != undefined && this.fullBackupAfter != 0)
         {
           for (let index = 0; index < this.fullBackupAfter; index++) {
             newTask.FullAfterBackup += this.backuptype == "Incremental"?"1":"2";
           }
-          if(this.followupTo != undefined)
-          {
-            newTask.FullAfterBackup += "0";
-          }
+          newTask.FullAfterBackup += "0";
         }
         else
           newTask.FullAfterBackup = newTask.FullAfterBackup += this.backuptype == "Incremental"?"1":"2";

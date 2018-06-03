@@ -64,7 +64,7 @@ namespace KoFrMaRestApi.Models
                         if (reader["RepeatInJSON"] != DBNull.Value)
                         {
                             EmailSettings email = new EmailSettings() { EmailAddress = (string)reader["RecievingEmail"], SendOnlyFailed = Convert.ToBoolean(reader["SendOnlyFailed"]) };
-                            if (this.CorrectTime(JsonSerializationUtility.Deserialize<TaskRepeating>((string)reader["RepeatInJSON"])))
+                            if (this.CorrectTime(JsonSerializationUtility.Deserialize<TaskRepeating>((string)reader["RepeatInJSON"]), 0))
                             {
                                 //this.mail.SendEmail(email, (int)reader["IdAdmin"]);
                             }
@@ -82,7 +82,7 @@ namespace KoFrMaRestApi.Models
         /// <param name="TableName">Name of the table to edit time in</param>
         /// <param name="ColumnName">Name of the column to edit value in</param>
         /// <returns>True if it's time to execute a task</returns>
-        public bool CorrectTime(TaskRepeating taskRepeating)
+        public bool CorrectTime(TaskRepeating taskRepeating, int sendBefore)
         {
             taskRepeating.ExecutionTimes.Sort();
             if (taskRepeating.ExceptionDates != null)
@@ -96,7 +96,7 @@ namespace KoFrMaRestApi.Models
             bool eligible = false;
             foreach (DateTime item in taskRepeating.ExecutionTimes)
             {
-                if (item <= DateTime.Now && eligible == false)
+                if ((item - DateTime.Now).TotalMilliseconds< sendBefore && eligible == false)
                 {
                     eligible = true;
                     foreach (var value in taskRepeating.ExceptionDates)

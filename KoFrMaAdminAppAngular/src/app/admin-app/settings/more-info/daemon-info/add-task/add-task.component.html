@@ -9,9 +9,9 @@
       </select>
       <hr>
       <div id="backupType"><strong>Backup Type:</strong>
-        Full<input type="radio" class="basicRadio" name="buChoice" value="Full" [(ngModel)]="backuptype" (change)="isEnabled()" id="full">  
-        Incremental <input type="radio" class="basicRadio" name="buChoice" value="Incremental" [(ngModel)]="backuptype" (change)="isEnabled()" id="incr">  
-        Differencial <input type="radio" class="basicRadio" name="buChoice" value="Differencial" [(ngModel)]="backuptype" (change)="isEnabled()" id="diff"><br>
+        <input type="radio" class="basicRadio" name="buChoice" value="Full" [(ngModel)]="backuptype" (change)="isEnabled()" id="full"> Full
+        <input type="radio" class="basicRadio" name="buChoice" value="Incremental" [(ngModel)]="backuptype" (change)="isEnabled()" id="incr"> Incremental
+        <input type="radio" class="basicRadio" name="buChoice" value="Differencial" [(ngModel)]="backuptype" (change)="isEnabled()" id="diff"> Differencial<br>
       </div>
       <div *ngIf="backuptype=='Incremental'||backuptype=='Differencial'">
         Full backup after every: <input type="number" class="BasicInput" style="margin: 10px; max-width: 80px;" [(ngModel)]="fullBackupAfter">
@@ -26,9 +26,9 @@
       <div>
         <div id="sourceType">
           <strong>Source Type:</strong>
-          Local <input type="radio" class="basicRadio" id="sourceLocal" name="sourceType" value="Local" [(ngModel)]="sourcetype" (change)="isEnabled()">
-          MySQL <input type="radio" class="basicRadio" id="sourceDbMY" name="sourceType" value="MySQL" [(ngModel)]="sourcetype" (change)="isEnabled()"> 
-          MsSQL <input type="radio" class="basicRadio" id="sourceDbMS" name="sourceType" value="MsSQL" [(ngModel)]="sourcetype" (change)="isEnabled()">
+          <input type="radio" class="basicRadio" id="sourceLocal" name="sourceType" value="Local" [(ngModel)]="sourcetype" (change)="isEnabled()"> Local
+          <input type="radio" class="basicRadio" id="sourceDbMY" name="sourceType" value="MySQL" [(ngModel)]="sourcetype" (change)="isEnabled()"> MySQL
+          <input type="radio" class="basicRadio" id="sourceDbMS" name="sourceType" value="MsSQL" [(ngModel)]="sourcetype" (change)="isEnabled()"> MsSQL
         </div>
         <div>
           <div *ngIf="sourcetype == 'Local'">
@@ -55,9 +55,9 @@
       <div>
         <div id="destinationSelect">
           <strong>Destination Type:</strong>
-          Local <input type="radio" class="basicRadio" name="type" id="local"[(ngModel)]="destinationtype" value="LOCAL">
-          FTP <input type="radio" class="basicRadio" name="type" id="distant" [(ngModel)]="destinationtype" value="FTP">
-          SFTP<input type="radio" class="basicRadio" name="type" id="sftp"[(ngModel)]="destinationtype" value="SFTP">
+          <input type="radio" class="basicRadio" name="type" id="local"[(ngModel)]="destinationtype" value="LOCAL"> Local
+          <input type="radio" class="basicRadio" name="type" id="distant" [(ngModel)]="destinationtype" value="FTP"> FTP
+          <input type="radio" class="basicRadio" name="type" id="sftp"[(ngModel)]="destinationtype" value="SFTP"> SFTP
         </div>
       <div id="ifServer">
         <div *ngIf="destinationtype != undefined">
@@ -128,8 +128,6 @@
           <option *ngFor="let element of repeatOptions" value="{{element.value}}" id="optionTime" >{{element.text}}</option> 
         </select>
         <hr>
-        <strong style="margin: 5px">Repeat till: </strong><input type="datetime-local" id="repeatTill" class="basicDate" [value] = "_date" (change) = "onDateChange($event.target.value)">
-        <hr>
         <input type="submit" value="Add execution date" id="repeatAddExecutionSubmit" class="basicSubmit" (click)="AddExecutionDate()">
         <div style="max-height: 150px; overflow: auto;">
           <div *ngFor="let element of executionDates">
@@ -154,6 +152,9 @@
             </div>
           </div>
         </div>
+        <hr>
+        <strong style="margin: 5px">Repeat till: </strong><input type="datetime-local" id="repeatTill" class="basicDate" [value] = "_date" (change) = "onDateChange($event.target.value)">
+        
       </div>
       <!--Advanced options-->
       <hr>

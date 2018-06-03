@@ -307,8 +307,9 @@ export class ServerConnectionService{
     }
     ChangeEmail(email : EditEmailRequest) : Promise<string>
     {
-        let url = this.data.ServerRootURL + "api/AdminApp/test";
-        return this.http.post(url,"eeee").toPromise()
+        let url = this.data.ServerRootURL + "api/AdminApp/ChangeEmail";
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo,email);
+        return this.http.post(url,postAdmin).toPromise()
                         .then(res => 
                             {
                                 //this.data.Loading = false

@@ -67,7 +67,7 @@ namespace KoFrMaRestApi.MySqlCom
                 {
                     while (reader.Read())
                     {
-                        if (timer.CorrectTime(JsonSerializationUtility.Deserialize<TaskRepeating>((string)reader["RepeatInJSON"])))
+                        if (timer.CorrectTime(JsonSerializationUtility.Deserialize<TaskRepeating>((string)reader["RepeatInJSON"]), 2147483647))
                         {
                             result.Add(JsonSerializationUtility.Deserialize<Task>((string)reader["Task"]));
                             result.Last().IDTask = (int)reader["Id"];
@@ -150,7 +150,7 @@ namespace KoFrMaRestApi.MySqlCom
                         debugLog += item + "\n";
                     }
                 }
-                using (MySqlCommand command = new MySqlCommand($"INSERT INTO `tbTasksCompleted`VALUES (null,{GetDaemonId(taskComplete.DaemonInfo, connection)},{taskComplete.IDTask},'{JsonSerializationUtility.Serialize(taskComplete.DatFile)}',@datetime,'{debugLog}',{taskComplete.IsSuccessfull})", connection))
+                using (MySqlCommand command = new MySqlCommand($"INSERT INTO `tbTasksCompleted` VALUES (null,{GetDaemonId(taskComplete.DaemonInfo, connection)},{taskComplete.IDTask},'{JsonSerializationUtility.Serialize(taskComplete.DatFile)}',@datetime,'{debugLog}',{taskComplete.IsSuccessfull},0)", connection))
                 {
                     command.Parameters.AddWithValue("@datetime", taskComplete.TimeOfCompletition);
                     command.ExecuteNonQuery();
@@ -208,7 +208,6 @@ namespace KoFrMaRestApi.MySqlCom
                 Task newTask;
                 string order = "";
                 //BackupType: 0=Full, 1=Incr, 2=Diff
-                byte backupType = 0;
                 int previousTaskID = 0;
                 using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbTasks` WHERE `Id` = @id", connection))
                 {
@@ -219,7 +218,6 @@ namespace KoFrMaRestApi.MySqlCom
                         {
                             originalTask = JsonSerializationUtility.Deserialize<Task>((string)reader["Task"]);
                             order = (string)reader["BackupTypePlan"];
-                            backupType = (byte)reader["BackupType"];
                             previousTaskID = (int)reader["IDPreviousTask"];
                         }
                     }
@@ -229,12 +227,11 @@ namespace KoFrMaRestApi.MySqlCom
                     throw new Exception("Task " + taskComplete.IDTask + "cannot be found in database");
                 }
 
+                TaskRemove(taskComplete);
 
                 string newOrder = "";
-                for (int i = 1; i < order.Length+1; i++)
-                {
-                    newOrder += order[i % (order.Length-1)];
-                }
+                newOrder += order.Substring(1,order.Length-1);
+                newOrder += order[0];
 
                 int previousTaskIDLast = previousTaskID;
                 ISource[] previousTasksSources = new ISource[newOrder.Length];
@@ -243,7 +240,7 @@ namespace KoFrMaRestApi.MySqlCom
                 //Dictionary<int, string> previousTasksData = new Dictionary<int, string>(order.Length);
                 for (int i = 0; i < newOrder.Length; i++)
                 {
-                    using (MySqlCommand command = new MySqlCommand("SELECT Task, PreviousTaskID FROM `tbTasks` WHERE `Id` = " + previousTaskIDLast, connection))
+                    using (MySqlCommand command = new MySqlCommand("SELECT Task, IdPreviousTask FROM `tbTasks` WHERE `Id` = " + previousTaskIDLast, connection))
                     {
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
@@ -252,10 +249,9 @@ namespace KoFrMaRestApi.MySqlCom
                                 //previousTasksTypes.Add((int)reader["PreviousTaskID"], (byte)reader["BackupType"]);
                                 previousTasksSources[i] = JsonSerializationUtility.Deserialize<Task>((string)reader["Task"]).Sources;
                                 previousTasksIds[i] = previousTaskIDLast;
-                                previousTaskIDLast = (int)reader["PreviousTaskID"];
+                                previousTaskIDLast = (int)reader["IdPreviousTask"];
                             }
                         }
-
                     }
                 }
 
@@ -277,7 +273,14 @@ namespace KoFrMaRestApi.MySqlCom
                         }
                         if (newOrder[0] == '1')
                         {
-                            using (MySqlCommand command = new MySqlCommand("SELECT c.BackupJournal FROM tbTasksCompleted c INNER JOIN tbTasks t on t.ID = c.IdTask WHERE t.ID = " + previousTasksIds[newOrder.Length-1], connection))
+                            int lastID = previousTasksIds[newOrder.Length - 1];
+                            int i = 0;
+                            while (lastID==0)
+                            {
+                                lastID = previousTasksIds[newOrder.Length -1- i];
+                                i++;
+                            }
+                            using (MySqlCommand command = new MySqlCommand("SELECT BackupJournal FROM tbTasksCompleted WHERE IdTask = " + previousTasksIds[lastID], connection))
                             {
                                 using (MySqlDataReader reader = command.ExecuteReader())
                                 {
@@ -292,11 +295,19 @@ namespace KoFrMaRestApi.MySqlCom
                         }
                         if (newOrder[0]=='2')
                         {
+                            
                             for (int i = newOrder.Length - 1; i > 0; i--)
                             {
+                                int lastID = previousTasksIds[i];
+                                int y = 1;
+                                while (lastID == 0)
+                                {
+                                    lastID = previousTasksIds[i] - y;
+                                    y++;
+                                }
                                 if (newOrder[i] == '0')
                                 {
-                                    using (MySqlCommand command = new MySqlCommand("SELECT c.BackupJournal FROM tbTasksCompleted c INNER JOIN tbTasks t on t.ID = c.IdTask WHERE t.ID = " + previousTasksIds[i], connection))
+                                    using (MySqlCommand command = new MySqlCommand("SELECT BackupJournal FROM tbTasksCompleted WHERE IdTask = " + previousTasksIds[i], connection))
                                     {
                                         using (MySqlDataReader reader = command.ExecuteReader())
                                         {
@@ -318,21 +329,19 @@ namespace KoFrMaRestApi.MySqlCom
                 {
                     throw new Exception("Order is undefined");
                 }
-
-
-
-
-
-
-
-
-
-
-
-
                 newTask.IDTask = sqlAdmin.NextAutoIncrement("tbTasks");
-                //sqlAdmin.AlterTable(new Models.Tables.ChangeTable() { ColumnName = "RepeatInJSON", Id = taskComplete.IDTask, TableName = "tbTasks", Value = JsonSerializationUtility.Serialize(repeat) });
-                TaskRemove(taskComplete);
+                sqlAdmin.AlterTable(new Models.Tables.ChangeTable() { ColumnName = "RepeatInJSON", Id = taskComplete.IDTask, TableName = "tbTasks", Value = JsonSerializationUtility.Serialize(repeat) });
+                using (MySqlCommand command = new MySqlCommand("INSERT INTO `tbTasks`(`IdDaemon`, `Task`, `TimeOfExecution`, `IdPreviousTask`, `BackupTypePlan`, `RepeatInJSON`, `Completed`)" +
+                    " VALUES (@IdDaemon, @Task, @TimeOfExecution, @IdPreviousTask, @BackupPlan, @Repeat, 0 )", connection))
+                {
+                    command.Parameters.AddWithValue("@IdDaemon", GetDaemonId(taskComplete.DaemonInfo,connection));
+                    command.Parameters.AddWithValue("@Task", JsonSerializationUtility.Serialize(newTask));
+                    command.Parameters.AddWithValue("@TimeOfExecution", repeat.ExecutionTimes[0]);
+                    command.Parameters.AddWithValue("@Repeat", JsonSerializationUtility.Serialize(repeat));
+                    command.Parameters.AddWithValue("@IdPreviousTask", taskComplete.IDTask);
+                    command.Parameters.AddWithValue("@BackupPlan", newOrder);
+                    command.ExecuteNonQuery();
+                }
                 /*
                 repeat.ExecutionTimes.Sort();
                 DateTime nextDate = repeat.ExecutionTimes.Last();

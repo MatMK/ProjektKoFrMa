@@ -39,6 +39,8 @@ namespace KoFrMaRestApi.Models
                     return typeof(ExistsRequest);
                 case "ChangePasswordRequest":
                     return typeof(ChangePasswordRequest);
+                case "EditEmailRequest":
+                    return typeof(EditEmailRequest);
 
                 //Task
                 case "Destination7z":

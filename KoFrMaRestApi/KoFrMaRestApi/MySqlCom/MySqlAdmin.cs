@@ -45,7 +45,7 @@ namespace KoFrMaRestApi.MySqlCom
                     {
                         throw new Exception("No admin with this username");
                     }
-                    if(NumberOfAdmins > 1)
+                    if (NumberOfAdmins > 1)
                     {
                         throw new Exception("Multiple admin accounts with the same username");
                     }
@@ -170,7 +170,7 @@ namespace KoFrMaRestApi.MySqlCom
                 connection.Open();
                 foreach (var item in tasks)
                 {
-                    using (MySqlCommand command = new MySqlCommand("INSERT INTO `tbTasks` VALUES (null, @DaemonId, @Task, @DateOfCompletion,@BackupType,@IdPreviousTask, @BackupTypePlan,@Repeating,0)", connection))
+                    using (MySqlCommand command = new MySqlCommand("INSERT INTO `tbTasks` VALUES (null, @DaemonId, @Task, @DateOfCompletion,@IdPreviousTask, @BackupTypePlan,@Repeating,0)", connection))
                     {
                         TaskRepeating taskRepeating = new TaskRepeating()
                         {
@@ -193,7 +193,7 @@ namespace KoFrMaRestApi.MySqlCom
                             TimeToBackup = taskRepeating.ExecutionTimes[0]
                         };
                         dynamic Repeating;
-                        
+
                         if (item.ExecutionTimes != null)
                             Repeating = JsonSerializationUtility.Serialize(taskRepeating);
                         else
@@ -202,7 +202,6 @@ namespace KoFrMaRestApi.MySqlCom
                         command.Parameters.AddWithValue("@Task", JsonSerializationUtility.Serialize(task));
                         command.Parameters.AddWithValue("@DateOfCompletion", taskRepeating.ExecutionTimes[0]);
                         command.Parameters.AddWithValue("@Repeating", Repeating);
-                        command.Parameters.AddWithValue("@BackupType", item.BackupType);
                         command.Parameters.AddWithValue("@IdPreviousTask", item.FollowupTo);
                         command.Parameters.AddWithValue("@BackupTypePlan", item.FullAfterBackup);
                         command.ExecuteNonQuery();
@@ -242,6 +241,17 @@ namespace KoFrMaRestApi.MySqlCom
             using (MySqlConnection connection = WebApiConfig.Connection())
             using (MySqlCommand command = new MySqlCommand($"UPDATE `{changeTable.TableName}` SET `{changeTable.ColumnName}` = @Value WHERE `Id` = {changeTable.Id};", connection))
             {
+                connection.Open();
+                command.Parameters.AddWithValue("@Value", changeTable.Value);
+                command.ExecuteNonQuery();
+            }
+        }
+        public void AlterTable(ChangeTable changeTable, string IdColumnName)
+        {
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand($"UPDATE `{changeTable.TableName}` SET `{changeTable.ColumnName}` = @Value WHERE {IdColumnName} = {changeTable.Id};", connection))
+            {
+
                 connection.Open();
                 command.Parameters.AddWithValue("@Value", changeTable.Value);
                 command.ExecuteNonQuery();
@@ -389,23 +399,22 @@ namespace KoFrMaRestApi.MySqlCom
         public void UpdateEmail(int AdminId, EditEmailRequest email)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
-            using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbEmailPreferences` WHERE `Id` = " + AdminId, connection))
+            using (MySqlCommand command = new MySqlCommand("DELETE FROM `tbEmailPreferences` WHERE `IdAdmin` = " + AdminId, connection))
             {
                 connection.Open();
-                if (email.RecieveMail == false)
+                command.ExecuteNonQuery();
+                if (email.RecieveMail)
                 {
-                    command.CommandText = "DELETE FROM `tbEmailPreferences` WHERE `Id` = " + AdminId;
-                }
-                else
-                {
-                    if (command.ExecuteNonQuery() == 0)
+                    TaskRepeating rep = new TaskRepeating()
                     {
-                        command.CommandText = $"INSERT INTO `tbEmailPreferences`(`IdAdmin`, `RepeatInJSON`, `RecievingEmail`) VALUES (1,{JsonSerializationUtility.Serialize(email.Repeating)},{GetAdminEmail(AdminId)})";
-                    }
-                    else
-                    {
-                        command.CommandText = $"UPDATE `tbEmailPreferences` SET `RepeatInJSON`=[value-4] WHERE `IdAdmin` = " + AdminId;
-                    }
+                        ExceptionDates = email.Repeating.ExceptionDates,
+                        ExecutionTimes = email.Repeating.ExecutionTimes,
+                        Repeating = new TimeSpan(0,0,email.Repeating.Repeating),
+                        RepeatTill = email.Repeating.RepeatTill
+                    };
+                    command.CommandText = $"INSERT INTO `tbEmailPreferences`(`IdAdmin`, `RepeatInJSON`, `RecievingEmail`) VALUES ({AdminId},@repeating,@email)";
+                    command.Parameters.AddWithValue("@repeating", JsonSerializationUtility.Serialize(email.Repeating));
+                    command.Parameters.AddWithValue("@email", GetAdminEmail(AdminId));
                     command.ExecuteNonQuery();
                 }
             }
@@ -413,7 +422,7 @@ namespace KoFrMaRestApi.MySqlCom
         private string GetAdminEmail(int Id)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
-            using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbAdminAccounts` WHERE `Id` = " + Id , connection))
+            using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbAdminAccounts` WHERE `Id` = " + Id, connection))
             {
                 connection.Open();
                 using (MySqlDataReader reader = command.ExecuteReader())
