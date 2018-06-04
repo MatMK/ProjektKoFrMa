@@ -30,11 +30,12 @@ import { ExceptionDate } from '../../../../server-connection/models/communicatio
 })
 export class AddTaskComponent  
 {
-  private daemonId : number;
+  private daemonId : number = undefined;
   //Backuptype
   private backuptype : string = "Full";
   private fullBackupAfter : number;
   private followupTo : number;
+  private customOrder : string;
   //Destinations
   private ncUsername : string;
   private ncPassword : string;
@@ -93,8 +94,7 @@ export class AddTaskComponent
   private temporaryFolderMaxBuffer : number;
 
   constructor(private activeRoute:ActivatedRoute, private service : ServerConnectionService, private renderer: Renderer2, private router : Router, private data : Data) {
-    if(this.data.Data.tbCompletedTasks.data.length == 0)  
-      this.service.RefreshData([2,4])
+    this.service.RefreshData([2,4])
     this.activeRoute.params.subscribe(params => {
       this.daemonId = params.daemonid;
       this.checkIfNumberValid(false);
@@ -236,7 +236,7 @@ export class AddTaskComponent
       }
       //BackupType
       
-      if(this.backuptype !="Full")
+      if(this.backuptype =="Incremental" || this.backuptype == "Differencial")
       {
         newTask.FullAfterBackup = "";
         if(this.fullBackupAfter != undefined && this.fullBackupAfter != 0)
@@ -248,7 +248,32 @@ export class AddTaskComponent
         }
         else
           newTask.FullAfterBackup = newTask.FullAfterBackup += this.backuptype == "Incremental"?"1":"2";
-        
+      }
+      else if(this.backuptype == "Full")
+      {
+        newTask.FullAfterBackup = "0";
+      }
+      else if(this.backuptype = "Custom")
+      {
+        if(this.customOrder == undefined || this.customOrder.length == 0)
+        {
+          alert("Please fill in order type")
+          return;
+        }
+        for (let i = 0; i < this.customOrder.length; i++) {
+          console.log(this.customOrder[i])
+          if(this.customOrder[i] != '0' && this.customOrder[i] != '1' && this.customOrder[i] != '2')
+          {
+            alert("Char " + this.customOrder[i] + " is not valid for this field");
+            return;
+          }
+        }
+        newTask.FullAfterBackup = this.customOrder
+      }
+      else
+      {
+        alert("No backup type selected")
+        return;
       }
       newTask.DaemonId = this.daemonId;
       newTask.Destinations = this.destinations.filter(function( element ) {
@@ -267,7 +292,7 @@ export class AddTaskComponent
   }
   isEnabled()
   {
-    if(this.backuptype == "Incremental" || this.backuptype == "Differencial")
+    if(this.backuptype == "Incremental" || this.backuptype == "Differencial" || this.backuptype == "Custom")
     {
       document.getElementById("sourceDbMY").setAttribute("disabled", "true")
       document.getElementById("sourceDbMS").setAttribute("disabled", "true")
@@ -282,12 +307,14 @@ export class AddTaskComponent
     {
       document.getElementById("incr").setAttribute("disabled", "true")
       document.getElementById("diff").setAttribute("disabled", "true")
+      document.getElementById("custom").setAttribute("disabled", "true")
       this.backuptype = "Full"
     }
     else
     {
       document.getElementById("incr").removeAttribute("disabled")
       document.getElementById("diff").removeAttribute("disabled")
+      document.getElementById("custom").removeAttribute("disabled")
     }
   }
   parseDate(date : Date, time : Time) : Date

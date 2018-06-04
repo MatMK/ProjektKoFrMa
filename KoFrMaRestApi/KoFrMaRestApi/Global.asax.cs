@@ -13,6 +13,9 @@ namespace KoFrMaRestApi
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+        /// <summary>
+        /// Gets called on the application start
+        /// </summary>
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -21,7 +24,7 @@ namespace KoFrMaRestApi
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             KoFrMaRestApi.Models.TimerClass timer = KoFrMaRestApi.Models.TimerClass.GetInstance();
-            //timer.StartTimer();
+            timer.StartTimer();
         }
     }
 }

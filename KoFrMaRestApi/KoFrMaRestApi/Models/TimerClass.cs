@@ -52,7 +52,6 @@ namespace KoFrMaRestApi.Models
         }
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
-
             using (MySqlConnection connection = WebApiConfig.Connection())
             using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbEmailPreferences`", connection))
             {
@@ -66,7 +65,7 @@ namespace KoFrMaRestApi.Models
                             EmailSettings email = new EmailSettings() { EmailAddress = (string)reader["RecievingEmail"], SendOnlyFailed = Convert.ToBoolean(reader["SendOnlyFailed"]) };
                             if (this.CorrectTime(JsonSerializationUtility.Deserialize<TaskRepeating>((string)reader["RepeatInJSON"]), 0))
                             {
-                                //this.mail.SendEmail(email, (int)reader["IdAdmin"]);
+                                this.mail.SendEmail(email, (int)reader["IdAdmin"]);
                             }
                             TaskExtendDatabase(JsonSerializationUtility.Deserialize<TaskRepeating>((string)reader["RepeatInJSON"]), (int)reader["id"], "tbEmailPreferences", "RepeatInJSON");
                         }

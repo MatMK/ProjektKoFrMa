@@ -95,7 +95,7 @@ namespace KoFrMaRestApi.Models.Tables
             try
             {
                 using (MySqlConnection connection = WebApiConfig.Connection())
-                using (MySqlCommand command = new MySqlCommand(@"select * from tbTasks", connection))
+                using (MySqlCommand command = new MySqlCommand(@"select * from tbTasks where Completed = 0", connection))
                 {
                     connection.Open();
 

@@ -40,6 +40,7 @@ namespace KoFrMaRestApi.Models
                 }
                 foreach (int item in toInsert)
                 {
+                    command.Parameters.Clear();
                     command.CommandText = $"INSERT INTO `tbRestApiExceptionsAdminNOTNotified`(IdRestApiExceptions, IdAdmin) VALUES({Id},@Item)";
                     command.Parameters.AddWithValue("@Item", item);
                     command.ExecuteNonQuery();

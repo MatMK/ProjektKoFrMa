@@ -5,6 +5,7 @@ import { SetTask } from '../../../server-connection/models/communication-models/
 import { EventEmitter } from 'events';
 import { TaskRepeatingNoTimespan } from '../../../server-connection/models/communication-models/task/task-repeating.model';
 import { ServerConnectionService } from '../../../server-connection/server-connection.service';
+import { Data } from '../../../server-connection/data.model';
 
 @Component({
   selector: 'app-daemon-info',
@@ -13,13 +14,15 @@ import { ServerConnectionService } from '../../../server-connection/server-conne
 })
 export class DaemonInfoComponent implements OnInit {
   daemonId : number
-  constructor(private activeRoute:ActivatedRoute, private service : ServerConnectionService, private router : Router)
+  constructor(private activeRoute:ActivatedRoute, private service : ServerConnectionService, private router : Router, private data: Data)
   {
     this.activeRoute.params.subscribe(params => {
       this.daemonId = params.daemonid;
       this.checkIfNumberValid();
     })
   }
+  displayedColumns = ['Id', 'IdDaemon', 'TimeOfExecution', 'Completed', 'Delete'];
+  displayedColumnsCompletedTask = ['id', 'idTask', 'idDaemon', 'timeOfCompletion', 'isSuccessful', 'moreInfo'];
   checkIfNumberValid()
    {
     if (!(this.daemonId >= 0 || this.daemonId<0))

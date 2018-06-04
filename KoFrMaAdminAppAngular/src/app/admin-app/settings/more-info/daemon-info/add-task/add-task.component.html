@@ -5,21 +5,31 @@
       <h2>Backup settings</h2>
       <strong>Daemon id:</strong>
       <select class="basicSelect" [(ngModel)]="daemonId" style="width: 250px"> 
-        <option *ngFor="let element of data.Data.tbDaemons.data" >{{element.Id}}</option>
+        <option value="undefined">-</option>
+        <option *ngFor="let element of data.Data.tbDaemons.data" value="{{element.Id}}">{{element.Id}}</option>
       </select>
       <hr>
-      <div id="backupType"><strong>Backup Type:</strong>
+      <div id="backupType" style="width: 100%"><strong>Backup Type:</strong>
         <input type="radio" class="basicRadio" name="buChoice" value="Full" [(ngModel)]="backuptype" (change)="isEnabled()" id="full"> Full
         <input type="radio" class="basicRadio" name="buChoice" value="Incremental" [(ngModel)]="backuptype" (change)="isEnabled()" id="incr"> Incremental
-        <input type="radio" class="basicRadio" name="buChoice" value="Differencial" [(ngModel)]="backuptype" (change)="isEnabled()" id="diff"> Differencial<br>
+        <input type="radio" class="basicRadio" name="buChoice" value="Differencial" [(ngModel)]="backuptype" (change)="isEnabled()" id="diff"> Differencial
+        <input type="radio" class="basicRadio" name="buChoice" value="Custom" [(ngModel)]="backuptype" (change)="isEnabled()" id="custom"> Custom <br>
       </div>
       <div *ngIf="backuptype=='Incremental'||backuptype=='Differencial'">
-        Full backup after every: <input type="number" class="BasicInput" style="margin: 10px; max-width: 80px;" [(ngModel)]="fullBackupAfter">
         Backup by: 
         <select class="basicSelect" [(ngModel)]="followupTo" style="width: 250px"> 
             <option value="undefined" id="optionRar">Do a full backup first</option> 
             <option *ngFor="let element of data.Data.tbCompletedTasks.data" value="{{element.Id}}" >Completed task id: {{element.Id}}</option>
           </select>
+          Full backup after every: <input type="number" class="BasicInput" style="margin: 10px; max-width: 80px;" [(ngModel)]="fullBackupAfter">
+      </div>
+      <div *ngIf="backuptype=='Custom'">
+        Backup by: 
+        <select class="basicSelect" [(ngModel)]="followupTo" style="width: 250px"> 
+            <option value="undefined" id="optionRar">Do a full backup first</option> 
+            <option *ngFor="let element of data.Data.tbCompletedTasks.data" value="{{element.Id}}" >Completed task id: {{element.Id}}</option>
+          </select>
+        <input type='text'placeholder="Order of types (0 = Full, 1 = Incremental, 2 = Differencial)" class="BasicInput"[(ngModel)]="customOrder"><br>
       </div>
       <hr>
       <!--Sources-->
@@ -70,7 +80,7 @@
       </div>
       <!--Compression settings-->
       <div *ngIf="destinationtype != undefined">
-        Compress?<input type="checkbox" id="checkboxCompression" class="basicCheckbox" [(ngModel)]="compress" style="vertical-align: middle;">
+        <input type="checkbox" id="checkboxCompression" class="basicCheckbox" [(ngModel)]="compress" style="vertical-align: middle;">Compress
         <br>
         <div *ngIf="compress==true">
           <div id="divCompress">

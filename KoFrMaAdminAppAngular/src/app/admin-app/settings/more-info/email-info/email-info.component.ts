@@ -29,7 +29,10 @@ export class EmailInfoComponent implements OnInit {
   private emailCheck : boolean;
 
   constructor(private service : ServerConnectionService, private data : Data) { 
-    this.service.GetMail().then(res => console.log(res));
+    this.service.GetMail().then(res => {
+      console.log(res);
+      this.emailCheck = res.RecieveMail;
+    });
   }
   Apply()
   {
@@ -66,6 +69,7 @@ export class EmailInfoComponent implements OnInit {
       email.Repeating.RepeatTill = this.sendTill;
       email.Repeating.Repeating = this.send * this.sendEvery;
     }
+    this.data.Loading = true;    
     this.service.ChangeEmail(email)
   }
   parseDate(date : Date, time : Time) : Date

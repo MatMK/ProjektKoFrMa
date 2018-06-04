@@ -413,7 +413,7 @@ namespace KoFrMaRestApi.MySqlCom
                         RepeatTill = email.Repeating.RepeatTill
                     };
                     command.CommandText = $"INSERT INTO `tbEmailPreferences`(`IdAdmin`, `RepeatInJSON`, `RecievingEmail`) VALUES ({AdminId},@repeating,@email)";
-                    command.Parameters.AddWithValue("@repeating", JsonSerializationUtility.Serialize(email.Repeating));
+                    command.Parameters.AddWithValue("@repeating", JsonSerializationUtility.Serialize(rep));
                     command.Parameters.AddWithValue("@email", GetAdminEmail(AdminId));
                     command.ExecuteNonQuery();
                 }

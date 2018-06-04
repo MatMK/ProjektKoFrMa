@@ -26,7 +26,6 @@ import { ChangePasswordRequest } from './models/communication-models/post-admin/
 import { tbCompletedTasks } from './models/sql-data/data/tb-completed-tasks';
 import { tbServerExceptions } from './models/sql-data/data/tb-server-exceptions.model';
 import { EditEmailRequest } from './models/communication-models/post-admin/edit-email-request.model';
-import { IPromise } from 'q';
 
 @Injectable()
 
@@ -312,12 +311,12 @@ export class ServerConnectionService{
         return this.http.post(url,postAdmin).toPromise()
                         .then(res => 
                             {
-                                //this.data.Loading = false
+                                this.data.Loading = false
                                 return res.json();
                             })
                         .catch(msg => 
                             {
-                                //this.data.Loading = false;
+                                this.data.Loading = false;
                                 this.report.handleError(msg);
                                 return null;
                             })

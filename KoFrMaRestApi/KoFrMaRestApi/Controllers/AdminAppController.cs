@@ -397,6 +397,10 @@ namespace KoFrMaRestApi.Controllers
             else
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
         }
+        /// <summary>
+        /// Changes email settings
+        /// </summary>
+        /// <param name="postAdmin">PostAdmin with EditEmailRequest as IRequest</param>
         [HttpPost, Route("api/AdminApp/ChangeEmail")]
         public void ChangeEmail(PostAdmin postAdmin)
         {
@@ -410,6 +414,11 @@ namespace KoFrMaRestApi.Controllers
             else
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
+        /// <summary>
+        /// Returns your email settings
+        /// </summary>
+        /// <param name="adminInfo"></param>
+        /// <returns></returns>
         [HttpPost, Route("api/AdminApp/GetEmail")]
         public EditEmailRequest GetEmail(AdminInfo adminInfo)
         {

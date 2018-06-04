@@ -1,0 +1,167 @@
+
+#radioBackup
+{
+    display: inline-flex;
+    flex-direction: row;
+}
+.BasicInput{
+width: 90%;
+margin-bottom: 3px;
+background-color: white;
+font-size: 20px;
+border: none;
+border-bottom: 1px solid #d3d3d3;
+border-radius: 0px;
+}
+
+#menuTask{
+    font-size: 20px;
+    position: relative;
+    height: 716px;
+    width: 70%;
+    background-color: white;
+    padding: 40px;
+    border: none;
+    border-left: 2px solid #d3d3d3;
+    border-radius: 5px;
+    margin: 0 auto;
+    margin-top: 30px;
+    box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
+}
+#mensiDiv{
+    float: left;
+    width: 55%;
+    border: none;
+    margin-bottom:10px;
+}
+#backupType{
+    background-color: white;
+}
+
+.autoDestiLocal{
+    background-color: white;
+}
+
+.basicSelect{
+    border: none;
+    border-bottom: 1px solid #d3d3d3;
+    border-top: 1px solid #d3d3d3;;
+    border-radius: 0px;
+    margin-bottom: 2px;
+    font-size: 18px;
+    width: 171.33px;
+}
+.smallSelect{
+    border: none;
+    border-bottom: 1px solid #d3d3d3;
+    border-top: 1px solid #d3d3d3;;
+    border-radius: 0px;
+    margin-bottom: 2px;
+    font-size: 15px;
+}
+
+
+#menuTask button{
+    margin-left: 2px;
+    height: 28px;
+}
+#menuTask submit{
+margin-left: 2px;
+margin-bottom: 5px;
+height: 28px;
+}
+
+.basicSubmit, .basicCheckbox, button {
+    background-color: rgb(220, 220, 220);
+    transition-duration: 0.4s;
+    -webkit-transition-duration: 0,4s;
+    border: 1px solid #d3d3d3;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 18PX;
+    padding: 0px 16px;
+    height: 28px;
+    color: black;
+    margin-left: 2px;
+    margin-bottom: 2px;
+}
+
+.basicSubmit:hover {
+    background-color: white;
+    color: black;
+    text-decoration:none;
+    cursor:pointer;
+    }
+
+.newTaskDiv{
+     float: left;
+     height: 33%;
+     width: 46%;
+     background-color: white;
+     margin: 10px;
+     margin-top: 0px;
+     border: 1.5px solid #d3d3d3;
+    border-radius: 5px;
+    }
+
+.BasicInputNew{
+    width: 262px !important;
+    margin-left: 25px;
+    margin-bottom: 3px;
+    background-color: white;
+    font-size: 18px;
+    border: none;
+    border-bottom: 1px solid #d3d3d3;
+    border-radius: 0px;
+}
+::placeholder{
+    color: gray;
+    opacity: 1;
+}
+
+
+
+.destTypeRad{
+   
+    float: left;
+}
+.RadioDiv{
+    float: left;
+    margin-left: 20px;
+    margin-top: 10px;
+    font-size: 20px;
+  
+}
+#newButton{
+   float: right;
+   margin-left: 25px;
+   background-color: white;
+}
+.basicDate{
+    width: 380px;
+margin-bottom: 3px;
+background-color: white;
+font-size: 18px;
+border: none;
+border-bottom: 1px solid #d3d3d3;
+border-radius: 0px;
+}
+
+   .basicRadio{
+  
+    align-content: right;
+
+}
+#sourceType, #destinationSelect, #backupType{
+    text-align: left;
+    width: 450px;
+}
+.vl {
+    border-left: 3px solid grey;
+    height: 797px;
+    position: absolute;
+    left: 50%;
+    margin-left: -1px;
+    top: 0;
+}
