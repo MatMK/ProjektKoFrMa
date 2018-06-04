@@ -139,13 +139,18 @@ namespace KoFrMaDaemon
             List<string> tmpSourceFoldersPaths = new List<string>();
             tmpSourceFoldersPaths.Add(@"D:\KoFrMa\BackupThisFolder\");
             tmpSourceFolders.Paths = tmpSourceFoldersPaths;
+            SourceMSSQL sourceMSSQL = new SourceMSSQL();
+            sourceMSSQL.ServerName = "(local)";
+            sourceMSSQL.DatabaseName = "dbNw";
+            sourceMSSQL.NetworkCredential = new System.Net.NetworkCredential() { UserName = "dbo",Password = "123456"};
 
             tmpDestinations.Add(new DestinationPlain() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" } });
             tmpDestinations.Add(new Destination7z() { Path = new DestinationPathLocal() { Path = @"d:\KoFrMa\BackupGoesHere\" }, CompressionLevel = 0, SplitAfter = 5 });
             Task taskTest = new Task
             {
                 //Sources = cheatBackupJournalOperations.LoadBackupJournalObject(@"d:\KoFrMa\BackupGoesHere\KoFrMaBackup_2018_06_02_15_02_59\KoFrMaBackup.dat", debugLog),
-                Sources = tmpSourceFolders,
+                //Sources = tmpSourceFolders,
+                Sources = sourceMSSQL,
                 IDTask = 0,
                 LogLevel = 8,
                 TemporaryFolderMaxBuffer = null,

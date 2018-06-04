@@ -109,7 +109,7 @@ namespace KoFrMaDaemon.Backup
             {
                 this.taskDebugLog.WriteToLog("Starting backup of Microsft SQL database", 5);
                 SQLBackup mSSQLBackup= new SQLBackup();
-                mSSQLBackup.BackupMSSQL((SourceMSSQL)task.Sources,destination);
+                mSSQLBackup.BackupMSSQL((SourceMSSQL)task.Sources,destination,taskDebugLog);
             }
             else if (task.Sources is SourceMySQL)
             {

@@ -17,14 +17,16 @@ namespace KoFrMaDaemon.Backup
         /// </summary>
         /// <param name="source"><c>SourceMSSQL</c> containing all parameters needed for backup</param>
         /// <param name="destination"><c>DirectoryInfo</c> where the backup file will be stored</param>
-        public void BackupMSSQL(SourceMSSQL source,DirectoryInfo destination)
+        public void BackupMSSQL(SourceMSSQL source,DirectoryInfo destination,DebugLog debugLog)
         {
             SqlConnection connect;
             string con1 = @"Data Source=" + source.ServerName + ";Initial Catalog=" + source.DatabaseName + ";Persist Security Info=True;User ID=" + source.NetworkCredential.UserName + ";Password=" + source.NetworkCredential.Password;
+            debugLog.WriteToLog("Connecting to database with this SQL command: "+con1, 6);
             connect = new SqlConnection(con1);
             connect.Open();
             SqlCommand command;
             command = new SqlCommand(@"backup database " + source.DatabaseName + " to disk ='" + destination.FullName + "\\" + source.DatabaseName +".bak" + "' with init,stats=10", connect);
+            debugLog.WriteToLog("Backuping databse with this SQL command: " + command, 6);
             command.ExecuteNonQuery();
             connect.Close();
         }
