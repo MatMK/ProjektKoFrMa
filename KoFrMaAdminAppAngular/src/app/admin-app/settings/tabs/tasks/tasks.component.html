@@ -1,5 +1,10 @@
 <div>
     <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+    <button routerLink="/backup/add-task/null">Add Task</button>
+  <button (click)=service.RefreshData([3])>Refresh</button>
+</div>
+<div>
+  
 </div>
 <div class="table-task">
   <mat-table #table [dataSource]="data.Data.tbTasks">
@@ -42,8 +47,4 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
   </mat-table>
-</div>
-<div>
-  <button routerLink="/backup/add-task/null">Add Task</button>
-  <button (click)=service.RefreshData([3])>Refresh</button>
 </div>

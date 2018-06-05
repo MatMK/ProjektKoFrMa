@@ -1,5 +1,6 @@
 <div>
   <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+  <button (click)=service.RefreshData([2])>Refresh</button>
 </div>
 <div class="table-daemon">
   <mat-table #table [dataSource]="data.Data.tbDaemons">
@@ -61,5 +62,5 @@
   </mat-table>
 </div>
 <div>
-  <button (click)=service.RefreshData([2])>Refresh</button>
+  
 </div>

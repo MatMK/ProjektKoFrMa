@@ -1,16 +1,17 @@
-body{
-  height: 850px;
-}
+
 
 .table-task {
     display: flex;
     flex-direction: column;
-    max-height: 500px;
+   max-height: 500px;
     min-width: 300px;
+    overflow: auto;
+    min-height: 500px;
 }
 .mat-table {
   overflow: auto;
-  max-height: 500px;
+ height: 500px;
+  
 }
 .mat-column-Id {
   flex: 0 0 5%;

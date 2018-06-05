@@ -1,14 +1,15 @@
 
 .table-daemon {
-  display: flex;
-  flex-direction: column;
-  max-height: 500px;
-  min-width: 300px;
+  
+    display: flex;
+    flex-direction: column;
+   max-height: 500px;
+    min-width: 300px;
+    overflow: auto;
+    min-height: 500px;
+
 }
-.mat-table {
-  overflow: auto;
-  max-height: 500px;
-}
+
 input[type="text"]
 {
     background: transparent;

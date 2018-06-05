@@ -1,6 +1,9 @@
 <div>
   <div>
       <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+      <button routerLink="/backup/add-admin">Add Administrator</button>
+    <button (click)=service.RefreshData([1])>Refresh</button>
+    <button routerLink="/backup/manage-emails">Manage emails</button>
   </div>
 
   <div class="table-admin">
@@ -74,8 +77,6 @@
     </mat-table>
   </div>
   <div>
-    <button routerLink="/backup/add-admin">Add Administrator</button>
-    <button (click)=service.RefreshData([1])>Refresh</button>
-    <button routerLink="/backup/manage-emails">Manage emails</button>
+    
   </div>
 </div>
