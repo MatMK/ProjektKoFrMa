@@ -26,6 +26,7 @@ import { ChangePasswordRequest } from './models/communication-models/post-admin/
 import { tbCompletedTasks } from './models/sql-data/data/tb-completed-tasks';
 import { tbServerExceptions } from './models/sql-data/data/tb-server-exceptions.model';
 import { EditEmailRequest } from './models/communication-models/post-admin/edit-email-request.model';
+import { GetTimerDaemonRequest } from './models/communication-models/post-admin/get-timer-daemon-request.model';
 
 @Injectable()
 
@@ -326,6 +327,24 @@ export class ServerConnectionService{
         this.data.Loading = true;
         let url = this.data.ServerRootURL + "api/AdminApp/GetEmail";
         return this.http.post(url,this.data.adminInfo).toPromise()
+            .then(res => 
+                {
+                    this.data.Loading = false
+                    return res.json();
+                })
+            .catch(msg => 
+                {
+                    this.data.Loading = false;
+                    this.report.handleError(msg);
+                    throw new Error();
+                })
+    }
+    GetTimerTick(daemonId : number) : Promise<number>
+    {
+        this.data.Loading = true;
+        let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, new GetTimerDaemonRequest("GetTimerDaemonRequest",daemonId))
+        let url = this.data.ServerRootURL + "api/AdminApp/ChangeTimerDaemon";
+        return this.http.post(url,postAdmin).toPromise()
             .then(res => 
                 {
                     this.data.Loading = false

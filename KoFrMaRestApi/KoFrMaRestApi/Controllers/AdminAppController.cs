@@ -57,8 +57,8 @@ namespace KoFrMaRestApi.Controllers
         private string BadRequestCannotSetPermission = "You don't have permission to set permissions";
         private string BadRequestUsernameExists = "This username already exists";
         InputCheck check = new InputCheck();
-        //Token token = new Token();
         MySqlAdmin mySqlCom = new MySqlAdmin();
+        MySqlDaemon mySqlDaemon = new MySqlDaemon();
         /// <summary>
         /// Used for logging in
         /// </summary>
@@ -383,6 +383,11 @@ namespace KoFrMaRestApi.Controllers
                         {
                             mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable);
                         }
+                        else if (((ChangeTableRequest)postAdmin.request).changeTable.ColumnName == "TimerTick" &&
+                                (((ChangeTableRequest)postAdmin.request).changeTable.Value is long) || ((ChangeTableRequest)postAdmin.request).changeTable.Value is int)
+                        {
+                            mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable);
+                        }
                         else
                         {
                             throw new HttpResponseException(HttpStatusCode.BadRequest);
@@ -434,55 +439,70 @@ namespace KoFrMaRestApi.Controllers
             else
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
-        /// <summary>
-        /// Returns a token if it exists, if not it creates a new one.
-        /// </summary>
-        /// <param name="username">Admin's username</param>
-        /// <param name="password">Admin's password</param>
-        /// <returns></returns>
-        [HttpPost, Route("api/AdminApp/login-server")]
-        public string LoginServer(string username, string password)
+        [HttpPost, Route("api/AdminApp/ChangeTimerDaemon")]
+        public int? GetTimerDaemon(PostAdmin postAdmin)
         {
-            try
+            if (this.Authorized(postAdmin.adminInfo))
             {
-                if (username == null || password == null)
+                if (Permitted(postAdmin.adminInfo.UserName, new int[] { 3 }))
                 {
-                    throw new HttpResponseException(HttpStatusCode.BadRequest);
-                }
-                string token = mySqlCom.SelectToken(username, password);
-                return token;
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message == "No admin with this username")
-                {
-                    throw new HttpResponseException(HttpStatusCode.BadRequest);
-                }
-                else
-                    throw ex;
-            }
-        }
-        /// <summary>
-        /// Used to change data on server
-        /// </summary>
-        /// <param name="username"></param>
-        /// <param name="token"></param>
-        [HttpPost, Route("api/AdminApp/change-server-data")]
-        public void ChangeServerData(string username, string token/*add stuff you need to set set it in WebApiConfig*/)
-        {
-            if (this.Authorized(new AdminInfo() { Token = token, UserName = username }))
-            {
-                if (this.Permitted(username, new int[] { 6 }))
-                {
-                    //your code
+                    return mySqlCom.GetTimerTick(((GetTimerDaemonRequest)postAdmin.request).DaemonId);
                 }
                 else
                     throw new HttpResponseException(HttpStatusCode.Forbidden);
             }
             else
-            {
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
-            }
         }
+        ///// <summary>
+        ///// Returns a token if it exists, if not it creates a new one.
+        ///// </summary>
+        ///// <param name="username">Admin's username</param>
+        ///// <param name="password">Admin's password</param>
+        ///// <returns></returns>
+        //[HttpPost, Route("api/AdminApp/login-server")]
+        //public string LoginServer(string username, string password)
+        //{
+        //    try
+        //    {
+        //        if (username == null || password == null)
+        //        {
+        //            throw new HttpResponseException(HttpStatusCode.BadRequest);
+        //        }
+        //        string token = mySqlCom.SelectToken(username, password);
+        //        return token;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        if (ex.Message == "No admin with this username")
+        //        {
+        //            throw new HttpResponseException(HttpStatusCode.BadRequest);
+        //        }
+        //        else
+        //            throw ex;
+        //    }
+        //}
+        ///// <summary>
+        ///// Used to change data on server
+        ///// </summary>
+        ///// <param name="username"></param>
+        ///// <param name="token"></param>
+        //[HttpPost, Route("api/AdminApp/change-server-data")]
+        //public void ChangeServerData(string username, string token/*add stuff you need to set set it in WebApiConfig*/)
+        //{
+        //    if (this.Authorized(new AdminInfo() { Token = token, UserName = username }))
+        //    {
+        //        if (this.Permitted(username, new int[] { 6 }))
+        //        {
+        //            //your code
+        //        }
+        //        else
+        //            throw new HttpResponseException(HttpStatusCode.Forbidden);
+        //    }
+        //    else
+        //    {
+        //        throw new HttpResponseException(HttpStatusCode.Unauthorized);
+        //    }
+        //}
     }
 }

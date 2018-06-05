@@ -22,10 +22,9 @@ namespace KoFrMaRestApi.MySqlCom
         /// <param name="daemon"></param>
         /// <param name="connection"></param>
         /// <returns></returns>
-        public int? GetDaemonId(DaemonInfo daemon, MySqlConnection connection)
+        public int? GetDaemonId(DaemonInfo daemon)
         {
             return SelectFromTableByPcId(daemon);
-
         }
         public int RegisterDaemonAndGetId(DaemonInfo daemon, string Password)
         {
@@ -35,7 +34,7 @@ namespace KoFrMaRestApi.MySqlCom
                 int? o = SelectFromTableByPcId(daemon);
                 if (o == null)
                 {
-                    string SqlInsert = @"insert into tbDaemons values(null, @version, @os, @pc_unique, 1, now(),@password,'')";
+                    string SqlInsert = @"insert into tbDaemons values(null, @version, @os, @pc_unique, 1, now(),@password,'',null)";
                     using (MySqlCommand command = new MySqlCommand(SqlInsert, connection))
                     {
                         command.Parameters.AddWithValue("@version", daemon.Version);
@@ -43,7 +42,7 @@ namespace KoFrMaRestApi.MySqlCom
                         command.Parameters.AddWithValue("@pc_unique", daemon.PC_Unique);
                         command.Parameters.AddWithValue("@password", Password.ToString());
                         command.ExecuteNonQuery();
-                        return (int)GetDaemonId(daemon, connection);
+                        return (int)GetDaemonId(daemon);
                     }
                 }
                 return (int)o;
@@ -150,7 +149,7 @@ namespace KoFrMaRestApi.MySqlCom
                         debugLog += item + "\n";
                     }
                 }
-                using (MySqlCommand command = new MySqlCommand($"INSERT INTO `tbTasksCompleted` VALUES (null,{GetDaemonId(taskComplete.DaemonInfo, connection)},{taskComplete.IDTask},'{JsonSerializationUtility.Serialize(taskComplete.DatFile)}',@datetime,'{debugLog}',{taskComplete.IsSuccessfull},0)", connection))
+                using (MySqlCommand command = new MySqlCommand($"INSERT INTO `tbTasksCompleted` VALUES (null,{GetDaemonId(taskComplete.DaemonInfo)},{taskComplete.IDTask},'{JsonSerializationUtility.Serialize(taskComplete.DatFile)}',@datetime,'{debugLog}',{taskComplete.IsSuccessfull},0)", connection))
                 {
                     command.Parameters.AddWithValue("@datetime", taskComplete.TimeOfCompletition);
                     command.ExecuteNonQuery();
@@ -334,7 +333,7 @@ namespace KoFrMaRestApi.MySqlCom
                 using (MySqlCommand command = new MySqlCommand("INSERT INTO `tbTasks`(`IdDaemon`, `Task`, `TimeOfExecution`, `IdPreviousTask`, `BackupTypePlan`, `RepeatInJSON`, `Completed`)" +
                     " VALUES (@IdDaemon, @Task, @TimeOfExecution, @IdPreviousTask, @BackupPlan, @Repeat, 0 )", connection))
                 {
-                    command.Parameters.AddWithValue("@IdDaemon", GetDaemonId(taskComplete.DaemonInfo,connection));
+                    command.Parameters.AddWithValue("@IdDaemon", GetDaemonId(taskComplete.DaemonInfo));
                     command.Parameters.AddWithValue("@Task", JsonSerializationUtility.Serialize(newTask));
                     command.Parameters.AddWithValue("@TimeOfExecution", repeat.ExecutionTimes[0]);
                     command.Parameters.AddWithValue("@Repeat", JsonSerializationUtility.Serialize(repeat));

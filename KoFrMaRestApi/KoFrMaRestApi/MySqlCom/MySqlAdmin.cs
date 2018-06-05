@@ -454,5 +454,21 @@ namespace KoFrMaRestApi.MySqlCom
                 }
             }
         }
+        public int? GetTimerTick(int DaemonId)
+        {
+            using (MySqlConnection connection = WebApiConfig.Connection())
+            using (MySqlCommand command = new MySqlCommand("SELECT `TimerTick` FROM `tbDaemons` WHERE `Id` = " + DaemonId, connection))
+            {
+                connection.Open();
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        return (int)reader["TimerTick"];
+                    }
+                    return null;
+                }
+            }
+        }
     }
 }

@@ -208,6 +208,7 @@
     <Compile Include="Models\AdminApp\PostAdmin\EditEmailRequest.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\ExistsRequest.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\GetDataRequest.cs" />
+    <Compile Include="Models\AdminApp\PostAdmin\GetTimerDaemonRequest.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\IRequest.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\PostAdmin.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\SetTasksRequest.cs" />

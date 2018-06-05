@@ -109,7 +109,9 @@ namespace KoFrMaDaemon.ConnectionToServer
             {
                 result = streamReader.ReadToEnd();
             }
-            return result;
+            RegisterData data = JsonSerializationUtility.Deserialize<RegisterData>(result);
+            //
+            return data.Token;
         }
 
 

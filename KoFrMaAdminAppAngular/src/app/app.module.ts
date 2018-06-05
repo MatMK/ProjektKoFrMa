@@ -24,7 +24,6 @@ import { ToolbarComponent } from './admin-app/settings/toolbar/toolbar.component
 import { AddTaskComponent } from './admin-app/settings/more-info/daemon-info/add-task/add-task.component';
 import { AddAdminComponent } from './admin-app/settings/tabs/admin-accounts/add-admin/add-admin.component';
 import { ErrorReport } from './admin-app/server-connection/error-report.service';
-import { ToastsManager } from 'ng2-toastr';
 import { ServerExceptionsComponent } from './admin-app/settings/tabs/server-exceptions/server-exceptions.component';
 import { CompletedTasksComponent } from './admin-app/settings/tabs/completed-tasks/completed-tasks.component';
 import { CompletedTaskInfoComponent } from './admin-app/settings/more-info/completed-task-info/completed-task-info.component';

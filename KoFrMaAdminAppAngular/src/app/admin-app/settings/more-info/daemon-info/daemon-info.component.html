@@ -1,81 +1,73 @@
 <div id="menuTask">
-    <button (click)="addTask()">Add Task</button>
+<div>
+  <h2>Daemon {{daemonId}}</h2>
+  <button (click)="addTask()">Add Task</button><br>
+  TimerTick: <input type="number" name="timertick" (change)="changeTick()" [(ngModel)]="timertickValue">
+  <select id="dropdownRepeat" class="basicSelect" [(ngModel)]="repeat" (change)="changeTick()"> 
+    <option *ngFor="let element of repeatOptions" value="{{element.value}}" id="optionTime">{{element.text}}</option> 
+  </select>
+  <h4>Upcoming tasks:</h4>
+  <div style="max-height: 200px; overflow: auto">
     <mat-table #table [dataSource]="data.Data.tbTasks">
 
-        <!-- Id Column -->
-        <ng-container matColumnDef="Id">
-          <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
-        </ng-container>
-    
-        <!-- IdDaemon Column -->
-        <ng-container matColumnDef="IdDaemon">
-          <mat-header-cell *matHeaderCellDef> IdDaemon </mat-header-cell>
-          <mat-cell *matCellDef="let element"> 
-                  {{element.IdDaemon}}
-          </mat-cell>
-        </ng-container>
-    
-    
-        <!-- TimeOfExecution Column -->
-        <ng-container matColumnDef="TimeOfExecution">
-          <mat-header-cell *matHeaderCellDef> TimeOfExecution </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.TimeOfExecution}} </mat-cell>
-        </ng-container>
-        
-    
-          <!-- Completed Column -->
-          <ng-container matColumnDef="Completed">
-            <mat-header-cell *matHeaderCellDef> Completed </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.Completed}} </mat-cell>
-          </ng-container>
-    
-            <!-- Completed Column -->
-            <ng-container matColumnDef="Delete">
-              <mat-header-cell *matHeaderCellDef> Delete </mat-header-cell>
-              <mat-cell *matCellDef="let element"> <button (click)="deleteRow(element.Id)">Delete</button> </mat-cell>
-            </ng-container>
-    
-          
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-      </mat-table>
+      <!-- Id Column -->
+      <ng-container matColumnDef="Id">
+        <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
+      </ng-container>
 
+      <!-- TimeOfExecution Column -->
+      <ng-container matColumnDef="TimeOfExecution">
+        <mat-header-cell *matHeaderCellDef> Time Of Execution </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.TimeOfExecution}} </mat-cell>
+      </ng-container>
 
-      <mat-table #table [dataSource]="data.Data.tbCompletedTasks">
+      <!-- Completed Column -->
+      <ng-container matColumnDef="Completed">
+        <mat-header-cell *matHeaderCellDef> Completed </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.Completed}} </mat-cell>
+      </ng-container>
 
-          <ng-container matColumnDef="id">
-            <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
-          </ng-container>
-        
-          <ng-container matColumnDef="idDaemon">
-            <mat-header-cell *matHeaderCellDef> Id of Daemon </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.IdDaemon}} </mat-cell>
-          </ng-container>
-        
-          <ng-container matColumnDef="idTask">
-            <mat-header-cell *matHeaderCellDef> Id of Task </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.IdTask}} </mat-cell>
-          </ng-container>
-        
-          <ng-container matColumnDef="timeOfCompletion">
-            <mat-header-cell *matHeaderCellDef> TimeOfCompetion </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.TimeOfCompetion}} </mat-cell>
-          </ng-container>
-        
-          <ng-container matColumnDef="isSuccessful">
-            <mat-header-cell *matHeaderCellDef> Successful </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.IsSuccessful}} </mat-cell>
-          </ng-container>
-        
-          <ng-container matColumnDef="moreInfo">
-            <mat-header-cell *matHeaderCellDef> More Info </mat-header-cell>
-            <mat-cell *matCellDef="let element"> <button routerLink="/backup/completed-task-info/{{element.Id}}">More Info</button> </mat-cell>
-          </ng-container>
-        
-        
-          <mat-header-row *matHeaderRowDef="displayedColumnsCompletedTask"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: displayedColumnsCompletedTask;"></mat-row>
-        </mat-table>
+      <!-- Completed Column -->
+      <ng-container matColumnDef="Delete">
+        <mat-header-cell *matHeaderCellDef> Delete </mat-header-cell>
+        <mat-cell *matCellDef="let element"> <button (click)="deleteRow(element.Id)">Delete</button> </mat-cell>
+      </ng-container>
+      
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  </div>
+  <h4>Completed tasks:</h4>
+  <div style="max-height: 400px; overflow: auto">
+    <mat-table #table [dataSource]="data.Data.tbCompletedTasks">
+    <ng-container matColumnDef="id">
+      <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="idTask">
+        <mat-header-cell *matHeaderCellDef> Id of Task </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.IdTask}} </mat-cell>
+      </ng-container>
+    
+      <ng-container matColumnDef="timeOfCompletion">
+        <mat-header-cell *matHeaderCellDef> Time Of Completion </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.TimeOfCompetion}} </mat-cell>
+      </ng-container>
+    
+      <ng-container matColumnDef="isSuccessful">
+        <mat-header-cell *matHeaderCellDef> Successful </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.IsSuccessful}} </mat-cell>
+      </ng-container>
+    
+      <ng-container matColumnDef="moreInfo">
+        <mat-header-cell *matHeaderCellDef> More Info </mat-header-cell>
+        <mat-cell *matCellDef="let element"> <button routerLink="/backup/completed-task-info/{{element.Id}}">More Info</button> </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumnsCompletedTask"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumnsCompletedTask;"></mat-row>
+    </mat-table>
+  </div>
 </div>

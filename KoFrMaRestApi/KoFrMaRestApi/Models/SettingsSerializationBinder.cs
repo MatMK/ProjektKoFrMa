@@ -41,6 +41,9 @@ namespace KoFrMaRestApi.Models
                     return typeof(ChangePasswordRequest);
                 case "EditEmailRequest":
                     return typeof(EditEmailRequest);
+                case "GetTimerDaemonRequest":
+                    return typeof(GetTimerDaemonRequest);
+
 
                 //Task
                 case "Destination7z":

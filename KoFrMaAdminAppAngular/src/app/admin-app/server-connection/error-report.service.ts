@@ -1,6 +1,6 @@
 import {ErrorHandler, Injectable, ComponentFactoryResolver} from "@angular/core";
 import { Router } from "@angular/router";
-import {ToastsManager, Toast, ToastOptions} from "ng2-toastr";
+
 
 @Injectable()
 

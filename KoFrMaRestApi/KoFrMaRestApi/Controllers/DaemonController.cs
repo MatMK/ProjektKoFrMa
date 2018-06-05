@@ -39,7 +39,7 @@ namespace KoFrMaRestApi.Controllers
                 if (mySqlCom.Authorized(request.daemon.PC_Unique, request.daemon.Token, connection))
                 {
                     TasksCompleted(request.CompletedTasks);
-                    int DaemonId = (int)mySqlCom.GetDaemonId(request.daemon, connection);
+                    int DaemonId = (int)mySqlCom.GetDaemonId(request.daemon);
                     mySqlCom.DaemonSeen(DaemonId, connection);
                     List<Task> tasks = mySqlCom.GetTasks(DaemonId, connection);
                     List<int> ToRemove = new List<int>();
@@ -116,7 +116,7 @@ namespace KoFrMaRestApi.Controllers
             {
                 connection.Open();
                 mySqlCom.RegisterDaemonAndGetId(password.daemon, password.password);
-                mySqlCom.DaemonSeen((int)mySqlCom.GetDaemonId(password.daemon, connection), connection);
+                mySqlCom.DaemonSeen((int)mySqlCom.GetDaemonId(password.daemon), connection);
                 connection.Close();
             }
             mySqlCom.RegisterToken(password.daemon.PC_Unique,password.password,token);
