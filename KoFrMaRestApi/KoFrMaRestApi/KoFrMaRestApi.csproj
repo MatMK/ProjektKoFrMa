@@ -259,7 +259,6 @@
     <Compile Include="Models\Tables\tbServerExceptions.cs" />
     <Compile Include="Models\Tables\tbTasks.cs" />
     <Compile Include="Models\Tables\tbTasksCompleted.cs" />
-    <Compile Include="Models\Tables\TokenUtility.cs" />
     <Compile Include="Models\TimerClass.cs" />
     <Compile Include="Models\Token.cs" />
     <Compile Include="MySqlCom\MySqlAdmin.cs" />
@@ -351,7 +350,6 @@
           <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties DocumentXCommentEditorState="&lt;HtmlEditState&gt;&#xA;  &lt;Attributes /&gt;&#xA;&lt;/HtmlEditState&gt;" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

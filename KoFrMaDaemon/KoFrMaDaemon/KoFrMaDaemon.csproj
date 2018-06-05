@@ -121,7 +121,6 @@
     <Compile Include="ConnectionToServer\Request.cs" />
     <Compile Include="ConnectionToServer\SettingsSerializationBinder.cs" />
     <Compile Include="ConnectionToServer\TaskVersion.cs" />
-    <Compile Include="ConnectionToServer\TimerTicks.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
