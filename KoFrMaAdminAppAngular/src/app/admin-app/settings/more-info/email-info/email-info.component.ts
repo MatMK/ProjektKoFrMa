@@ -30,12 +30,8 @@ export class EmailInfoComponent implements OnInit {
   private exceptionDates : {id : number, dateStart: Date, timeStart: Time, dateEnd: Date, timeEnd: Time, }[] = [];
   private sendTill : Date;
   private emailCheck : boolean;
-
-<<<<<<< HEAD
+  
   constructor(private service : ServerConnectionService, private data : Data, private router : Router) { 
-=======
-  constructor(private service : ServerConnectionService, private data : Data, )  { 
->>>>>>> 2b1f3df0c30e4a4e39380d73e719e72557da5bcd
     this.service.GetMail().then(res => {
       console.log(res);
       this.emailCheck = res.RecieveMail;
