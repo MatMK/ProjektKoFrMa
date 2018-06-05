@@ -20,7 +20,6 @@ namespace KoFrMaRestApi.MySqlCom
         /// Returns daemons database id.
         /// </summary>
         /// <param name="daemon"></param>
-        /// <param name="connection"></param>
         /// <returns></returns>
         public int? GetDaemonId(DaemonInfo daemon)
         {
@@ -34,7 +33,7 @@ namespace KoFrMaRestApi.MySqlCom
                 int? o = SelectFromTableByPcId(daemon);
                 if (o == null)
                 {
-                    string SqlInsert = @"insert into tbDaemons values(null, @version, @os, @pc_unique, 1, now(),@password,'',null)";
+                    string SqlInsert = @"insert into tbDaemons(`Id`, `Version`, `OS`, `PC_Unique`, `Allowed`, `LastSeen`, `Password`, `Token`) values(null, @version, @os, @pc_unique, 1, now(),@password,'')";
                     using (MySqlCommand command = new MySqlCommand(SqlInsert, connection))
                     {
                         command.Parameters.AddWithValue("@version", daemon.Version);
@@ -126,8 +125,6 @@ namespace KoFrMaRestApi.MySqlCom
         /// Sets task's state to completed and 
         /// </summary>
         /// <param name="taskComplete">Completed task</param>
-        /// <param name="connection">Open MySQL connection</param>
-        /// <param name="isSuccessful">Was task successful</param>
         public void TaskRemove(TaskComplete taskComplete)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
@@ -174,11 +171,10 @@ namespace KoFrMaRestApi.MySqlCom
             }
         }
         /// <summary>
-        /// If next execution time exists new task is created and current is marked as completed else task is removed with <see cref="TaskRemove(TaskComplete, MySqlConnection, bool)"/>
+        /// If next execution time exists new task is created and current is marked as completed else task is removed with <see cref="TaskRemove(TaskComplete)"/>
         /// </summary>
         /// <param name="taskComplete">Completed task</param>
         /// <param name="JsonTime">T<see cref="TaskRepeating"/> in json</param>
-        /// <param name="connection">open MySqlConnection</param>
         private void TaskExtend(TaskComplete taskComplete, string JsonTime)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
@@ -556,7 +552,7 @@ namespace KoFrMaRestApi.MySqlCom
                     reader.Close();
                 }
                 Bcrypter bcrypter = new Bcrypter();
-                if (bcrypter.PasswordMatches(Password, DatabasePassword)) ;
+                if (Password == DatabasePassword)
                 {
                     command.CommandText = @"UPDATE `tbDaemons` SET `Token`= @Token WHERE `PC_Unique` = @PC_Unique";
                     command.Parameters.AddWithValue("@Token", Token);

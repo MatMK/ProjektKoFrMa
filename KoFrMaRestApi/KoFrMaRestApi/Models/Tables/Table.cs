@@ -7,8 +7,15 @@ using System.Diagnostics;
 
 namespace KoFrMaRestApi.Models.Tables
 {
+    /// <summary>
+    /// Gets tables from database
+    /// </summary>
     public class Table
     {
+        /// <summary>
+        /// Gets data from database
+        /// </summary>
+        /// <returns></returns>
         public List<tbAdminAccounts> GetAdminAccounts()
         {
             List<tbAdminAccounts> tb = new List<tbAdminAccounts>();
@@ -55,6 +62,10 @@ namespace KoFrMaRestApi.Models.Tables
             }
             return permissionsList;
         }
+        /// <summary>
+        /// Gets data from database
+        /// </summary>
+        /// <returns></returns>
         public List<tbDaemons> GetDaemons()
         {
             List<tbDaemons> tb = new List<tbDaemons>();
@@ -89,6 +100,10 @@ namespace KoFrMaRestApi.Models.Tables
             }
             return tb;
         }
+        /// <summary>
+        /// Gets data from database
+        /// </summary>
+        /// <returns></returns>
         public List<tbTasks> GetTasks()
         {
             List<tbTasks> tb = new List<tbTasks>();
@@ -120,6 +135,10 @@ namespace KoFrMaRestApi.Models.Tables
             }
             return tb;
         }
+        /// <summary>
+        /// Gets data from database
+        /// </summary>
+        /// <returns>Tb task completed</returns>
         public List<tbTasksCompleted> GetTasksCompleted()
         {
             List<tbTasksCompleted> result = new List<tbTasksCompleted>();
@@ -146,6 +165,10 @@ namespace KoFrMaRestApi.Models.Tables
             }
             return result;
         }
+        /// <summary>
+        /// Gets data from database
+        /// </summary>
+        /// <returns></returns>
         public List<tbServerExceptions> GetServerExceptions()
         {
             List<tbServerExceptions> result = new List<tbServerExceptions>();

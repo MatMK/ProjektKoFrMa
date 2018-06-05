@@ -50,7 +50,7 @@ namespace KoFrMaRestApi.EmailSender
                     {
                         completedTasks.Add(new TaskComplete()
                         {
-                            DatFile = JsonSerializationUtility.Deserialize<BackupJournalObject>((string)reader["BackupJournal"]),
+                            //DatFile = JsonSerializationUtility.Deserialize<BackupJournalObject>((string)reader["BackupJournal"]),
                             IDTask = (int)reader["Id"],
                             DaemonInfo = new DaemonInfo() { Id = (int)reader["Id"] },
                             TimeOfCompletition = (DateTime)reader["TimeOfCompletition"],

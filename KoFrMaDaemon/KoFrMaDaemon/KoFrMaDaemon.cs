@@ -319,9 +319,9 @@ namespace KoFrMaDaemon
                     try
                     {
                         RegisterData data = connection.GetToken();
-                        this.timerValues.ConnectionFailed = data.TimerTick.AfterFailed;
-                        this.timerValues.ConnectionSuccess = data.TimerTick.TimerTick;
-                        this.timerValues.OnStart = data.TimerTick.AfterStart;
+                        this.timerValues.ConnectionFailed = data.TimerTick.AfterFailed*1000;
+                        this.timerValues.ConnectionSuccess = data.TimerTick.TimerTick*1000;
+                        this.timerValues.OnStart = data.TimerTick.AfterStart*1000;
 
                         daemon.Token = data.Token;
                         debugLog.WriteToLog("Token obtained.", 5);

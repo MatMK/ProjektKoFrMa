@@ -6,6 +6,9 @@ using System.Web;
 
 namespace KoFrMaRestApi.Models.Daemon.Task
 {
+    /// <summary>
+    /// Defines source as MySql source
+    /// </summary>
     public class SourceMySQL:ISource
     {
         /// <summary>

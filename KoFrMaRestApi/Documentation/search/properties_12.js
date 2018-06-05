@@ -1,0 +1,4 @@
+var searchData=
+[
+  ['username',['UserName',['../class_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_admin_info.html#ac82b323abd888f2bf582436925f10a6c',1,'KoFrMaRestApi.Models.AdminApp.AdminInfo.UserName()'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_admin_login.html#a0cc0a3bdfe53f249dfdaeafeae1093f3',1,'KoFrMaRestApi.Models.AdminApp.AdminLogin.UserName()'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_tables_1_1tb_admin_accounts.html#a76e0e41e277c8b0896c1d857d868c1b8',1,'KoFrMaRestApi.Models.Tables.tbAdminAccounts.UserName()'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_add_admin.html#a54a146a955e2aa684fac02979929e811',1,'KoFrMaRestApi.Models.AdminApp.AddAdmin.Username()'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_server_settings_1_1_server_login.html#a6377a1b5bfc8c0f0945aa9793d84da71',1,'KoFrMaRestApi.Models.ServerSettings.ServerLogin.Username()']]]
+];

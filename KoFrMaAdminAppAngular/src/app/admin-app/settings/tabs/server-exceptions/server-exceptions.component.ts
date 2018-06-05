@@ -13,7 +13,7 @@ import { tbServerExceptions } from '../../../server-connection/models/sql-data/d
 export class ServerExceptionsComponent {
 
   constructor(private service : ServerConnectionService, private data : Data) {
-    //this.service.RefreshData([5])
+    
    }
    displayedColumns = ['id', 'timeOfException', 'exceptionInJson', 'severity'];
 

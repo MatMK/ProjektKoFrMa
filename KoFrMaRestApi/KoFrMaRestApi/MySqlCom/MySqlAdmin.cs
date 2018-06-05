@@ -20,6 +20,7 @@ namespace KoFrMaRestApi.MySqlCom
     public class MySqlAdmin
     {
         Bcrypter Verification = new Bcrypter();
+        Token TokenService = new Token();
         /// <summary>
         /// Returns new token
         /// </summary>
@@ -28,7 +29,7 @@ namespace KoFrMaRestApi.MySqlCom
         public string RegisterToken(AdminLogin adminLogin)
         {
             string DatabasePassword = "";
-            string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+            string token = TokenService.GenerateToken();
             using (MySqlConnection connection = WebApiConfig.Connection())
             using (MySqlCommand command = new MySqlCommand(@"SELECT `Password` FROM `tbAdminAccounts` WHERE `Username` = @username", connection))
             {
@@ -77,6 +78,10 @@ namespace KoFrMaRestApi.MySqlCom
         public bool Authorized(string Username, string Token)
         {
             bool result;
+            if (!TokenService.IsValid(Token))
+            {
+                return false;
+            }
             using (MySqlConnection connection = WebApiConfig.Connection())
             using (MySqlCommand command = new MySqlCommand(@"SELECT * FROM `tbAdminAccounts` WHERE `Username` = @Username and `Token` = @Token", connection))
             {

@@ -286,8 +286,8 @@ export class AddTaskComponent
         newTask.BackupType = this.backuptype == "Incremental"?1:2;
       console.log(newTask);
       console.log(this)
-      this.service.SetTask([newTask])//.then(res => this.service.RefreshData([3]))
-      //this.router.navigate(['backup', 'app','tasks']);
+      this.service.SetTask([newTask]).then(res => this.service.RefreshData([3]))
+      this.router.navigate(['backup', 'app','tasks']);
     }
   }
   isEnabled()

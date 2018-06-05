@@ -77,9 +77,7 @@ namespace KoFrMaRestApi.Models
         /// Checks TaskRepeat
         /// </summary>
         /// <param name="taskRepeating">times to see if it's time</param>
-        /// <param name="Id">Id of column to edit time in</param>
-        /// <param name="TableName">Name of the table to edit time in</param>
-        /// <param name="ColumnName">Name of the column to edit value in</param>
+        /// <param name="sendBefore">Time to tell how much in future should the task be sent</param>
         /// <returns>True if it's time to execute a task</returns>
         public bool CorrectTime(TaskRepeating taskRepeating, int sendBefore)
         {
@@ -146,6 +144,11 @@ namespace KoFrMaRestApi.Models
             }
             return taskRepeating;
         }
+        /// <summary>
+        /// Extends a <see cref="TaskRepeating"/>
+        /// </summary>
+        /// <param name="taskRepeating">Taskrepeating to extend</param>
+        /// <returns>new Taskrepeating</returns>
         public TaskRepeating TaskExtend(TaskRepeating taskRepeating)
         {
             TaskRepeating reference = taskRepeating;

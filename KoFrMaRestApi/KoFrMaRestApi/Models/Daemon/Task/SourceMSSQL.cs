@@ -6,6 +6,9 @@ using System.Web;
 
 namespace KoFrMaRestApi.Models.Daemon.Task
 {
+    /// <summary>
+    /// Defines source as mssql database
+    /// </summary>
     public class SourceMSSQL:ISource
     {
         /// <summary>

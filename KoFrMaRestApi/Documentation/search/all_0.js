@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['about',['About',['../class_ko_fr_ma_rest_api_1_1_controllers_1_1_home_controller.html#af209bef52089552774fedd5b235b9df5',1,'KoFrMaRestApi::Controllers::HomeController']]],
+  ['addadmin',['AddAdmin',['../class_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_add_admin.html',1,'KoFrMaRestApi.Models.AdminApp.AddAdmin'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_post_admin_1_1_add_admin_request.html#abc3c57d2e25b05286f77c931ed065496',1,'KoFrMaRestApi.Models.AdminApp.PostAdmin.AddAdminRequest.addAdmin()'],['../class_ko_fr_ma_rest_api_1_1_controllers_1_1_admin_app_controller.html#a479faaceb5985617af8e97c5f6e02f3c',1,'KoFrMaRestApi.Controllers.AdminAppController.AddAdmin()'],['../class_ko_fr_ma_rest_api_1_1_my_sql_com_1_1_my_sql_admin.html#a4db45e2b95e9024dee131ca86f036261',1,'KoFrMaRestApi.MySqlCom.MySqlAdmin.AddAdmin()']]],
+  ['addadmin_2ecs',['AddAdmin.cs',['../_add_admin_8cs.html',1,'']]],
+  ['addadminrequest',['AddAdminRequest',['../class_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_post_admin_1_1_add_admin_request.html',1,'KoFrMaRestApi::Models::AdminApp::PostAdmin']]],
+  ['addadminrequest_2ecs',['AddAdminRequest.cs',['../_add_admin_request_8cs.html',1,'']]],
+  ['adminappcontroller',['AdminAppController',['../class_ko_fr_ma_rest_api_1_1_controllers_1_1_admin_app_controller.html',1,'KoFrMaRestApi::Controllers']]],
+  ['adminappcontroller_2ecs',['AdminAppController.cs',['../_admin_app_controller_8cs.html',1,'']]],
+  ['adminid',['AdminId',['../class_ko_fr_ma_rest_api_1_1_models_1_1_tables_1_1_change_permission.html#a01935bac062aa92dfda07f2bb5f37d1c',1,'KoFrMaRestApi::Models::Tables::ChangePermission']]],
+  ['admininfo',['AdminInfo',['../class_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_admin_info.html',1,'KoFrMaRestApi.Models.AdminApp.AdminInfo'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_post_admin_1_1_post_admin.html#a7721ed2b589ee2b4823641fffb1c0ad4',1,'KoFrMaRestApi.Models.AdminApp.PostAdmin.PostAdmin.adminInfo()']]],
+  ['admininfo_2ecs',['AdminInfo.cs',['../_admin_info_8cs.html',1,'']]],
+  ['adminlogin',['AdminLogin',['../class_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_admin_login.html',1,'KoFrMaRestApi::Models::AdminApp']]],
+  ['adminlogin_2ecs',['AdminLogin.cs',['../_admin_login_8cs.html',1,'']]],
+  ['afterfailed',['AfterFailed',['../class_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_get_list_1_1_timer_ticks.html#a2b0c6a7ba2cf5e0cd2dff4dd5d8e99f7',1,'KoFrMaRestApi::Models::AdminApp::GetList::TimerTicks']]],
+  ['afterstart',['AfterStart',['../class_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_get_list_1_1_timer_ticks.html#a7e00beaa9d05cbfc20c314420e5ed206',1,'KoFrMaRestApi::Models::AdminApp::GetList::TimerTicks']]],
+  ['allowed',['Allowed',['../class_ko_fr_ma_rest_api_1_1_models_1_1_tables_1_1tb_daemons.html#a2e7273a7c45a63aa7c7f8e0c4fc3dad3',1,'KoFrMaRestApi::Models::Tables::tbDaemons']]],
+  ['alterdatapermissions',['AlterDataPermissions',['../class_ko_fr_ma_rest_api_1_1_controllers_1_1_admin_app_controller.html#ad73120a17f0513925663cf6ffb2f9f99',1,'KoFrMaRestApi::Controllers::AdminAppController']]],
+  ['alterpermissions',['AlterPermissions',['../class_ko_fr_ma_rest_api_1_1_my_sql_com_1_1_my_sql_admin.html#ad3e1b5f4ccac0507f03fcc6b68a192aa',1,'KoFrMaRestApi::MySqlCom::MySqlAdmin']]],
+  ['altertable',['AlterTable',['../class_ko_fr_ma_rest_api_1_1_controllers_1_1_admin_app_controller.html#af287f0080447df399fb858e2df1dcbbd',1,'KoFrMaRestApi.Controllers.AdminAppController.AlterTable()'],['../class_ko_fr_ma_rest_api_1_1_my_sql_com_1_1_my_sql_admin.html#a94dd7809680a6de9a3ba0a385cd4cf86',1,'KoFrMaRestApi.MySqlCom.MySqlAdmin.AlterTable(ChangeTable changeTable)'],['../class_ko_fr_ma_rest_api_1_1_my_sql_com_1_1_my_sql_admin.html#ade5efdd5950c57cc3beb65462b6c479f',1,'KoFrMaRestApi.MySqlCom.MySqlAdmin.AlterTable(ChangeTable changeTable, string IdColumnName)']]],
+  ['application_5fstart',['Application_Start',['../class_ko_fr_ma_rest_api_1_1_mvc_application.html#acc1974353fcb6233dad22788c27c25e3',1,'KoFrMaRestApi::MvcApplication']]],
+  ['assemblyinfo_2ecs',['AssemblyInfo.cs',['../_assembly_info_8cs.html',1,'']]],
+  ['attributes',['Attributes',['../class_ko_fr_ma_rest_api_1_1_models_1_1_daemon_1_1_task_1_1_backup_journal_1_1_file_info_object.html#a8e0c54b91d76de63cd2e1616ad5ab173',1,'KoFrMaRestApi.Models.Daemon.Task.BackupJournal.FileInfoObject.Attributes()'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_daemon_1_1_task_1_1_backup_journal_1_1_folder_object.html#a9d8922980b567bbcc5408283d67217d9',1,'KoFrMaRestApi.Models.Daemon.Task.BackupJournal.FolderObject.Attributes()']]],
+  ['authorized',['Authorized',['../class_ko_fr_ma_rest_api_1_1_controllers_1_1_admin_app_controller.html#ab18bb5bbeff404a59f9e16639a3ea83f',1,'KoFrMaRestApi.Controllers.AdminAppController.Authorized()'],['../class_ko_fr_ma_rest_api_1_1_my_sql_com_1_1_my_sql_admin.html#a9ec4eeb91bffa17cf766bc71d88a4e2b',1,'KoFrMaRestApi.MySqlCom.MySqlAdmin.Authorized()'],['../class_ko_fr_ma_rest_api_1_1_my_sql_com_1_1_my_sql_daemon.html#a6fe873bb26f92e8f7c906ea9edce3034',1,'KoFrMaRestApi.MySqlCom.MySqlDaemon.Authorized()']]]
+];

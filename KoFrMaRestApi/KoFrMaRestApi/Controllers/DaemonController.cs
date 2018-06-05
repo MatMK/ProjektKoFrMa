@@ -12,6 +12,7 @@ using System.Data.SqlClient;
 using KoFrMaRestApi.Models.Daemon;
 using KoFrMaRestApi.MySqlCom;
 using KoFrMaRestApi.Models.Daemon.Task;
+using System.Diagnostics;
 
 namespace KoFrMaRestApi.Controllers
 {
@@ -70,6 +71,7 @@ namespace KoFrMaRestApi.Controllers
                     {
                         tasks.RemoveAt(ToRemove[i]);
                     }
+                    Debug.WriteLine(JsonConvert.SerializeObject(tasks));
                     return tasks;
                 }
                 else

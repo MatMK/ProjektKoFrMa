@@ -20,10 +20,6 @@ namespace KoFrMaRestApi.Models.Daemon.Task.BackupJournal
         /// </summary>
         public DateTime CreationTimeUtc { get; set; }
         /// <summary>
-        /// When the folder changed its contains for the last time (Folder attribute)
-        /// </summary>
-        //public DateTime LastWriteTimeUtc { get; set; }
-        /// <summary>
         /// Folder attributes (ex. ReadOnly)
         /// </summary>
         public string Attributes { get; set; }

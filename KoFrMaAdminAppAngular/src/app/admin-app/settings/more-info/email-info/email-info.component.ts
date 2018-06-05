@@ -6,6 +6,7 @@ import { ServerConnectionService } from '../../../server-connection/server-conne
 import { EditEmailRequest } from '../../../server-connection/models/communication-models/post-admin/edit-email-request.model';
 import { ExceptionDate } from '../../../server-connection/models/communication-models/task/exception-date.model';
 import { TaskRepeatingNoTimespan } from '../../../server-connection/models/communication-models/task/task-repeating.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-email-info',
@@ -28,7 +29,7 @@ export class EmailInfoComponent implements OnInit {
   private sendTill : Date;
   private emailCheck : boolean;
 
-  constructor(private service : ServerConnectionService, private data : Data) { 
+  constructor(private service : ServerConnectionService, private data : Data, private router : Router) { 
     this.service.GetMail().then(res => {
       console.log(res);
       this.emailCheck = res.RecieveMail;
@@ -71,6 +72,7 @@ export class EmailInfoComponent implements OnInit {
     }
     this.data.Loading = true;    
     this.service.ChangeEmail(email)
+    this.router.navigate(['backup', 'app','tasks']);
   }
   parseDate(date : Date, time : Time) : Date
   {

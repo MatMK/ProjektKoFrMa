@@ -1,7 +1,7 @@
 ﻿using KoFrMaRestApi.Models.Daemon;
 using System;
 using System.Collections.Generic;
-/*using System.Linq;
+using System.Linq;
 using System.Web;
 using MySql.Data.MySqlClient;
 using KoFrMaRestApi.Models.AdminApp;
@@ -10,30 +10,36 @@ using KoFrMaRestApi.Models.AdminApp.PostAdmin;
 
 namespace KoFrMaRestApi.Models
 {
+    /// <summary>
+    /// Generating and checking tokens
+    /// </summary>
     public class Token
     {
-        MySqlDaemon SqlDaemon = new MySqlDaemon();
-        MySqlAdmin SqlAdmin = new MySqlAdmin();
-        public bool Authorized(DaemonInfo daemon)
+        /// <summary>
+        /// Generates a new token with date encrypted to it
+        /// </summary>
+        /// <returns>New token</returns>
+        public string GenerateToken()
         {
-            bool result;
-            using (MySqlConnection connection = WebApiConfig.Connection())
+            byte[] time = BitConverter.GetBytes(DateTime.UtcNow.ToBinary());
+            byte[] key = Guid.NewGuid().ToByteArray();
+            string token = Convert.ToBase64String(time.Concat(key).ToArray());
+            return token;
+        }
+        /// <summary>
+        /// Checks if token is valid by time not by database
+        /// </summary>
+        /// <param name="token">token</param>
+        /// <returns></returns>
+        public bool IsValid(string token)
+        {
+            byte[] data = Convert.FromBase64String(token);
+            DateTime when = DateTime.FromBinary(BitConverter.ToInt64(data, 0));
+            if (when < DateTime.UtcNow.AddHours(-24))
             {
-                connection.Open();
-                result = SqlDaemon.Authorized(daemon.PC_Unique, daemon.Token, connection);
-                connection.Close();
+                return false;
             }
-            return result;
-        }
-        public string CreateToken(string HashPassword, DaemonInfo daemon)
-        {
-            string Token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
-            SqlDaemon.RegisterToken(daemon.PC_Unique, HashPassword, Token);
-            return Token;
-        }
-        public bool Authorized(PostAdmin postAdmin)
-        {
-            return SqlAdmin.Authorized(postAdmin.adminInfo.UserName, postAdmin.adminInfo.Token);
+            return true;
         }
     }
-}*/
+}

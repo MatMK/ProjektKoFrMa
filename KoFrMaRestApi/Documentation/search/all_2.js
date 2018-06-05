@@ -1,0 +1,22 @@
+var searchData=
+[
+  ['changeemail',['ChangeEmail',['../class_ko_fr_ma_rest_api_1_1_controllers_1_1_admin_app_controller.html#a4517e8e951d8df1585e43faee4cf2913',1,'KoFrMaRestApi::Controllers::AdminAppController']]],
+  ['changepasswordrequest',['ChangePasswordRequest',['../class_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_post_admin_1_1_change_password_request.html',1,'KoFrMaRestApi::Models::AdminApp::PostAdmin']]],
+  ['changepasswordrequest_2ecs',['ChangePasswordRequest.cs',['../_change_password_request_8cs.html',1,'']]],
+  ['changepermission',['ChangePermission',['../class_ko_fr_ma_rest_api_1_1_models_1_1_tables_1_1_change_permission.html',1,'KoFrMaRestApi.Models.Tables.ChangePermission'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_post_admin_1_1_change_permission_request.html#a95b737a12fe12c29e9e2d27205059024',1,'KoFrMaRestApi.Models.AdminApp.PostAdmin.ChangePermissionRequest.changePermission()']]],
+  ['changepermission_2ecs',['ChangePermission.cs',['../_change_permission_8cs.html',1,'']]],
+  ['changepermissionrequest',['ChangePermissionRequest',['../class_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_post_admin_1_1_change_permission_request.html',1,'KoFrMaRestApi::Models::AdminApp::PostAdmin']]],
+  ['changepermissionrequest_2ecs',['ChangePermissionRequest.cs',['../_change_permission_request_8cs.html',1,'']]],
+  ['changetable',['ChangeTable',['../class_ko_fr_ma_rest_api_1_1_models_1_1_tables_1_1_change_table.html',1,'KoFrMaRestApi.Models.Tables.ChangeTable'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_post_admin_1_1_change_table_request.html#a2ca339d923b62f8edd50c59ef3d33d9a',1,'KoFrMaRestApi.Models.AdminApp.PostAdmin.ChangeTableRequest.changeTable()']]],
+  ['changetable_2ecs',['ChangeTable.cs',['../_change_table_8cs.html',1,'']]],
+  ['changetablerequest',['ChangeTableRequest',['../class_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_post_admin_1_1_change_table_request.html',1,'KoFrMaRestApi::Models::AdminApp::PostAdmin']]],
+  ['changetablerequest_2ecs',['ChangeTableRequest.cs',['../_change_table_request_8cs.html',1,'']]],
+  ['column',['Column',['../class_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_post_admin_1_1_exists_request.html#a5a9dddb6071953b1969386bc98d11e9c',1,'KoFrMaRestApi::Models::AdminApp::PostAdmin::ExistsRequest']]],
+  ['columnname',['ColumnName',['../class_ko_fr_ma_rest_api_1_1_models_1_1_tables_1_1_change_table.html#a8a350ec14df5f58119079fff67ec8203',1,'KoFrMaRestApi::Models::Tables::ChangeTable']]],
+  ['completed',['Completed',['../class_ko_fr_ma_rest_api_1_1_models_1_1_tables_1_1tb_tasks.html#a024d2fd7f2a905f7e1d7de425c10d399',1,'KoFrMaRestApi::Models::Tables::tbTasks']]],
+  ['completedtasks',['CompletedTasks',['../class_ko_fr_ma_rest_api_1_1_models_1_1_daemon_1_1_request.html#a6d3d90a52b6b64cf73ab42b250cd15ff',1,'KoFrMaRestApi::Models::Daemon::Request']]],
+  ['compressionlevel',['CompressionLevel',['../class_ko_fr_ma_rest_api_1_1_models_1_1_daemon_1_1_task_1_1_destination7z.html#ac4e4314df29777eba289520ca9a5dd85',1,'KoFrMaRestApi.Models.Daemon.Task.Destination7z.CompressionLevel()'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_daemon_1_1_task_1_1_destination_rar.html#a13a248ecfa0f2a242be1b744b7c87d24',1,'KoFrMaRestApi.Models.Daemon.Task.DestinationRar.CompressionLevel()'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_daemon_1_1_task_1_1_destination_zip.html#a7487a512b75445703ed8c86aef6a4a09',1,'KoFrMaRestApi.Models.Daemon.Task.DestinationZip.CompressionLevel()']]],
+  ['contact',['Contact',['../class_ko_fr_ma_rest_api_1_1_controllers_1_1_home_controller.html#a4cb8dbeaa3b7b3a297f279b8afb4ba7e',1,'KoFrMaRestApi::Controllers::HomeController']]],
+  ['correcttime',['CorrectTime',['../class_ko_fr_ma_rest_api_1_1_models_1_1_timer_class.html#a2d7315fdfb8cd56e1581206733c5423a',1,'KoFrMaRestApi::Models::TimerClass']]],
+  ['creationtimeutc',['CreationTimeUtc',['../class_ko_fr_ma_rest_api_1_1_models_1_1_daemon_1_1_task_1_1_backup_journal_1_1_file_info_object.html#a309271082bad1628737e5ae69d280035',1,'KoFrMaRestApi.Models.Daemon.Task.BackupJournal.FileInfoObject.CreationTimeUtc()'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_daemon_1_1_task_1_1_backup_journal_1_1_folder_object.html#a38241860f939eb636640c7f701799a31',1,'KoFrMaRestApi.Models.Daemon.Task.BackupJournal.FolderObject.CreationTimeUtc()']]]
+];

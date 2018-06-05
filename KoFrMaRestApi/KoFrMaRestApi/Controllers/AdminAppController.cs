@@ -17,6 +17,7 @@ using System.Net;
 using BCrypt.Net;
 using System.Net.Http;
 using KoFrMaRestApi.Models.AdminApp.RepeatingTasks;
+using System.Diagnostics;
 
 namespace KoFrMaRestApi.Controllers
 {
@@ -67,8 +68,10 @@ namespace KoFrMaRestApi.Controllers
         [HttpPost, Route(@"api/AdminApp/RegisterToken")]
         public string RegisterToken(AdminLogin adminLogin)
         {
+            Debug.WriteLine(JsonConvert.SerializeObject(adminLogin));
             try
             {
+                Debug.WriteLine(JsonConvert.SerializeObject(mySqlCom.RegisterToken(adminLogin)));
                 return mySqlCom.RegisterToken(adminLogin);
             }
             catch(Exception ex)
@@ -374,7 +377,7 @@ namespace KoFrMaRestApi.Controllers
                             mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable);
                         }
                         else if (((ChangeTableRequest)postAdmin.request).changeTable.ColumnName == "Username" &&
-                                mySqlCom.Exists(new ExistsRequest()
+                                !mySqlCom.Exists(new ExistsRequest()
                                 {
                                     Column = ((ChangeTableRequest)postAdmin.request).changeTable.ColumnName,
                                     TableName = ((ChangeTableRequest)postAdmin.request).changeTable.TableName,
@@ -433,7 +436,7 @@ namespace KoFrMaRestApi.Controllers
         /// Returns your email settings
         /// </summary>
         /// <param name="adminInfo"></param>
-        /// <returns></returns>
+        /// <returns>Data about email</returns>
         [HttpPost, Route("api/AdminApp/GetEmail")]
         public EditEmailRequest GetEmail(AdminInfo adminInfo)
         {
@@ -449,6 +452,11 @@ namespace KoFrMaRestApi.Controllers
             else
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
+        /// <summary>
+        /// Used for changing timer of daemon
+        /// </summary>
+        /// <param name="postAdmin"></param>
+        /// <returns>Updated timer</returns>
         [HttpPost, Route("api/AdminApp/ChangeTimerDaemon")]
         public TimerTicks GetTimerDaemon(PostAdmin postAdmin)
         {
@@ -464,55 +472,5 @@ namespace KoFrMaRestApi.Controllers
             else
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
-        ///// <summary>
-        ///// Returns a token if it exists, if not it creates a new one.
-        ///// </summary>
-        ///// <param name="username">Admin's username</param>
-        ///// <param name="password">Admin's password</param>
-        ///// <returns></returns>
-        //[HttpPost, Route("api/AdminApp/login-server")]
-        //public string LoginServer(string username, string password)
-        //{
-        //    try
-        //    {
-        //        if (username == null || password == null)
-        //        {
-        //            throw new HttpResponseException(HttpStatusCode.BadRequest);
-        //        }
-        //        string token = mySqlCom.SelectToken(username, password);
-        //        return token;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        if (ex.Message == "No admin with this username")
-        //        {
-        //            throw new HttpResponseException(HttpStatusCode.BadRequest);
-        //        }
-        //        else
-        //            throw ex;
-        //    }
-        //}
-        ///// <summary>
-        ///// Used to change data on server
-        ///// </summary>
-        ///// <param name="username"></param>
-        ///// <param name="token"></param>
-        //[HttpPost, Route("api/AdminApp/change-server-data")]
-        //public void ChangeServerData(string username, string token/*add stuff you need to set set it in WebApiConfig*/)
-        //{
-        //    if (this.Authorized(new AdminInfo() { Token = token, UserName = username }))
-        //    {
-        //        if (this.Permitted(username, new int[] { 6 }))
-        //        {
-        //            //your code
-        //        }
-        //        else
-        //            throw new HttpResponseException(HttpStatusCode.Forbidden);
-        //    }
-        //    else
-        //    {
-        //        throw new HttpResponseException(HttpStatusCode.Unauthorized);
-        //    }
-        //}
     }
 }

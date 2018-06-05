@@ -5,6 +5,9 @@ using System.Web;
 
 namespace KoFrMaRestApi.Models.Daemon
 {
+    /// <summary>
+    /// Version of a task
+    /// </summary>
     public class TaskVersion
     {
         /// <summary>

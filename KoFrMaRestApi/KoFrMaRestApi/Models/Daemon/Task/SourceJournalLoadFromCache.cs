@@ -5,6 +5,9 @@ using System.Web;
 
 namespace KoFrMaRestApi.Models.Daemon.Task
 {
+    /// <summary>
+    /// Loads source from previous task
+    /// </summary>
     public class SourceJournalLoadFromCache:ISource
     {
         /// <summary>

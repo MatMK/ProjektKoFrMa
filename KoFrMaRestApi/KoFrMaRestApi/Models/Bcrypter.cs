@@ -15,7 +15,9 @@ namespace KoFrMaRestApi.Models
         }
         public bool PasswordMatches(string Base64Password, string EncryptedPasswordInBase64)
         {
-            return BCrypt.Net.BCrypt.Verify(Base64Password + HardcodedSalt, Base64Decode(EncryptedPasswordInBase64));
+            
+            bool t = BCrypt.Net.BCrypt.Verify(Base64Password + HardcodedSalt, Base64Decode(EncryptedPasswordInBase64));
+            return t;
         }
         public string Base64Decode(string base64EncodedData)
         {

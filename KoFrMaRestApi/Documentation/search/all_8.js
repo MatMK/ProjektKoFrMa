@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['id',['Id',['../class_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_post_admin_1_1_delete_row_request.html#a982b758125ad9b0538cfbe213ef54510',1,'KoFrMaRestApi.Models.AdminApp.PostAdmin.DeleteRowRequest.Id()'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_daemon_1_1_daemon_info.html#a3d82e5ea208a94438e844470c2f63285',1,'KoFrMaRestApi.Models.Daemon.DaemonInfo.Id()'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_tables_1_1_change_table.html#a6830f08c94c46ed6848119e3ef4c8599',1,'KoFrMaRestApi.Models.Tables.ChangeTable.Id()'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_tables_1_1tb_admin_accounts.html#a3b0caf808f217b4d1b66d43309e0e288',1,'KoFrMaRestApi.Models.Tables.tbAdminAccounts.Id()'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_tables_1_1tb_daemons.html#a1a1d2b939a5603101e6740e1a8158753',1,'KoFrMaRestApi.Models.Tables.tbDaemons.Id()'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_tables_1_1tb_server_exceptions.html#a11f1050c735dcfa94fc6890b389d9cd5',1,'KoFrMaRestApi.Models.Tables.tbServerExceptions.Id()'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_tables_1_1tb_tasks.html#ab6309727bf72bc66581d796cd4d2acb1',1,'KoFrMaRestApi.Models.Tables.tbTasks.Id()'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_tables_1_1tb_tasks_completed.html#a10280d7b9e0ce5fce133af09401450ed',1,'KoFrMaRestApi.Models.Tables.tbTasksCompleted.Id()']]],
+  ['iddaemon',['IdDaemon',['../class_ko_fr_ma_rest_api_1_1_models_1_1_tables_1_1tb_tasks.html#a49b2a61d4b753202302762e5094a6c8a',1,'KoFrMaRestApi.Models.Tables.tbTasks.IdDaemon()'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_tables_1_1tb_tasks_completed.html#ad1a2863b8642ae0c5ca8db0fea1fdabf',1,'KoFrMaRestApi.Models.Tables.tbTasksCompleted.IdDaemon()']]],
+  ['idestination',['IDestination',['../interface_ko_fr_ma_rest_api_1_1_models_1_1_daemon_1_1_task_1_1_i_destination.html',1,'KoFrMaRestApi::Models::Daemon::Task']]],
+  ['idestination_2ecs',['IDestination.cs',['../_i_destination_8cs.html',1,'']]],
+  ['idestinationpath',['IDestinationPath',['../interface_ko_fr_ma_rest_api_1_1_models_1_1_daemon_1_1_task_1_1_i_destination_path.html',1,'KoFrMaRestApi::Models::Daemon::Task']]],
+  ['idestinationpath_2ecs',['IDestinationPath.cs',['../_i_destination_path_8cs.html',1,'']]],
+  ['idtask',['IdTask',['../class_ko_fr_ma_rest_api_1_1_models_1_1_tables_1_1tb_tasks_completed.html#a8899cf4a60e52dc1d044509f244d796f',1,'KoFrMaRestApi.Models.Tables.tbTasksCompleted.IdTask()'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_daemon_1_1_task_1_1_task.html#a8f040dcfde58a69f8099e97657b6fa8a',1,'KoFrMaRestApi.Models.Daemon.Task.Task.IDTask()'],['../class_ko_fr_ma_rest_api_1_1_models_1_1_daemon_1_1_task_complete.html#a869e813dba67d957bc862e2466191870',1,'KoFrMaRestApi.Models.Daemon.TaskComplete.IDTask()']]],
+  ['index',['Index',['../class_ko_fr_ma_rest_api_1_1_controllers_1_1_home_controller.html#ac8916840cf5a975025a597985da71860',1,'KoFrMaRestApi::Controllers::HomeController']]],
+  ['inprogress',['InProgress',['../class_ko_fr_ma_rest_api_1_1_models_1_1_daemon_1_1_task_1_1_task.html#ab3ce3f283451571f2d0a670994d22942',1,'KoFrMaRestApi::Models::Daemon::Task::Task']]],
+  ['inputcheck',['InputCheck',['../class_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_input_check.html',1,'KoFrMaRestApi::Models::AdminApp']]],
+  ['inputcheck_2ecs',['InputCheck.cs',['../_input_check_8cs.html',1,'']]],
+  ['irequest',['IRequest',['../interface_ko_fr_ma_rest_api_1_1_models_1_1_admin_app_1_1_post_admin_1_1_i_request.html',1,'KoFrMaRestApi::Models::AdminApp::PostAdmin']]],
+  ['irequest_2ecs',['IRequest.cs',['../_i_request_8cs.html',1,'']]],
+  ['isource',['ISource',['../interface_ko_fr_ma_rest_api_1_1_models_1_1_daemon_1_1_task_1_1_i_source.html',1,'KoFrMaRestApi::Models::Daemon::Task']]],
+  ['isource_2ecs',['ISource.cs',['../_i_source_8cs.html',1,'']]],
+  ['issuccessful',['IsSuccessful',['../class_ko_fr_ma_rest_api_1_1_models_1_1_tables_1_1tb_tasks_completed.html#a09bca889ed7cf38c2f0ad88e3f0cf10b',1,'KoFrMaRestApi::Models::Tables::tbTasksCompleted']]],
+  ['issuccessfull',['IsSuccessfull',['../class_ko_fr_ma_rest_api_1_1_models_1_1_daemon_1_1_task_complete.html#a19987382d51b876d9f0352d32e1b7f06',1,'KoFrMaRestApi::Models::Daemon::TaskComplete']]],
+  ['isvalid',['IsValid',['../class_ko_fr_ma_rest_api_1_1_models_1_1_token.html#a646ee60e016460ce2278bd1f2c54657c',1,'KoFrMaRestApi::Models::Token']]]
+];
