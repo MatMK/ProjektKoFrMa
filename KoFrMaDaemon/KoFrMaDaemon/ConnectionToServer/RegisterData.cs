@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace KoFrMaDaemon.ConnectionToServer
 {
-    class RegisterData
+    public class RegisterData
     {
+        public string Token { get; set; }
+        public int TimerTick { get; set; }
     }
 }

@@ -117,6 +117,7 @@
     <Compile Include="ConnectionToServer\DaemonSettings.cs" />
     <Compile Include="ConnectionToServer\JsonSerializationUtility.cs" />
     <Compile Include="ConnectionToServer\Password.cs" />
+    <Compile Include="ConnectionToServer\RegisterData.cs" />
     <Compile Include="ConnectionToServer\Request.cs" />
     <Compile Include="ConnectionToServer\SettingsSerializationBinder.cs" />
     <Compile Include="ConnectionToServer\TaskVersion.cs" />
