@@ -1,5 +1,6 @@
 ﻿using KoFrMaRestApi.Models;
 using KoFrMaRestApi.Models.AdminApp;
+using KoFrMaRestApi.Models.AdminApp.GetList;
 using KoFrMaRestApi.Models.AdminApp.PostAdmin;
 using KoFrMaRestApi.Models.AdminApp.RepeatingTasks;
 using KoFrMaRestApi.Models.Daemon.Task;
@@ -454,17 +455,21 @@ namespace KoFrMaRestApi.MySqlCom
                 }
             }
         }
-        public int? GetTimerTick(int DaemonId)
+        public TimerTicks GetTimerTick(int DaemonId)
         {
             using (MySqlConnection connection = WebApiConfig.Connection())
-            using (MySqlCommand command = new MySqlCommand("SELECT `TimerTick` FROM `tbDaemons` WHERE `Id` = " + DaemonId, connection))
+            using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbDaemons` WHERE `Id` = " + DaemonId, connection))
             {
+                TimerTicks timers = new TimerTicks();
                 connection.Open();
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        return (int)reader["TimerTick"];
+                        timers.TimerTick = (int)reader["TimerTick"];
+                        timers.AfterStart = (int)reader["TimerOnStart"];
+                        timers.AfterFailed = (int)reader["TimerAfterFail"];
+                        return timers;
                     }
                     return null;
                 }

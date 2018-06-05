@@ -318,7 +318,12 @@ namespace KoFrMaDaemon
                     debugLog.WriteToLog("Trying to obtain token from the server...", 5);
                     try
                     {
-                        daemon.Token = connection.GetToken();
+                        RegisterData data = connection.GetToken();
+                        this.timerValues.ConnectionFailed = data.TimerTick.AfterFailed;
+                        this.timerValues.ConnectionSuccess = data.TimerTick.TimerTick;
+                        this.timerValues.OnStart = data.TimerTick.AfterStart;
+
+                        daemon.Token = data.Token;
                         debugLog.WriteToLog("Token obtained.", 5);
                         this.timerConnection.AutoReset = false;
                     }

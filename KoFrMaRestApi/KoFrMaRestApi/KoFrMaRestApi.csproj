@@ -199,6 +199,7 @@
     <Compile Include="Models\AdminApp\AdminInfo.cs" />
     <Compile Include="Models\AdminApp\AdminLogin.cs" />
     <Compile Include="Models\AdminApp\GetList\Data.cs" />
+    <Compile Include="Models\AdminApp\GetList\TimerTicks.cs" />
     <Compile Include="Models\AdminApp\InputCheck.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\AddAdminRequest.cs" />
     <Compile Include="Models\AdminApp\PostAdmin\ChangePasswordRequest.cs" />
@@ -217,6 +218,7 @@
     <Compile Include="Models\AdminApp\SetTasks.cs" />
     <Compile Include="Models\AdminApp\RepeatingTasks\TaskRepeating.cs" />
     <Compile Include="Models\Bcrypter.cs" />
+    <Compile Include="Models\Daemon\RegisterData.cs" />
     <Compile Include="Models\Daemon\Request.cs" />
     <Compile Include="Models\Daemon\DaemonInfo.cs" />
     <Compile Include="Models\Daemon\Password.cs" />

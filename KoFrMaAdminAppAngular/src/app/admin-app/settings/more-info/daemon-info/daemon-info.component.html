@@ -5,6 +5,14 @@
   TimerTick: <input type="number" name="timertick" (change)="changeTick()" [(ngModel)]="timertickValue">
   <select id="dropdownRepeat" class="basicSelect" [(ngModel)]="repeat" (change)="changeTick()"> 
     <option *ngFor="let element of repeatOptions" value="{{element.value}}" id="optionTime">{{element.text}}</option> 
+  </select><br>
+  Retry after failed connection: <input type="number" name="timertick" (change)="changeTickError()" [(ngModel)]="timertickValueError">
+  <select id="dropdownRepeat" class="basicSelect" [(ngModel)]="repeatError" (change)="changeTickError()"> 
+    <option *ngFor="let element of repeatOptions" value="{{element.value}}" id="optionTime">{{element.text}}</option> 
+  </select><br>
+  After start: <input type="number" name="timertick" (change)="changeTickError()" [(ngModel)]="timertickValueStart">
+  <select id="dropdownRepeat" class="basicSelect" [(ngModel)]="repeatStart" (change)="changeTickError()"> 
+    <option *ngFor="let element of repeatOptions" value="{{element.value}}" id="optionTime">{{element.text}}</option> 
   </select>
   <h4>Upcoming tasks:</h4>
   <div style="max-height: 200px; overflow: auto">
