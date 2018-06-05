@@ -1,7 +1,6 @@
 <mat-toolbar class="toolbar">
-  <h1 routerLink="/backup/app/tasks">KoFrMaBackup</h1>
-  <div style="float:right">
-  <button (click)="logOut()" style="float:right">Log out</button>
-</div>
+  <div class="kfmLogo"></div>
+  <h1 routerLink="/backup/app/tasks" >KoFrMaBackup</h1>
+  <div class="logout" (click)="logOut()"></div>
 </mat-toolbar>
 <router-outlet></router-outlet>

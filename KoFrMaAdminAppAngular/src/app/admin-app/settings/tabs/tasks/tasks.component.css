@@ -1,16 +1,16 @@
 
 
 .table-task {
-    display: flex;
-    flex-direction: column;
-   max-height: 545px;
-    min-width: 300px;
-    overflow: auto;
-    min-height: 545px;
+  display: flex;
+  flex-direction: column;
+ max-height: 860px;
+  min-width: 300px;
+  overflow: auto;
+  min-height: 860px;;
 }
 .mat-table {
   overflow: auto;
- height: 500px;
+ ;
   
 }
 .mat-column-Id {

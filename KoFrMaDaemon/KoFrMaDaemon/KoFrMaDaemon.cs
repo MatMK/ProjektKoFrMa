@@ -149,8 +149,8 @@ namespace KoFrMaDaemon
             Task taskTest = new Task
             {
                 //Sources = cheatBackupJournalOperations.LoadBackupJournalObject(@"d:\KoFrMa\BackupGoesHere\KoFrMaBackup_2018_06_02_15_02_59\KoFrMaBackup.dat", debugLog),
-                //Sources = tmpSourceFolders,
-                Sources = sourceMSSQL,
+                Sources = tmpSourceFolders,
+                //Sources = sourceMSSQL,
                 IDTask = 0,
                 LogLevel = 8,
                 TemporaryFolderMaxBuffer = null,

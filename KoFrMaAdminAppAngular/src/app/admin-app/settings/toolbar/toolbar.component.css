@@ -1,5 +1,25 @@
 .toolbar{
-    background-color: rgba(255, 255, 255,0.3 );
+    background-color: rgba(255, 255, 255,0.4 );
     
   
+}
+
+.kfmLogo{
+    background-image: url("kfmlogo60x60x.png");
+    width: 60px;
+    height: 60px;
+}
+
+
+
+.logout{
+background-image: url("logout40x40x.png");
+
+margin-left: 1640px;
+width: 40px;
+height: 40px;
+}
+
+.logout:hover{
+    cursor: pointer;
 }

@@ -8,6 +8,8 @@ import { ExceptionDate } from '../../../server-connection/models/communication-m
 import { TaskRepeatingNoTimespan } from '../../../server-connection/models/communication-models/task/task-repeating.model';
 import { Router } from '@angular/router';
 
+
+
 @Component({
   selector: 'app-email-info',
   templateUrl: './email-info.component.html',
@@ -29,7 +31,11 @@ export class EmailInfoComponent implements OnInit {
   private sendTill : Date;
   private emailCheck : boolean;
 
+<<<<<<< HEAD
   constructor(private service : ServerConnectionService, private data : Data, private router : Router) { 
+=======
+  constructor(private service : ServerConnectionService, private data : Data, )  { 
+>>>>>>> 2b1f3df0c30e4a4e39380d73e719e72557da5bcd
     this.service.GetMail().then(res => {
       console.log(res);
       this.emailCheck = res.RecieveMail;
@@ -100,5 +106,6 @@ export class EmailInfoComponent implements OnInit {
     this.sendTill= value;
   }
   ngOnInit() {
+    
   }
 }
