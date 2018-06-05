@@ -14,3 +14,7 @@ p{
 p.active-link{
     font-weight: 900;
 }
+
+.selectElement{
+    border: solid grey 1p;
+}

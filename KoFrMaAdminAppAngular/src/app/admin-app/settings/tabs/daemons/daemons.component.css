@@ -3,10 +3,10 @@
   
     display: flex;
     flex-direction: column;
-   max-height: 500px;
+   max-height: 545px;
     min-width: 300px;
     overflow: auto;
-    min-height: 500px;
+    min-height: 545px;
 
 }
 

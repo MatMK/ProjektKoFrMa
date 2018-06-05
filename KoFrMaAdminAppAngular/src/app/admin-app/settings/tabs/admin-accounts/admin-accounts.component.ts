@@ -26,7 +26,7 @@ export class AdminAccountsComponent {
   private selectedPerm : PermInterface[][];
   constructor(private service : ServerConnectionService, private data : Data, private app : AppComponent) {
   }
-  displayedColumns = ['Id', 'Username', 'Email', 'Enabled', 'Permission', 'Delete', 'ResetPassword'];
+  displayedColumns = ['Id', 'Username', 'Email', 'Enabled', 'Permission',  'ResetPassword','Delete'];
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim(); // Remove whitespace
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches

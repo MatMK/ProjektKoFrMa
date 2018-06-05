@@ -40,7 +40,8 @@
         <!-- Completed Column -->
         <ng-container matColumnDef="Delete">
           <mat-header-cell *matHeaderCellDef> Delete </mat-header-cell>
-          <mat-cell *matCellDef="let element"> <button (click)="deleteRow(element.Id)">Delete</button> </mat-cell>
+          
+          <mat-cell *matCellDef="let element"> <div class="deleteDiv"  style="margin-left: 20px;" (click)="deleteRow(element.Id)">  </div> </mat-cell>
         </ng-container>
 
       

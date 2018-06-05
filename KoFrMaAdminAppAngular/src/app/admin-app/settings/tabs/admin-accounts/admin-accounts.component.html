@@ -56,21 +56,24 @@
           </mat-cell>
       </ng-container>
 
-      <!-- Delete Column -->
-      <ng-container matColumnDef="Delete">
-        <mat-header-cell *matHeaderCellDef> Delete </mat-header-cell>
-        <mat-cell *matCellDef="let element"> 
-          <button (click)="deleteRow(element.Id)">Delete</button>
-        </mat-cell>
-      </ng-container>
-
       <!-- Reset Password -->
       <ng-container matColumnDef="ResetPassword">
         <mat-header-cell *matHeaderCellDef> Reset password </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <button (click)="resetPassword(element.UserName)">Reset password</button>
+            <button style="margin-left:10px" (click)="resetPassword(element.UserName)">Reset password</button>
         </mat-cell>
       </ng-container>
+
+      <!-- Delete Column -->
+      <ng-container matColumnDef="Delete">
+        <mat-header-cell *matHeaderCellDef> Delete </mat-header-cell>
+        <mat-cell  *matCellDef="let element"> 
+          <div class="deleteDiv"  style="margin-left: 20px;" (click)="deleteRow(element.Id)">  </div>
+          
+        </mat-cell>
+      </ng-container>
+
+      
 
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
