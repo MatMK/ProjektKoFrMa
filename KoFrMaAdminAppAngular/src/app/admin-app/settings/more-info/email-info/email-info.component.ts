@@ -7,6 +7,8 @@ import { EditEmailRequest } from '../../../server-connection/models/communicatio
 import { ExceptionDate } from '../../../server-connection/models/communication-models/task/exception-date.model';
 import { TaskRepeatingNoTimespan } from '../../../server-connection/models/communication-models/task/task-repeating.model';
 
+
+
 @Component({
   selector: 'app-email-info',
   templateUrl: './email-info.component.html',
@@ -28,7 +30,7 @@ export class EmailInfoComponent implements OnInit {
   private sendTill : Date;
   private emailCheck : boolean;
 
-  constructor(private service : ServerConnectionService, private data : Data) { 
+  constructor(private service : ServerConnectionService, private data : Data, )  { 
     this.service.GetMail().then(res => {
       console.log(res);
       this.emailCheck = res.RecieveMail;
@@ -98,5 +100,6 @@ export class EmailInfoComponent implements OnInit {
     this.sendTill= value;
   }
   ngOnInit() {
+    
   }
 }

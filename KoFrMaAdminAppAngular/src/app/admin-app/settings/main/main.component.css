@@ -7,9 +7,20 @@
     background-color: white;
     padding-left: 15px;
     width: 170px;
+    border-right: solid rgb(220, 220, 220) 1px;
 }
 p{
     color: black;
+    font-size: 18px;
+    border-bottom: solid rgb(220, 220, 220) 1px;
+    vertical-align: center;
+    margin-bottom: 10px;
+   
+}
+
+    p:hover{
+    cursor: pointer;
+    background-color: rgb(220, 220, 220);
 }
 p.active-link{
     font-weight: 900;
