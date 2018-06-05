@@ -59,6 +59,7 @@ namespace KoFrMaRestApi.Controllers
         InputCheck check = new InputCheck();
         MySqlAdmin mySqlCom = new MySqlAdmin();
         MySqlDaemon mySqlDaemon = new MySqlDaemon();
+        TokenUtility token = new TokenUtility();
         /// <summary>
         /// Used for logging in
         /// </summary>
@@ -114,7 +115,7 @@ namespace KoFrMaRestApi.Controllers
         [HttpPost, Route(@"api/AdminApp/Authorized")]
         public bool Authorized(AdminInfo adminInfo)
         {
-            return mySqlCom.Authorized(adminInfo.UserName, adminInfo.Token);
+            return token.IsValid(adminInfo.UserName, adminInfo.Token);
         }
         /// <summary>
         /// Used for setting a new list of <see cref="Task"/>

@@ -87,7 +87,7 @@ namespace KoFrMaDaemon.ConnectionToServer
         /// Connects to the RestAPI server and tries to obtain a token that authorizes the daemon to receives tasks
         /// </summary>
         /// <returns></returns>
-        public string GetToken()
+        public RegisterData GetToken()
         {
             KoFrMaDaemon.debugLog.WriteToLog("Creating token request...", 7);
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(ConnectionInfo.ServerURL + @"/api/Daemon/RegisterToken");
@@ -110,8 +110,7 @@ namespace KoFrMaDaemon.ConnectionToServer
                 result = streamReader.ReadToEnd();
             }
             RegisterData data = JsonSerializationUtility.Deserialize<RegisterData>(result);
-            //
-            return data.Token;
+            return data;
         }
 
 
