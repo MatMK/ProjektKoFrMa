@@ -22,6 +22,7 @@ namespace KoFrMaRestApi.Controllers
     {
         //Token token = new Token();
         MySqlDaemon mySqlCom = new MySqlDaemon();
+        MySqlAdmin mySqlAdmin = new MySqlAdmin();
         /// <summary>
         /// Submits daemons completed tasks and returns new tasks if there are any.
         /// AUTHENTICATION:
@@ -108,7 +109,7 @@ namespace KoFrMaRestApi.Controllers
         /// <param name="password">Input with daemon's <see cref="DaemonInfo"/> and password in base64</param>
         /// <returns>Returns token</returns>
         [HttpPost, Route(@"api/Daemon/RegisterToken")]
-        public string Register(Password password)
+        public RegisterData Register(Password password)
         {
             string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
             Bcrypter encrypt = new Bcrypter();
@@ -116,11 +117,11 @@ namespace KoFrMaRestApi.Controllers
             {
                 connection.Open();
                 mySqlCom.RegisterDaemonAndGetId(password.daemon, password.password);
-                mySqlCom.DaemonSeen((int)mySqlCom.GetDaemonId(password.daemon), connection);
+                mySqlCom.DaemonSeen((int)mySqlCom.GetDaemonId(password.daemon ), connection);
                 connection.Close();
             }
             mySqlCom.RegisterToken(password.daemon.PC_Unique,password.password,token);
-            return token;
+            return new RegisterData() { Token = token, TimerTick = mySqlAdmin.GetTimerTick((int)mySqlCom.GetDaemonId(password.daemon))};
         }
     }
 }

@@ -27,6 +27,7 @@ import { tbCompletedTasks } from './models/sql-data/data/tb-completed-tasks';
 import { tbServerExceptions } from './models/sql-data/data/tb-server-exceptions.model';
 import { EditEmailRequest } from './models/communication-models/post-admin/edit-email-request.model';
 import { GetTimerDaemonRequest } from './models/communication-models/post-admin/get-timer-daemon-request.model';
+import { TimerTicks } from './models/sql-data/timer-ticks.model';
 
 @Injectable()
 
@@ -339,7 +340,7 @@ export class ServerConnectionService{
                     throw new Error();
                 })
     }
-    GetTimerTick(daemonId : number) : Promise<number>
+    GetTimerTick(daemonId : number) : Promise<TimerTicks>
     {
         this.data.Loading = true;
         let postAdmin : PostAdmin = new PostAdmin(this.data.adminInfo, new GetTimerDaemonRequest("GetTimerDaemonRequest",daemonId))

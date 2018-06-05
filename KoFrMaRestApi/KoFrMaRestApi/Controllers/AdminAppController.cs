@@ -388,6 +388,16 @@ namespace KoFrMaRestApi.Controllers
                         {
                             mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable);
                         }
+                        else if (((ChangeTableRequest)postAdmin.request).changeTable.ColumnName == "TimerOnStart" &&
+        (((ChangeTableRequest)postAdmin.request).changeTable.Value is long) || ((ChangeTableRequest)postAdmin.request).changeTable.Value is int)
+                        {
+                            mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable);
+                        }
+                        else if (((ChangeTableRequest)postAdmin.request).changeTable.ColumnName == "TimerAfterFail" &&
+        (((ChangeTableRequest)postAdmin.request).changeTable.Value is long) || ((ChangeTableRequest)postAdmin.request).changeTable.Value is int)
+                        {
+                            mySqlCom.AlterTable(((ChangeTableRequest)postAdmin.request).changeTable);
+                        }
                         else
                         {
                             throw new HttpResponseException(HttpStatusCode.BadRequest);
@@ -440,7 +450,7 @@ namespace KoFrMaRestApi.Controllers
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
         [HttpPost, Route("api/AdminApp/ChangeTimerDaemon")]
-        public int? GetTimerDaemon(PostAdmin postAdmin)
+        public TimerTicks GetTimerDaemon(PostAdmin postAdmin)
         {
             if (this.Authorized(postAdmin.adminInfo))
             {

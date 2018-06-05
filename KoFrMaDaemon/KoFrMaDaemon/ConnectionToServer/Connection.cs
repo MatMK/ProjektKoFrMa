@@ -54,40 +54,11 @@ namespace KoFrMaDaemon.ConnectionToServer
             //result = this.DecodeBase64(System.Text.Encoding.UTF8, resultBase64);
             return JsonSerializationUtility.Deserialize<List<Task>>(result);
         }
-        //public void TaskCompleted(Task task, BackupJournalObject backupJournalNew, DebugLog debugLog, bool Successfull)
-        //{
-        //    TaskComplete completedTask = new TaskComplete()
-        //    {
-        //        IDTask = task.IDTask,
-        //        TimeOfCompletition = DateTime.Now,
-        //        DebugLog = debugLog.logReport,
-        //        DatFile = backupJournalNew,
-        //        IsSuccessfull = Successfull
-        //    };
-
-        //    var httpWebRequest = (HttpWebRequest)WebRequest.Create(ConnectionInfo.ServerURL + @"/api/Daemon/TaskCompleted");
-        //    httpWebRequest.ContentType = "application/json";
-        //    httpWebRequest.Method = "POST";
-        //    using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
-        //    {
-        //        string json = JsonConvert.SerializeObject(completedTask);
-
-        //        streamWriter.Write(json);
-        //        streamWriter.Flush();
-        //        streamWriter.Close();
-        //    }
-        //    var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-        //    string result;
-        //    using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-        //    {
-        //        result = streamReader.ReadToEnd();
-        //    }
-        //}
         /// <summary>
         /// Connects to the RestAPI server and tries to obtain a token that authorizes the daemon to receives tasks
         /// </summary>
         /// <returns></returns>
-        public string GetToken()
+        public RegisterData GetToken()
         {
             KoFrMaDaemon.debugLog.WriteToLog("Creating token request...", 7);
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(ConnectionInfo.ServerURL + @"/api/Daemon/RegisterToken");
@@ -111,7 +82,7 @@ namespace KoFrMaDaemon.ConnectionToServer
             }
             RegisterData data = JsonSerializationUtility.Deserialize<RegisterData>(result);
             //
-            return data.Token;
+            return data;
         }
 
 
