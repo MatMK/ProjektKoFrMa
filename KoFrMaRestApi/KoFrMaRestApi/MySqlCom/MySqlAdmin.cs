@@ -213,7 +213,7 @@ namespace KoFrMaRestApi.MySqlCom
                                     if ((string)reader["BackupJournal"] != "null" && reader["BackupJournal"] != DBNull.Value)
                                     {
                                         i++;
-                                        task.Sources = JsonSerializationUtility.Deserialize<BackupJournalObject>(Verification.Base64Decode((string)reader["BackupJournal"]));
+                                        task.Sources = JsonConvert.DeserializeObject<BackupJournalObject>(Verification.Base64Decode((string)reader["BackupJournal"]));
                                         break;
                                     }
                                 }
