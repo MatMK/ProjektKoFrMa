@@ -72,6 +72,10 @@ namespace KoFrMaRestApi.Models
                     return typeof(SourceMSSQL);
                 case "SourceMySQL":
                     return typeof(SourceMySQL);
+                case "BackupJournalFiles":
+                    return typeof(FileInfoObject);
+                case "FolderObject":
+                    return typeof(FolderObject);
             }
             return null;
         }
