@@ -189,6 +189,7 @@
     <Compile Include="Controllers\AdminAppController.cs" />
     <Compile Include="Controllers\DaemonController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="EmailSender\ExecuteMail.cs" />
     <Compile Include="EmailSender\Mail.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -308,8 +309,7 @@
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\View.cshtml" />
-    <Content Include="Views\ServerSettings\Login.cshtml" />
-    <Content Include="Views\ServerSettings\Set.cshtml" />
+    <Content Include="Views\Set.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

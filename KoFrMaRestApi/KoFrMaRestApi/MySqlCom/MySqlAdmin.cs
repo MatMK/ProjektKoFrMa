@@ -4,6 +4,7 @@ using KoFrMaRestApi.Models.AdminApp.GetList;
 using KoFrMaRestApi.Models.AdminApp.PostAdmin;
 using KoFrMaRestApi.Models.AdminApp.RepeatingTasks;
 using KoFrMaRestApi.Models.Daemon.Task;
+using KoFrMaRestApi.Models.Daemon.Task.BackupJournal;
 using KoFrMaRestApi.Models.Tables;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
@@ -189,7 +190,6 @@ namespace KoFrMaRestApi.MySqlCom
                         Task task = new Task()
                         {
                             IDTask = NextAutoIncrement("tbTasks"),
-                            Sources = item.Sources,
                             Destinations = item.Destinations,
                             LogLevel = item.LogLevel,
                             ScriptBefore = item.ScriptBefore,
@@ -198,8 +198,33 @@ namespace KoFrMaRestApi.MySqlCom
                             InProgress = false,
                             TimeToBackup = taskRepeating.ExecutionTimes[0]
                         };
+                        if (item.FollowupTo == 0)
+                        {
+                            task.Sources = item.Sources;
+                        }
+                        else
+                        {
+                            command.CommandText = "SELECT * FROM `tbTasksCompleted` WHERE `Id` = " + item.FollowupTo;
+                            using (MySqlDataReader reader = command.ExecuteReader())
+                            {
+                                int i = 0;
+                                while (reader.Read())
+                                {
+                                    if ((string)reader["BackupJournal"] != "null" && reader["BackupJournal"] != DBNull.Value)
+                                    {
+                                        i++;
+                                        task.Sources = JsonSerializationUtility.Deserialize<BackupJournalObject>(Verification.Base64Decode((string)reader["BackupJournal"]));
+                                        break;
+                                    }
+                                }
+                                if (i == 0)
+                                {
+                                    throw new Exception("Cannot follow up to task with no backup journal");
+                                }
+                            }
+                        }
                         dynamic Repeating;
-
+                        command.CommandText = "INSERT INTO `tbTasks` VALUES (null, @DaemonId, @Task, @DateOfCompletion,@IdPreviousTask, @BackupTypePlan,@Repeating,0)";
                         if (item.ExecutionTimes != null)
                             Repeating = JsonSerializationUtility.Serialize(taskRepeating);
                         else

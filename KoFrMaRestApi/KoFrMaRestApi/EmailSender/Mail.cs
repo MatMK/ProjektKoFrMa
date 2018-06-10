@@ -73,7 +73,7 @@ namespace KoFrMaRestApi.EmailSender
                 }
             }
             Sbody = Sbody.Replace("{Date}", DateTime.Now.ToShortDateString());
-            Sbody = Sbody.Replace("{}", WebApiConfig.WebServerURL);
+            Sbody = Sbody.Replace("{AdminAppUrl}", WebApiConfig.WebServerURL);
             Sbody = Sbody.Replace("{ErrorCount}", exceptions.Count.ToString());
             Sbody = Sbody.Replace("{CompletedTasks}", completedTasks.Count.ToString());
             Sbody = Sbody.Replace("{Successful}", successful.ToString());

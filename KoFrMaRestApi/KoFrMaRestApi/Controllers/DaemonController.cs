@@ -71,7 +71,6 @@ namespace KoFrMaRestApi.Controllers
                     {
                         tasks.RemoveAt(ToRemove[i]);
                     }
-                    Debug.WriteLine(JsonConvert.SerializeObject(tasks));
                     return tasks;
                 }
                 else
