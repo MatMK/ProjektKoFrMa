@@ -147,8 +147,9 @@ namespace KoFrMaRestApi.MySqlCom
                         debugLog += item + "\n";
                     }
                 }
-                using (MySqlCommand command = new MySqlCommand($"INSERT INTO `tbTasksCompleted` VALUES (null,{GetDaemonId(taskComplete.DaemonInfo)},{taskComplete.IDTask},'{b.Base64Encode(JsonSerializationUtility.Serialize(taskComplete.DatFile))}',@datetime,'{debugLog}',{taskComplete.IsSuccessfull},0)", connection))
+                using (MySqlCommand command = new MySqlCommand($"INSERT INTO `tbTasksCompleted` VALUES (null,{GetDaemonId(taskComplete.DaemonInfo)},{taskComplete.IDTask},@backupjournal,@datetime,'{debugLog}',{taskComplete.IsSuccessfull},0)", connection))
                 {
+                    command.Parameters.AddWithValue("@backupjournal", b.Base64Encode(JsonConvert.SerializeObject(taskComplete.DatFile)));
                     command.Parameters.AddWithValue("@datetime", taskComplete.TimeOfCompletition);
                     command.ExecuteNonQuery();
                 }
@@ -192,7 +193,7 @@ namespace KoFrMaRestApi.MySqlCom
                 {
                     foreach (var item in repeat.ExecutionTimes)
                     {
-                        while(this.HasDateException(item,repeat.ExceptionDates))
+                        while (this.HasDateException(item, repeat.ExceptionDates))
                         {
                             item.Add(repeat.Repeating);
                         }
@@ -226,7 +227,7 @@ namespace KoFrMaRestApi.MySqlCom
                 TaskRemove(taskComplete);
 
                 string newOrder = "";
-                newOrder += order.Substring(1,order.Length-1);
+                newOrder += order.Substring(1, order.Length - 1);
                 newOrder += order[0];
 
                 int previousTaskIDLast = previousTaskID;
@@ -255,68 +256,69 @@ namespace KoFrMaRestApi.MySqlCom
                 {
                     newTask = originalTask;
                     newTask.TimeToBackup = repeat.ExecutionTimes[0];
-                        if (newOrder[0]=='0')
+                    if (newOrder[0] == '0')
+                    {
+                        for (int i = newOrder.Length - 1; i > 0; i--)
                         {
-                            for (int i = newOrder.Length-1; i >0; i--)
+                            if (newOrder[i] == '0')
                             {
-                                if (newOrder[i] == '0')
-                                {
-                                    newTask.Sources = previousTasksSources[i];
-                                }
+                                newTask.Sources = previousTasksSources[i];
                             }
                         }
-                        else if (newOrder[0] == '1')
+                    }
+                    else if (newOrder[0] == '1')
+                    {
+                        int lastID = previousTasksIds[newOrder.Length - 1];
+                        int i = 0;
+                        while (lastID == 0)
                         {
-                            int lastID = previousTasksIds[newOrder.Length - 1];
-                            int i = 0;
-                            while (lastID==0)
+                            lastID = previousTasksIds[newOrder.Length - 1 - i];
+                            i++;
+                        }
+                        using (MySqlCommand command = new MySqlCommand("SELECT BackupJournal FROM tbTasksCompleted WHERE IdTask = " + lastID, connection))
+                        {
+                            using (MySqlDataReader reader = command.ExecuteReader())
                             {
-                                lastID = previousTasksIds[newOrder.Length -1- i];
-                                i++;
-                            }
-                            using (MySqlCommand command = new MySqlCommand("SELECT BackupJournal FROM tbTasksCompleted WHERE IdTask = " + lastID, connection))
-                            {
-                                using (MySqlDataReader reader = command.ExecuteReader())
+                                while (reader.Read())
                                 {
-                                    while (reader.Read())
-                                    {
-                                        //previousTasksTypes.Add((int)reader["PreviousTaskID"], (byte)reader["BackupType"]);
-                                        newTask.Sources = JsonSerializationUtility.Deserialize<ISource>((string)reader["BackupJournal"]);
-                                    }
-                                }
+                                    //previousTasksTypes.Add((int)reader["PreviousTaskID"], (byte)reader["BackupType"]);
 
-                            }
-                        }
-                        else if (newOrder[0]=='2')
-                        {
-                            
-                            for (int i = newOrder.Length - 1; i > 0; i--)
-                            {
-                                int lastID = previousTasksIds[i];
-                                int y = 1;
-                                while (lastID == 0)
-                                {
-                                    lastID = previousTasksIds[i] - y;
-                                    y++;
+                                    newTask.Sources = JsonConvert.DeserializeObject<BackupJournalObject>(b.Base64Decode((string)reader["BackupJournal"]));
                                 }
-                                if (newOrder[i] == '0')
+                            }
+
+                        }
+                    }
+                    else if (newOrder[0] == '2')
+                    {
+
+                        for (int i = newOrder.Length - 1; i > 0; i--)
+                        {
+                            int lastID = previousTasksIds[i];
+                            int y = 1;
+                            while (lastID == 0)
+                            {
+                                lastID = previousTasksIds[i] - y;
+                                y++;
+                            }
+                            if (newOrder[i] == '0')
+                            {
+                                using (MySqlCommand command = new MySqlCommand("SELECT BackupJournal FROM tbTasksCompleted WHERE IdTask = " + previousTasksIds[i], connection))
                                 {
-                                    using (MySqlCommand command = new MySqlCommand("SELECT BackupJournal FROM tbTasksCompleted WHERE IdTask = " + previousTasksIds[i], connection))
+                                    using (MySqlDataReader reader = command.ExecuteReader())
                                     {
-                                        using (MySqlDataReader reader = command.ExecuteReader())
+                                        while (reader.Read())
                                         {
-                                            while (reader.Read())
-                                            {
-                                                //previousTasksTypes.Add((int)reader["PreviousTaskID"], (byte)reader["BackupType"]);
-                                                newTask.Sources = JsonSerializationUtility.Deserialize<ISource>((string)reader["Task"]);
-                                            }
+                                            //previousTasksTypes.Add((int)reader["PreviousTaskID"], (byte)reader["BackupType"]);
+                                            newTask.Sources = JsonConvert.DeserializeObject<BackupJournalObject>((string)reader["Task"]);
                                         }
-
                                     }
-                                    break;
+
                                 }
+                                break;
                             }
                         }
+                    }
                 }
                 else
                 {
