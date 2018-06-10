@@ -213,7 +213,7 @@ namespace KoFrMaRestApi.MySqlCom
                         {
                             originalTask = JsonSerializationUtility.Deserialize<Task>((string)reader["Task"]);
                             order = (string)reader["BackupTypePlan"];
-                            previousTaskID = (int)reader["IDPreviousTask"];
+                            previousTaskID = (int)reader["Id"];
                         }
                     }
                 }
@@ -254,8 +254,6 @@ namespace KoFrMaRestApi.MySqlCom
                 {
                     newTask = originalTask;
                     newTask.TimeToBackup = repeat.ExecutionTimes[0];
-                    if (true)
-                    {
                         if (newOrder[0]=='0')
                         {
                             for (int i = newOrder.Length-1; i >0; i--)
@@ -266,7 +264,7 @@ namespace KoFrMaRestApi.MySqlCom
                                 }
                             }
                         }
-                        if (newOrder[0] == '1')
+                        else if (newOrder[0] == '1')
                         {
                             int lastID = previousTasksIds[newOrder.Length - 1];
                             int i = 0;
@@ -275,20 +273,20 @@ namespace KoFrMaRestApi.MySqlCom
                                 lastID = previousTasksIds[newOrder.Length -1- i];
                                 i++;
                             }
-                            using (MySqlCommand command = new MySqlCommand("SELECT BackupJournal FROM tbTasksCompleted WHERE IdTask = " + previousTasksIds[lastID], connection))
+                            using (MySqlCommand command = new MySqlCommand("SELECT BackupJournal FROM tbTasksCompleted WHERE IdTask = " + lastID, connection))
                             {
                                 using (MySqlDataReader reader = command.ExecuteReader())
                                 {
                                     while (reader.Read())
                                     {
                                         //previousTasksTypes.Add((int)reader["PreviousTaskID"], (byte)reader["BackupType"]);
-                                        newTask.Sources = JsonSerializationUtility.Deserialize<ISource>((string)reader["Task"]);
+                                        newTask.Sources = JsonSerializationUtility.Deserialize<ISource>((string)reader["BackupJournal"]);
                                     }
                                 }
 
                             }
                         }
-                        if (newOrder[0]=='2')
+                        else if (newOrder[0]=='2')
                         {
                             
                             for (int i = newOrder.Length - 1; i > 0; i--)
@@ -318,7 +316,6 @@ namespace KoFrMaRestApi.MySqlCom
                                 }
                             }
                         }
-                    }
                 }
                 else
                 {
