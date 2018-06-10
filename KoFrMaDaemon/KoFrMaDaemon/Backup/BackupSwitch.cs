@@ -344,6 +344,14 @@ namespace KoFrMaDaemon.Backup
             this.taskDebugLog.WriteToLog("Comparison of files successfully done, " + FilesToCopy.Count + " files were created or modified since original backup.", 5);
 
             this.taskDebugLog.WriteToLog("Creating list of files that were changed or no longer exists...", 5);
+            if (FilesToDelete == null)
+            {
+                FilesToDelete = new List<string>();
+            }
+            if (FoldersToDelete == null)
+            {
+                FoldersToDelete = new List<string>();
+            }
             foreach (FileInfoObject itemOriginal in OriginalFiles)
             {
                 if (!itemOriginal.Paired)
@@ -351,7 +359,7 @@ namespace KoFrMaDaemon.Backup
                     FilesToDelete.Add(itemOriginal.FullPath);
                 }
             }
-            this.taskDebugLog.WriteToLog("There is " + (FilesToDelete.Count-backupJournalSource.BackupJournalFilesDelete.Count) + " files that needs to be deleted since the original backup.", 5);
+            this.taskDebugLog.WriteToLog("There is " + (FilesToDelete.Count) + " files that needs to be deleted since the original backup.", 5);
 
 
 
@@ -423,7 +431,7 @@ namespace KoFrMaDaemon.Backup
                     //in FoldersToDelete při obnově mazat POUZE prázdné!!
                 }
             }
-            this.taskDebugLog.WriteToLog("There is " + (FoldersToDelete.Count - backupJournalSource.BackupJournalFoldersDelete.Count) + " folders that needs to be deleted since the original backup.", 5);
+            this.taskDebugLog.WriteToLog("There is " + (FoldersToDelete.Count) + " folders that needs to be deleted since the original backup.", 5);
 
 
 

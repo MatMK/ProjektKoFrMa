@@ -150,25 +150,33 @@ namespace KoFrMaDaemon.Backup
                 }
             }
 
-
             result.BackupJournalFilesDelete.AddRange(journalObjectNew.BackupJournalFilesDelete);
-            for (int i = 0; i < journalObjectOld.BackupJournalFilesDelete.Count; i++)
+            if (journalObjectOld.BackupJournalFilesDelete != null)
             {
-                if (!journalObjectNew.BackupJournalFilesDelete.Contains(journalObjectOld.BackupJournalFilesDelete[i]))
+                for (int i = 0; i < journalObjectOld.BackupJournalFilesDelete.Count; i++)
                 {
-                    result.BackupJournalFilesDelete.Add(journalObjectOld.BackupJournalFilesDelete[i]);
+                    if (!journalObjectNew.BackupJournalFilesDelete.Contains(journalObjectOld.BackupJournalFilesDelete[i]))
+                    {
+                        result.BackupJournalFilesDelete.Add(journalObjectOld.BackupJournalFilesDelete[i]);
+                    }
                 }
             }
+            
+
 
 
             result.BackupJournalFoldersDelete.AddRange(journalObjectNew.BackupJournalFoldersDelete);
-            for (int i = 0; i < journalObjectOld.BackupJournalFoldersDelete.Count; i++)
+            if (journalObjectOld.BackupJournalFoldersDelete!=null)
             {
-                if (!journalObjectNew.BackupJournalFoldersDelete.Contains(journalObjectOld.BackupJournalFoldersDelete[i]))
+                for (int i = 0; i < journalObjectOld.BackupJournalFoldersDelete.Count; i++)
                 {
-                    result.BackupJournalFoldersDelete.Add(journalObjectOld.BackupJournalFoldersDelete[i]);
+                    if (!journalObjectNew.BackupJournalFoldersDelete.Contains(journalObjectOld.BackupJournalFoldersDelete[i]))
+                    {
+                        result.BackupJournalFoldersDelete.Add(journalObjectOld.BackupJournalFoldersDelete[i]);
+                    }
                 }
             }
+
 
 
 

@@ -260,7 +260,7 @@ namespace KoFrMaRestApi.MySqlCom
                     {
                         for (int i = newOrder.Length - 1; i > 0; i--)
                         {
-                            if (newOrder[i] == '0')
+                            if (previousTasksSources[i] is SourceFolders)
                             {
                                 newTask.Sources = previousTasksSources[i];
                             }
