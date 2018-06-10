@@ -41,7 +41,7 @@ namespace KoFrMaRestApi.Models
         {
             if (timer == null)
             {
-                timer = new Timer(10000);
+                timer = new Timer(30000);
                 timer.Elapsed += OnTimedEvent;
                 timer.Enabled = true;
             }
@@ -50,8 +50,9 @@ namespace KoFrMaRestApi.Models
                 throw new Exception("Timer already running");
             }
         }
-        private void OnTimedEvent(object source, ElapsedEventArgs e)
+        private async void OnTimedEvent(object source, ElapsedEventArgs e)
         {
+            List<ExecuteMail> exec = new List<ExecuteMail>();
             using (MySqlConnection connection = WebApiConfig.Connection())
             using (MySqlCommand command = new MySqlCommand("SELECT * FROM `tbEmailPreferences`", connection))
             {
@@ -65,12 +66,18 @@ namespace KoFrMaRestApi.Models
                             EmailSettings email = new EmailSettings() { EmailAddress = (string)reader["RecievingEmail"], SendOnlyFailed = Convert.ToBoolean(reader["SendOnlyFailed"]) };
                             if (this.CorrectTime(JsonSerializationUtility.Deserialize<TaskRepeating>((string)reader["RepeatInJSON"]), 0))
                             {
-                                this.mail.SendEmail(email, (int)reader["IdAdmin"]);
+                                exec.Add(new ExecuteMail(email, (int)reader["IdAdmin"]));
                             }
                             TaskExtendDatabase(JsonSerializationUtility.Deserialize<TaskRepeating>((string)reader["RepeatInJSON"]), (int)reader["id"], "tbEmailPreferences", "RepeatInJSON");
                         }
                     }
                 }
+                connection.Close();
+                connection.Dispose();
+            }
+            foreach (var item in exec)
+            {
+                item.Execute();
             }
         }
         /// <summary>

@@ -16,6 +16,7 @@ namespace KoFrMaRestApi.MySqlCom
     {
         MySqlAdmin sqlAdmin = new MySqlAdmin();
         TimerClass timer = TimerClass.GetInstance();
+        Bcrypter b = new Bcrypter();
         /// <summary>
         /// Returns daemons database id.
         /// </summary>
@@ -146,7 +147,7 @@ namespace KoFrMaRestApi.MySqlCom
                         debugLog += item + "\n";
                     }
                 }
-                using (MySqlCommand command = new MySqlCommand($"INSERT INTO `tbTasksCompleted` VALUES (null,{GetDaemonId(taskComplete.DaemonInfo)},{taskComplete.IDTask},'{JsonSerializationUtility.Serialize(taskComplete.DatFile)}',@datetime,'{debugLog}',{taskComplete.IsSuccessfull},0)", connection))
+                using (MySqlCommand command = new MySqlCommand($"INSERT INTO `tbTasksCompleted` VALUES (null,{GetDaemonId(taskComplete.DaemonInfo)},{taskComplete.IDTask},'{b.Base64Encode(JsonSerializationUtility.Serialize(taskComplete.DatFile))}',@datetime,'{debugLog}',{taskComplete.IsSuccessfull},0)", connection))
                 {
                     command.Parameters.AddWithValue("@datetime", taskComplete.TimeOfCompletition);
                     command.ExecuteNonQuery();
