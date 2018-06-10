@@ -263,31 +263,50 @@ namespace KoFrMaRestApi.MySqlCom
                             if (previousTasksSources[i] is SourceFolders)
                             {
                                 newTask.Sources = previousTasksSources[i];
+                                break;
                             }
                         }
                     }
                     else if (newOrder[0] == '1')
                     {
-                        int lastID = previousTasksIds[newOrder.Length - 1];
-                        int i = 0;
-                        while (lastID == 0)
+                        for (int i = newOrder.Length - 1; i > 0; i--)
                         {
-                            lastID = previousTasksIds[newOrder.Length - 1 - i];
-                            i++;
-                        }
-                        using (MySqlCommand command = new MySqlCommand("SELECT BackupJournal FROM tbTasksCompleted WHERE IdTask = " + lastID, connection))
-                        {
-                            using (MySqlDataReader reader = command.ExecuteReader())
+                            if (previousTasksSources[i] is SourceFolders)
                             {
-                                while (reader.Read())
+                                using (MySqlCommand command = new MySqlCommand("SELECT BackupJournal FROM tbTasksCompleted WHERE IdTask = " + previousTasksIds[i], connection))
                                 {
-                                    //previousTasksTypes.Add((int)reader["PreviousTaskID"], (byte)reader["BackupType"]);
+                                    using (MySqlDataReader reader = command.ExecuteReader())
+                                    {
+                                        while (reader.Read())
+                                        {
+                                            newTask.Sources = JsonConvert.DeserializeObject<BackupJournalObject>((string)reader["BackupJournal"]);
+                                        }
+                                    }
 
-                                    newTask.Sources = JsonConvert.DeserializeObject<BackupJournalObject>(b.Base64Decode((string)reader["BackupJournal"]));
                                 }
+                                break;
                             }
-
                         }
+                        //int lastID = previousTasksIds[newOrder.Length - 1];
+                        //int i = 0;
+                        //while (lastID == 0)
+                        //{
+                        //    lastID = previousTasksIds[newOrder.Length - 1 - i];
+                        //    i++;
+                        //}
+                        //using (MySqlCommand command = new MySqlCommand("SELECT BackupJournal FROM tbTasksCompleted WHERE IdTask = " + lastID, connection))
+                        //{
+                        //    using (MySqlDataReader reader = command.ExecuteReader())
+                        //    {
+                        //        while (reader.Read())
+                        //        {
+                        //            //previousTasksTypes.Add((int)reader["PreviousTaskID"], (byte)reader["BackupType"]);
+
+                        //            newTask.Sources = JsonConvert.DeserializeObject<BackupJournalObject>(b.Base64Decode((string)reader["BackupJournal"]));
+                        //        }
+                        //    }
+
+                        //}
                     }
                     else if (newOrder[0] == '2')
                     {
@@ -310,7 +329,7 @@ namespace KoFrMaRestApi.MySqlCom
                                         while (reader.Read())
                                         {
                                             //previousTasksTypes.Add((int)reader["PreviousTaskID"], (byte)reader["BackupType"]);
-                                            newTask.Sources = JsonConvert.DeserializeObject<BackupJournalObject>((string)reader["Task"]);
+                                            newTask.Sources = JsonConvert.DeserializeObject<BackupJournalObject>((string)reader["BackupJournal"]);
                                         }
                                     }
 
